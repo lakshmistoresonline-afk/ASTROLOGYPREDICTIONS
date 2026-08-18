@@ -8,8 +8,26 @@ from pathlib import Path
 
 STORE_PATH = Path(__file__).parent.parent.parent / "data" / "charts.json"
 
+# Toggle between Local and Firestore
+USE_FIREBASE = os.getenv("USE_FIREBASE", "false").lower() == "true"
 
-def _load_all() -> dict:
+if USE_FIREBASE:
+    from . import firebase_store as fb
+
+    def save_chart(chart: dict) -> str:
+        return fb.save_chart(chart)
+
+    def list_charts() -> list:
+        return fb.list_charts()
+
+    def get_chart(cid: str) -> dict | None:
+        return fb.get_chart(cid)
+
+    def delete_chart(cid: str) -> bool:
+        return fb.delete_chart(cid)
+
+else:
+    def _load_all() -> dict:
     if STORE_PATH.exists():
         try:
             return json.loads(STORE_PATH.read_text())

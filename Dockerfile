@@ -29,12 +29,13 @@ COPY . .
 # Set ephemeris path for pyswisseph
 ENV SE_EPHE_PATH=/app/ephe
 ENV FLASK_ENV=production
-ENV PORT=5000
+ENV PORT=8080
 
-EXPOSE 5000
+EXPOSE 8080
 
 # Use gunicorn in production
-CMD ["gunicorn", "--bind", "0.0.0.0:5000", \
-     "--workers", "2", "--threads", "4", \
-     "--timeout", "120", \
-     "run:app"]
+# Cloud Run expects the app to listen on the $PORT environment variable
+CMD gunicorn --bind 0.0.0.0:$PORT \
+     --workers 2 --threads 4 \
+     --timeout 120 \
+     "run:app"

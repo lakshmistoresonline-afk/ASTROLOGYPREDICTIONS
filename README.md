@@ -97,6 +97,33 @@ docker compose logs -f        # view logs
 
 ---
 
+## ☁️ Cloud Deployment (Firebase + Cloud Run)
+
+You can host this dashboard for **free** (within usage limits) using Google Cloud.
+
+### 1. Prerequisites
+- [Google Cloud SDK](https://cloud.google.com/sdk/docs/install) installed and authenticated.
+- [Firebase CLI](https://firebase.google.com/docs/cli) installed.
+- A Firebase project created in the console.
+
+### 2. Deploy to Cloud Run
+```bash
+# Set your project ID
+gcloud config set project your-project-id
+
+# Build and deploy the container
+gcloud run deploy jyotish-dashboard --source . \
+  --env-vars-update USE_FIREBASE=true,FLASK_SECRET_KEY=your-random-key \
+  --allow-unauthenticated --region us-central1
+```
+
+### 3. Deploy to Firebase Hosting
+```bash
+firebase deploy --only hosting
+```
+
+---
+
 ## 🔄 Sync / Update
 
 ```bash

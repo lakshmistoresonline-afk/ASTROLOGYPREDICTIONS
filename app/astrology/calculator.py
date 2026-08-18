@@ -424,23 +424,23 @@ def get_sunrise_sunset_moonrise(
 
 def _rahu_kaal(weekday: int, sunrise: datetime, sunset: datetime) -> str:
     """Rahu Kaal period — inauspicious 90-minute window each day."""
-    # Rahu Kaal order by weekday (Mon=0 … Sun=6 in Python, but Sun=0 in Indian week)
-    # Sunday=7th part, Monday=2nd, Tuesday=7th, Wednesday=5th,
-    # Thursday=6th, Friday=4th, Saturday=3rd
-    order = {0: 2, 1: 7, 2: 4, 3: 5, 4: 6, 5: 3, 6: 8}  # Python Mon=0
+    # Rahu Kaal order by weekday (Mon=0 … Sun=6 in Python)
+    # Mon: 2, Tue: 7, Wed: 5, Thu: 6, Fri: 4, Sat: 3, Sun: 8
+    order = {0: 2, 1: 7, 2: 5, 3: 6, 4: 4, 5: 3, 6: 8}
     part = order.get(weekday, 1)
     return _kaal_window(part, sunrise, sunset)
 
 
 def _gulika_kaal(weekday: int, sunrise: datetime, sunset: datetime) -> str:
-    # Sunday=6, Mon=5, Tue=4, Wed=3, Thu=2, Fri=1, Sat=0 (day parts from sunrise)
-    order = {0: 6, 1: 5, 2: 4, 3: 3, 4: 2, 5: 1, 6: 7}
+    # Mon: 5, Tue: 4, Wed: 3, Thu: 2, Fri: 1, Sat: 7, Sun: 6
+    order = {0: 5, 1: 4, 2: 3, 3: 2, 4: 1, 5: 7, 6: 6}
     part = order.get(weekday, 1)
     return _kaal_window(part, sunrise, sunset)
 
 
 def _yamaghanta(weekday: int, sunrise: datetime, sunset: datetime) -> str:
-    order = {0: 5, 1: 4, 2: 3, 3: 2, 4: 1, 5: 7, 6: 6}
+    # Mon: 4, Tue: 3, Wed: 2, Thu: 1, Fri: 7, Sat: 6, Sun: 5
+    order = {0: 4, 1: 3, 2: 2, 3: 1, 4: 7, 5: 6, 6: 5}
     part = order.get(weekday, 1)
     return _kaal_window(part, sunrise, sunset)
 
