@@ -21,11 +21,6 @@ def calculate_dasha_balance(moon_longitude: float) -> Dict[str, Any]:
 
     # Dasha sequence repeats every 9 nakshatras
     lord_idx = nak_idx % 9
-    # The sequence starts from Ketu for Ashwini (idx 0)
-    # Ashwini (0), Bharani (1), Krittika (2)...
-    # Sequence: Ketu, Venus, Sun, Moon, Mars, Rahu, Jupiter, Saturn, Mercury
-    # Matches NAKSHATRA_LORDS logic in legacy code
-
     lord = DASHA_SEQUENCE[lord_idx]
 
     nak_start = nak_idx * nak_span
@@ -41,13 +36,12 @@ def calculate_dasha_balance(moon_longitude: float) -> Dict[str, Any]:
     }
 
 def get_vimshottari_periods(moon_longitude: float, birth_dt: datetime) -> List[Dict[str, Any]]:
-    """Generate the full list of Mahadashas."""
+    """Generate the full list of Mahadashas with Antardashas and Pratyantardashas."""
     balance = calculate_dasha_balance(moon_longitude)
-
-    periods = []
-    current_start = birth_dt
-
     start_lord_idx = balance["lord_idx"]
+
+    mahadashas = []
+    current_start = birth_dt
 
     for i in range(9):
         lord = DASHA_SEQUENCE[(start_lord_idx + i) % 9]
@@ -56,12 +50,65 @@ def get_vimshottari_periods(moon_longitude: float, birth_dt: datetime) -> List[D
         duration_days = years * DAYS_PER_YEAR
         current_end = current_start + timedelta(days=duration_days)
 
-        periods.append({
+        # Calculate Antardashas
+        antardashas = _get_antardashas(lord, current_start, years)
+
+        mahadashas.append({
             "lord": lord,
             "start": current_start,
             "end": current_end,
-            "years": years
+            "years": years,
+            "antardashas": antardashas
         })
         current_start = current_end
 
-    return periods
+    return mahadashas
+
+def _get_antardashas(maha_lord: str, maha_start: datetime, maha_years: float) -> List[Dict[str, Any]]:
+    antars = []
+    lord_idx = DASHA_SEQUENCE.index(maha_lord)
+    current_start = maha_start
+
+    for i in range(9):
+        lord = DASHA_SEQUENCE[(lord_idx + i) % 9]
+        # Duration is proportional: (Maha Years * Antar Years) / 120
+        years = (maha_years * DASHA_YEARS[lord]) / TOTAL_YEARS
+        duration_days = years * DAYS_PER_YEAR
+        current_end = current_start + timedelta(days=duration_days)
+
+        # Calculate Pratyantardashas
+        pratyantars = _get_pratyantardashas(lord, current_start, years)
+
+        antars.append({
+            "lord": lord,
+            "start": current_start,
+            "end": current_end,
+            "years": years,
+            "months": years * 12,
+            "pratyantardashas": pratyantars
+        })
+        current_start = current_end
+
+    return antars
+
+def _get_pratyantardashas(antar_lord: str, antar_start: datetime, antar_years: float) -> List[Dict[str, Any]]:
+    pratys = []
+    lord_idx = DASHA_SEQUENCE.index(antar_lord)
+    current_start = antar_start
+
+    for i in range(9):
+        lord = DASHA_SEQUENCE[(lord_idx + i) % 9]
+        years = (antar_years * DASHA_YEARS[lord]) / TOTAL_YEARS
+        duration_days = years * DAYS_PER_YEAR
+        current_end = current_start + timedelta(days=duration_days)
+
+        pratys.append({
+            "lord": lord,
+            "start": current_start,
+            "end": current_end,
+            "years": years,
+            "days": int(duration_days)
+        })
+        current_start = current_end
+
+    return pratys
