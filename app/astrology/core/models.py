@@ -64,8 +64,9 @@ class DomainPrediction(BaseModel):
     score: float
     confidence: str # LOW, MEDIUM, HIGH
     summary: str
-    positive_factors: List[PredictionFactor]
-    negative_factors: List[PredictionFactor]
-    contradictions: List[str]
-    timing: List[Dict[str, Any]]
-    recommendations: List[str]
+    evidence: List[str] = []
+    positive_factors: List[PredictionFactor] = []
+    negative_factors: List[PredictionFactor] = []
+    contradictions: List[str] = []
+    timing: List[Dict[str, Any]] = []
+    recommendations: List[str] = []

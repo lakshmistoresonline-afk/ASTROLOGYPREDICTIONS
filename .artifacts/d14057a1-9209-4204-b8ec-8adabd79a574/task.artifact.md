@@ -1,34 +1,33 @@
-# Task List: Jyotish Dashboard 2.0 Completion
+# Task List: Comprehensive Prediction Engine Upgrade
 
-## Phase 2: Core Calculation Refactor (Expanded)
-- [x] Create directory structure
-- [x] Implement core modules (ephemeris, ayanamsa, datetime, planets, houses)
-- [x] Implement all Divisional Charts (D1-D60) in `app/astrology/charts/divisional.py`
-- [x] Implement Ashtakavarga in `app/astrology/charts/ashtakavarga.py`
+## Phase 1: Foundation & Security
+- [x] Update `.gitignore` and remove `.env` from tracking
+- [x] Add `pydantic` to dependencies
+- [x] Define `CanonicalChart` and `DomainPrediction` models
+- [ ] Implement `CanonicalChart` population engine
+- [ ] Create regression test suite for D1-D60 and core positions
 
-## Phase 4: Strength & Aspects Engine (Expanded)
-- [x] Functional Benefic/Malefic logic
-- [x] Classical Graha Drishti
-- [x] Dignity engine
-- [x] Implement Shadbala (Progressive implementation)
-    - [x] Sthana Bala
-    - [x] Dig Bala
-    - [x] Naisargika Bala
+## Phase 2: High-Priority Engines
+- [ ] Implement full Shadbala engine (6 components)
+- [ ] Implement robust Yoga detection framework
+- [ ] Implement unified Timing engine (Dasha + Transit)
+- [ ] Implement Ashtakavarga integration
 
-## Phase 5: Predictions & Evidence (Expanded)
-- [x] Weighted scoring engine
-- [x] Career domain evidence
-- [x] Finance domain evidence (D2, 2nd/11th houses)
-- [x] Contradiction Detection & Confidence scoring
+## Phase 3: Domain Predictions (32 Categories)
+- [ ] Personality & Life Purpose
+- [ ] Education & Career
+- [ ] Marriage, Relationships & Children
+- [ ] Wealth, Finance & Property
+- [ ] Health, Travel & Spirituality
+- [ ] Legal, Fame & Authority
 
-## Phase 6: Persistence & Infrastructure
-- [x] SQLite Database Models (`app/database/models.py`)
-- [x] SQLAlchemy Integration
-- [x] Migration script from JSON to SQLite
+## Phase 4: System Intelligence
+- [ ] Implement Evidence extraction engine
+- [ ] Implement Contradiction analysis logic
+- [ ] Implement Confidence scoring algorithm
 
-## Phase 7: Application Integration & UI
-- [x] Switch `routes.py` to use new `calculate_chart_data`
-- [x] Update templates to display Evidence and Confidence
-- [x] Implement South Indian Chart layout (Canvas renderer update)
-- [x] Create Deployment Scripts for `srinathrajiran007@gmail.com`
-- [ ] Final verification and testing
+## Phase 5: UI & Final Polish
+- [ ] Card-based Dashboard UI
+- [ ] Expandable Evidence views
+- [ ] Event Timelines
+- [ ] Final Accuracy & Security Audit

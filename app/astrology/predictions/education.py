@@ -50,6 +50,7 @@ def get_education_prediction(chart: CanonicalChart) -> DomainPrediction:
         score=score,
         confidence="MEDIUM",
         summary="Educational prospects are driven by the strength of the 2nd, 4th, and 5th houses.",
+        evidence=evidence,
         positive_factors=[f for f in factors if f.direction == "positive"],
         negative_factors=[f for f in factors if f.direction == "negative"],
         contradictions=[],

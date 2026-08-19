@@ -23,3 +23,15 @@ def get_house_from_longitude(longitude: float, ascendant: float) -> int:
     obj_rashi = int(longitude // 30)
     house = (obj_rashi - asc_rashi + 12) % 12 + 1
     return house
+
+# Sign-to-Lord mapping (Standard Parashari)
+RASHI_LORDS = {
+    0: "Mars", 1: "Venus", 2: "Mercury", 3: "Moon",
+    4: "Sun", 5: "Mercury", 6: "Venus", 7: "Mars",
+    8: "Jupiter", 9: "Saturn", 10: "Saturn", 11: "Jupiter",
+}
+
+def get_house_lord(house_num: int, ascendant_rashi: int) -> str:
+    """Return the lord of a given house number."""
+    rashi = (ascendant_rashi + house_num - 1) % 12
+    return RASHI_LORDS[rashi]

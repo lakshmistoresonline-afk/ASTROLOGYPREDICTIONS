@@ -1,46 +1,72 @@
 from typing import Dict, Any, List
+from ..core.models import CanonicalChart, DomainPrediction
 from .career import get_career_prediction
 from .finance import get_finance_prediction
 from .marriage import get_marriage_prediction
 from .health import get_health_prediction
+from .personality import get_personality_prediction
+from .education import get_education_prediction
 from .scoring import get_label_from_score
 
-def detect_contradictions(domain_results: Dict[str, Any]) -> List[str]:
+def detect_contradictions(domain_results: DomainPrediction) -> List[str]:
     """Identify conflicting factors across domains."""
     contradictions = []
-    evidence = domain_results.get("evidence", [])
 
-    # Example: Positive house lord but negative occupant
-    positives = [e for e in evidence if "✓" in e]
-    negatives = [e for e in evidence if "⚠" in e]
+    # Check for mixed indicators in factors or evidence
+    pos = any("✓" in e for e in domain_results.evidence)
+    neg = any("⚠" in e for e in domain_results.evidence)
 
-    if positives and negatives:
-        contradictions.append(f"Mixed indicators found in {domain_results['domain']}.")
+    if pos and neg:
+        contradictions.append(f"Mixed signals: both favorable and challenging factors detected.")
 
     return contradictions
 
-def generate_evidence_based_predictions(chart: Dict[str, Any]) -> Dict[str, Any]:
+def generate_evidence_based_predictions(chart: CanonicalChart) -> Dict[str, Any]:
     """Aggregate all domain predictions with evidence and scoring."""
-    career = get_career_prediction(chart)
-    finance = get_finance_prediction(chart)
-    marriage = get_marriage_prediction(chart)
-    health = get_health_prediction(chart)
 
-    domains = [career, finance, marriage, health]
+    # Domains using the new CanonicalChart model
+    personality = get_personality_prediction(chart)
+    education = get_education_prediction(chart)
+
+    # Adapting existing engines to the model
+    # We pass model_dump() to existing functions that expect dicts
+    chart_dict = chart.model_dump()
+    career = get_career_prediction(chart_dict)
+    finance = get_finance_prediction(chart_dict)
+    marriage = get_marriage_prediction(chart_dict)
+    health = get_health_prediction(chart_dict)
+
+    domains = [personality, education]
+
+    # Convert dict results to objects for the engine loop
+    for d in [career, finance, marriage, health]:
+        obj = DomainPrediction(
+            domain=d["domain"],
+            score=d["score"],
+            confidence=d["confidence"],
+            summary="",
+            evidence=d.get("evidence", []),
+            positive_factors=[],
+            negative_factors=[],
+            contradictions=[],
+            timing=[],
+            recommendations=[]
+        )
+        domains.append(obj)
 
     # Calculate overall support score
-    total_score = sum(d["score"] for d in domains) / len(domains)
+    total_score = sum(d.score for d in domains) / len(domains)
 
-    # Apply contradiction penalties/notes
+    results = []
     for d in domains:
-        d["contradictions"] = detect_contradictions(d)
-        if d["contradictions"]:
-            # Reduce confidence if contradictions exist
-            if d["confidence"] == "HIGH": d["confidence"] = "MEDIUM"
-            elif d["confidence"] == "MEDIUM": d["confidence"] = "LOW"
+        # Detect contradictions based on evidence strings
+        d.contradictions = detect_contradictions(d)
+        if d.contradictions and d.confidence == "HIGH":
+            d.confidence = "MEDIUM"
+        results.append(d.model_dump())
 
     return {
         "overall_score": round(total_score, 2),
         "overall_label": get_label_from_score(total_score),
-        "domains": domains
+        "domains": results
     }

@@ -68,6 +68,7 @@ def get_personality_prediction(chart: CanonicalChart) -> DomainPrediction:
         score=score,
         confidence="MEDIUM",
         summary=f"Primary personality is shaped by {rashi_themes[asc_rashi]} and the influence of {asc_lord_name}.",
+        evidence=evidence,
         positive_factors=[f for f in factors if f.direction == "positive"],
         negative_factors=[f for f in factors if f.direction == "negative"],
         contradictions=[],

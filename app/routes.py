@@ -54,9 +54,6 @@ def _enrich_chart_for_template(chart: dict):
     chart["navamsa"] = {}
     if "divisional" in chart and "D9" in chart["divisional"]:
         chart["navamsa"] = {k: {"rashi": v} for k, v in chart["divisional"]["D9"].items()}
-        if "Lagna" in chart["navamsa"]:
-            # Templates expect chart.navamsa.Lagna.rashi
-            pass
 
     # Houses (Whole Sign)
     chart["houses"] = []
@@ -100,7 +97,8 @@ def calculate_transit_chart(lat: float, lon: float, tz_str: str, dt: datetime = 
     if dt is None:
         tz = pytz.timezone(tz_str)
         dt = datetime.now(tz)
-    chart = calculate_chart_data(dt, lat, lon, tz_str)
+    chart_obj = calculate_chart_data(dt, lat, lon, tz_str)
+    chart = chart_obj.model_dump()
     _enrich_chart_for_template(chart)
     return chart
 
@@ -193,7 +191,8 @@ def kundli():
                 lon = float(lon)
 
             birth_dt = datetime.strptime(f"{dob} {tob}", "%Y-%m-%d %H:%M")
-            chart = calculate_chart_data(birth_dt, float(lat), float(lon), tz_str)
+            chart_obj = calculate_chart_data(birth_dt, float(lat), float(lon), tz_str)
+            chart = chart_obj.model_dump()
 
             moon_lon = chart["planets"]["Moon"]["longitude"]
             dasha    = calculate_vimshottari(moon_lon, birth_dt)
@@ -312,7 +311,8 @@ def transit():
     if dob and tob:
         try:
             birth_dt = datetime.strptime(f"{dob} {tob}", "%Y-%m-%d %H:%M")
-            natal_chart = calculate_chart_data(birth_dt, float(lat), float(lon), tz_str)
+            natal_chart_obj = calculate_chart_data(birth_dt, float(lat), float(lon), tz_str)
+            natal_chart = natal_chart_obj.model_dump()
             _enrich_chart_for_template(natal_chart)
         except Exception:
             pass
@@ -345,10 +345,10 @@ def dasha():
     if dob and tob:
         try:
             birth_dt   = datetime.strptime(f"{dob} {tob}", "%Y-%m-%d %H:%M")
-            chart      = calculate_chart_data(birth_dt, float(lat), float(lon), tz)
+            chart_obj  = calculate_chart_data(birth_dt, float(lat), float(lon), tz)
+            chart      = chart_obj.model_dump()
             moon_lon   = chart["planets"]["Moon"]["longitude"]
             dasha_data = calculate_vimshottari(moon_lon, birth_dt)
-            print(f"DEBUG: Dasha data keys: {list(dasha_data.keys()) if dasha_data else 'None'}")
             _enrich_chart_for_template(chart)
         except Exception as e:
             error = str(e)
