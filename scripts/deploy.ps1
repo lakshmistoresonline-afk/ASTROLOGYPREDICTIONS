@@ -1,11 +1,11 @@
 # ══════════════════════════════════════════════════════════════════
 #  Jyotish Vedic Dashboard — Cloud Deployment (PowerShell)
 #  Project: astropredictions-ff47c
-#  User:    srinathrajiran007@gmail.com
+#  User:    srinathrajkiran007@gmail.com
 # ══════════════════════════════════════════════════════════════════
 
 $PROJECT_ID = "astropredictions-ff47c"
-$ACCOUNT = "srinathrajiran007@gmail.com"
+$ACCOUNT = "srinathrajkiran007@gmail.com"
 $REGION = "us-central1"
 $SECRET_KEY = "a7f03eedd2a10e739cd43152ee574b7d821b412f2f37b1202af8a7035305f9bc"
 
