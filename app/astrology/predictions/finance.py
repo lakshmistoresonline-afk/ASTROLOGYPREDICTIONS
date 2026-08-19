@@ -55,7 +55,7 @@ def get_finance_prediction(chart: Dict[str, Any]) -> Dict[str, Any]:
 
     return {
         "domain": "Finance",
-        "score": score,
+        "score": round(score, 1),
         "evidence": evidence,
         "confidence": "HIGH" if len(evidence) >= 3 else "MEDIUM"
     }
