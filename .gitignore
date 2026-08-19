@@ -1,0 +1,28 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+ENV/
+.env
+
+# Astro Data
+ephe/
+data/*.json
+data/*.db
+!data/.gitkeep
+
+# IDEs
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Caches
+.mypy_cache/
+.pytest_cache/
+.ruff_cache/
+
+# Artifacts
+.artifacts/
