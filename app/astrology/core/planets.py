@@ -26,6 +26,7 @@ PLANET_COLORS = {
 
 # Natural Benefics and Malefics
 NATURAL_BENEFICS = {"Jupiter", "Venus", "Moon", "Mercury"}
+NATURAL_MALEFICS = {"Saturn", "Mars", "Sun", "Rahu", "Ketu"}
 NAKSHATRA_NAMES = [
     "Ashwini", "Bharani", "Krittika", "Rohini", "Mrigashira",
     "Ardra", "Punarvasu", "Pushya", "Ashlesha", "Magha",

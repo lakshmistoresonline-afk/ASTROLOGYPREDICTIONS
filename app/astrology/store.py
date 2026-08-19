@@ -40,14 +40,21 @@ else:
         return cid
 
     def list_charts() -> list:
-        charts = Chart.query.order_by(Chart.saved_at.desc()).all()
-        results = []
-        for c in charts:
-            data = c.get_data()
-            data["id"] = c.id
-            data["saved_at"] = c.saved_at.isoformat()
-            results.append(data)
-        return results
+        try:
+            charts = Chart.query.order_by(Chart.saved_at.desc()).all()
+            results = []
+            for c in charts:
+                data = c.get_data()
+                data["id"] = c.id
+                data["saved_at"] = c.saved_at.isoformat() if c.saved_at else datetime.now().isoformat()
+                # Ensure keys exist for template
+                data["name"] = data.get("name", c.name or "Unknown")
+                data["birth_datetime"] = data.get("birth_datetime", "")
+                results.append(data)
+            return results
+        except Exception as e:
+            print(f"Error listing charts: {e}")
+            return []
 
     def get_chart(cid: str) -> dict | None:
         c = Chart.query.get(cid)

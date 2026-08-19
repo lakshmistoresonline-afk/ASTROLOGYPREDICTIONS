@@ -43,12 +43,22 @@ def save_chart(chart: dict) -> str:
 
 def list_charts() -> list:
     """Return all saved charts from Firestore sorted by saved_at."""
-    db = _get_db()
-    docs = db.collection(CHARTS_COLLECTION).order_by(
-        "saved_at", direction=firestore.Query.DESCENDING
-    ).stream()
+    try:
+        db = _get_db()
+        docs = db.collection(CHARTS_COLLECTION).order_by(
+            "saved_at", direction=firestore.Query.DESCENDING
+        ).stream()
 
-    return [doc.to_dict() for doc in docs]
+        results = []
+        for doc in docs:
+            d = doc.to_dict()
+            if d:
+                d["birth_datetime"] = d.get("birth_datetime", "")
+                results.append(d)
+        return results
+    except Exception as e:
+        print(f"Firestore Error: {e}")
+        return []
 
 def get_chart(cid: str) -> dict | None:
     db = _get_db()

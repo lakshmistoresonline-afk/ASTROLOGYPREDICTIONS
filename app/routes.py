@@ -44,7 +44,7 @@ def get_sunrise_sunset_moonrise(target_date: date, lat: float, lon: float, tz_st
         y, m, d, h = swe.revjul(jd)
         hh = int(h)
         mm = int((h - hh) * 60)
-        dt_utc = datetime(y, m, d, hh, mm, ss=0, tzinfo=pytz.utc)
+        dt_utc = datetime(y, m, d, hh, mm, second=0, tzinfo=pytz.utc)
         return dt_utc.astimezone(tz).strftime("%I:%M %p")
 
     weekday = target_date.weekday()
@@ -67,9 +67,13 @@ main = Blueprint("main", __name__)
 # ─────────────────────────────────────────────
 @main.route("/")
 def index():
-    ip_loc   = get_ip_location()
-    saved    = list_charts()
-    return render_template("index.html", ip_loc=ip_loc, saved_charts=saved)
+    try:
+        ip_loc   = get_ip_location()
+        saved    = list_charts()
+        return render_template("index.html", ip_loc=ip_loc, saved_charts=saved)
+    except Exception as e:
+        traceback.print_exc()
+        return f"Internal Server Error: {str(e)}", 500
 
 
 # ─────────────────────────────────────────────
