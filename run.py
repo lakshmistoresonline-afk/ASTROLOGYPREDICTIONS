@@ -82,11 +82,12 @@ if __name__ == "__main__":
         flush=True,
     )
 
-    # Start idle watcher as a background daemon
-    t = threading.Thread(target=_idle_watcher, daemon=True)
-    t.start()
+    # Start idle watcher as a background daemon (only in non-production)
+    if os.getenv("FLASK_ENV") != "production":
+        t = threading.Thread(target=_idle_watcher, daemon=True)
+        t.start()
 
-    # Open browser after Flask is ready
-    threading.Timer(1.5, open_browser).start()
+        # Open browser after Flask is ready
+        threading.Timer(1.5, open_browser).start()
 
     app.run(host="0.0.0.0", port=port, debug=False)

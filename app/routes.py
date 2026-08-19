@@ -16,8 +16,43 @@ from .astrology.predictions.data import TRANSIT_NAKSHATRA_WARNINGS, NAKSHATRA_ME
 from .astrology.store import save_chart, list_charts, get_chart, delete_chart
 from .api.external import geocode_place, get_ip_location
 
-# For legacy compat
-from .astrology.calculator import calculate_transit_chart, get_sunrise_sunset_moonrise
+# Compatibility helpers for legacy routes
+def calculate_transit_chart(lat: float, lon: float, tz_str: str, dt: datetime = None) -> dict:
+    from .astrology.core.chart import calculate_chart_data
+    if dt is None:
+        tz = pytz.timezone(tz_str)
+        dt = datetime.now(tz)
+    return calculate_chart_data(dt, lat, lon, tz_str)
+
+def get_sunrise_sunset_moonrise(target_date: date, lat: float, lon: float, tz_str: str) -> dict:
+    from .astrology.panchang.sky import get_sunrise, get_sunset, get_moonrise, get_moonset
+    from .astrology.core.datetime import datetime_to_jd
+    import swisseph as swe
+
+    tz = pytz.timezone(tz_str)
+    noon_dt = datetime.combine(target_date, datetime.min.time()).replace(hour=12)
+    jd_ut = datetime_to_jd(noon_dt, tz_str)
+
+    sr = get_sunrise(jd_ut, lat, lon)
+    ss = get_sunset(jd_ut, lat, lon)
+    mr = get_moonrise(jd_ut, lat, lon)
+    ms = get_moonset(jd_ut, lat, lon)
+
+    def jd_to_str(jd):
+        if not jd or jd < 0: return "—"
+        y, m, d, h = swe.revjul(jd)
+        hh = int(h)
+        mm = int((h - hh) * 60)
+        dt_utc = datetime(y, m, d, hh, mm, tzinfo=pytz.utc)
+        return dt_utc.astimezone(tz).strftime("%I:%M %p")
+
+    return {
+        "sunrise": jd_to_str(sr),
+        "sunset": jd_to_str(ss),
+        "moonrise": jd_to_str(mr),
+        "moonset": jd_to_str(ms),
+        "rahu_kaal": "—" # Logic to be ported from calculator.py
+    }
 
 main = Blueprint("main", __name__)
 

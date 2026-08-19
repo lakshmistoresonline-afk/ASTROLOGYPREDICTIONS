@@ -10,14 +10,14 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 WORKDIR /app
 
-# Download Swiss Ephemeris data files (Moshier — good for 600 BC to 2400 AD)
+# Download Swiss Ephemeris data files (GitHub Mirror — reliable)
 RUN mkdir -p /app/ephe && \
     wget -q -O /app/ephe/seas_18.se1 \
-        https://www.astro.com/ftp/swisseph/ephe/seas_18.se1 || true && \
+        https://github.com/aloistr/swisseph/raw/master/ephe/seas_18.se1 && \
     wget -q -O /app/ephe/semo_18.se1 \
-        https://www.astro.com/ftp/swisseph/ephe/semo_18.se1 || true && \
+        https://github.com/aloistr/swisseph/raw/master/ephe/semo_18.se1 && \
     wget -q -O /app/ephe/sepl_18.se1 \
-        https://www.astro.com/ftp/swisseph/ephe/sepl_18.se1 || true
+        https://github.com/aloistr/swisseph/raw/master/ephe/sepl_18.se1
 
 # Python dependencies
 COPY requirements.txt .
