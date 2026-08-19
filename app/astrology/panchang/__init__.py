@@ -4,6 +4,7 @@ from .nakshatra import get_nakshatra_info, get_nakshatra_end_time
 from .yoga import get_yoga_info, get_yoga_end_time
 from .karana import get_karana_info, get_karana_end_time
 from .sky import get_sunrise, get_sunset, get_moonrise, get_moonset, get_rahu_kaal, get_gulika_kaal, get_yamaghanta
+from .muhurta import get_choghadiya
 from ..core.datetime import datetime_to_jd
 from ..core.ephemeris import get_ayanamsa, get_planet_position
 from ..core.planets import NAKSHATRA_NAMES, NAKSHATRA_LORDS
@@ -188,8 +189,43 @@ def calculate_panchang(target_date: date, lat: float, lon: float, tz_str: str,
             "yamaghanta": get_yamaghanta(weekday_idx, sunrise_jd or 0, sunset_jd or 0),
         },
         "is_auspicious": tithi_nature == "Auspicious" and yoga_nature == "Auspicious",
-        "abhijit_muhurta": "—" # To be implemented
+        "choghadiya": [],
+        "muhurtas": {}
     }
+
+    # 3. Precision Muhurtas
+    from .muhurta import get_abhijit_muhurta, get_brahma_muhurta, get_amrit_kaal
+    if sunrise_jd and sunset_jd:
+        # Abhijit
+        ab_s, ab_e = get_abhijit_muhurta(sunrise_jd, sunset_jd)
+        res["muhurtas"]["Abhijit"] = f"{jd_to_local_str(ab_s)} – {jd_to_local_str(ab_e)}"
+        res["abhijit_muhurta"] = res["muhurtas"]["Abhijit"] # Legacy compatibility
+
+        # Brahma
+        br_s, br_e = get_brahma_muhurta(sunrise_jd, sunset_jd)
+        res["muhurtas"]["Brahma"] = f"{jd_to_local_str(br_s)} – {jd_to_local_str(br_e)}"
+
+        # Amrit Kaal
+        nak_start = jd_ut # Approximate start for current day if not known
+        nak_end = get_nakshatra_end_time(jd_ut)
+        am_kaal = get_amrit_kaal(nak["number"], nak_start, nak_end)
+        if am_kaal:
+            res["muhurtas"]["Amrit Kaal"] = f"{jd_to_local_str(am_kaal[0])} – {jd_to_local_str(am_kaal[1])}"
+        else:
+            res["muhurtas"]["Amrit Kaal"] = "—"
+
+    # 4. Choghadiya
+    if sunrise_jd and sunset_jd:
+        # Approximate next sunrise
+        next_sr = get_sunrise(jd_ut + 1.0, lat, lon) or (sunrise_jd + 1.0)
+        ch_raw = get_choghadiya(sunrise_jd, sunset_jd, next_sr, indian_day_idx)
+        for c in ch_raw:
+            res["choghadiya"].append({
+                "name": c["name"],
+                "start": jd_to_local_str(c["start_jd"]),
+                "end": jd_to_local_str(c["end_jd"]),
+                "type": c["type"]
+            })
 
     # Tarabala / Chandra Bala
     if birth_nak_idx is not None:

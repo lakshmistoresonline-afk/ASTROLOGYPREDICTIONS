@@ -26,9 +26,14 @@ _tf = TimezoneFinder()
 def geocode_place(place_name: str) -> dict:
     """
     Convert a place name to lat/lon/timezone.
-    Priority:  OpenCage API → Nominatim (free fallback)
-    Returns dict with keys: lat, lon, timezone, display_name
+    Priority: Local Offline Database → OpenCage API → Nominatim
     """
+    # --- Try Local Offline Database (Nuclear-Bunker Mode) ---
+    from ..astrology.core.cities import search_offline_city
+    local_results = search_offline_city(place_name)
+    if local_results:
+        return local_results[0] # Return the first matching city
+
     # --- Try OpenCage (most accurate) ---
     if OPENCAGE_KEY:
         try:

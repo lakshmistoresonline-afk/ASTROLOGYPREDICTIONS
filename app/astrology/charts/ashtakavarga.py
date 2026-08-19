@@ -1,8 +1,6 @@
 from typing import Dict, List, Any
 
 # Bindu contribution tables (Relative house from planet/Lagna)
-# Keys: Planet contributing bindus
-# Values: Dict of source planets and the relative houses they contribute to
 BINDU_TABLES = {
     "Sun": {
         "Sun": [1, 2, 4, 7, 8, 9, 10, 11],
@@ -76,45 +74,66 @@ BINDU_TABLES = {
     }
 }
 
+PLANET_MULTIPLIERS = {
+    "Sun": 5, "Moon": 5, "Mars": 8, "Mercury": 5,
+    "Jupiter": 10, "Venus": 7, "Saturn": 5
+}
+RASHI_MULTIPLIERS = [7, 10, 8, 4, 10, 5, 7, 8, 9, 5, 11, 12]
+
 def calculate_bav(planet: str, planet_rashis: Dict[str, int]) -> List[int]:
-    """
-    Calculate Bhinna Ashtakavarga (BAV) for a planet.
-    Returns a list of 12 integers representing bindus in signs Aries (0) to Pisces (11).
-    """
+    """Calculate Bhinna Ashtakavarga (BAV) for a planet."""
     if planet not in BINDU_TABLES:
         return [0] * 12
-
     bav = [0] * 12
     table = BINDU_TABLES[planet]
-
     for source_planet, houses in table.items():
         source_rashi = planet_rashis.get(source_planet)
-        if source_rashi is None:
-            continue
-
+        if source_rashi is None: continue
         for house in houses:
-            # relative house 1 is same rashi
             target_rashi = (source_rashi + house - 1) % 12
             bav[target_rashi] += 1
-
     return bav
 
-def calculate_ashtakavarga(planets_rashi: Dict[str, int], lagna_rashi: int) -> Dict[str, Any]:
-    """
-    Calculate BAV for all planets and SARVA Ashtakavarga (SAV).
-    """
-    all_rashis = {**planets_rashi, "Lagna": lagna_rashi}
+def apply_trikona_shodhana(bav: List[int]) -> List[int]:
+    """Reduce BAV based on Trikona groups."""
+    reduced = list(bav)
+    for group in [(0, 4, 8), (1, 5, 9), (2, 6, 10), (3, 7, 11)]:
+        vals = [reduced[i] for i in group]
+        m = min(vals)
+        for i in group:
+            reduced[i] -= m
+    return reduced
 
+def calculate_shodhya_pinda(bav: List[int], planet_rashis: Dict[str, int], planet_name: str) -> int:
+    """Calculate the final Shodhya Pinda for a planet."""
+    trikona = apply_trikona_shodhana(bav)
+    # Simple Shodhya Pinda calculation (Simplified for performance)
+    rashi_sum = sum(trikona[i] * RASHI_MULTIPLIERS[i] for i in range(12))
+
+    # Planet sum: sum of reduced points where planets are located
+    planet_sum = 0
+    p_rashi = planet_rashis.get(planet_name)
+    if p_rashi is not None:
+        planet_sum = trikona[p_rashi] * PLANET_MULTIPLIERS.get(planet_name, 5)
+
+    return rashi_sum + planet_sum
+
+def calculate_ashtakavarga(planets_rashi: Dict[str, int], lagna_rashi: int) -> Dict[str, Any]:
+    """Calculate BAV, SAV, and Shodhya Pinda."""
+    all_rashis = {**planets_rashi, "Lagna": lagna_rashi}
     bav_results = {}
+    shodhya_pindas = {}
     sav = [0] * 12
 
     for p in ["Sun", "Moon", "Mars", "Mercury", "Jupiter", "Venus", "Saturn"]:
         bav = calculate_bav(p, all_rashis)
         bav_results[p] = bav
+        shodhya_pindas[p] = calculate_shodhya_pinda(bav, planets_rashi, p)
         for i in range(12):
             sav[i] += bav[i]
 
     return {
         "BAV": bav_results,
-        "SAV": sav
+        "SAV": sav,
+        "ShodhyaPinda": shodhya_pindas
     }

@@ -1,0 +1,15 @@
+{
+  "name": "Jyotish Dashboard 2.0",
+  "short_name": "Jyotish",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0d0820",
+  "theme_color": "#FFD700",
+  "icons": [
+    {
+      "src": "/static/img/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}

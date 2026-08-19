@@ -9,53 +9,49 @@
 
 {# ── Mode tabs (only shown when saved charts exist) ───────────────── #}
 {% if saved_charts %}
-<div class="kundli-mode-tabs mb-4">
+<div class="kundli-mode-tabs mb-4 d-flex align-items-center">
   <button class="kmt-btn active" id="tab-saved" onclick="switchTab('saved')">
-    <i class="bi bi-folder2-open me-2"></i>Open Saved Kundli
+    <i class="bi bi-folder2-open me-2"></i>Saved Vault
     <span class="kmt-count">{{ saved_charts|length }}</span>
   </button>
   <button class="kmt-btn" id="tab-new" onclick="switchTab('new')">
     <i class="bi bi-plus-circle me-2"></i>New Kundli
   </button>
+
+  <div class="ms-auto position-relative" style="width: 220px" id="vault-search-container">
+    <input type="text" id="vault-search" class="form-control form-control-sm bg-dark text-white border-gold border-opacity-25"
+           placeholder="Search saved profiles..." oninput="searchVault()">
+    <i class="bi bi-search position-absolute top-50 end-0 translate-middle-y me-2 small text-muted"></i>
+  </div>
 </div>
 
 {# ── Saved kundli cards ───────────────────────────────────────────── #}
 <div id="panel-saved">
-  <div class="kundli-cards">
+  <div class="row g-4">
     {% for c in saved_charts %}
-    <div class="kundli-card">
-      <div class="kc-avatar">{{ (c.name or '?')[0].upper() }}</div>
-      <div class="kc-body">
-        <div class="kc-name">{{ c.name or 'Unnamed' }}</div>
-        <div class="kc-meta">
-          <span><i class="bi bi-calendar3"></i> {{ c.birth_datetime[:10] }}</span>
-          <span><i class="bi bi-clock"></i> {{ c.birth_datetime[11:16] }}</span>
-          {% if c.lagna %}<span><i class="bi bi-circle-half"></i> {{ c.lagna.rashi_name }}</span>{% endif %}
-        </div>
-        <div class="kc-place text-muted">
-          <i class="bi bi-geo-alt"></i> {{ c.place[:40] if c.place else '—' }}
-        </div>
-        <div class="kc-actions">
-          <a href="{{ url_for('main.load_kundli', cid=c.id) }}"
-             class="btn btn-vedic btn-xs">
-            <i class="bi bi-circle-half me-1"></i>Chart
-          </a>
-          <a href="{{ url_for('main.load_kundli', cid=c.id) }}?next=predictions"
-             class="btn btn-outline-gold btn-xs">
-            <i class="bi bi-magic me-1"></i>Predictions
-          </a>
-          <a href="{{ url_for('main.load_kundli', cid=c.id) }}?next=transit"
-             class="btn btn-outline-gold btn-xs">
-            <i class="bi bi-stars me-1"></i>Transit
-          </a>
-          <a href="{{ url_for('main.load_kundli', cid=c.id) }}?next=dasha"
-             class="btn btn-outline-gold btn-xs">
-            <i class="bi bi-bar-chart-steps me-1"></i>Dasha
-          </a>
-          <button class="btn btn-outline-danger btn-xs ms-auto"
-                  onclick="deleteChart('{{ c.id }}', this)" title="Delete">
-            <i class="bi bi-trash3"></i>
-          </button>
+    <div class="col-md-6 col-xl-4">
+      <div class="card-vedic h-100 kundli-card-modern">
+        <div class="card-vedic-body d-flex flex-column h-100">
+          <div class="d-flex align-items-center gap-3 mb-3">
+            <div class="kc-avatar">{{ (c.name or '?')[0].upper() }}</div>
+            <div class="flex-grow-1">
+              <h5 class="kc-name mb-0">{{ c.name or 'Unnamed' }}</h5>
+              <div class="small text-muted">{{ c.birth_datetime[:10] }} · {{ c.birth_datetime[11:16] }}</div>
+            </div>
+            <button class="btn btn-link text-danger p-0" onclick="deleteChart('{{ c.id }}', this)" title="Delete">
+              <i class="bi bi-trash3"></i>
+            </button>
+          </div>
+
+          <div class="small text-muted mb-4">
+            <i class="bi bi-geo-alt me-1"></i> {{ c.place[:40] if c.place else '—' }}
+          </div>
+
+          <div class="mt-auto pt-3 border-top border-secondary border-opacity-10 d-flex flex-wrap gap-2">
+            <a href="{{ url_for('main.load_kundli', cid=c.id) }}" class="btn btn-vedic btn-xs flex-grow-1">Chart</a>
+            <a href="{{ url_for('main.load_kundli', cid=c.id) }}?next=predictions" class="btn btn-outline-gold btn-xs flex-grow-1">Predictions</a>
+            <a href="{{ url_for('main.load_kundli', cid=c.id) }}?next=transit" class="btn btn-outline-gold btn-xs flex-grow-1">Transit</a>
+          </div>
         </div>
       </div>
     </div>
@@ -70,51 +66,54 @@
 <div class="row g-4">
   <!-- Birth data form -->
   <div class="col-lg-7">
-    <div class="card-vedic">
-      <div class="card-vedic-header">
-        <i class="bi bi-person-circle me-2"></i> Birth Details (जन्म विवरण)
+    <div class="card-vedic border-0 shadow-lg">
+      <div class="card-vedic-header border-0 bg-transparent py-4">
+        <div class="d-flex flex-column">
+          <span class="text-gold small fw-bold text-uppercase mb-1" style="letter-spacing: 2px">Divine Blueprint</span>
+          <h2 class="text-white mb-0 fw-black h4">Birth Details (जन्म विवरण)</h2>
+        </div>
       </div>
-      <div class="card-vedic-body">
+      <div class="card-vedic-body pt-0">
         <form action="{{ url_for('main.kundli') }}" method="POST" id="kundli-form">
-          <div class="row g-3">
+          <div class="row g-4">
             <div class="col-12">
               <label class="form-label-vedic">Full Name</label>
-              <input type="text" name="name" class="form-control form-control-vedic"
+              <input type="text" name="name" class="form-control form-control-vedic py-3"
                      placeholder="e.g. Arjun Sharma" autocomplete="off"/>
             </div>
             <div class="col-md-6">
-              <label class="form-label-vedic">Date of Birth <span class="text-danger">*</span></label>
-              <input type="date" name="dob" class="form-control form-control-vedic" required
+              <label class="form-label-vedic">Date of Birth</label>
+              <input type="date" name="dob" class="form-control form-control-vedic py-3" required
                      max="{{ today }}"/>
             </div>
             <div class="col-md-6">
-              <label class="form-label-vedic">Time of Birth <span class="text-danger">*</span></label>
-              <input type="time" name="tob" class="form-control form-control-vedic" required step="60"/>
+              <label class="form-label-vedic">Time of Birth</label>
+              <input type="time" name="tob" class="form-control form-control-vedic py-3" required step="60"/>
             </div>
             <div class="col-12">
-              <label class="form-label-vedic">Place of Birth <span class="text-danger">*</span></label>
+              <label class="form-label-vedic">Place of Birth</label>
               <div class="input-group">
                 <input type="text" name="place" id="place-input"
-                       class="form-control form-control-vedic"
+                       class="form-control form-control-vedic py-3"
                        placeholder="e.g. New Delhi, India"
                        value="{{ ip_loc.city if ip_loc else '' }}"
                        autocomplete="off"/>
-                <button type="button" class="btn btn-outline-gold" id="geo-btn"
+                <button type="button" class="btn btn-outline-gold px-4" id="geo-btn"
                         title="Use my location">
                   <i class="bi bi-geo-alt-fill"></i>
                 </button>
               </div>
-              <small class="text-muted">City name — coordinates auto-fetched</small>
+              <small class="text-muted">Coordinates auto-fetched from city name</small>
             </div>
             <input type="hidden" name="lat"      id="lat-input"/>
             <input type="hidden" name="lon"      id="lon-input"/>
             <input type="hidden" name="timezone" id="tz-input" value="Asia/Kolkata"/>
-            <div class="col-12 d-flex gap-3 mt-2">
-              <button type="submit" class="btn btn-vedic flex-grow-1">
-                <i class="bi bi-circle-half me-2"></i>Generate Kundli
+            <div class="col-12 d-flex gap-3 mt-4">
+              <button type="submit" class="btn btn-vedic flex-grow-1 py-3 fs-5">
+                <i class="bi bi-stars me-2"></i>Generate Kundli
               </button>
-              <button type="reset" class="btn btn-outline-gold">
-                <i class="bi bi-arrow-counterclockwise"></i>
+              <button type="reset" class="btn btn-outline-secondary px-4">
+                <i class="bi bi-arrow-counterclockwise fs-5"></i>
               </button>
             </div>
           </div>
@@ -240,6 +239,15 @@ function switchTab(tab) {
   document.getElementById('panel-new').style.display   = isSaved ? 'none' : '';
   document.getElementById('tab-saved').classList.toggle('active', isSaved);
   document.getElementById('tab-new').classList.toggle('active', !isSaved);
+  document.getElementById('vault-search-container').style.display = isSaved ? 'block' : 'none';
+}
+
+function searchVault() {
+  const q = document.getElementById("vault-search").value.toLowerCase();
+  document.querySelectorAll(".kundli-card").forEach(card => {
+    const name = card.querySelector(".kc-name").textContent.toLowerCase();
+    card.style.display = name.includes(q) ? 'flex' : 'none';
+  });
 }
 
 // ── Sky data ────────────────────────────────────────────

@@ -4,7 +4,11 @@
 {% block content %}
 <div class="page-header mb-4">
   <h1 class="page-title"><i class="bi bi-bar-chart-steps me-2"></i>Vimshottari Dasha</h1>
-  <p class="page-sub">विंशोत्तरी दशा — 120-year planetary period system based on Moon nakshatra</p>
+  <div class="ms-auto position-relative" style="width: 250px">
+    <input type="text" id="dasha-search" class="form-control form-control-sm bg-dark text-white border-gold border-opacity-25"
+           placeholder="Search planet or year..." oninput="searchDasha()">
+    <i class="bi bi-search position-absolute top-50 end-0 translate-middle-y me-2 small text-muted"></i>
+  </div>
 </div>
 
 {% if error %}
@@ -117,7 +121,23 @@
         </h2>
         <div id="maha{{ loop.index }}"
              class="accordion-collapse collapse {{ 'show' if maha.is_current else '' }}">
-          <div class="accordion-body p-0">
+          <div class="accordion-body p-3">
+            <!-- Mahadasha Theme -->
+            <div class="p-3 mb-3 rounded bg-dark border border-secondary border-opacity-50">
+              <h6 class="text-gold"><i class="bi bi-info-circle me-2"></i>{{ maha.lord }} Mahadasha Theme</h6>
+              <p class="small text-muted mb-0">
+                {% if maha.lord == 'Sun' %}Focus on career, authority, father, and self-realization.{% endif %}
+                {% if maha.lord == 'Moon' %}Periods of emotional changes, home, mother, and mental health.{% endif %}
+                {% if maha.lord == 'Mars' %}Focus on energy, siblings, property, and courage.{% endif %}
+                {% if maha.lord == 'Mercury' %}Emphasis on education, business, speech, and networking.{% endif %}
+                {% if maha.lord == 'Jupiter' %}A time for wisdom, expansion, children, and spiritual growth.{% endif %}
+                {% if maha.lord == 'Venus' %}Luxury, relationships, arts, and material comforts take center stage.{% endif %}
+                {% if maha.lord == 'Saturn' %}Discipline, hard work, delays, and long-term achievements.{% endif %}
+                {% if maha.lord == 'Rahu' %}Ambitious period with unexpected changes and foreign influences.{% endif %}
+                {% if maha.lord == 'Ketu' %}Introspective phase focusing on detachment, spirituality, and intuition.{% endif %}
+              </p>
+            </div>
+
             <table class="table table-vedic table-sm mb-0">
               <thead>
                 <tr>
@@ -180,4 +200,66 @@
 </div>
 
 {% endif %}
+
+{% if yogini %}
+<!-- Yogini Dasha Section -->
+<div class="page-header mt-5 mb-4">
+  <h2 class="text-gold"><i class="bi bi-clock-history me-2"></i>Yogini Dasha (36-Year Cycle)</h2>
+  <p class="text-muted small">Standard short-term system for precise event timing.</p>
+</div>
+
+<div class="card-vedic">
+  <div class="card-vedic-body p-0">
+    <div class="table-responsive">
+      <table class="table table-vedic mb-0">
+        <thead>
+          <tr>
+            <th>Yogini</th><th>Start Date</th><th>End Date</th><th>Duration</th><th>Lord</th><th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for maha in yogini.mahadashas %}
+          <tr class="{{ 'table-active-dasha' if maha.is_current else '' }}">
+            <td class="fw-bold">{{ maha.name }}</td>
+            <td class="font-mono small">{{ maha.start_str }}</td>
+            <td class="font-mono small">{{ maha.end_str }}</td>
+            <td>{{ maha.years }}y</td>
+            <td>{{ maha.lord }}</td>
+            <td>
+              {% if maha.is_current %}<span class="badge bg-success">ACTIVE</span>{% endif %}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endif %}
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+function searchDasha() {
+  const q = document.getElementById("dasha-search").value.toLowerCase();
+  const rows = document.querySelectorAll("#dashaAccordion tr, .accordion-item");
+
+  if (!q) {
+    rows.forEach(r => { r.style.display = ''; r.style.opacity = '1'; });
+    return;
+  }
+
+  rows.forEach(r => {
+    const text = r.textContent.toLowerCase();
+    const match = text.includes(q);
+
+    if (r.classList.contains('accordion-item')) {
+       r.style.opacity = match ? '1' : '0.4';
+    } else {
+       r.style.backgroundColor = match ? 'rgba(255,215,0,0.1)' : '';
+    }
+  });
+}
+</script>
 {% endblock %}

@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+{% block title %}Shani Report — {{ name }}{% endblock %}
+
+{% block content %}
+<div class="page-header mb-4">
+  <h1 class="page-title"><i class="bi bi-shield-fill me-2" style="color:#9CA3AF"></i>Shani (Saturn) Transit Report</h1>
+  <p class="page-sub">Analysis of Sade Sati, Dhaiya, and Kantaka Shani for {{ name }}.</p>
+</div>
+
+<div class="row g-4">
+  <!-- ── Current Status ───────── -->
+  <div class="col-lg-4">
+    <div class="card-vedic h-100">
+      <div class="card-vedic-header">Current Shani Status</div>
+      <div class="card-vedic-body text-center py-5">
+        <div class="mb-4">
+          <i class="bi bi-planet fs-1 text-muted"></i>
+          <h4 class="mt-2 text-white">Saturn in {{ rashi_names[status.saturn_rashi] }}</h4>
+        </div>
+
+        {% if status.is_heavy %}
+          <div class="alert alert-danger">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i>
+            <strong>Active Influence Detected</strong>
+          </div>
+          <div class="d-flex flex-column gap-2 mt-3">
+            {% if status.sade_sati %}<span class="badge bg-danger p-2 fs-6">{{ status.sade_sati }}</span>{% endif %}
+            {% if status.dhaiya %}<span class="badge bg-warning text-dark p-2 fs-6">{{ status.dhaiya }}</span>{% endif %}
+            {% if status.kantaka %}<span class="badge bg-info text-dark p-2 fs-6">{{ status.kantaka }}</span>{% endif %}
+          </div>
+        {% else %}
+          <div class="alert alert-success">
+            <i class="bi bi-check-circle-fill me-2"></i>
+            No major Saturn affliction (Sade Sati/Dhaiya) currently active.
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <!-- ── 30-Year Timeline ───────── -->
+  <div class="col-lg-8">
+    <div class="card-vedic">
+      <div class="card-vedic-header d-flex justify-content-between">
+        <span>Sade Sati Timeline (30 Years)</span>
+        <span class="badge bg-dark border border-secondary text-muted">Apotheosis Engine</span>
+      </div>
+      <div class="card-vedic-body p-0">
+        <div class="table-responsive">
+          <table class="table table-vedic mb-0">
+            <thead>
+              <tr>
+                <th>Phase</th><th>Start Date</th><th>End Date</th><th>Duration</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for phase in timeline %}
+              <tr class="{{ 'bg-danger bg-opacity-10' if 'Peak' in phase.phase else 'bg-warning bg-opacity-10' }}">
+                <td class="fw-bold">{{ phase.phase }}</td>
+                <td class="font-mono">{{ phase.start }}</td>
+                <td class="font-mono">{{ phase.end }}</td>
+                <td class="small text-muted">~2.5 Years</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="mt-4 p-3 rounded bg-dark border border-secondary small text-muted">
+      <h6 class="text-gold"><i class="bi bi-info-circle me-2"></i>About Shani Transits</h6>
+      <p>Saturn stays in one sign for approximately 2.5 years. <strong>Sade Sati</strong> is a 7.5-year period that occurs when Saturn traverses the sign before, during, and after your natal Moon. It is a time of profound restructuring, hard work, and eventual growth.</p>
+    </div>
+  </div>
+</div>
+{% endblock %}

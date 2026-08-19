@@ -213,8 +213,22 @@
     <div class="row g-3">
       <div class="col-md-4">
         <div class="muhurta-box">
+          <div class="muhurta-label">🔱 Brahma Muhurta</div>
+          <div class="muhurta-time">{{ panchang.muhurtas.get('Brahma', '—') }}</div>
+          <div class="muhurta-desc">The 'Creator's Hour' for meditation & prayer</div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="muhurta-box">
+          <div class="muhurta-label">💎 Amrit Kaal</div>
+          <div class="muhurta-time">{{ panchang.muhurtas.get('Amrit Kaal', '—') }}</div>
+          <div class="muhurta-desc">Sacred window of nectar for all new work</div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="muhurta-box">
           <div class="muhurta-label">⭐ Abhijit Muhurta</div>
-          <div class="muhurta-time">{{ panchang.abhijit_muhurta }}</div>
+          <div class="muhurta-time">{{ panchang.muhurtas.get('Abhijit', '—') }}</div>
           <div class="muhurta-desc">Most powerful daily window (solar noon ±24 min)</div>
         </div>
       </div>
@@ -273,6 +287,45 @@
           Nakshatra: {{ panchang.nakshatra.name }}, Pada {{ panchang.nakshatra.pada }}
         </div>
       </div>
+    </div>
+  </div>
+</div>
+
+</div>
+
+<!-- ── Choghadiya ──────────────────────────────────────── -->
+<div class="card-vedic mb-4">
+  <div class="card-vedic-header">
+    <i class="bi bi-clock-history me-2 text-gold"></i>Choghadiya (Auspicious Time Windows)
+  </div>
+  <div class="card-vedic-body p-0">
+    <div class="table-responsive">
+      <table class="table table-vedic mb-0">
+        <thead>
+          <tr>
+            <th>Time Window</th><th>Choghadiya</th><th>Type</th><th>Quality</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for c in panchang.choghadiya %}
+          <tr class="{{ 'bg-success bg-opacity-10' if c.name in ['Amrit','Shubh','Labh'] else 'bg-danger bg-opacity-10' if c.name in ['Udveg','Rog','Kaal'] else '' }}">
+            <td class="font-mono small">{{ c.start }} – {{ c.end }}</td>
+            <td class="fw-bold text-gold">{{ c.name }}</td>
+            <td><span class="badge {{ 'bg-info text-dark' if c.type == 'Day' else 'bg-dark border border-info text-info' }}">{{ c.type }}</span></td>
+            <td>
+              {% if c.name == 'Amrit' %}<span class="text-success small">✓ Excellent</span>
+              {% elif c.name == 'Shubh' %}<span class="text-success small">✓ Good</span>
+              {% elif c.name == 'Labh' %}<span class="text-success small">✓ Gain</span>
+              {% elif c.name == 'Chara' %}<span class="text-info small">· Neutral</span>
+              {% elif c.name == 'Udveg' %}<span class="text-danger small">⚠ Anxiety</span>
+              {% elif c.name == 'Rog' %}<span class="text-danger small">⚠ Illness</span>
+              {% elif c.name == 'Kaal' %}<span class="text-danger small">⚠ Loss</span>
+              {% endif %}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
     </div>
   </div>
 </div>

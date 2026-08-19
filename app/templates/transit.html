@@ -8,9 +8,19 @@
     <p class="page-sub">गोचर — Current planets mapped to natal houses with nakshatra warnings</p>
   </div>
   {% if transit %}
-  <div class="text-end">
-    <div class="native-detail text-gold">{{ transit.transit_time }}</div>
-    <div class="native-detail text-muted">Ayanamsa: {{ transit.ayanamsa }}°</div>
+  <div class="text-end d-flex flex-column align-items-end gap-2">
+    <div class="time-machine-box p-2 rounded bg-dark border border-gold border-opacity-25 d-flex align-items-center gap-3">
+      <i class="bi bi-clock-history text-gold" title="Time Machine"></i>
+      <input type="date" id="tm-date-picker" value="{{ selected_date }}"
+             class="form-control form-control-sm bg-black text-white border-0"
+             onchange="window.location.href='?date='+this.value">
+      <div class="d-flex gap-1">
+        <button class="btn btn-outline-gold btn-xs" onclick="offsetDate(-1)" title="-1 Day">‹</button>
+        <button class="btn btn-outline-gold btn-xs" onclick="offsetDate(1)" title="+1 Day">›</button>
+      </div>
+    </div>
+    <div class="native-detail text-gold small">{{ transit.transit_time }}</div>
+    <div class="native-detail text-muted small">Ayanamsa: {{ transit.ayanamsa }}°</div>
     <a href="{{ url_for('main.predictions') }}" class="btn btn-vedic btn-sm mt-1">
       <i class="bi bi-magic me-1"></i>Today's Predictions
     </a>
@@ -41,7 +51,6 @@
     <span class="tsb-num">{{ positive_count }}</span>
     <span class="tsb-label">Positive</span>
   </div>
-  <div class="tsb-divider"></div>
   <div class="tsb-hint text-muted small">
     {% if not natal %}
     <i class="bi bi-info-circle me-1"></i>Generate a Kundli for natal house mapping
@@ -52,18 +61,61 @@
 </div>
 {% endif %}
 
+{# ── Vedha Alerts ─────────────────────────────────────────────────── #}
+{% if vedha_alerts %}
+<div class="alert alert-warning mb-4">
+  <div class="fw-bold mb-2"><i class="bi bi-shield-slash me-2"></i>Transit Obstructions (Vedha) Detected</div>
+  <div class="row g-2">
+    {% for v in vedha_alerts %}
+    <div class="col-md-6 small">
+      <span class="text-white">{{ v.planet }}</span> results in house {{ v.transit_house }} are <strong>blocked</strong> by natal <span class="text-gold">{{ v.obstructed_by | join(', ') }}</span> in house {{ v.vedha_house }}.
+    </div>
+    {% endfor %}
+  </div>
+</div>
+{% endif %}
+
+<!-- ── 12-Month Transit Power Heatmap ──────────────────────────── -->
+{% if natal %}
+<div class="card-vedic mb-4">
+  <div class="card-vedic-header d-flex align-items-center">
+    <i class="bi bi-calendar-range me-2"></i>12-Month Cosmic Power Heatmap
+    <span class="badge bg-gold text-dark ms-auto">Personalized</span>
+  </div>
+  <div class="card-vedic-body">
+    <div class="d-flex flex-wrap gap-2" id="transit-heatmap-container">
+      <!-- Generated via JS -->
+      <div class="text-center py-4 w-100 text-muted"><i class="bi bi-hourglass-split me-2"></i>Calculating annual transit intensity...</div>
+    </div>
+    <div class="mt-3 d-flex align-items-center gap-3 small text-muted">
+       <span><span class="p-1 rounded bg-success me-1" style="width:12px;height:12px;display:inline-block"></span> High Support</span>
+       <span><span class="p-1 rounded bg-warning me-1" style="width:12px;height:12px;display:inline-block"></span> Mixed</span>
+       <span><span class="p-1 rounded bg-danger me-1" style="width:12px;height:12px;display:inline-block"></span> Challenge</span>
+    </div>
+  </div>
+</div>
+{% endif %}
+
 <div class="row g-4">
 
   {# ── Left: Chart canvas ────────────────────────────────────────────── #}
   <div class="col-xl-4">
     <div class="card-vedic mb-4">
-      <div class="card-vedic-header">
-        <i class="bi bi-grid-3x3 me-2"></i>Transit Chart Now
+      <div class="card-vedic-header d-flex align-items-center">
+        <i class="bi bi-grid-3x3 me-2"></i>
+        <span id="chart-title">Transit Chart</span>
+        {% if natal %}
+        <div class="ms-auto btn-group btn-group-xs">
+          <button class="btn btn-outline-gold active" onclick="switchTransitView('normal')" id="btn-view-normal">Simple</button>
+          <button class="btn btn-outline-gold" onclick="switchTransitView('biwheel')" id="btn-view-biwheel">Bi-Wheel</button>
+        </div>
+        {% endif %}
       </div>
       <div class="card-vedic-body p-2">
         <canvas id="transitCanvas" width="440" height="440"
                 class="kundli-canvas"
-                data-chart="{{ transit | tojson | e }}"></canvas>
+                data-chart="{{ transit | tojson | e }}"
+                data-natal="{{ natal | tojson | e if natal else '' }}"></canvas>
       </div>
     </div>
 
@@ -291,6 +343,26 @@
 <script>
 {% if transit %}
 const transitData = {{ transit | tojson }};
+{% if natal %}
+const natalData = {{ natal | tojson }};
+{% endif %}
+
+function switchTransitView(mode) {
+  const isBi = mode === 'biwheel';
+  document.getElementById('btn-view-normal').classList.toggle('active', !isBi);
+  document.getElementById('btn-view-biwheel').classList.toggle('active', isBi);
+  document.getElementById('chart-title').textContent = isBi ? 'Transit Bi-Wheel' : 'Transit Chart';
+
+  if (isBi) {
+    renderBiWheelChart("transitCanvas", natalData.house_occupants, transitData.house_occupants,
+                       natalData.lagna.rashi, transitData.planets);
+  } else {
+    renderNorthIndianChart("transitCanvas", transitData.house_occupants,
+                            transitData.lagna.rashi, transitData.planets);
+  }
+}
+
+// Initial render
 renderNorthIndianChart("transitCanvas", transitData.house_occupants,
                         transitData.lagna.rashi, transitData.planets);
 
@@ -310,7 +382,53 @@ renderNorthIndianChart("transitCanvas", transitData.house_occupants,
     }).catch(() => {});
 })();
 
-setInterval(() => window.location.reload(), 300000);
+function offsetDate(days) {
+  const current = new Date(document.getElementById("tm-date-picker").value);
+  current.setDate(current.getDate() + days);
+  const iso = current.toISOString().split('T')[0];
+  window.location.href = '?date=' + iso;
+}
+
+// Auto-refresh only if viewing today
+if ("{{ selected_date }}" === new Date().toISOString().split('T')[0]) {
+  setInterval(() => window.location.reload(), 300000);
+}
+
+// ── Transit Heatmap ─────────────────────────────────────
+{% if natal %}
+(function loadHeatmap() {
+  const lat = {{ transit.latitude }};
+  const lon = {{ transit.longitude_coord }};
+  const tz  = "{{ tz_str }}";
+  fetch(`/api/transit/heatmap?lat=${lat}&lon=${lon}&tz=${encodeURIComponent(tz)}`)
+    .then(r => r.json()).then(data => {
+      const container = document.getElementById("transit-heatmap-container");
+      container.innerHTML = "";
+      data.forEach(m => {
+        const div = document.createElement("div");
+        div.className = "p-2 rounded text-center border border-secondary border-opacity-25";
+        div.style.flex = "1 0 14%";
+        div.style.minWidth = "100px";
+
+        let color = "rgba(220,38,38,0.1)"; // Default red
+        let border = "rgba(220,38,38,0.3)";
+        if (m.score >= 65) { color = "rgba(22,163,74,0.1)"; border = "rgba(22,163,74,0.3)"; }
+        else if (m.score >= 45) { color = "rgba(217,119,6,0.1)"; border = "rgba(217,119,6,0.3)"; }
+
+        div.style.background = color;
+        div.style.borderColor = border;
+
+        div.innerHTML = `
+          <div class="small text-muted mb-1">${m.month}</div>
+          <div class="fw-bold text-white">${m.score}%</div>
+        `;
+        div.style.cursor = "pointer";
+        div.onclick = () => window.location.href = '?date=' + m.date;
+        container.appendChild(div);
+      });
+    });
+})();
+{% endif %}
 {% endif %}
 </script>
 {% endblock %}

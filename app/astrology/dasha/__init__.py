@@ -9,7 +9,12 @@ def calculate_vimshottari(moon_longitude: float, birth_dt: datetime) -> dict:
 
     print(f"DEBUG: Starting Vimshottari for {moon_longitude}, balance: {balance['balance_years']}")
 
-    now = datetime.now()
+    # Match timezone awareness of birth_dt
+    if birth_dt.tzinfo:
+        now = datetime.now(birth_dt.tzinfo)
+    else:
+        now = datetime.now()
+
     mahadashas = []
     current_maha = None
     current_antar = None

@@ -10,12 +10,23 @@ def get_houses(jd_ut: float, lat: float, lon: float, hsys: bytes = b'W') -> Dict
     flags = swe.FLG_SIDEREAL
     cusps, ascmc = swe.houses_ex(jd_ut, lat, lon, hsys, flags)
     return {
-        "cusps": list(cusps[1:]),  # cusps[0] is unused in swe
+        "cusps": list(cusps),
         "ascendant": ascmc[0],
         "mc": ascmc[1],
         "armc": ascmc[2],
         "vertex": ascmc[3]
     }
+
+def get_house_from_cusps(longitude: float, cusps: list) -> int:
+    """Determine house number for a given longitude using specific cusps."""
+    for i in range(11):
+        if cusps[i] <= longitude < cusps[i+1]:
+            return i + 1
+        # Handle wraparound at 360
+        if cusps[i] > cusps[i+1]:
+            if longitude >= cusps[i] or longitude < cusps[i+1]:
+                return i + 1
+    return 12
 
 def get_house_from_longitude(longitude: float, ascendant: float) -> int:
     """Determine house number for a given longitude using Whole Sign system."""

@@ -1,4 +1,4 @@
-from typing import Dict, Any, List
+from typing import Dict, Any, List, Tuple
 from .dignity import EXALTATION, DEBILITATION, OWN_SIGN, MOOLATRIKONA
 from .friendship import NATURAL_FRIENDSHIP, get_compound_friendship
 from ..core.houses import RASHI_LORDS
@@ -133,3 +133,38 @@ def calculate_shadbala(chart_data: Dict[str, Any], is_day: bool = True) -> Dict[
         }
 
     return results
+
+def calculate_vimsopaka(planet: str, vargas_rashis: Dict[str, int]) -> float:
+    """Calculate Vimsopaka Bala (0-20 points) across 16 vargas."""
+    # Varga Weights for Shodashavarga
+    WEIGHTS = {
+        "D1": 6.0, "D2": 2.0, "D3": 4.0, "D7": 5.0, "D9": 3.0, "D10": 2.0,
+        "D12": 4.0, "D16": 2.0, "D20": 5.0, "D24": 4.0, "D27": 2.0, "D30": 1.0,
+        "D40": 1.0, "D45": 1.0, "D60": 1.0
+    }
+
+    total_points = 0.0
+    total_weight = sum(WEIGHTS.values())
+
+    for varga, weight in WEIGHTS.items():
+        if varga not in vargas_rashis: continue
+        rashi = vargas_rashis[varga]
+
+        # Simple point mapping based on sign lord relationship
+        # Own/Exalt = 20, Friend = 15, Neutral = 10, Enemy = 5
+        # (Simplified implementation)
+        lord = RASHI_LORDS[rashi]
+        if lord == planet: score = 20.0
+        else: score = 10.0 # Default neutral
+
+        total_points += (score * weight)
+
+    return round(total_points / total_weight, 2)
+
+def calculate_ishta_kashta(planet: str, ucha_bala: float, chesta_bala: float) -> Tuple[float, float]:
+    """Calculate Ishta Phala and Kashta Phala."""
+    import math
+    # Ucha Bala and Chesta Bala are 0-60 Virupas
+    ishta = math.sqrt(ucha_bala * chesta_bala)
+    kashta = math.sqrt((60.0 - ucha_bala) * (60.0 - chesta_bala))
+    return round(ishta, 2), round(kashta, 2)

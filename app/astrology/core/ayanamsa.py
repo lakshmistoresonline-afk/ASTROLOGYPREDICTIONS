@@ -4,7 +4,7 @@ import swisseph as swe
 AYANAMSA_MODES = {
     "LAHIRI": swe.SIDM_LAHIRI,
     "RAMAN": swe.SIDM_RAMAN,
-    "KP": swe.SIDM_KP,
+    "KP": swe.SIDM_KRISHNAMURTI,
     "FAGAN_BRADLEY": swe.SIDM_FAGAN_BRADLEY,
     "J_BHASIN": swe.SIDM_JN_BHASIN,
 }

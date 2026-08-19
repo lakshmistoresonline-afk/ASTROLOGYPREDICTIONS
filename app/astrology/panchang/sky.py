@@ -18,16 +18,16 @@ def get_sky_event(jd_ut: float, lat: float, lon: float, planet_id: int, event_ty
         return None
 
 def get_sunrise(jd_ut: float, lat: float, lon: float) -> Optional[float]:
-    return get_sky_event(jd_ut, lat, lon, swe.SUN, swe.CALC_RISE | swe.BIT_HINDSIGHT)
+    return get_sky_event(jd_ut, lat, lon, swe.SUN, swe.CALC_RISE)
 
 def get_sunset(jd_ut: float, lat: float, lon: float) -> Optional[float]:
-    return get_sky_event(jd_ut, lat, lon, swe.SUN, swe.CALC_SET | swe.BIT_HINDSIGHT)
+    return get_sky_event(jd_ut, lat, lon, swe.SUN, swe.CALC_SET)
 
 def get_moonrise(jd_ut: float, lat: float, lon: float) -> Optional[float]:
-    return get_sky_event(jd_ut, lat, lon, swe.MOON, swe.CALC_RISE | swe.BIT_HINDSIGHT)
+    return get_sky_event(jd_ut, lat, lon, swe.MOON, swe.CALC_RISE)
 
 def get_moonset(jd_ut: float, lat: float, lon: float) -> Optional[float]:
-    return get_sky_event(jd_ut, lat, lon, swe.MOON, swe.CALC_SET | swe.BIT_HINDSIGHT)
+    return get_sky_event(jd_ut, lat, lon, swe.MOON, swe.CALC_SET)
 
 def get_kaal_window(part: int, sunrise_jd: float, sunset_jd: float) -> str:
     """Calculate a specific day-segment time window string."""

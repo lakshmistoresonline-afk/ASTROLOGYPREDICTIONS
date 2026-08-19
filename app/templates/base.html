@@ -13,6 +13,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap"/>
   <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}"/>
+  <link rel="manifest" href="/static/manifest.json">
+  <meta name="theme-color" content="#FFD700">
   {% block head %}{% endblock %}
 </head>
 <body>
@@ -31,40 +33,108 @@
     <li class="nav-item">
       <a class="nav-link {% if request.endpoint == 'main.index' %}active{% endif %}"
          href="{{ url_for('main.index') }}">
-        <i class="bi bi-house-door-fill"></i> Home
+        <i class="bi bi-house-door-fill"></i> {{ _('nav_home') }}
       </a>
     </li>
     <li class="nav-item">
       <a class="nav-link {% if request.endpoint == 'main.kundli' %}active{% endif %}"
          href="{{ url_for('main.kundli') }}">
-        <i class="bi bi-circle-half"></i> Kundli Chart
+        <i class="bi bi-circle-half"></i> {{ _('chart_title') }}
       </a>
     </li>
     <li class="nav-item">
       <a class="nav-link {% if request.endpoint == 'main.transit' %}active{% endif %}"
          href="{{ url_for('main.transit') }}">
-        <i class="bi bi-stars"></i> Transit Chart
+        <i class="bi bi-stars"></i> {{ _('nav_transit') }}
+      </a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link {% if request.endpoint == 'main.varshaphala' %}active{% endif %}"
+         href="{{ url_for('main.varshaphala') }}">
+        <i class="bi bi-calendar-check"></i> {{ _('nav_yearly') }}
+      </a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link {% if request.endpoint == 'main.prashna' %}active{% endif %}"
+         href="{{ url_for('main.prashna') }}">
+        <i class="bi bi-question-circle"></i> {{ _('nav_prashna') }}
       </a>
     </li>
     <li class="nav-item">
       <a class="nav-link {% if request.endpoint == 'main.dasha' %}active{% endif %}"
          href="{{ url_for('main.dasha') }}">
-        <i class="bi bi-bar-chart-steps"></i> Dasha Periods
+        <i class="bi bi-bar-chart-steps"></i> {{ _('nav_dasha') }}
       </a>
     </li>
     <li class="nav-item">
       <a class="nav-link {% if request.endpoint == 'main.panchang' %}active{% endif %}"
          href="{{ url_for('main.panchang') }}">
-        <i class="bi bi-calendar3"></i> Panchang
+        <i class="bi bi-calendar3"></i> {{ _('nav_panchang') }}
       </a>
     </li>
     <li class="nav-item">
       <a class="nav-link {% if request.endpoint == 'main.predictions' %}active{% endif %}"
          href="{{ url_for('main.predictions') }}">
-        <i class="bi bi-magic"></i> Predictions
+        <i class="bi bi-magic"></i> {{ _('nav_predictions') }}
       </a>
     </li>
+    <li class="nav-item">
+      <a class="nav-link {% if request.endpoint == 'main.matchmaking' %}active{% endif %}"
+         href="{{ url_for('main.matchmaking') }}">
+        <i class="bi bi-heart-fill"></i> {{ _('nav_matchmaking') }}
+      </a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link {% if request.endpoint == 'main.shani_report' %}active{% endif %}"
+         href="{{ url_for('main.shani_report') }}">
+        <i class="bi bi-shield-shaded"></i> Shani Report
+      </a>
+    </li>
+
+    <li class="nav-item px-3 mt-3 mb-2">
+      <form action="{{ url_for('main.set_lang_pref') }}" method="POST" class="mb-3">
+        <label class="small text-muted mb-1">Interface Language</label>
+        <select name="lang" onchange="this.form.submit()" class="form-select form-select-sm bg-dark text-gold border-secondary">
+          <option value="en" {% if current_lang == 'en' %}selected{% endif %}>English</option>
+          <option value="hi" {% if current_lang == 'hi' %}selected{% endif %}>हिन्दी (Hindi)</option>
+        </select>
+      </form>
+
+      <form action="{{ url_for('main.set_ayanamsa_pref') }}" method="POST">
+        <label class="small text-muted mb-1">Ayanamsa Mode</label>
+        <select name="ayanamsa" onchange="this.form.submit()" class="form-select form-select-sm bg-dark text-gold border-secondary">
+          <option value="Lahiri" {% if session.get('ayanamsa') == 'Lahiri' %}selected{% endif %}>Lahiri (Standard)</option>
+          <option value="Raman" {% if session.get('ayanamsa') == 'Raman' %}selected{% endif %}>B.V. Raman</option>
+          <option value="KP" {% if session.get('ayanamsa') == 'KP' %}selected{% endif %}>KP (Precision)</option>
+        </select>
+      </form>
+    </li>
   </ul>
+
+  <div class="sidebar-privacy px-3 mb-3">
+    <div class="p-2 rounded bg-dark border border-secondary small text-muted">
+      <i class="bi bi-shield-lock-fill text-success me-1"></i>
+      <strong>Privacy:</strong> All data is stored locally.
+      <a href="{{ url_for('main.export_all_data') }}" class="d-block mt-2 text-gold text-decoration-none small">
+        <i class="bi bi-download me-1"></i>Backup all data
+      </a>
+      <label class="d-block mt-2 text-gold text-decoration-none small" style="cursor:pointer">
+        <i class="bi bi-upload me-1"></i>Restore / Import
+        <form action="{{ url_for('main.import_all_data') }}" method="POST" enctype="multipart/form-data" class="d-none">
+          <input type="file" name="file" onchange="this.form.submit()">
+        </form>
+      </label>
+    </div>
+  </div>
+
+  <div class="sidebar-lexicon px-3 mb-3">
+    <div class="p-2 rounded bg-dark border border-gold border-opacity-10">
+      <div class="small text-gold mb-1"><i class="bi bi-book me-1"></i>Vedic Lexicon</div>
+      <input type="text" id="lexicon-search" class="form-control form-control-xs bg-black text-white border-0"
+             placeholder="Search terms..." oninput="searchLexicon()">
+      <div id="lexicon-results" class="mt-2 small text-muted" style="max-height: 100px; overflow-y: auto; display:none"></div>
+    </div>
+  </div>
 
   <div class="sidebar-footer">
     <small class="text-muted">Lahiri Ayanamsa · Swiss Ephemeris</small>
@@ -81,6 +151,9 @@
     </button>
     <div class="d-flex align-items-center gap-3">
       <span id="live-clock" class="live-clock"></span>
+      <button class="btn btn-link text-gold p-0 border-0" onclick="toggleTheme()" title="Toggle Theme">
+        <i class="bi bi-brightness-high" id="theme-icon"></i>
+      </button>
       <span class="badge badge-om">ॐ</span>
     </div>
   </header>
@@ -97,8 +170,98 @@
   </main>
 </div>
 
+<!-- AstroChat Widget -->
+<div id="astro-chat-widget" class="astro-chat-collapsed">
+  <div id="chat-header" onclick="toggleChat()">
+    <i class="bi bi-stars me-2"></i>AstroChat AI
+    <i class="bi bi-chevron-up ms-auto" id="chat-toggle-icon"></i>
+  </div>
+  <div id="chat-body" style="display:none">
+    <div id="chat-messages">
+      <div class="chat-msg ai">Namaste! How can I help you understand your chart today?</div>
+    </div>
+    <div class="chat-input-area">
+      <input type="text" id="user-query" placeholder="Ask about your career, love, or dasha..." onkeydown="if(event.key==='Enter') sendAstroMsg()">
+      <button onclick="sendAstroMsg()"><i class="bi bi-send-fill"></i></button>
+    </div>
+  </div>
+</div>
+
+<style>
+/* Modernized AstroChat Styles (Integrated with System) */
+#astro-chat-widget {
+  position: fixed; bottom: 24px; right: 24px; width: 340px;
+  background: var(--bg-secondary); border: 1px solid var(--border-color);
+  border-radius: var(--radius); box-shadow: 0 12px 48px rgba(0,0,0,0.3);
+  z-index: 2000; transition: all 0.4s var(--transition); overflow: hidden;
+}
+#chat-header {
+  padding: 16px 20px; background: var(--bg-card-glow);
+  color: var(--gold); font-weight: 700; cursor: pointer; display: flex; align-items: center;
+  border-bottom: 1px solid var(--border-color);
+}
+#chat-body { height: 450px; display: flex; flex-direction: column; }
+#chat-messages { flex-grow: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; }
+.chat-msg { padding: 10px 14px; border-radius: 14px; font-size: 0.88rem; max-width: 85%; line-height: 1.5; }
+.chat-msg.ai { align-self: flex-start; background: var(--bg-primary); border: 1px solid var(--border-color); color: var(--text-main); }
+.chat-msg.user { align-self: flex-end; background: var(--gold); color: #000; font-weight: 600; }
+.chat-input-area { padding: 12px 20px; border-top: 1px solid var(--border-color); display: flex; gap: 10px; }
+#user-query { flex-grow: 1; background: var(--bg-primary); border: 1px solid var(--border-color); color: var(--text-main); border-radius: 24px; padding: 8px 16px; font-size: 0.88rem; outline: none; transition: border-color 0.2s; }
+#user-query:focus { border-color: var(--gold); }
+.chat-input-area button { background: none; border: none; color: var(--gold); font-size: 1.4rem; cursor: pointer; transition: transform 0.2s; }
+.chat-input-area button:hover { transform: scale(1.1); }
+</style>
+
+<script>
+function toggleChat() {
+  const body = document.getElementById("chat-body");
+  const icon = document.getElementById("chat-toggle-icon");
+  if (body.style.display === "none") {
+    body.style.display = "flex";
+    icon.classList.replace("bi-chevron-up", "bi-chevron-down");
+  } else {
+    body.style.display = "none";
+    icon.classList.replace("bi-chevron-down", "bi-chevron-up");
+  }
+}
+
+async function sendAstroMsg() {
+  const input = document.getElementById("user-query");
+  const msg = input.value.trim();
+  if (!msg) return;
+
+  input.value = "";
+  addMsg(msg, 'user');
+
+  const loadingDiv = addMsg("Calculating cosmic alignment...", 'ai');
+
+  try {
+    const resp = await fetch("/api/chat", {
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({ message: msg })
+    });
+    const data = await resp.json();
+    loadingDiv.textContent = data.response;
+  } catch(e) {
+    loadingDiv.textContent = "My intuition is momentarily clouded. Please check if Ollama is running.";
+  }
+}
+
+function addMsg(text, type) {
+  const box = document.getElementById("chat-messages");
+  const div = document.createElement("div");
+  div.className = `chat-msg ${type}`;
+  div.textContent = text;
+  box.appendChild(div);
+  box.scrollTop = box.scrollHeight;
+  return div;
+}
+</script>
+
 <!-- Bootstrap JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <script>
 // Live clock
@@ -115,6 +278,55 @@ document.getElementById("sidebar-toggle").addEventListener("click", () => {
   document.getElementById("sidebar").classList.toggle("collapsed");
   document.getElementById("main-content").classList.toggle("expanded");
 });
+
+// Theme Toggle
+function toggleTheme() {
+  const html = document.documentElement;
+  const isDark = html.getAttribute("data-bs-theme") === "dark";
+  const newTheme = isDark ? "light" : "dark";
+  html.setAttribute("data-bs-theme", newTheme);
+  localStorage.setItem("theme", newTheme);
+  document.getElementById("theme-icon").classList.replace(isDark ? "bi-brightness-high" : "bi-moon-stars", isDark ? "bi-moon-stars" : "bi-brightness-high");
+}
+// Init theme
+const savedTheme = localStorage.getItem("theme") || "dark";
+document.documentElement.setAttribute("data-bs-theme", savedTheme);
+if (savedTheme === "light") document.getElementById("theme-icon").classList.replace("bi-brightness-high", "bi-moon-stars");
+
+// Initialize Tooltips
+const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+const tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+  return new bootstrap.Tooltip(tooltipTriggerEl)
+})
+
+// PWA Service Worker
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/static/js/sw.js').catch(() => {});
+  });
+}
+
+function searchLexicon() {
+  const q = document.getElementById("lexicon-search").value.trim();
+  const box = document.getElementById("lexicon-results");
+  if (q.length < 2) { box.style.display = 'none'; return; }
+
+  fetch(`/api/lexicon?q=${encodeURIComponent(q)}`)
+    .then(r => r.json()).then(data => {
+      box.innerHTML = "";
+      const keys = Object.keys(data);
+      if (keys.length === 0) { box.innerHTML = "No results found."; }
+      else {
+        keys.forEach(k => {
+          const div = document.createElement("div");
+          div.className = "mb-2 pb-1 border-bottom border-secondary border-opacity-25";
+          div.innerHTML = `<strong class="text-white">${k}:</strong> ${data[k]}`;
+          box.appendChild(div);
+        });
+      }
+      box.style.display = 'block';
+    });
+}
 </script>
 
 {% block scripts %}{% endblock %}

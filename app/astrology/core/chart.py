@@ -1,5 +1,5 @@
 from typing import Dict, Any, List
-from .ephemeris import get_planet_position, get_ayanamsa
+from .ephemeris import get_planet_position, get_ayanamsa, set_topocentric
 from .datetime import datetime_to_jd
 from .houses import get_houses, get_house_from_longitude, get_house_lord, RASHI_LORDS
 from .planets import PLANETS, NAKSHATRA_NAMES, NAKSHATRA_LORDS, NAK_SPAN
@@ -8,10 +8,13 @@ from ..strength.dignity import get_dignity
 from ..strength.functional import get_functional_status
 from ..strength.aspects import get_graha_drishti
 from ..charts.divisional import get_varga_chart
-from ..strength.shadbala import calculate_shadbala
+from ..strength.shadbala import calculate_shadbala, calculate_vimsopaka, calculate_ishta_kashta, calculate_exaltation_bala
 from ..charts.ashtakavarga import calculate_ashtakavarga
 from ..yogas.detector import detect_yogas
-from .models import CanonicalChart, PlanetInfo, NakshatraInfo
+from .models import CanonicalChart, PlanetInfo, NakshatraInfo, ShadbalaInfo, KPInfo
+from .kp import get_kp_lords
+from .jaimini import calculate_charakarakas
+from .houses import get_houses, get_house_from_longitude, get_house_lord, RASHI_LORDS, get_house_from_cusps
 from datetime import datetime
 from functools import lru_cache
 
@@ -33,6 +36,9 @@ def _get_nakshatra_info(longitude: float) -> NakshatraInfo:
 @lru_cache(maxsize=128)
 def calculate_chart_data(birth_dt: datetime, lat: float, lon: float, tz_str: str) -> CanonicalChart:
     """Master Engine: Returns a complete CanonicalChart object."""
+    # Enable Topocentric Precision
+    set_topocentric(lat, lon)
+
     jd_ut = datetime_to_jd(birth_dt, tz_str)
 
     # 1. Houses and Lagna
@@ -57,7 +63,14 @@ def calculate_chart_data(birth_dt: datetime, lat: float, lon: float, tz_str: str
     # For speed, Ketu speed is usually considered opposite of Rahu or similar
     planets_lon["Ketu"] = ketu_lon
 
-    # 3. Enhanced Planet Data
+    # 3. Divisional Charts (Full set D1-D60) - Needed for Vimsopaka
+    divisions = [1, 2, 3, 4, 7, 9, 10, 12, 16, 20, 24, 27, 30, 40, 45, 60]
+    divisional_charts = {}
+    for d in divisions:
+        varga = get_varga_chart(planets_lon, ascendant, d)
+        divisional_charts[f"D{d}"] = varga
+
+    # 4. Enhanced Planet Data
     planets = {}
     functional_status_map = get_functional_status(asc_rashi)
 
@@ -99,6 +112,14 @@ def calculate_chart_data(birth_dt: datetime, lat: float, lon: float, tz_str: str
 
         sb_info = shadbala_map.get(name, {})
 
+        # Calculate Vimsopaka
+        p_vargas = {v: divisional_charts[v][name] for v in divisional_charts if name in divisional_charts[v]}
+        v_score = calculate_vimsopaka(name, p_vargas)
+
+        # Calculate Ishta/Kashta (Simplified)
+        ucha_b = calculate_exaltation_bala(name, lon)
+        ishta, kashta = calculate_ishta_kashta(name, ucha_b, 30.0) # 30 is neutral chesta
+
         planets[name] = PlanetInfo(
             name=name,
             longitude=lon,
@@ -114,25 +135,40 @@ def calculate_chart_data(birth_dt: datetime, lat: float, lon: float, tz_str: str
             dispositor=RASHI_LORDS[rashi],
             functional_status=functional_status_map.get(name),
             shadbala_score=sb_info.get("total_shadbala"),
-            shadbala_label=f"{sb_info.get('total_rupas')} Rupas" if sb_info else None
+            shadbala_label=f"{sb_info.get('total_rupas')} Rupas" if sb_info else None,
+            shadbala_details=ShadbalaInfo(**sb_info) if sb_info else None,
+            kp_details=None, # Filled in step 8
+            vimsopaka_score=v_score,
+            ishta_phala=ishta,
+            kashta_phala=kashta
         )
 
-    # 4. House Lords
+    # 5. House Lords
     house_lords = {h: get_house_lord(h, asc_rashi) for h in range(1, 13)}
-
-    # 5. Divisional Charts (Full set D1-D60)
-    divisions = [1, 2, 3, 4, 7, 9, 10, 12, 16, 20, 24, 27, 30, 40, 45, 60]
-    divisional_charts = {}
-    for d in divisions:
-        varga = get_varga_chart(planets_lon, ascendant, d)
-        divisional_charts[f"D{d}"] = varga
 
     # 6. Ashtakavarga
     planets_rashi = {name: info.rashi for name, info in planets.items()}
     av_data = calculate_ashtakavarga(planets_rashi, asc_rashi)
 
     # 7. Yogas
-    yoga_results = detect_yogas(planets)
+    yoga_results = detect_yogas(planets, house_lords)
+
+    # 8. KP Cusps and Bhava Chalit
+    kp_data = get_houses(jd_ut, lat, lon, hsys=b'P')
+    kp_cusps = kp_data["cusps"]
+
+    bhava_chalit = {h: [] for h in range(1, 13)}
+    for name, p_info in planets.items():
+        # Get KP Sub-Lord
+        star, sub = get_kp_lords(p_info.longitude)
+        p_info.kp_details = KPInfo(star_lord=star, sub_lord=sub)
+
+        # Bhava Chalit mapping
+        bc_house = get_house_from_cusps(p_info.longitude, kp_cusps)
+        bhava_chalit[bc_house].append(name)
+
+    # 9. Jaimini Karakas
+    jaimini_data = calculate_charakarakas(planets_lon)
 
     return CanonicalChart(
         birth_datetime=birth_dt,
@@ -148,5 +184,8 @@ def calculate_chart_data(birth_dt: datetime, lat: float, lon: float, tz_str: str
         house_lords=house_lords,
         divisional_charts=divisional_charts,
         ashtakavarga=av_data,
-        yogas=yoga_results
+        yogas=yoga_results,
+        bhava_chalit=bhava_chalit,
+        kp_cusps=kp_cusps,
+        jaimini_karakas=jaimini_data
     )

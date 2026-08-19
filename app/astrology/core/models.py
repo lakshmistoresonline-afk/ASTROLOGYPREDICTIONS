@@ -10,6 +10,19 @@ class NakshatraInfo(BaseModel):
     deity: Optional[str] = None
     symbol: Optional[str] = None
 
+class KPInfo(BaseModel):
+    star_lord: str
+    sub_lord: str
+    sub_sub_lord: Optional[str] = None
+
+class ShadbalaInfo(BaseModel):
+    sthana_bala: float
+    dig_bala: float
+    kala_bala: float
+    naisargika_bala: float
+    total_shadbala: float
+    total_rupas: float
+
 class PlanetInfo(BaseModel):
     name: str
     longitude: float
@@ -26,6 +39,11 @@ class PlanetInfo(BaseModel):
     functional_status: Optional[str] = None
     shadbala_score: Optional[float] = None
     shadbala_label: Optional[str] = None
+    shadbala_details: Optional[ShadbalaInfo] = None
+    kp_details: Optional[KPInfo] = None
+    vimsopaka_score: Optional[float] = None
+    ishta_phala: Optional[float] = None
+    kashta_phala: Optional[float] = None
 
 class CanonicalChart(BaseModel):
     birth_datetime: datetime
@@ -48,6 +66,10 @@ class CanonicalChart(BaseModel):
 
     ashtakavarga: Dict[str, Any] = {}
     yogas: List[Dict[str, Any]] = []
+
+    bhava_chalit: Dict[int, List[str]] = {} # House -> [Planets]
+    kp_cusps: List[float] = [] # Placidus cusps
+    jaimini_karakas: Dict[str, str] = {} # Karaka Name -> Planet Name
 
     dasha_balance: Dict[str, Any] = {}
     current_periods: Dict[str, str] = {} # Maha, Antar, etc.

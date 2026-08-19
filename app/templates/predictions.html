@@ -193,6 +193,14 @@
             Day: <span class="text-white">{{ preds.panchang.vara.name }}</span>
               (Lord: <span style="color:{{ preds.maha_color }}">{{ preds.panchang.vara.lord }}</span>)
           </div>
+          {% if preds.panchang.tarabala %}
+          <div class="mt-2 p-1 rounded bg-dark border border-secondary small">
+            <i class="bi bi-person-check-fill text-gold me-1"></i>
+            Personal Tara: <strong class="{{ 'text-success' if 'Auspicious' in preds.panchang.tarabala.quality else 'text-danger' if 'Inauspicious' in preds.panchang.tarabala.quality else 'text-white' }}">
+              {{ preds.panchang.tarabala.name }}
+            </strong>
+          </div>
+          {% endif %}
           <div class="mt-2">
             <span class="warning-pill {{ 'positive' if preds.panchang_ok else 'caution' }}">
               {{ '✓ Auspicious Day' if preds.panchang_ok else '⚠ Mixed Day' }}
@@ -510,41 +518,63 @@
 
 {# ── ROW 4: Evidence-based Domain Predictions ───────────────────────── #}
 <div class="card-vedic mb-4">
-  <div class="card-vedic-header">
+  <div class="card-vedic-header d-flex align-items-center">
     <i class="bi bi-shield-check me-2" style="color:var(--gold)"></i>
-    Evidence-based Support Scores
+    Complete Life Domain Analysis (32 Categories)
+    <div class="ms-auto position-relative" style="width: 200px">
+      <input type="text" id="domain-search" class="form-control form-control-xs bg-black text-white border-gold border-opacity-25"
+             placeholder="Filter domains..." oninput="filterDomains()">
+      <i class="bi bi-filter position-absolute top-50 end-0 translate-middle-y me-2 small text-muted"></i>
+    </div>
   </div>
   <div class="card-vedic-body">
-    <div class="row g-4">
+    <div class="row g-4" id="domains-grid">
       {% for d in preds.domains %}
-      <div class="col-md-6">
-        <div class="domain-card p-3 rounded" style="background: rgba(255,215,0,0.03); border: 1px solid rgba(255,215,0,0.1)">
+      <div class="col-md-6 col-xl-4 domain-item" data-domain="{{ d.domain | lower }}">
+        <div class="domain-card h-100">
           <div class="d-flex justify-content-between align-items-center mb-3">
-            <h4 class="mb-0 text-white">{{ d.domain }}</h4>
+            <h4 class="mb-0 text-white fw-bold small text-uppercase" style="letter-spacing: 1px">{{ d.domain }}</h4>
             <div class="text-end">
-              <span class="fs-4 fw-bold" style="color: var(--gold)">{{ d.score }}%</span>
-              <div class="small text-muted">{{ d.confidence }} CONFIDENCE</div>
+              <span class="fs-4 fw-black text-gold">{{ d.score }}%</span>
             </div>
           </div>
 
-          <div class="progress mb-3" style="height: 6px; background: rgba(255,255,255,0.05)">
-            <div class="progress-bar" style="width: {{ d.score }}%; background: var(--gold)"></div>
+          <div class="progress mb-4" style="height: 4px; background: rgba(255,255,255,0.05)">
+            <div class="progress-bar bg-gold" style="width: {{ d.score }}%"></div>
           </div>
 
-          <div class="evidence-list small">
+          <p class="xsmall text-muted italic mb-3" style="font-size: 0.72rem">{{ d.summary }}</p>
+
+          <div class="evidence-list mb-3">
             {% for e in d.evidence %}
-            <div class="mb-1 {{ 'text-success' if '✓' in e else 'text-warning' if '⚠' in e else 'text-muted' }}">
-              {{ e }}
+            <div class="mb-1 d-flex gap-2 align-items-start" style="font-size: 0.78rem">
+                <span class="{{ 'text-success' if '✓' in e else 'text-warning' if '⚠' in e else 'text-muted' }}">
+                  {{ '✓' if '✓' in e else '⚠' if '⚠' in e else '·' }}
+                </span>
+                <span>{{ e | replace('✓','') | replace('⚠','') }}</span>
             </div>
             {% endfor %}
           </div>
 
-          {% if d.contradictions %}
-          <div class="mt-3 p-2 rounded small" style="background: rgba(239,68,68,0.05); color: #ef4444; border-left: 3px solid #ef4444">
-            <i class="bi bi-exclamation-triangle-fill me-1"></i>
-            <strong>Contradictions:</strong> {{ d.contradictions | join(', ') }}
+          <div class="mt-auto d-flex justify-content-between align-items-center pt-2 border-top border-secondary border-opacity-10">
+             <span class="badge bg-dark text-muted" style="font-size: 0.55rem">{{ d.confidence }} CONFIDENCE</span>
+             <button class="btn btn-link btn-xs text-gold p-0" onclick="toggleDomainDetail(this)">Details</button>
           </div>
-          {% endif %}
+
+          <div class="domain-factors-extra mt-3" style="display:none">
+            {% if d.positive_factors or d.negative_factors %}
+              {% for f in d.positive_factors %}
+                <div class="p-1 mb-1 rounded bg-success bg-opacity-10 text-success xsmall" style="font-size: 0.7rem">
+                  <i class="bi bi-shield-check me-1"></i>{{ f.explanation }}
+                </div>
+              {% endfor %}
+              {% for f in d.negative_factors %}
+                <div class="p-1 mb-1 rounded bg-danger bg-opacity-10 text-danger xsmall" style="font-size: 0.7rem">
+                  <i class="bi bi-shield-exclamation me-1"></i>{{ f.explanation }}
+                </div>
+              {% endfor %}
+            {% endif %}
+          </div>
         </div>
       </div>
       {% endfor %}
@@ -583,6 +613,9 @@
               <div class="nak-tag">{{ f.nakshatra }}</div>
               <div class="text-muted mt-1" style="font-size:0.68rem">
                 Lord: <span style="color:{{ f.nak_lord_color }}">{{ f.nak_lord }}</span>
+              </div>
+              <div class="text-gold mt-1 italic" style="font-size:0.65rem; max-width:140px">
+                "{{ f.nak_sutra }}"
               </div>
               {% if f.nak_warning %}
               <div class="warning-pill {{ f.nak_warning[0] }} mt-1" style="font-size:0.62rem">
@@ -984,14 +1017,23 @@ function downloadObsidian() {
   const m = document.getElementById('obs-month-sel').value;
   window.location.href = `/export/obsidian?year=${y}&month=${m}&lat=${LAT}&lon=${LON}&tz=${encodeURIComponent(TZ)}`;
 }
-// Pre-fill Google Calendar import link with current month label
-(function() {
-  const gcLink = document.getElementById('gc-import-link');
-  if (gcLink) {
-    const label = new Date(calYear, calMonth - 1, 1)
-      .toLocaleString('default', { month: 'long', year: 'numeric' });
-    gcLink.title = `Import ${label} iCal into Google Calendar`;
+function filterDomains() {
+  const q = document.getElementById("domain-search").value.toLowerCase();
+  document.querySelectorAll(".domain-item").forEach(item => {
+    const name = item.dataset.domain;
+    item.style.display = name.includes(q) ? 'block' : 'none';
+  });
+}
+
+function toggleDomainDetail(btn) {
+  const extra = btn.closest('.domain-card').querySelector('.domain-factors-extra');
+  if (extra.style.display === 'none') {
+    extra.style.display = 'block';
+    btn.textContent = 'Hide';
+  } else {
+    extra.style.display = 'none';
+    btn.textContent = 'Details';
   }
-})();
+}
 </script>
 {% endblock %}

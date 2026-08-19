@@ -1,0 +1,169 @@
+{% extends "base.html" %}
+{% block title %}Matchmaking (Guna Milan) — Jyotish Dashboard{% endblock %}
+
+{% block content %}
+<div class="page-header mb-4">
+  <h1 class="page-title"><i class="bi bi-heart-fill me-2" style="color:#ef4444"></i>Matchmaking (Guna Milan)</h1>
+  <p class="page-sub">Traditional 36-point Vedic compatibility analysis between two charts.</p>
+</div>
+
+<div class="row g-4">
+  <!-- ── Input Form ───────── -->
+  <div class="col-lg-5">
+    <div class="card-vedic">
+      <div class="card-vedic-header">Enter Birth Details</div>
+      <div class="card-vedic-body">
+        <form method="POST">
+          <div class="row g-3">
+            <!-- Boy Details -->
+            <div class="col-12">
+              <h5 class="text-gold border-bottom border-secondary pb-2 mb-3">Partner 1 (Boy)</h5>
+              <div class="mb-2">
+                <label class="form-label small text-muted">Full Name</label>
+                <input type="text" name="b_name" class="form-control form-control-sm bg-dark text-white" placeholder="Boy's Name" required>
+              </div>
+              <div class="row g-2 mb-2">
+                <div class="col-7">
+                  <label class="form-label small text-muted">Date of Birth</label>
+                  <input type="date" name="b_dob" class="form-control form-control-sm bg-dark text-white" required>
+                </div>
+                <div class="col-5">
+                  <label class="form-label small text-muted">Time</label>
+                  <input type="time" name="b_tob" class="form-control form-control-sm bg-dark text-white" required>
+                </div>
+              </div>
+              <div class="mb-3">
+                <label class="form-label small text-muted">Birth Place</label>
+                <input type="text" name="b_place" class="form-control form-control-sm bg-dark text-white" placeholder="City, Country" required>
+              </div>
+            </div>
+
+            <!-- Girl Details -->
+            <div class="col-12">
+              <h5 class="text-gold border-bottom border-secondary pb-2 mb-3">Partner 2 (Girl)</h5>
+              <div class="mb-2">
+                <label class="form-label small text-muted">Full Name</label>
+                <input type="text" name="g_name" class="form-control form-control-sm bg-dark text-white" placeholder="Girl's Name" required>
+              </div>
+              <div class="row g-2 mb-2">
+                <div class="col-7">
+                  <label class="form-label small text-muted">Date of Birth</label>
+                  <input type="date" name="g_dob" class="form-control form-control-sm bg-dark text-white" required>
+                </div>
+                <div class="col-5">
+                  <label class="form-label small text-muted">Time</label>
+                  <input type="time" name="g_tob" class="form-control form-control-sm bg-dark text-white" required>
+                </div>
+              </div>
+              <div class="mb-3">
+                <label class="form-label small text-muted">Birth Place</label>
+                <input type="text" name="g_place" class="form-control form-control-sm bg-dark text-white" placeholder="City, Country" required>
+              </div>
+            </div>
+
+            <div class="col-12">
+              <button type="submit" class="btn btn-vedic w-100 py-2">
+                <i class="bi bi-heart-fill me-2"></i>Calculate Compatibility
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Results ───────── -->
+  <div class="col-lg-7">
+    {% if error %}
+    <div class="alert alert-danger">{{ error }}</div>
+    {% endif %}
+
+    {% if result %}
+    <div class="card-vedic mb-4">
+      <div class="card-vedic-header d-flex justify-content-between align-items-center">
+        <span>Guna Milan Scorecard</span>
+        <span class="badge bg-gold text-dark fs-6">{{ result.total_score }} / 36.0</span>
+      </div>
+      <div class="card-vedic-body">
+        <!-- Summary Strip -->
+        <div class="row g-3 mb-4 text-center">
+          <div class="col-6">
+            <div class="p-3 rounded bg-dark border border-secondary">
+              <div class="text-muted small">Partner 1 (Boy)</div>
+              <div class="fw-bold text-white">{{ boy.name }}</div>
+              <div class="text-gold small">{{ boy.nak }} Nakshatra</div>
+            </div>
+          </div>
+          <div class="col-6">
+            <div class="p-3 rounded bg-dark border border-secondary">
+              <div class="text-muted small">Partner 2 (Girl)</div>
+              <div class="fw-bold text-white">{{ girl.name }}</div>
+              <div class="text-gold small">{{ girl.nak }} Nakshatra</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Verdict -->
+        <div class="text-center mb-4">
+          <div class="display-6 fw-bold mb-1" style="color: {{ '#16a34a' if result.total_score >= 18 else '#dc2626' }}">
+            {{ result.verdict }} Compatibility
+          </div>
+          <p class="text-muted">Based on traditional Ashta-Kuta principles.</p>
+        </div>
+
+        {% if result.doshas %}
+        <div class="alert alert-warning mb-4">
+          <i class="bi bi-exclamation-triangle-fill me-2"></i>
+          <strong>Critical Doshas Detected:</strong> {{ result.doshas | join(', ') }}
+        </div>
+        {% endif %}
+
+        <!-- Detailed Kutas -->
+        <div class="table-responsive">
+          <table class="table table-vedic">
+            <thead>
+              <tr>
+                <th>Kuta (Factor)</th>
+                <th class="text-center">Score</th>
+                <th class="text-center">Max</th>
+                <th class="text-center">Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for k in result.kutas %}
+              <tr>
+                <td>{{ k.name }}</td>
+                <td class="text-center fw-bold">{{ k.score }}</td>
+                <td class="text-center text-muted">{{ k.max }}</td>
+                <td class="text-center">
+                  <span class="badge {{ 'bg-success' if k.status == 'PASS' else 'bg-danger' }}">
+                    {{ k.status }}
+                  </span>
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Explanations -->
+    <div class="card-vedic">
+      <div class="card-vedic-header">What these scores mean</div>
+      <div class="card-vedic-body small text-muted">
+        <p><strong>Nadi (8 pts):</strong> Represents physiological compatibility and progeny. If 0, it indicates Nadi Dosha.</p>
+        <p><strong>Bhakut (7 pts):</strong> Represents emotional construct and longevity of the relationship.</p>
+        <p><strong>Gana (6 pts):</strong> Represents temperament compatibility (Deva, Manushya, Rakshasa).</p>
+        <p><strong>Graha Maitri (5 pts):</strong> Represents psychological compatibility based on planetary friendship.</p>
+      </div>
+    </div>
+    {% else %}
+    <div class="text-center py-5 text-muted">
+      <i class="bi bi-heart-pulse fs-1 mb-3 d-block"></i>
+      <p>Enter birth details for both partners to view the matchmaking report.</p>
+    </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

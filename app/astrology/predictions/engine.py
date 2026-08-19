@@ -23,38 +23,29 @@ def detect_contradictions(domain_results: DomainPrediction) -> List[str]:
 
 def generate_evidence_based_predictions(chart: CanonicalChart) -> Dict[str, Any]:
     """Aggregate all domain predictions with evidence and scoring."""
+    from ..dasha import calculate_vimshottari
 
-    # Domains using the new CanonicalChart model
-    personality = get_personality_prediction(chart)
-    education = get_education_prediction(chart)
+    # 1. Calculate current Dasha for timing influence
+    moon_lon = chart.planets["Moon"].longitude
+    dasha_data = calculate_vimshottari(moon_lon, chart.birth_datetime)
 
-    # Adapting existing engines to the model
-    # We pass model_dump() to existing functions that expect dicts
-    chart_dict = chart.model_dump()
-    career = get_career_prediction(chart_dict)
-    finance = get_finance_prediction(chart_dict)
-    marriage = get_marriage_prediction(chart_dict)
-    health = get_health_prediction(chart_dict)
+    current_maha = dasha_data.get("current_maha", {}).get("lord")
+    current_antar = dasha_data.get("current_antar", {}).get("lord")
 
-    domains = [personality, education]
+    # 2. Comprehensive Domain predictions
+    from .comprehensive import get_comprehensive_predictions
+    domains = get_comprehensive_predictions(chart, active_yogas=chart.yogas, current_dasha=current_maha)
 
-    # Convert dict results to objects for the engine loop
-    for d in [career, finance, marriage, health]:
-        obj = DomainPrediction(
-            domain=d["domain"],
-            score=d["score"],
-            confidence=d["confidence"],
-            summary="",
-            evidence=d.get("evidence", []),
-            positive_factors=[],
-            negative_factors=[],
-            contradictions=[],
-            timing=[],
-            recommendations=[]
-        )
-        domains.append(obj)
+    # 3. Apply Dasha Influence
+    # If a domain lord is the current Dasha lord, its impact is amplified
+    for d in domains:
+        # Simplified: if dasha lord is favorable/unfavorable to the domain
+        # This can be expanded with lord relationships
+        if current_maha:
+            d.evidence.append(f"⏳ Current Mahadasha Lord: {current_maha}")
+            d.timing.append({"period": f"{current_maha} Mahadasha", "impact": "Dominant theme"})
 
-    # Calculate overall support score
+    # 4. Calculate overall support score
     total_score = sum(d.score for d in domains) / len(domains)
 
     results = []

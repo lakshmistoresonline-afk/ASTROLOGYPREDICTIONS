@@ -59,7 +59,10 @@ def test_local_run():
         # Delhi 1980-05-15 10:30 AM
         dt = datetime(1980, 5, 15, 10, 30)
         chart = calculate_chart_data(dt, 28.6139, 77.2090, "Asia/Kolkata")
-        print(f"✅ Chart calculated. Ascendant Rashi: {chart['asc_rashi']}")
+
+        # Handle both dict and Pydantic model
+        asc_rashi = chart.asc_rashi if hasattr(chart, 'asc_rashi') else chart['asc_rashi']
+        print(f"✅ Chart calculated. Ascendant Rashi: {asc_rashi}")
     except Exception as e:
         print(f"❌ Failed to calculate chart: {e}")
         import traceback
