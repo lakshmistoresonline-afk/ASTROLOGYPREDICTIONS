@@ -52,8 +52,11 @@
 
     <!-- D1 Chart -->
     <div class="card-vedic mb-4">
-      <div class="card-vedic-header">
+      <div class="card-vedic-header d-flex align-items-center">
         <i class="bi bi-grid-3x3 me-2"></i>D1 — Rashi Chart (Lagna: {{ chart.lagna.rashi_name }})
+        <button class="btn btn-outline-gold btn-xs ms-auto" onclick="toggleChartStyle()">
+          <i class="bi bi-arrow-repeat me-1"></i> Switch Layout
+        </button>
       </div>
       <div class="card-vedic-body p-2">
         <canvas id="kundliCanvas" width="440" height="440"

@@ -63,10 +63,118 @@ const PLANET_COLORS = {
   Rahu:"#8B5CF6", Ketu:"#EC4899",
 };
 
-const PLANET_SYMBOLS = {
-  Sun:"☉", Moon:"☽", Mars:"♂", Mercury:"☿",
-  Jupiter:"♃", Venus:"♀", Saturn:"♄", Rahu:"☊", Ketu:"☋",
-};
+let currentChartStyle = localStorage.getItem("chartStyle") || "north";
+
+function toggleChartStyle() {
+  currentChartStyle = currentChartStyle === "north" ? "south" : "north";
+  localStorage.setItem("chartStyle", currentChartStyle);
+  window.dispatchEvent(new Event("resize"));
+}
+
+function renderChart(canvasId, houseOccupants, lagnaRashi, planets) {
+  if (currentChartStyle === "north") {
+    renderNorthIndianChart(canvasId, houseOccupants, lagnaRashi, planets);
+  } else {
+    renderSouthIndianChart(canvasId, houseOccupants, lagnaRashi, planets);
+  }
+}
+
+/**
+ * South Indian Kundli chart renderer (Canvas 2D).
+ * 4x4 grid where signs are fixed.
+ */
+function renderSouthIndianChart(canvasId, houseOccupants, lagnaRashi, planets) {
+  const canvas = document.getElementById(canvasId);
+  if (!canvas) return;
+
+  const dpr = window.devicePixelRatio || 1;
+  const size = canvas.offsetWidth || 440;
+  canvas.width = size * dpr;
+  canvas.height = size * dpr;
+  canvas.style.width = size + "px";
+  canvas.style.height = size + "px";
+
+  const ctx = canvas.getContext("2d");
+  ctx.scale(dpr, dpr);
+
+  const S = size;
+  const CW = S / 4;
+  const CH = S / 4;
+
+  // Background
+  ctx.fillStyle = "#0d0820";
+  ctx.fillRect(0, 0, S, S);
+
+  // Outer border
+  ctx.strokeStyle = "#FFD700";
+  ctx.lineWidth = 2;
+  ctx.strokeRect(2, 2, S - 4, S - 4);
+
+  // Sign positions in 4x4 grid (row, col)
+  const SIGN_CELLS = [
+    { r: 0, c: 1 }, { r: 0, c: 2 }, { r: 0, c: 3 }, { r: 1, c: 3 },
+    { r: 2, c: 3 }, { r: 3, c: 3 }, { r: 3, c: 2 }, { r: 3, c: 1 },
+    { r: 3, c: 0 }, { r: 2, c: 0 }, { r: 1, c: 0 }, { r: 0, c: 0 }
+  ];
+
+  for (let s = 0; s < 12; s++) {
+    const { r, c } = SIGN_CELLS[s];
+    const x = c * CW;
+    const y = r * CH;
+
+    const isLagna = s === lagnaRashi;
+    ctx.fillStyle = isLagna ? "rgba(255,215,0,0.07)" : "#130d2e";
+    ctx.fillRect(x, y, CW, CH);
+    ctx.strokeStyle = isLagna ? "#FFD700" : "#2e1f6e";
+    ctx.lineWidth = 1;
+    ctx.strokeRect(x, y, CW, CH);
+
+    // Sign Name
+    ctx.font = `${Math.floor(CW * 0.13)}px Inter, sans-serif`;
+    ctx.fillStyle = "#7B6FA0";
+    ctx.textAlign = "right";
+    ctx.textBaseline = "top";
+    ctx.fillText(RASHI_ABBR[s], x + CW * 0.95, y + CH * 0.06);
+
+    if (isLagna) {
+        ctx.font = `bold ${Math.floor(CW * 0.18)}px Inter, sans-serif`;
+        ctx.fillStyle = "#FFD700";
+        ctx.textAlign = "left";
+        ctx.fillText("ASC", x + CW * 0.07, y + CH * 0.06);
+    }
+
+    // Planets in this sign
+    const houseNum = (s - lagnaRashi + 12) % 12 + 1;
+    const occupants = houseOccupants[houseNum] || houseOccupants[String(houseNum)] || [];
+
+    const maxCols = 2;
+    const pSize = Math.max(Math.floor(CW * 0.18), 10);
+    const padX = CW * 0.1;
+    const padY = CH * 0.35;
+    const lineH = pSize + 2;
+
+    occupants.forEach((pname, i) => {
+      const col = i % maxCols;
+      const row = Math.floor(i / maxCols);
+      const px = x + padX + col * (CW - padX * 2) / maxCols;
+      const py = y + padY + row * lineH;
+
+      const color = (planets && planets[pname]) ? planets[pname].color : "#FFFFFF";
+      const sym = PLANET_SYMBOLS[pname] || pname[0];
+
+      ctx.font = `bold ${pSize}px Inter, sans-serif`;
+      ctx.fillStyle = color;
+      ctx.textAlign = "left";
+      ctx.fillText(sym + pname.substring(0, 2), px, py);
+    });
+  }
+
+  // Center logo
+  ctx.font = `bold ${Math.floor(S * 0.09)}px serif`;
+  ctx.fillStyle = "rgba(255,215,0,0.1)";
+  ctx.textAlign = "center";
+  ctx.fillText("ॐ", S / 2, S / 2);
+}
 
 // ─────────────────────────────────────────────────────
 //  Main renderer
@@ -232,7 +340,7 @@ function renderNavamsaChart(canvasId, navamsa) {
     planetsMap[pname] = { color: PLANET_COLORS[pname] || "#fff", retrograde: false };
   }
 
-  renderNorthIndianChart(canvasId, houseOccupants, lagnaRashi, planetsMap);
+  renderChart(canvasId, houseOccupants, lagnaRashi, planetsMap);
 }
 
 // ─────────────────────────────────────────────────────
@@ -247,7 +355,7 @@ window.addEventListener("resize", () => {
     if (chartData) {
       try {
         const d = JSON.parse(chartData);
-        renderNorthIndianChart(canvas.id, d.house_occupants, d.lagna.rashi, d.planets);
+        renderChart(canvas.id, d.house_occupants, d.lagna.rashi, d.planets);
       } catch(e) {}
     } else if (navData) {
       try {

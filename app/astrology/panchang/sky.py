@@ -1,5 +1,5 @@
 import swisseph as swe
-from typing import Dict, Any, Optional
+from typing import Optional
 
 def get_sky_event(jd_ut: float, lat: float, lon: float, planet_id: int, event_type: int) -> Optional[float]:
     """

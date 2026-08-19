@@ -508,6 +508,50 @@
 </div>
 {% endif %}
 
+{# ── ROW 4: Evidence-based Domain Predictions ───────────────────────── #}
+<div class="card-vedic mb-4">
+  <div class="card-vedic-header">
+    <i class="bi bi-shield-check me-2" style="color:var(--gold)"></i>
+    Evidence-based Support Scores
+  </div>
+  <div class="card-vedic-body">
+    <div class="row g-4">
+      {% for d in preds.domains %}
+      <div class="col-md-6">
+        <div class="domain-card p-3 rounded" style="background: rgba(255,215,0,0.03); border: 1px solid rgba(255,215,0,0.1)">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <h4 class="mb-0 text-white">{{ d.domain }}</h4>
+            <div class="text-end">
+              <span class="fs-4 fw-bold" style="color: var(--gold)">{{ d.score }}%</span>
+              <div class="small text-muted">{{ d.confidence }} CONFIDENCE</div>
+            </div>
+          </div>
+
+          <div class="progress mb-3" style="height: 6px; background: rgba(255,255,255,0.05)">
+            <div class="progress-bar" style="width: {{ d.score }}%; background: var(--gold)"></div>
+          </div>
+
+          <div class="evidence-list small">
+            {% for e in d.evidence %}
+            <div class="mb-1 {{ 'text-success' if '✓' in e else 'text-warning' if '⚠' in e else 'text-muted' }}">
+              {{ e }}
+            </div>
+            {% endfor %}
+          </div>
+
+          {% if d.contradictions %}
+          <div class="mt-3 p-2 rounded small" style="background: rgba(239,68,68,0.05); color: #ef4444; border-left: 3px solid #ef4444">
+            <i class="bi bi-exclamation-triangle-fill me-1"></i>
+            <strong>Contradictions:</strong> {{ d.contradictions | join(', ') }}
+          </div>
+          {% endif %}
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
 {# ── ROW 5: Planet-by-planet grid ─────────────────────────────────────── #}
 <div class="card-vedic mb-4">
   <div class="card-vedic-header">

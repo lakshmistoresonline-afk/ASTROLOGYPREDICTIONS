@@ -1,5 +1,4 @@
 from typing import Callable
-import swisseph as swe
 
 def find_event(start_jd: float, end_jd: float, func: Callable[[float], float], target: float, tolerance: float = 1e-6) -> float:
     """

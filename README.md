@@ -106,21 +106,24 @@ You can host this dashboard for **free** (within usage limits) using Google Clou
 - [Firebase CLI](https://firebase.google.com/docs/cli) installed.
 - A Firebase project created in the console.
 
-### 2. Deploy to Cloud Run
-```bash
-# Set your project ID
-gcloud config set project your-project-id
+### 2. Deploy to Cloud Run & Firebase Hosting
 
-# Build and deploy the container
-gcloud run deploy jyotish-dashboard --source . \
-  --env-vars-update USE_FIREBASE=true,FLASK_SECRET_KEY=your-random-key \
-  --allow-unauthenticated --region us-central1
+I have provided a script to automate this for your specific account.
+
+**For Windows (PowerShell):**
+```powershell
+.\scripts\deploy.ps1
 ```
 
-### 3. Deploy to Firebase Hosting
+**For Linux/Mac (Bash):**
 ```bash
-firebase deploy --only hosting
+bash scripts/deploy.sh
 ```
+
+These scripts will:
+1. Log you into the correct account (`srinathrajiran007@gmail.com`).
+2. Build and deploy the container to Cloud Run.
+3. Push static assets to Firebase Hosting.
 
 ---
 

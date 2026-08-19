@@ -1,5 +1,5 @@
-from typing import Dict, Any, List
-from .ephemeris import get_planet_position, get_julian_day, get_ayanamsa
+from typing import Dict, Any
+from .ephemeris import get_planet_position, get_ayanamsa
 from .datetime import datetime_to_jd
 from .houses import get_houses, get_house_from_longitude
 from .planets import PLANETS

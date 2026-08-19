@@ -1,5 +1,5 @@
 from datetime import datetime, timedelta
-from typing import List, Dict, Any, Optional
+from typing import List, Dict, Any
 
 DASHA_SEQUENCE = [
     "Ketu", "Venus", "Sun", "Moon", "Mars",

@@ -2,17 +2,25 @@ from flask import (Blueprint, render_template, request, jsonify, session,
                    redirect, url_for, flash, Response)
 from datetime import datetime, date, timedelta
 import calendar as cal_mod
-import zipfile, io, os, re
+import zipfile
+import io
+import os
 import pytz
 import traceback
 
-from .astrology.calculator import (calculate_full_chart, calculate_transit_chart,
-                                    get_sunrise_sunset_moonrise, PLANET_COLORS)
-from .astrology.dasha import calculate_vimshottari, dasha_summary
-from .astrology.panchang import calculate_panchang
+from .astrology.core.chart import calculate_chart_data
+from .astrology.core.ephemeris import get_planet_position, get_ayanamsa
+from .astrology.core.planets import PLANET_COLORS
+from .astrology.panchang.tithi import get_tithi_info
+from .astrology.panchang.nakshatra import get_nakshatra_info
+from .astrology.dasha.vimshottari import get_vimshottari_periods
+from .astrology.predictions.engine import generate_evidence_based_predictions
 from .astrology.store import save_chart, list_charts, get_chart, delete_chart
-from .astrology.predictions import generate_predictions
 from .api.external import geocode_place, get_ip_location
+
+# For legacy compat or local helpers
+from .astrology.calculator import calculate_transit_chart, get_sunrise_sunset_moonrise
+from .astrology.panchang import calculate_panchang
 
 main = Blueprint("main", __name__)
 
@@ -64,11 +72,26 @@ def kundli():
                 lon = float(lon)
 
             birth_dt = datetime.strptime(f"{dob} {tob}", "%Y-%m-%d %H:%M")
-            chart = calculate_full_chart(birth_dt, float(lat), float(lon),
-                                         tz_str, name=name, place=place)
+            chart = calculate_chart_data(birth_dt, float(lat), float(lon), tz_str)
 
             moon_lon = chart["planets"]["Moon"]["longitude"]
-            dasha    = calculate_vimshottari(moon_lon, birth_dt)
+            dasha    = get_vimshottari_periods(moon_lon, birth_dt)
+
+            # Enrich chart with metadata for UI
+            chart["name"] = name
+            chart["place"] = place
+            chart["birth_dob"] = dob
+            chart["birth_tob"] = tob
+            chart["latitude"] = float(lat)
+            chart["longitude_coord"] = float(lon)
+            chart["timezone"] = tz_str
+            chart["birth_datetime"] = birth_dt.isoformat()
+
+            # Legacy compatibility for template keys
+            chart["house_occupants"] = {h: [] for h in range(1, 13)}
+            for p, data in chart["planets"].items():
+                chart["house_occupants"][data["house"]].append(p)
+            chart["lagna"] = {"rashi": chart["asc_rashi"]}
 
             # Persist in session for transit/dasha/predictions
             session["birth_lat"]   = float(lat)
@@ -131,7 +154,7 @@ def load_kundli(cid):
     try:
         moon_lon = chart["planets"]["Moon"]["longitude"]
         birth_dt = datetime.fromisoformat(chart["birth_datetime"])
-        dasha = calculate_vimshottari(moon_lon, birth_dt)
+        dasha = get_vimshottari_periods(moon_lon, birth_dt)
     except Exception:
         pass
 
@@ -166,8 +189,11 @@ def transit():
     if dob and tob:
         try:
             birth_dt = datetime.strptime(f"{dob} {tob}", "%Y-%m-%d %H:%M")
-            natal_chart = calculate_full_chart(birth_dt, float(lat), float(lon),
-                                               tz_str, name=name, place=place)
+            natal_chart = calculate_chart_data(birth_dt, float(lat), float(lon), tz_str)
+            natal_chart["house_occupants"] = {h: [] for h in range(1, 13)}
+            for p, data in natal_chart["planets"].items():
+                natal_chart["house_occupants"][data["house"]].append(p)
+            natal_chart["houses"] = [{"rashi": (natal_chart["asc_rashi"] + i - 1) % 12, "house": i} for i in range(1, 13)]
         except Exception:
             pass
 
@@ -199,9 +225,11 @@ def dasha():
     if dob and tob:
         try:
             birth_dt   = datetime.strptime(f"{dob} {tob}", "%Y-%m-%d %H:%M")
-            chart      = calculate_full_chart(birth_dt, float(lat), float(lon), tz)
+            chart      = calculate_chart_data(birth_dt, float(lat), float(lon), tz)
             moon_lon   = chart["planets"]["Moon"]["longitude"]
-            dasha_data = calculate_vimshottari(moon_lon, birth_dt)
+            dasha_data = get_vimshottari_periods(moon_lon, birth_dt)
+            # Compat for template
+            chart["lagna"] = {"rashi": chart["asc_rashi"]}
         except Exception as e:
             error = str(e)
     else:
@@ -244,22 +272,16 @@ def predictions():
 
     try:
         birth_dt    = datetime.strptime(f"{dob} {tob}", "%Y-%m-%d %H:%M")
-        natal_chart = calculate_full_chart(birth_dt, float(lat), float(lon),
-                                           tz, name=name, place=place)
+        natal_chart = calculate_chart_data(birth_dt, float(lat), float(lon), tz)
 
-        if selected_date == today:
-            transit_data = calculate_transit_chart(float(lat), float(lon), tz)
-        else:
-            tz_obj      = pytz.timezone(tz)
-            transit_dt  = tz_obj.localize(datetime(selected_date.year,
-                                                    selected_date.month,
-                                                    selected_date.day, 12, 0))
-            transit_data = calculate_transit_chart(float(lat), float(lon), tz, dt=transit_dt)
+        # Legacy compatibility for prediction engine
+        # In 2.0, we use evidence-based predictions
+        preds = generate_evidence_based_predictions(natal_chart)
 
-        moon_lon   = natal_chart["planets"]["Moon"]["longitude"]
-        dasha_data = calculate_vimshottari(moon_lon, birth_dt)
-        preds      = generate_predictions(natal_chart, transit_data,
-                                          dasha_data, float(lat), float(lon), tz)
+        # Enrich for template
+        preds["date"] = selected_date.strftime("%A, %d %B %Y")
+        preds["name"] = name
+
     except Exception as e:
         error = str(e)
         traceback.print_exc()
@@ -583,8 +605,8 @@ def export_obsidian():
                 lines += [
                     "## Panchang",
                     "",
-                    f"| Limb | Value | Quality |",
-                    f"|---|---|---|",
+                    "| Limb | Value | Quality |",
+                    "|---|---|---|",
                     f"| **Vara** | {weekday} (Lord: {vara.get('lord','')}) | {'✅' if vara.get('lord') in ['Moon','Jupiter','Venus','Mercury'] else '⚠️'} |",
                     f"| **Tithi** | {tithi.get('name','')} ({tithi.get('paksha','')}) | {'✅' if tithi.get('quality','') == 'Auspicious' else '⚠️'} |",
                     f"| **Nakshatra** | {nakshatra.get('name','')} (Lord: {nakshatra.get('lord','')}) | {'✅' if nakshatra.get('nature','') == 'Auspicious' else '⚠️'} |",
@@ -593,8 +615,8 @@ def export_obsidian():
                     "",
                     "## Sky",
                     "",
-                    f"| | Time |",
-                    f"|---|---|",
+                    "| | Time |",
+                    "|---|---|",
                     f"| 🌅 Sunrise | {sky.get('sunrise','—')} |",
                     f"| 🌇 Sunset | {sky.get('sunset','—')} |",
                     f"| ☀️ Solar Noon | {sky.get('solar_noon','—')} |",
@@ -622,7 +644,7 @@ def export_obsidian():
                     f"- ⚠️ **Yamaghanta**: {sky.get('yamaghanta','—')}",
                     "",
                     "---",
-                    f"*Generated by [Jyotish Dashboard](https://github.com/Aerofarmer/jyotish-dashboard)*",
+                    "*Generated by [Jyotish Dashboard](https://github.com/Aerofarmer/jyotish-dashboard)*",
                 ]
 
                 md_content = "\n".join(lines)
@@ -847,7 +869,7 @@ def _build_nak_house_map(transit_data: dict, natal_chart: dict | None) -> list:
     which nakshatra it's in, and warning level.
     """
     from .astrology.predictions import TRANSIT_NAKSHATRA_WARNINGS, NAKSHATRA_MEANINGS, NAK_SPAN
-    from .astrology.calculator import NAKSHATRA_NAMES, NAKSHATRA_LORDS, PLANET_COLORS
+    from .astrology.calculator import NAKSHATRA_NAMES, NAKSHATRA_LORDS
 
     if not natal_chart:
         return []

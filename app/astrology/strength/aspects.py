@@ -1,4 +1,4 @@
-from typing import List, Dict, Any
+from typing import List
 
 def get_graha_drishti(planet: str, rashi_idx: int) -> List[int]:
     """Return a list of Rashi indices that the planet aspects."""

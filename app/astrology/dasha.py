@@ -3,8 +3,6 @@ Vimshottari Dasha system — 120-year cycle based on Moon's Nakshatra at birth.
 Computes Mahadasha, Antardasha (Bhukti), and Pratyantardasha (Prana).
 """
 from datetime import datetime, timedelta
-from dateutil.relativedelta import relativedelta
-import math
 
 DASHA_SEQUENCE = [
     "Ketu", "Venus", "Sun", "Moon", "Mars",

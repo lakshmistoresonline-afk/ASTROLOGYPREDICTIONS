@@ -3,10 +3,10 @@ Full-spectrum daily prediction engine.
 Sections: Overall, Mana Ki Baat (emotional), Love, Career,
           Major Changes, Enemy/Friend planets, Planet-by-planet.
 """
-from datetime import datetime, date
+from datetime import date
 from .calculator import (
-    RASHI_NAMES, NAKSHATRA_NAMES, NAKSHATRA_LORDS,
-    PLANET_COLORS, PLANET_SYMBOLS, WEEKDAYS, WEEKDAY_LORDS,
+    NAKSHATRA_NAMES, NAKSHATRA_LORDS,
+    PLANET_COLORS, PLANET_SYMBOLS,
 )
 from .panchang import calculate_panchang
 

@@ -1,4 +1,4 @@
-from typing import Dict, List, Set
+from typing import Dict
 
 # Houses and their natures
 KENDRA = {1, 4, 7, 10}
@@ -27,8 +27,8 @@ def get_functional_status(asc_rashi_idx: int) -> Dict[str, str]:
     rashi_to_house = {v: k for k, v in house_to_rashi.items()}
 
     planet_to_houses = {p: [] for p in planets}
-    for r, l in RASHI_LORDS.items():
-        planet_to_houses[l].append(rashi_to_house[r])
+    for r, lord in RASHI_LORDS.items():
+        planet_to_houses[lord].append(rashi_to_house[r])
 
     for p in planets:
         houses = planet_to_houses[p]

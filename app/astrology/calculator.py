@@ -2,7 +2,6 @@
 Core Vedic astrology engine using Swiss Ephemeris (pyswisseph).
 Lahiri ayanamsa, sidereal zodiac, Whole Sign houses.
 """
-import math
 import swisseph as swe
 import ephem
 from datetime import datetime, date, timedelta

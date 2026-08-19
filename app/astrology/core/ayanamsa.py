@@ -1,5 +1,4 @@
 import swisseph as swe
-from typing import Optional
 
 # Common Ayanamsa constants
 AYANAMSA_MODES = {

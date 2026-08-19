@@ -11,7 +11,6 @@ Also computes: Rashi of Sun & Moon, Chandra Bala, Tarabala,
 Sunrise, Sunset, Moonrise, Moonset, Rahu Kaal, Gulika Kaal,
 Yamaghanta, day-length, and Abhijit Muhurta.
 """
-import math
 import swisseph as swe
 from datetime import datetime, date
 import pytz

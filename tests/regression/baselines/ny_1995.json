@@ -1,0 +1,485 @@
+{
+  "test_case": {
+    "id": "ny_1995",
+    "name": "Sarah",
+    "dob": "1995-10-25",
+    "tob": "15:45",
+    "lat": 40.7128,
+    "lon": -74.006,
+    "tz": "America/New_York",
+    "place": "New York, USA"
+  },
+  "chart": {
+    "name": "Sarah",
+    "place": "New York, USA",
+    "birth_datetime": "1995-10-25T15:45:00",
+    "timezone": "America/New_York",
+    "latitude": 40.7128,
+    "longitude_coord": -74.006,
+    "julian_day": 2450016.322917,
+    "lagna": {
+      "longitude": 312.3292,
+      "rashi": 10,
+      "rashi_name": "Kumbha",
+      "rashi_english": "Aquarius",
+      "degree_in_rashi": 12.3292,
+      "dms": "12\u00b019'45\"",
+      "nakshatra": {
+        "index": 23,
+        "name": "Shatabhisha",
+        "pada": 2,
+        "lord": "Rahu",
+        "devata": "Varuna",
+        "degree_in_nak": 5.6625,
+        "remaining_degrees": 7.6708
+      }
+    },
+    "planets": {
+      "Sun": {
+        "longitude": 188.1194,
+        "speed": 0.9972,
+        "retrograde": false,
+        "rashi": 6,
+        "rashi_name": "Tula",
+        "rashi_english": "Libra",
+        "degree_in_rashi": 8.1194,
+        "dms": "8\u00b07'9\"",
+        "house": 9,
+        "nakshatra": {
+          "index": 14,
+          "name": "Swati",
+          "pada": 1,
+          "lord": "Rahu",
+          "devata": "Vayu",
+          "degree_in_nak": 1.4527,
+          "remaining_degrees": 11.8806
+        },
+        "dignity": "Debilitated",
+        "color": "#FF6B35",
+        "symbol": "\u2609",
+        "nature": "Cruel/Separative"
+      },
+      "Moon": {
+        "longitude": 210.0116,
+        "speed": 14.5593,
+        "retrograde": false,
+        "rashi": 7,
+        "rashi_name": "Vrishchika",
+        "rashi_english": "Scorpio",
+        "degree_in_rashi": 0.0116,
+        "dms": "0\u00b00'41\"",
+        "house": 10,
+        "nakshatra": {
+          "index": 15,
+          "name": "Vishakha",
+          "pada": 4,
+          "lord": "Jupiter",
+          "devata": "Indragni",
+          "degree_in_nak": 10.0116,
+          "remaining_degrees": 3.3217
+        },
+        "dignity": "Debilitated",
+        "color": "#C0C0C0",
+        "symbol": "\u263d",
+        "nature": "Benefic (waxing)/Malefic (waning)"
+      },
+      "Mars": {
+        "longitude": 219.7508,
+        "speed": 0.7208,
+        "retrograde": false,
+        "rashi": 7,
+        "rashi_name": "Vrishchika",
+        "rashi_english": "Scorpio",
+        "degree_in_rashi": 9.7508,
+        "dms": "9\u00b045'2\"",
+        "house": 10,
+        "nakshatra": {
+          "index": 16,
+          "name": "Anuradha",
+          "pada": 2,
+          "lord": "Saturn",
+          "devata": "Mitra",
+          "degree_in_nak": 6.4175,
+          "remaining_degrees": 6.9159
+        },
+        "dignity": "Own Sign",
+        "color": "#FF4444",
+        "symbol": "\u2642",
+        "nature": "Cruel/Separative"
+      },
+      "Mercury": {
+        "longitude": 171.2551,
+        "speed": 1.4243,
+        "retrograde": false,
+        "rashi": 5,
+        "rashi_name": "Kanya",
+        "rashi_english": "Virgo",
+        "degree_in_rashi": 21.2551,
+        "dms": "21\u00b015'18\"",
+        "house": 8,
+        "nakshatra": {
+          "index": 12,
+          "name": "Hasta",
+          "pada": 4,
+          "lord": "Moon",
+          "devata": "Savita",
+          "degree_in_nak": 11.2551,
+          "remaining_degrees": 2.0782
+        },
+        "dignity": "Exalted",
+        "color": "#00CC88",
+        "symbol": "\u263f",
+        "nature": "Benefic/Neutral"
+      },
+      "Jupiter": {
+        "longitude": 230.9984,
+        "speed": 0.1933,
+        "retrograde": false,
+        "rashi": 7,
+        "rashi_name": "Vrishchika",
+        "rashi_english": "Scorpio",
+        "degree_in_rashi": 20.9984,
+        "dms": "20\u00b059'54\"",
+        "house": 10,
+        "nakshatra": {
+          "index": 17,
+          "name": "Jyeshtha",
+          "pada": 2,
+          "lord": "Mercury",
+          "devata": "Indra",
+          "degree_in_nak": 4.3317,
+          "remaining_degrees": 9.0016
+        },
+        "dignity": "Neutral",
+        "color": "#FFD700",
+        "symbol": "\u2643",
+        "nature": "Benefic"
+      },
+      "Venus": {
+        "longitude": 205.4887,
+        "speed": 1.2448,
+        "retrograde": false,
+        "rashi": 6,
+        "rashi_name": "Tula",
+        "rashi_english": "Libra",
+        "degree_in_rashi": 25.4887,
+        "dms": "25\u00b029'19\"",
+        "house": 9,
+        "nakshatra": {
+          "index": 15,
+          "name": "Vishakha",
+          "pada": 2,
+          "lord": "Jupiter",
+          "devata": "Indragni",
+          "degree_in_nak": 5.4887,
+          "remaining_degrees": 7.8446
+        },
+        "dignity": "Own Sign",
+        "color": "#FF69B4",
+        "symbol": "\u2640",
+        "nature": "Benefic"
+      },
+      "Saturn": {
+        "longitude": 324.8197,
+        "speed": -0.0448,
+        "retrograde": true,
+        "rashi": 10,
+        "rashi_name": "Kumbha",
+        "rashi_english": "Aquarius",
+        "degree_in_rashi": 24.8197,
+        "dms": "24\u00b049'10\"",
+        "house": 1,
+        "nakshatra": {
+          "index": 24,
+          "name": "Purva Bhadrapada",
+          "pada": 2,
+          "lord": "Jupiter",
+          "devata": "Aja Ekapada",
+          "degree_in_nak": 4.8197,
+          "remaining_degrees": 8.5136
+        },
+        "dignity": "Own Sign",
+        "color": "#6B7280",
+        "symbol": "\u2644",
+        "nature": "Cruel/Separative"
+      },
+      "Rahu": {
+        "longitude": 182.1951,
+        "speed": -0.053,
+        "retrograde": true,
+        "rashi": 6,
+        "rashi_name": "Tula",
+        "rashi_english": "Libra",
+        "degree_in_rashi": 2.1951,
+        "dms": "2\u00b011'42\"",
+        "house": 9,
+        "nakshatra": {
+          "index": 13,
+          "name": "Chitra",
+          "pada": 3,
+          "lord": "Mars",
+          "devata": "Vishwakarma",
+          "degree_in_nak": 8.8618,
+          "remaining_degrees": 4.4716
+        },
+        "dignity": "Neutral",
+        "color": "#8B5CF6",
+        "symbol": "\u260a",
+        "nature": "Cruel/Shadow"
+      },
+      "Ketu": {
+        "longitude": 2.1951,
+        "speed": 0.053,
+        "retrograde": true,
+        "rashi": 0,
+        "rashi_name": "Mesha",
+        "rashi_english": "Aries",
+        "degree_in_rashi": 2.1951,
+        "dms": "2\u00b011'42\"",
+        "house": 3,
+        "nakshatra": {
+          "index": 0,
+          "name": "Ashwini",
+          "pada": 1,
+          "lord": "Ketu",
+          "devata": "Ashwini Kumara",
+          "degree_in_nak": 2.1951,
+          "remaining_degrees": 11.1382
+        },
+        "dignity": "Neutral",
+        "color": "#EC4899",
+        "symbol": "\u260b",
+        "nature": "Cruel/Shadow"
+      }
+    },
+    "houses": [
+      {
+        "house": 1,
+        "rashi": 10,
+        "rashi_name": "Kumbha",
+        "rashi_english": "Aquarius",
+        "longitude": 300.0
+      },
+      {
+        "house": 2,
+        "rashi": 11,
+        "rashi_name": "Meena",
+        "rashi_english": "Pisces",
+        "longitude": 330.0
+      },
+      {
+        "house": 3,
+        "rashi": 0,
+        "rashi_name": "Mesha",
+        "rashi_english": "Aries",
+        "longitude": 0.0
+      },
+      {
+        "house": 4,
+        "rashi": 1,
+        "rashi_name": "Vrishabha",
+        "rashi_english": "Taurus",
+        "longitude": 30.0
+      },
+      {
+        "house": 5,
+        "rashi": 2,
+        "rashi_name": "Mithuna",
+        "rashi_english": "Gemini",
+        "longitude": 60.0
+      },
+      {
+        "house": 6,
+        "rashi": 3,
+        "rashi_name": "Karka",
+        "rashi_english": "Cancer",
+        "longitude": 90.0
+      },
+      {
+        "house": 7,
+        "rashi": 4,
+        "rashi_name": "Simha",
+        "rashi_english": "Leo",
+        "longitude": 120.0
+      },
+      {
+        "house": 8,
+        "rashi": 5,
+        "rashi_name": "Kanya",
+        "rashi_english": "Virgo",
+        "longitude": 150.0
+      },
+      {
+        "house": 9,
+        "rashi": 6,
+        "rashi_name": "Tula",
+        "rashi_english": "Libra",
+        "longitude": 180.0
+      },
+      {
+        "house": 10,
+        "rashi": 7,
+        "rashi_name": "Vrishchika",
+        "rashi_english": "Scorpio",
+        "longitude": 210.0
+      },
+      {
+        "house": 11,
+        "rashi": 8,
+        "rashi_name": "Dhanu",
+        "rashi_english": "Sagittarius",
+        "longitude": 240.0
+      },
+      {
+        "house": 12,
+        "rashi": 9,
+        "rashi_name": "Makara",
+        "rashi_english": "Capricorn",
+        "longitude": 270.0
+      }
+    ],
+    "house_occupants": {
+      "1": [
+        "Saturn"
+      ],
+      "2": [],
+      "3": [
+        "Ketu"
+      ],
+      "4": [],
+      "5": [],
+      "6": [],
+      "7": [],
+      "8": [
+        "Mercury"
+      ],
+      "9": [
+        "Sun",
+        "Venus",
+        "Rahu"
+      ],
+      "10": [
+        "Moon",
+        "Mars",
+        "Jupiter"
+      ],
+      "11": [],
+      "12": []
+    },
+    "navamsa": {
+      "Sun": {
+        "rashi": 8,
+        "rashi_name": "Dhanu"
+      },
+      "Moon": {
+        "rashi": 3,
+        "rashi_name": "Karka"
+      },
+      "Mars": {
+        "rashi": 5,
+        "rashi_name": "Kanya"
+      },
+      "Mercury": {
+        "rashi": 3,
+        "rashi_name": "Karka"
+      },
+      "Jupiter": {
+        "rashi": 9,
+        "rashi_name": "Makara"
+      },
+      "Venus": {
+        "rashi": 1,
+        "rashi_name": "Vrishabha"
+      },
+      "Saturn": {
+        "rashi": 1,
+        "rashi_name": "Vrishabha"
+      },
+      "Rahu": {
+        "rashi": 6,
+        "rashi_name": "Tula"
+      },
+      "Ketu": {
+        "rashi": 0,
+        "rashi_name": "Mesha"
+      },
+      "Lagna": {
+        "rashi": 9,
+        "rashi_name": "Makara"
+      }
+    },
+    "ayanamsa": 23.7986
+  },
+  "panchang": {
+    "date": "Wednesday, 25 October 1995",
+    "date_iso": "1995-10-25",
+    "vara": {
+      "name": "Wednesday",
+      "lord": "Mercury",
+      "index": 3
+    },
+    "tithi": {
+      "number": 2,
+      "name": "Dwitiya",
+      "paksha": "Shukla",
+      "fraction_elapsed": 64.8,
+      "hours_remaining": 7.7,
+      "nature": "Auspicious",
+      "is_ekadashi": false,
+      "is_purnima": false,
+      "is_amavasya": false,
+      "is_pradosh": false
+    },
+    "nakshatra": {
+      "index": 15,
+      "number": 16,
+      "name": "Vishakha",
+      "lord": "Jupiter",
+      "pada": 3,
+      "fraction_elapsed": 58.0,
+      "hours_remaining": 10.2,
+      "degree": 207.7382,
+      "degree_in_nak": 7.7382
+    },
+    "yoga": {
+      "index": 2,
+      "number": 3,
+      "name": "Ayushman",
+      "nature": "Auspicious",
+      "fraction_elapsed": 67.8
+    },
+    "karana": {
+      "number": 4,
+      "name": "Kaulava",
+      "nature": "Auspicious",
+      "fraction_elapsed": 29.6,
+      "is_vishti": false
+    },
+    "sun_rashi": {
+      "name": "Tula",
+      "degree": 7.96
+    },
+    "moon_rashi": {
+      "name": "Tula",
+      "degree": 27.74
+    },
+    "sky": {
+      "sunrise": "07:13 AM",
+      "sunset": "06:06 PM",
+      "solar_noon": "12:40 PM",
+      "moonrise": "08:49 AM",
+      "moonset": "07:17 PM",
+      "moon_phase_pct": 1.3,
+      "moon_phase_name": "New Moon",
+      "day_length": "10h 52m",
+      "rahu_kaal": "12:39 PM \u2013 02:01 PM",
+      "gulika_kaal": "09:56 AM \u2013 11:18 AM",
+      "yamaghanta": "08:35 AM \u2013 09:56 AM"
+    },
+    "abhijit_muhurta": "12:16 PM \u2013 01:04 PM",
+    "tarabala": null,
+    "chandra_bala": null,
+    "is_auspicious": true,
+    "ayanamsa": 23.7986
+  }
+}

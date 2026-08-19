@@ -1,50 +1,56 @@
-# Implementation Plan: Free-Tier Firebase & Cloud Migration
+# Implementation Plan: Jyotish Dashboard 2.0 (Completion Phase)
 
-This plan outlines the steps to migrate the Jyotish Dashboard to a cloud-hosted environment (Firebase + Google Cloud Run) while strictly adhering to **Free Tier** limits. It also includes "Quick Win" fixes for astrological calculation bugs discovered during the audit.
+This plan covers the implementation of the remaining deterministic astrology features and the integration of the modular engine into the live application.
 
 ## User Review Required
 
 > [!IMPORTANT]
-> To use Firestore, you will need to create a Firebase project in the [Firebase Console](https://console.firebase.google.com/) and download a `service-account.json` file (or use Application Default Credentials if deploying to Cloud Run).
+> **Database Migration**: We will migrate from `charts.json` to **SQLite**. Existing charts will be imported automatically on the first run of the new engine.
 
 > [!WARNING]
-> Moving to the cloud means data is no longer stored locally on your disk but in the Google Cloud (Firestore). This ensures your charts are accessible from any device but changes the "100% offline" nature for the cloud-deployed version.
-
-## Open Questions
-
-- Would you like to keep the local JSON storage as a fallback/option for local development, or fully switch to Firestore?
-- Should I proceed with adding **South Indian Chart support** as part of this migration, or focus purely on the Cloud transition first?
+> **Engine Switchover**: Switching the Flask routes to the new high-precision engine will result in slightly different (more accurate) timings for Dasha and Panchang.
 
 ## Proposed Changes
 
-### 1. Astrological Fixes (Quick Wins)
-Correct the Rahu Kaal and Yamaghanta part-mappings to ensure accurate inauspicious windows.
+### 1. Strength & Ashtakavarga Engine
+Implement the mathematical models for planetary and sign strength.
 
-#### [MODIFY] [calculator.py](file:///G:/Astrology%20Prediction/app/astrology/calculator.py)
-- Update `_rahu_kaal` mapping for Wed/Thu/Fri.
-- Update `_yamaghanta` mapping for all weekdays.
+#### [NEW] [shadbala.py](file:///G:/Astrology%20Prediction/app/astrology/strength/shadbala.py)
+- Implement Sthana Bala (Positional), Dig Bala (Directional), Kala Bala (Temporal), and Cheshta Bala (Mototional).
+- Normalize scores to a 0-100 scale for the prediction engine.
+#### [NEW] [ashtakavarga.py](file:///G:/Astrology%20Prediction/app/astrology/charts/ashtakavarga.py)
+- Implement Bhinnashtakavarga (BAV) for all 7 planets.
+- Implement Sarvashtakavarga (SAV) for sign-level transit modification.
 
-### 2. Database Migration (Firestore)
-Abstract the storage layer to support both Local JSON and Firestore.
+### 2. Expanded Predictions & Contradiction Detection
+Increase the depth and reliability of the evidence-based engine.
 
-#### [NEW] [firebase_store.py](file:///G:/Astrology%20Prediction/app/astrology/firebase_store.py)
-- Implement `save_chart`, `list_charts`, and `delete_chart` using the `google-cloud-firestore` SDK.
-#### [MODIFY] [store.py](file:///G:/Astrology%20Prediction/app/astrology/store.py)
-- Add a toggle/config to switch between `LocalStore` and `FirestoreStore`.
+#### [NEW] [finance.py](file:///G:/Astrology%20Prediction/app/astrology/predictions/finance.py)
+- Analyze 2nd and 11th houses, their lords, and D2 (Hora) chart.
+#### [MODIFY] [engine.py](file:///G:/Astrology%20Prediction/app/astrology/predictions/engine.py)
+- Implement a **Contradiction Engine** that detects conflicting indicators (e.g., strong house lord but weak Shadbala) and adjusts the confidence score.
 
-### 3. Cloud Deployment Configuration
+### 3. Production Persistence (SQLite)
+Replace the JSON file store with a robust relational database.
 
-#### [MODIFY] [Dockerfile](file:///G:/Astrology%20Prediction/Dockerfile)
-- Ensure all `ephe` files are correctly copied into the image.
-- Optimize for a smaller image size (using `python:3.11-slim`).
-#### [NEW] [firebase.json](file:///G:/Astrology%20Prediction/firebase.json)
-- Configure Firebase Hosting to proxy `/` to the Cloud Run service.
+#### [NEW] [models.py](file:///G:/Astrology%20Prediction/app/database/models.py)
+- Define `Chart` and `Profile` models using SQLAlchemy.
+#### [NEW] [migrate_json.py](file:///G:/Astrology%20Prediction/scripts/migrate_json.py)
+- A one-time utility to move data from `data/charts.json` to `data/app.db`.
+
+### 4. Application Integration
+Finalize the transition to the 2.0 architecture.
+
+#### [MODIFY] [routes.py](file:///G:/Astrology%20Prediction/app/routes.py)
+- Replace legacy imports with the new modular structure.
+- Update `/kundli` and `/predictions` endpoints to utilize the evidence-based results.
 
 ## Verification Plan
 
 ### Automated Tests
-- I will create a scratch script in `C:\Users\Acer\AppData\Local\Google\AndroidStudio2026.1.2\projects\astrology prediction.27cbfdb7\.artifacts\d14057a1-9209-4204-b8ec-8adabd79a574/scratch/verify_kaal.py` to verify the Rahu Kaal fixes against known standard tables.
+- `pytest tests/test_shadbala.py`: Validate strength calculations against standard manual examples.
+- `pytest tests/test_migration.py`: Ensure data integrity during JSON to SQLite transition.
 
 ### Manual Verification
-- Verify that charts saved to Firestore appear in the dashboard list.
-- Verify that the app starts correctly in a containerized environment with the bundled ephemeris files.
+- Verify that the "Evidence" panel in the UI correctly displays the new factors from Shadbala and Ashtakavarga.
+- Confirm that saved charts persist across application restarts.

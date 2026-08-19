@@ -1,4 +1,4 @@
-from typing import Dict, Any, List
+from typing import Dict, Any
 
 def get_career_prediction(chart: Dict[str, Any]) -> Dict[str, Any]:
     """Analyze career using 10th house, its lord, and D10."""
@@ -45,7 +45,7 @@ def get_career_prediction(chart: Dict[str, Any]) -> Dict[str, Any]:
     d10_lagna = d10["Lagna"]
     d10_tenth_rashi = (d10_lagna + 9) % 12
     if d10[tenth_lord_name] == d10_tenth_rashi:
-        evidence.append(f"✓ 10th lord confirmed in 10th house in D10 (+10)")
+        evidence.append("✓ 10th lord confirmed in 10th house in D10 (+10)")
         score += 10
 
     score = max(0.0, min(100.0, score))

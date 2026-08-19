@@ -1,4 +1,3 @@
-from typing import Dict, Any
 
 # Exaltation and Debilitation points
 # Format: (Rashi index, degree)
