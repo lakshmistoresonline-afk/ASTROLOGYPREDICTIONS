@@ -1,34 +1,29 @@
-# Implementation Plan: Fix Cloud 503 Service Unavailable
+# Implementation Plan: Fix Cloud 500 Internal Server Error
 
-The application is returning a 503 error on Google Cloud Run. This is likely due to a `NameError` in `app/routes.py` and a potential startup crash in the Firestore client initialization.
+The application is returning a 500 error because it is still attempting to import from `app/astrology/calculator.py`, which was deleted during the modular upgrade.
 
 ## User Review Required
 
 > [!IMPORTANT]
-> These changes are critical for the application to start in a serverless environment. No architectural changes are made, only bug fixes and robustness improvements.
+> This fix removes the last remaining reference to the legacy `calculator.py` file and completes the transition to the 2.0 engine.
 
 ## Proposed Changes
 
-### 1. Route Import Fixes
+### 1. Route Cleanup
 
 #### [MODIFY] [routes.py](file:///G:/Astrology%20Prediction/app/routes.py)
-- Add `import pytz` to the top-level imports.
-- Ensure all helper functions have necessary imports.
+- Remove `from .astrology.calculator import ...`
+- Implement the missing `rahu_kaal` logic directly in the compatibility helper or move it to `app/astrology/panchang/`.
 
-### 2. Firestore Robustness
+### 2. Rahu Kaal Logic Porting
 
-#### [MODIFY] [firebase_store.py](file:///G:/Astrology%20Prediction/app/astrology/firebase_store.py)
-- Move `firestore.Client()` initialization inside a helper function `_get_db()` to avoid top-level execution during module import.
-
-### 3. Database Initialization Fix
-
-#### [MODIFY] [__init__.py](file:///G:/Astrology%20Prediction/app/__init__.py)
-- Ensure the app context and database initialization are isolated to prevent crashes in read-only environments.
+#### [MODIFY] [panchang/sky.py](file:///G:/Astrology%20Prediction/app/astrology/panchang/sky.py)
+- Add `get_kaal_timings` to calculate Rahu Kaal, Gulika Kaal, and Yamaghanta using precise sunrise/sunset times.
 
 ## Verification Plan
 
 ### Automated Tests
-- I will run a local startup test to ensure no `ImportError` or `NameError` occurs.
+- Run `ruff check` and `mypy` to ensure no more missing imports exist.
 
 ### Manual Verification
-- The user will need to redeploy using the provided scripts.
+- Redeploy and verify the home page loads correctly.

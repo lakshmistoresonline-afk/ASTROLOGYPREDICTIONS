@@ -25,7 +25,8 @@ def calculate_transit_chart(lat: float, lon: float, tz_str: str, dt: datetime = 
     return calculate_chart_data(dt, lat, lon, tz_str)
 
 def get_sunrise_sunset_moonrise(target_date: date, lat: float, lon: float, tz_str: str) -> dict:
-    from .astrology.panchang.sky import get_sunrise, get_sunset, get_moonrise, get_moonset
+    from .astrology.panchang.sky import (get_sunrise, get_sunset, get_moonrise, get_moonset,
+                                         get_rahu_kaal, get_gulika_kaal, get_yamaghanta)
     from .astrology.core.datetime import datetime_to_jd
     import swisseph as swe
 
@@ -33,25 +34,29 @@ def get_sunrise_sunset_moonrise(target_date: date, lat: float, lon: float, tz_st
     noon_dt = datetime.combine(target_date, datetime.min.time()).replace(hour=12)
     jd_ut = datetime_to_jd(noon_dt, tz_str)
 
-    sr = get_sunrise(jd_ut, lat, lon)
-    ss = get_sunset(jd_ut, lat, lon)
-    mr = get_moonrise(jd_ut, lat, lon)
-    ms = get_moonset(jd_ut, lat, lon)
+    sr_jd = get_sunrise(jd_ut, lat, lon) or 0
+    ss_jd = get_sunset(jd_ut, lat, lon) or 0
+    mr_jd = get_moonrise(jd_ut, lat, lon)
+    ms_jd = get_moonset(jd_ut, lat, lon)
 
     def jd_to_str(jd):
         if not jd or jd < 0: return "—"
         y, m, d, h = swe.revjul(jd)
         hh = int(h)
         mm = int((h - hh) * 60)
-        dt_utc = datetime(y, m, d, hh, mm, tzinfo=pytz.utc)
+        dt_utc = datetime(y, m, d, hh, mm, ss=0, tzinfo=pytz.utc)
         return dt_utc.astimezone(tz).strftime("%I:%M %p")
 
+    weekday = target_date.weekday()
+
     return {
-        "sunrise": jd_to_str(sr),
-        "sunset": jd_to_str(ss),
-        "moonrise": jd_to_str(mr),
-        "moonset": jd_to_str(ms),
-        "rahu_kaal": "—" # Logic to be ported from calculator.py
+        "sunrise": jd_to_str(sr_jd),
+        "sunset": jd_to_str(ss_jd),
+        "moonrise": jd_to_str(mr_jd),
+        "moonset": jd_to_str(ms_jd),
+        "rahu_kaal": get_rahu_kaal(weekday, sr_jd, ss_jd),
+        "gulika_kaal": get_gulika_kaal(weekday, sr_jd, ss_jd),
+        "yamaghanta": get_yamaghanta(weekday, sr_jd, ss_jd)
     }
 
 main = Blueprint("main", __name__)
