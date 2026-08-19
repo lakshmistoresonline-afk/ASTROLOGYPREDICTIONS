@@ -7,6 +7,8 @@ def calculate_vimshottari(moon_longitude: float, birth_dt: datetime) -> dict:
     balance = calculate_dasha_balance(moon_longitude)
     mahadashas_raw = get_vimshottari_periods(moon_longitude, birth_dt)
 
+    print(f"DEBUG: Starting Vimshottari for {moon_longitude}, balance: {balance['balance_years']}")
+
     now = datetime.now()
     mahadashas = []
     current_maha = None

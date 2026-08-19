@@ -51,6 +51,7 @@ def _enrich_chart_for_template(chart: dict):
     }
 
     # Navamsa
+    chart["navamsa"] = {}
     if "divisional" in chart and "D9" in chart["divisional"]:
         chart["navamsa"] = {k: {"rashi": v} for k, v in chart["divisional"]["D9"].items()}
         if "Lagna" in chart["navamsa"]:
@@ -343,6 +344,7 @@ def dasha():
             chart      = calculate_chart_data(birth_dt, float(lat), float(lon), tz)
             moon_lon   = chart["planets"]["Moon"]["longitude"]
             dasha_data = calculate_vimshottari(moon_lon, birth_dt)
+            print(f"DEBUG: Dasha data keys: {list(dasha_data.keys()) if dasha_data else 'None'}")
             _enrich_chart_for_template(chart)
         except Exception as e:
             error = str(e)
@@ -936,6 +938,7 @@ def api_sky():
         data   = get_sunrise_sunset_moonrise(d, lat, lon, tz_str)
         return jsonify(data)
     except Exception as e:
+        traceback.print_exc()
         return jsonify({"error": str(e)}), 400
 
 
@@ -950,6 +953,7 @@ def api_panchang():
         data   = calculate_panchang(d, lat, lon, tz_str)
         return jsonify(data)
     except Exception as e:
+        traceback.print_exc()
         return jsonify({"error": str(e)}), 400
 
 
