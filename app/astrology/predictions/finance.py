@@ -1,4 +1,4 @@
-from typing import Dict, Any, List
+from typing import Dict, Any
 from ..strength.functional import RASHI_LORDS
 
 def get_finance_prediction(chart: Dict[str, Any]) -> Dict[str, Any]:
@@ -42,13 +42,13 @@ def get_finance_prediction(chart: Dict[str, Any]) -> Dict[str, Any]:
     # 3. Jupiter (Dhanakaraka)
     jupiter = planets["Jupiter"]
     if "Exalted" in jupiter["dignity"] or jupiter["dignity"] == "Own Sign":
-        evidence.append(f"✓ Jupiter (Significator of Wealth) is strong (+10)")
+        evidence.append("✓ Jupiter (Significator of Wealth) is strong (+10)")
         score += 10
 
     # 4. Dhana Yoga (Partial check: 2nd/11th/9th/5th lords association)
     # Association of 2nd lord and 11th lord
     if second_lord["house"] == 11 or eleventh_lord["house"] == 2:
-        evidence.append(f"✓ Strong association between 2nd and 11th houses (+15)")
+        evidence.append("✓ Strong association between 2nd and 11th houses (+15)")
         score += 15
 
     score = max(0.0, min(100.0, score))

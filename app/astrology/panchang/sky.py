@@ -12,10 +12,8 @@ def get_sky_event(jd_ut: float, lat: float, lon: float, planet_id: int, event_ty
 
     # event_type is a combination of flags
     # We want topocentric rise/set
-    flags = swe.BIT_DISC_CENTER # Standard for many astro calcs, but for sunrise usually top edge
     # For actual sunrise (visible), we might need to adjust flags.
     # Official Swiss Ephemeris suggests:
-    flags = 0 # Default is center.
 
     try:
         res = swe.rise_trans(jd_ut, planet_id, lon, lat, 0, atpress, attemp, event_type)

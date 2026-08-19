@@ -1,7 +1,6 @@
 import os
 import uuid
-from datetime import datetime
-from ..database.models import db, Chart, Profile
+from ..database.models import db, Chart
 
 # Toggle between Local SQLite, Firestore
 USE_FIREBASE = os.getenv("USE_FIREBASE", "false").lower() == "true"

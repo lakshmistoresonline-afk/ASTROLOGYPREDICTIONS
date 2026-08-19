@@ -1,6 +1,4 @@
-from typing import Dict, Any, List
-from ..core.planets import PLANETS
-from ..core.houses import get_house_from_longitude
+from typing import Dict, Any
 from .dignity import EXALTATION, DEBILITATION
 
 # Dig Bala (Directional Strength)
@@ -25,7 +23,7 @@ def calculate_exaltation_bala(planet: str, longitude: float) -> float:
         return 0.0
 
     ex_rashi, ex_deg = EXALTATION[planet]
-    ex_lon = ex_rashi * 30 + ex_deg
+    ex_rashi * 30 + ex_deg
 
     db_rashi, db_deg = DEBILITATION[planet]
     db_lon = db_rashi * 30 + db_deg

@@ -6,8 +6,8 @@ from datetime import datetime
 # Add project root to path
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../..")))
 
-from app.astrology.calculator import calculate_full_chart
-from app.astrology.panchang import calculate_panchang
+from app.astrology.core.chart import calculate_chart_data
+from app.astrology.panchang import calculate_panchang_2_0
 
 TEST_CASES = [
     {
@@ -60,12 +60,11 @@ def generate():
         print(f"Generating baseline for {tc['id']}...")
         birth_dt = datetime.strptime(f"{tc['dob']} {tc['tob']}", "%Y-%m-%d %H:%M")
 
-        chart = calculate_full_chart(
-            birth_dt, tc['lat'], tc['lon'], tc['tz'],
-            name=tc['name'], place=tc['place']
+        chart = calculate_chart_data(
+            birth_dt, tc['lat'], tc['lon'], tc['tz']
         )
 
-        panchang = calculate_panchang(
+        panchang = calculate_panchang_2_0(
             birth_dt.date(), tc['lat'], tc['lon'], tc['tz']
         )
 

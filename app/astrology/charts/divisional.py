@@ -1,4 +1,4 @@
-from typing import Dict, Any, List
+from typing import Dict
 
 def calculate_varga_rashi(longitude: float, division: int) -> int:
     """
