@@ -36,7 +36,7 @@ def get_moonset(jd_ut: float, lat: float, lon: float) -> Optional[float]:
 
 def get_kaal_window(part: int, sunrise_jd: float, sunset_jd: float) -> str:
     """Calculate a specific day-segment time window string."""
-    from datetime import datetime, timedelta, timezone
+    import swisseph as swe
 
     total_days = sunset_jd - sunrise_jd
     segment = total_days / 8.0
