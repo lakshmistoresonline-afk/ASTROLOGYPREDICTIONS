@@ -8,7 +8,9 @@ from ..strength.functional import get_functional_status
 from ..strength.aspects import get_graha_drishti
 from ..charts.divisional import get_varga_chart
 from datetime import datetime
+from functools import lru_cache
 
+@lru_cache(maxsize=128)
 def calculate_chart_data(birth_dt: datetime, lat: float, lon: float, tz_str: str) -> Dict[str, Any]:
     """Calculate all raw astrological data for a birth moment."""
     jd_ut = datetime_to_jd(birth_dt, tz_str)

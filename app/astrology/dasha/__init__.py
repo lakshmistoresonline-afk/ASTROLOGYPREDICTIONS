@@ -3,16 +3,19 @@ from datetime import datetime
 
 def calculate_vimshottari(moon_longitude: float, birth_dt: datetime) -> dict:
     """Legacy compatibility for Dasha."""
+    from .vimshottari import get_vimshottari_periods
+    from ..core.planets import PLANET_COLORS
     periods = get_vimshottari_periods(moon_longitude, birth_dt)
 
     # Format to look like legacy structure
     mahadashas = []
     for p in periods:
+        lord = p["lord"]
         mahadashas.append({
-            "lord": p["lord"],
+            "lord": lord,
             "start": p["start"].strftime("%d %b %Y"),
             "end": p["end"].strftime("%d %b %Y"),
-            "color": "#fff", # Placeholder
+            "color": PLANET_COLORS.get(lord, "#fff"),
             "is_current": p["start"] <= datetime.now() < p["end"]
         })
 

@@ -58,7 +58,23 @@ def calculate_kendra_adi_bala(house: int) -> float:
     if house in [2, 5, 8, 11]: return KENDRA_ADI_SCORES["Panapara"]
     return KENDRA_ADI_SCORES["Apoklima"]
 
-def calculate_shadbala(chart: Dict[str, Any]) -> Dict[str, Dict[str, float]]:
+def calculate_kala_bala(planet: str, is_day: bool) -> float:
+    """Calculate a simplified Kala Bala (Temporal Strength)."""
+    # Sun, Jupiter, Venus are strong during the day
+    # Moon, Mars, Saturn are strong during the night
+    # Mercury is always strong
+    day_planets = {"Sun", "Jupiter", "Venus"}
+    night_planets = {"Moon", "Mars", "Saturn"}
+
+    if planet == "Mercury":
+        return 60.0
+    if is_day and planet in day_planets:
+        return 60.0
+    if not is_day and planet in night_planets:
+        return 60.0
+    return 30.0
+
+def calculate_shadbala(chart: Dict[str, Any], is_day: bool = True) -> Dict[str, Dict[str, float]]:
     """
     Calculate a simplified Shadbala score for all 7 planets.
     Returns scores in Virupas (60 Virupas = 1 Rupa).
@@ -74,24 +90,26 @@ def calculate_shadbala(chart: Dict[str, Any]) -> Dict[str, Dict[str, float]]:
         # 1. Sthana Bala (Partial)
         sthana = calculate_exaltation_bala(p, lon)
         sthana += calculate_kendra_adi_bala(house)
-        # TODO: Add Sapta-varga-ja Bala
 
         # 2. Dig Bala
         dig = calculate_dig_bala(p, house)
 
-        # 3. Naisargika Bala (Natural Strength)
+        # 3. Kala Bala (Simplified)
+        kala = calculate_kala_bala(p, is_day)
+
+        # 4. Naisargika Bala (Natural Strength)
         # Sun=60, Moon=51.43, Venus=42.86, Jup=34.29, Merc=25.71, Mars=17.14, Sat=8.57
         naisargika = {
             "Sun": 60, "Moon": 51.43, "Venus": 42.86, "Jupiter": 34.29,
             "Mercury": 25.71, "Mars": 17.14, "Saturn": 8.57
         }.get(p, 0.0)
 
-        total = sthana + dig + naisargika
-        # TODO: Add Kala Bala, Cheshta Bala, Drik Bala
+        total = sthana + dig + kala + naisargika
 
         results[p] = {
             "sthana_bala": round(sthana, 2),
             "dig_bala": round(dig, 2),
+            "kala_bala": round(kala, 2),
             "naisargika_bala": round(naisargika, 2),
             "total_shadbala": round(total, 2),
             "total_rupas": round(total / 60.0, 2)

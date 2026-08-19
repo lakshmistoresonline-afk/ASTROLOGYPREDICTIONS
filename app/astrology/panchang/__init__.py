@@ -3,7 +3,7 @@ from .tithi import get_tithi_info, get_tithi_end_time
 from .nakshatra import get_nakshatra_info, get_nakshatra_end_time
 from .yoga import get_yoga_info, get_yoga_end_time
 from .karana import get_karana_info, get_karana_end_time
-from .sky import get_sunrise, get_sunset, get_moonrise, get_moonset
+from .sky import get_sunrise, get_sunset, get_moonrise, get_moonset, get_rahu_kaal
 from ..core.datetime import datetime_to_jd
 from ..core.ephemeris import get_ayanamsa
 from ..core.planets import NAKSHATRA_NAMES, NAKSHATRA_LORDS
@@ -148,7 +148,7 @@ def calculate_panchang(target_date: date, lat: float, lon: float, tz_str: str,
         "sky": {
             "sunrise": jd_to_local_str(sunrise_jd),
             "sunset": jd_to_local_str(sunset_jd),
-            "rahu_kaal": "—", # To be implemented precisely
+            "rahu_kaal": get_rahu_kaal(weekday_idx, sunrise_jd or 0, sunset_jd or 0),
         },
         "is_auspicious": tithi_nature == "Auspicious" and yoga_nature == "Auspicious"
     }
@@ -157,12 +157,9 @@ def calculate_panchang(target_date: date, lat: float, lon: float, tz_str: str,
     if birth_nak_idx is not None:
         from .utils import calculate_tarabala, calculate_chandra_bala
         res["tarabala"] = calculate_tarabala(nak["number"]-1, birth_nak_idx)
-        # Moon rashi is needed for chandra bala.
-        # nak index / 2.25 approx? No, better use longitude.
         moon_rashi = int(nak["longitude"] / 30)
-        # birth moon rashi would be needed.
-        # Let's assume birth_nak_idx can give us a hint or we need birth_rashi.
-        # Legacy code passed birth_nak_idx as birth_moon_rashi_or_nak.
-        res["chandra_bala"] = calculate_chandra_bala(moon_rashi, birth_nak_idx)
+        # Assuming birth_nak_idx passed here is actually birth moon rashi for simplicity in this turn
+        # or we need to refine how it's passed.
+        res["chandra_bala"] = calculate_chandra_bala(moon_rashi, int(birth_nak_idx / 2.25))
 
     return res

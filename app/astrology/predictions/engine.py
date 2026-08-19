@@ -1,6 +1,8 @@
 from typing import Dict, Any, List
 from .career import get_career_prediction
 from .finance import get_finance_prediction
+from .marriage import get_marriage_prediction
+from .health import get_health_prediction
 from .scoring import get_label_from_score
 
 def detect_contradictions(domain_results: Dict[str, Any]) -> List[str]:
@@ -21,8 +23,10 @@ def generate_evidence_based_predictions(chart: Dict[str, Any]) -> Dict[str, Any]
     """Aggregate all domain predictions with evidence and scoring."""
     career = get_career_prediction(chart)
     finance = get_finance_prediction(chart)
+    marriage = get_marriage_prediction(chart)
+    health = get_health_prediction(chart)
 
-    domains = [career, finance]
+    domains = [career, finance, marriage, health]
 
     # Calculate overall support score
     total_score = sum(d["score"] for d in domains) / len(domains)
