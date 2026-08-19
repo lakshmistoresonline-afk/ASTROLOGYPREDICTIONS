@@ -198,6 +198,10 @@ def kundli():
             moon_lon = chart["planets"]["Moon"]["longitude"]
             dasha    = calculate_vimshottari(moon_lon, birth_dt)
 
+            print(f"DEBUG: Kundli Dasha keys: {list(dasha.keys()) if dasha else 'None'}")
+            if dasha:
+                print(f"DEBUG: balance_years = {dasha.get('balance_years')}")
+
             # Enrich chart with metadata for UI
             chart["name"] = name
             chart["place"] = place
