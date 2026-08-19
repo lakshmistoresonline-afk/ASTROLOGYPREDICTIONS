@@ -5,6 +5,7 @@ import calendar as cal_mod
 import zipfile
 import io
 import os
+import pytz
 import traceback
 
 from .astrology.core.chart import calculate_chart_data
@@ -12,7 +13,6 @@ from .astrology.core.planets import PLANET_COLORS
 from .astrology.panchang import calculate_panchang
 from .astrology.dasha.vimshottari import get_vimshottari_periods
 from .astrology.predictions.engine import generate_evidence_based_predictions
-from .astrology.predictions.data import TRANSIT_NAKSHATRA_WARNINGS, NAKSHATRA_MEANINGS, NAK_SPAN
 from .astrology.store import save_chart, list_charts, get_chart, delete_chart
 from .api.external import geocode_place, get_ip_location
 

@@ -8,14 +8,18 @@ from google.cloud import firestore
 
 # Initialize Firestore
 # It will use Application Default Credentials (ADC) in Cloud Run
-db = firestore.Client()
+def _get_db():
+    return firestore.Client()
+
 CHARTS_COLLECTION = os.getenv("FIRESTORE_COLLECTION", "charts")
 
 def save_chart(chart: dict) -> str:
     """Persist a chart dict to Firestore and return its unique ID."""
+    db = _get_db()
     cid = chart.get("id") or firestore.INCREMENT  # Firestore will generate ID if not provided
     doc_ref = db.collection(CHARTS_COLLECTION).document()
     cid = doc_ref.id
+    # ...
 
     payload = {
         "id": cid,
@@ -39,6 +43,7 @@ def save_chart(chart: dict) -> str:
 
 def list_charts() -> list:
     """Return all saved charts from Firestore sorted by saved_at."""
+    db = _get_db()
     docs = db.collection(CHARTS_COLLECTION).order_by(
         "saved_at", direction=firestore.Query.DESCENDING
     ).stream()
@@ -46,6 +51,7 @@ def list_charts() -> list:
     return [doc.to_dict() for doc in docs]
 
 def get_chart(cid: str) -> dict | None:
+    db = _get_db()
     doc = db.collection(CHARTS_COLLECTION).document(cid).get()
     if doc.exists:
         return doc.to_dict()
@@ -53,6 +59,7 @@ def get_chart(cid: str) -> dict | None:
 
 def delete_chart(cid: str) -> bool:
     try:
+        db = _get_db()
         db.collection(CHARTS_COLLECTION).document(cid).delete()
         return True
     except Exception:

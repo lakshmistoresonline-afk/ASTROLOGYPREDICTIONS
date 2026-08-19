@@ -1,56 +1,34 @@
-# Implementation Plan: Jyotish Dashboard 2.0 (Completion Phase)
+# Implementation Plan: Fix Cloud 503 Service Unavailable
 
-This plan covers the implementation of the remaining deterministic astrology features and the integration of the modular engine into the live application.
+The application is returning a 503 error on Google Cloud Run. This is likely due to a `NameError` in `app/routes.py` and a potential startup crash in the Firestore client initialization.
 
 ## User Review Required
 
 > [!IMPORTANT]
-> **Database Migration**: We will migrate from `charts.json` to **SQLite**. Existing charts will be imported automatically on the first run of the new engine.
-
-> [!WARNING]
-> **Engine Switchover**: Switching the Flask routes to the new high-precision engine will result in slightly different (more accurate) timings for Dasha and Panchang.
+> These changes are critical for the application to start in a serverless environment. No architectural changes are made, only bug fixes and robustness improvements.
 
 ## Proposed Changes
 
-### 1. Strength & Ashtakavarga Engine
-Implement the mathematical models for planetary and sign strength.
-
-#### [NEW] [shadbala.py](file:///G:/Astrology%20Prediction/app/astrology/strength/shadbala.py)
-- Implement Sthana Bala (Positional), Dig Bala (Directional), Kala Bala (Temporal), and Cheshta Bala (Mototional).
-- Normalize scores to a 0-100 scale for the prediction engine.
-#### [NEW] [ashtakavarga.py](file:///G:/Astrology%20Prediction/app/astrology/charts/ashtakavarga.py)
-- Implement Bhinnashtakavarga (BAV) for all 7 planets.
-- Implement Sarvashtakavarga (SAV) for sign-level transit modification.
-
-### 2. Expanded Predictions & Contradiction Detection
-Increase the depth and reliability of the evidence-based engine.
-
-#### [NEW] [finance.py](file:///G:/Astrology%20Prediction/app/astrology/predictions/finance.py)
-- Analyze 2nd and 11th houses, their lords, and D2 (Hora) chart.
-#### [MODIFY] [engine.py](file:///G:/Astrology%20Prediction/app/astrology/predictions/engine.py)
-- Implement a **Contradiction Engine** that detects conflicting indicators (e.g., strong house lord but weak Shadbala) and adjusts the confidence score.
-
-### 3. Production Persistence (SQLite)
-Replace the JSON file store with a robust relational database.
-
-#### [NEW] [models.py](file:///G:/Astrology%20Prediction/app/database/models.py)
-- Define `Chart` and `Profile` models using SQLAlchemy.
-#### [NEW] [migrate_json.py](file:///G:/Astrology%20Prediction/scripts/migrate_json.py)
-- A one-time utility to move data from `data/charts.json` to `data/app.db`.
-
-### 4. Application Integration
-Finalize the transition to the 2.0 architecture.
+### 1. Route Import Fixes
 
 #### [MODIFY] [routes.py](file:///G:/Astrology%20Prediction/app/routes.py)
-- Replace legacy imports with the new modular structure.
-- Update `/kundli` and `/predictions` endpoints to utilize the evidence-based results.
+- Add `import pytz` to the top-level imports.
+- Ensure all helper functions have necessary imports.
+
+### 2. Firestore Robustness
+
+#### [MODIFY] [firebase_store.py](file:///G:/Astrology%20Prediction/app/astrology/firebase_store.py)
+- Move `firestore.Client()` initialization inside a helper function `_get_db()` to avoid top-level execution during module import.
+
+### 3. Database Initialization Fix
+
+#### [MODIFY] [__init__.py](file:///G:/Astrology%20Prediction/app/__init__.py)
+- Ensure the app context and database initialization are isolated to prevent crashes in read-only environments.
 
 ## Verification Plan
 
 ### Automated Tests
-- `pytest tests/test_shadbala.py`: Validate strength calculations against standard manual examples.
-- `pytest tests/test_migration.py`: Ensure data integrity during JSON to SQLite transition.
+- I will run a local startup test to ensure no `ImportError` or `NameError` occurs.
 
 ### Manual Verification
-- Verify that the "Evidence" panel in the UI correctly displays the new factors from Shadbala and Ashtakavarga.
-- Confirm that saved charts persist across application restarts.
+- The user will need to redeploy using the provided scripts.
