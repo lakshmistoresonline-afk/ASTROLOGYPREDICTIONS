@@ -17,12 +17,65 @@ from .astrology.store import save_chart, list_charts, get_chart, delete_chart
 from .api.external import geocode_place, get_ip_location
 
 # Compatibility helpers for legacy routes
+def _enrich_chart_for_template(chart: dict):
+    """Add legacy keys to chart dict for template compatibility."""
+    if not chart: return
+
+    # House occupants
+    chart["house_occupants"] = {h: [] for h in range(1, 13)}
+    for p, data in chart["planets"].items():
+        chart["house_occupants"][data["house"]] = chart["house_occupants"].get(data["house"], [])
+        chart["house_occupants"][data["house"]].append(p)
+
+    # Lagna
+    rashi_names = ["Mesha","Vrishabha","Mithuna","Karka","Simha","Kanya",
+                   "Tula","Vrishchika","Dhanu","Makara","Kumbha","Meena"]
+
+    asc_rashi = chart.get("asc_rashi", 0)
+    chart["lagna"] = {
+        "rashi": asc_rashi,
+        "rashi_name": rashi_names[asc_rashi],
+        "rashi_english": ["Aries","Taurus","Gemini","Cancer","Leo","Virgo",
+                          "Libra","Scorpio","Sagittarius","Capricorn","Aquarius","Pisces"][asc_rashi]
+    }
+
+    # Navamsa
+    if "divisional" in chart and "D9" in chart["divisional"]:
+        chart["navamsa"] = {k: {"rashi": v} for k, v in chart["divisional"]["D9"].items()}
+
+    # Houses (Whole Sign)
+    chart["houses"] = []
+    for i in range(1, 13):
+        rashi_idx = (asc_rashi + i - 1) % 12
+        chart["houses"].append({
+            "house": i,
+            "rashi": rashi_idx,
+            "rashi_name": rashi_names[rashi_idx]
+        })
+
+    # planets cleanup for legacy templates
+    for p, data in chart["planets"].items():
+        data["retrograde"] = data.get("is_retrograde", False)
+        # Add color if missing
+        if "color" not in data:
+            data["color"] = PLANET_COLORS.get(p, "#fff")
+        # Add dms if missing (dummy for now or implement)
+        if "dms" not in data:
+            deg = data.get("degree", 0)
+            d = int(deg)
+            m = int((deg - d) * 60)
+            data["dms"] = f"{d}°{m}'"
+        if "rashi_name" not in data:
+            data["rashi_name"] = rashi_names[data["rashi"]]
+
 def calculate_transit_chart(lat: float, lon: float, tz_str: str, dt: datetime = None) -> dict:
     from .astrology.core.chart import calculate_chart_data
     if dt is None:
         tz = pytz.timezone(tz_str)
         dt = datetime.now(tz)
-    return calculate_chart_data(dt, lat, lon, tz_str)
+    chart = calculate_chart_data(dt, lat, lon, tz_str)
+    _enrich_chart_for_template(chart)
+    return chart
 
 def get_sunrise_sunset_moonrise(target_date: date, lat: float, lon: float, tz_str: str) -> dict:
     from .astrology.panchang.sky import (get_sunrise, get_sunset, get_moonrise, get_moonset,
@@ -128,11 +181,7 @@ def kundli():
             chart["timezone"] = tz_str
             chart["birth_datetime"] = birth_dt.isoformat()
 
-            # Legacy compatibility for template keys
-            chart["house_occupants"] = {h: [] for h in range(1, 13)}
-            for p, data in chart["planets"].items():
-                chart["house_occupants"][data["house"]].append(p)
-            chart["lagna"] = {"rashi": chart["asc_rashi"]}
+            _enrich_chart_for_template(chart)
 
             # Persist in session for transit/dasha/predictions
             session["birth_lat"]   = float(lat)
@@ -172,6 +221,8 @@ def load_kundli(cid):
     if not chart:
         flash("Chart not found.", "danger")
         return redirect(url_for("main.index"))
+
+    _enrich_chart_for_template(chart)
 
     # Reconstitute session from saved chart
     session["birth_lat"]   = chart.get("latitude", 28.6139)
@@ -231,10 +282,7 @@ def transit():
         try:
             birth_dt = datetime.strptime(f"{dob} {tob}", "%Y-%m-%d %H:%M")
             natal_chart = calculate_chart_data(birth_dt, float(lat), float(lon), tz_str)
-            natal_chart["house_occupants"] = {h: [] for h in range(1, 13)}
-            for p, data in natal_chart["planets"].items():
-                natal_chart["house_occupants"][data["house"]].append(p)
-            natal_chart["houses"] = [{"rashi": (natal_chart["asc_rashi"] + i - 1) % 12, "house": i} for i in range(1, 13)]
+            _enrich_chart_for_template(natal_chart)
         except Exception:
             pass
 
@@ -269,8 +317,7 @@ def dasha():
             chart      = calculate_chart_data(birth_dt, float(lat), float(lon), tz)
             moon_lon   = chart["planets"]["Moon"]["longitude"]
             dasha_data = get_vimshottari_periods(moon_lon, birth_dt)
-            # Compat for template
-            chart["lagna"] = {"rashi": chart["asc_rashi"]}
+            _enrich_chart_for_template(chart)
         except Exception as e:
             error = str(e)
     else:

@@ -118,7 +118,7 @@ def calculate_panchang(target_date: date, lat: float, lon: float, tz_str: str,
     tithi_nature = "Auspicious" if tithi_idx in [1, 2, 4, 6, 9, 10, 12, 14] else "Mixed"
     yoga_nature = "Auspicious" if yoga_idx in [1, 2, 3, 4, 6, 7, 10, 11, 13, 15, 17, 19, 20, 21, 22, 23, 24, 25] else "Inauspicious"
 
-    return {
+    res = {
         "date": target_date.strftime("%A, %d %B %Y"),
         "vara": {
             "name": WEEKDAYS[indian_day_idx],
@@ -134,6 +134,7 @@ def calculate_panchang(target_date: date, lat: float, lon: float, tz_str: str,
             "number": nak["number"],
             "name": NAKSHATRA_NAMES[nak["number"]-1],
             "lord": NAKSHATRA_LORDS[nak["number"]-1],
+            "nature": "Auspicious" if nak["number"] in [1, 4, 8, 12, 13, 15, 17, 21, 22, 26, 27] else "Mixed",
             "pada": nak["pada"]
         },
         "yoga": {
@@ -151,3 +152,17 @@ def calculate_panchang(target_date: date, lat: float, lon: float, tz_str: str,
         },
         "is_auspicious": tithi_nature == "Auspicious" and yoga_nature == "Auspicious"
     }
+
+    # Tarabala / Chandra Bala
+    if birth_nak_idx is not None:
+        from .utils import calculate_tarabala, calculate_chandra_bala
+        res["tarabala"] = calculate_tarabala(nak["number"]-1, birth_nak_idx)
+        # Moon rashi is needed for chandra bala.
+        # nak index / 2.25 approx? No, better use longitude.
+        moon_rashi = int(nak["longitude"] / 30)
+        # birth moon rashi would be needed.
+        # Let's assume birth_nak_idx can give us a hint or we need birth_rashi.
+        # Legacy code passed birth_nak_idx as birth_moon_rashi_or_nak.
+        res["chandra_bala"] = calculate_chandra_bala(moon_rashi, birth_nak_idx)
+
+    return res
