@@ -68,19 +68,31 @@ def _enrich_chart_for_template(chart: dict):
         })
 
     # planets cleanup for legacy templates
+    from .astrology.core.planets import NAKSHATRA_NAMES, NAKSHATRA_LORDS, NAK_SPAN
     for p, data in chart["planets"].items():
         data["retrograde"] = data.get("is_retrograde", False)
         # Add color if missing
         if "color" not in data:
             data["color"] = PLANET_COLORS.get(p, "#fff")
         # Add dms if missing
+        lon = data.get("longitude", 0)
         if "dms" not in data:
-            p_deg = data.get("degree", 0)
+            p_deg = lon % 30
             pd = int(p_deg)
             pm = int((p_deg - pd) * 60)
             data["dms"] = f"{pd}°{pm}'"
         if "rashi_name" not in data:
             data["rashi_name"] = rashi_names[data["rashi"]]
+
+        # Add nakshatra info
+        if "nakshatra" not in data:
+            nak_idx = int(lon / NAK_SPAN)
+            nak_deg = lon % NAK_SPAN
+            data["nakshatra"] = {
+                "name": NAKSHATRA_NAMES[nak_idx],
+                "pada": int(nak_deg / (NAK_SPAN / 4)) + 1,
+                "lord": NAKSHATRA_LORDS[nak_idx]
+            }
 
 def calculate_transit_chart(lat: float, lon: float, tz_str: str, dt: datetime = None) -> dict:
     from .astrology.core.chart import calculate_chart_data
