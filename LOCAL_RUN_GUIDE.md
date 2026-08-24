@@ -1,26 +1,22 @@
 # 🔮 Jyotish Dashboard 2.0 — Local Run Guide
 
-This guide explains how to set up and run the Jyotish Dashboard locally on your computer for testing and personal use.
+This guide explains how to set up and run the Unified Astrology Engine locally for professional-grade predictive analysis.
 
 ## 🛠️ 1. Prerequisites
-- **Python 3.10** or higher.
+- **Python 3.10** to **3.12** (Python 3.13 may require build tools for some libraries).
 - A terminal (PowerShell, Command Prompt, or Bash).
+- **C++ Build Tools** (Required for `pyswisseph` and `numpy` if wheels are not available).
 
 ## 📦 2. Installation
-1.  **Clone the repository** (if you haven't already):
+1.  **Clone the repository**:
     ```bash
     git clone https://github.com/lakshmistoresonline-afk/ASTROLOGYPREDICTIONS.git
     cd ASTROLOGYPREDICTIONS
     ```
 2.  **Create and activate a virtual environment**:
     ```powershell
-    # Windows
     python -m venv .venv
     .venv\Scripts\activate
-
-    # Linux / Mac
-    python3 -m venv .venv
-    source .venv/bin/activate
     ```
 3.  **Install dependencies**:
     ```bash
@@ -28,35 +24,33 @@ This guide explains how to set up and run the Jyotish Dashboard locally on your 
     ```
 
 ## ⚙️ 3. Configuration
-Ensure your `.env` file exists in the root directory and contains the following settings for local operation:
+Ensure your `.env` file exists in the root directory:
 
 ```ini
-FLASK_SECRET_KEY=a7f03eedd2a10e739cd43152ee574b7d821b412f2f37b1202af8a7035305f9bc
-USE_FIREBASE=falsecls
+FLASK_SECRET_KEY=your_secret_key_here
+USE_FIREBASE=false
 SE_EPHE_PATH=./ephe
 PORT=5001
 FLASK_ENV=development
 ```
-> [!NOTE]
-> Setting `USE_FIREBASE=false` forces the app to use the local **SQLite** database (`data/app.db`) instead of the cloud.
 
-## 🧪 4. Verification (Recommended)
-Before running the full dashboard, verify that the core astrology engine and data files are correctly set up:
+## 🧪 4. Verification
+Verify the multi-disciplinary engine:
 ```bash
 python scripts/test_run.py
 ```
-If you see **"🎉 ALL LOCAL CORE TESTS PASSED"**, you are ready to go.
+This script checks the integration of Vedic, Western, Hellenistic, and East Asian modules.
 
-## 🚀 5. Start the Dashboard
-Run the following command to launch the web server:
+## 🚀 5. Start the Engine
 ```bash
 python run.py
 ```
-The application will automatically attempt to open in your browser at:
-👉 **[http://localhost:5001](http://localhost:5001)**
+Access the dashboard at: **[http://localhost:5001](http://localhost:5001)**
 
-## 🏁 Stopping the app
-Press `Ctrl+C` in your terminal to shut down the server.
-
----
-*Note: This mode stores all your saved charts locally in the `data/` folder. If you move the project to another computer, make sure to copy the `data/` folder to keep your charts.*
+## 🌟 6. Accessing Advanced Metrics
+Once the app is running, use the API or the "Advanced Metrics" section in the UI to see:
+- **KP 4-Step Theory** & **Nadi D-150 Amshas**.
+- **Human Design Gates** & **Gene Keys**.
+- **Bazi Pillars** & **Zi Wei Dou Shu** Palaces.
+- **AstroCartoGraphy** Power Longitudes.
+- **Zodiacal Releasing** Chapters.

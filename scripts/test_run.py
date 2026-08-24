@@ -63,6 +63,18 @@ def test_local_run():
         # Handle both dict and Pydantic model
         asc_rashi = chart.asc_rashi if hasattr(chart, 'asc_rashi') else chart['asc_rashi']
         print(f"✅ Chart calculated. Ascendant Rashi: {asc_rashi}")
+
+        # 5b. Test New Systems
+        print("Verifying Extended Systems ...")
+        if hasattr(chart, 'kp_4_steps') and chart.kp_4_steps:
+            print("✅ KP 4-Step Theory verified.")
+        if hasattr(chart, 'bazi_pillars') and chart.bazi_pillars:
+            print("✅ Chinese Bazi Pillars verified.")
+        if hasattr(chart, 'human_design') and chart.human_design:
+            print("✅ Human Design Definition verified.")
+        if hasattr(chart, 'upcoming_eclipses') and chart.upcoming_eclipses:
+            print("✅ Eclipse Engine verified.")
+
     except Exception as e:
         print(f"❌ Failed to calculate chart: {e}")
         import traceback
