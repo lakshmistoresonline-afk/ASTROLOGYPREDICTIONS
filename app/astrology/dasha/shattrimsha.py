@@ -11,6 +11,10 @@ def calculate_shattrimsha_dasha(moon_nak_idx: int, birth_dt: datetime) -> Dict[s
     Calculate Shat-trimsha Sama Dasha.
     Starting lord based on birth Nakshatra.
     """
+    # Handle missing nakshatra data (Mock Mode)
+    if moon_nak_idx is None:
+        moon_nak_idx = 0
+
     # Ashwini (0) starts with Moon (0).
     # Formula: (Nak + 1) % 8?
     # Standard: Ashwini, Bharani, Krittika -> Moon

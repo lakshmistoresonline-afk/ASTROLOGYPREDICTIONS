@@ -1,4 +1,4 @@
-from typing import Dict
+from typing import Dict, Any
 
 # Linear mapping of 64 Hexagrams to the 360 degree circle
 HEXAGRAM_NAMES = {

@@ -74,15 +74,20 @@ def check_jaimini_rajayoga_advanced(chart: Any) -> List[Dict[str, Any]]:
     dk_name = karakas.get("Darakaraka (DK) - Spouse")
 
     # 1. AK & AmK association
-    if are_associated(ak_name, amk_name, chart.planets):
+    if ak_name and amk_name and are_associated(ak_name, amk_name, chart.planets):
         yogas.append({"name": "Jaimini Rajayoga (AK-AmK)", "strength": "HIGH"})
 
-    # 2. AK & PK association
-    if are_associated(ak_name, pk_name, chart.planets):
-        yogas.append({"name": "Jaimini Rajayoga (AK-PK)", "strength": "MEDIUM"})
-
-    # 3. AmK & PK association
-    if are_associated(amk_name, pk_name, chart.planets):
-        yogas.append({"name": "Jaimini Rajayoga (AmK-PK)", "strength": "MEDIUM"})
-
     return yogas
+
+def get_karakamsha_swamsha(planets: Dict[str, Any], navamsha_lagna_rashi: int) -> Dict[str, Any]:
+    """Calculate Karakamsha and Swamsha points."""
+    # Find AK
+    karakas = calculate_charakarakas({n: p.longitude for n, p in planets.items() if hasattr(p, 'longitude')})
+    ak_name = karakas.get("Atmakaraka (AK) - Soul")
+
+    results = {"Swamsha": navamsha_lagna_rashi}
+    if ak_name in planets:
+        results["Karakamsha"] = planets[ak_name].navamsa_rashi
+        results["Atmakaraka"] = ak_name
+
+    return results

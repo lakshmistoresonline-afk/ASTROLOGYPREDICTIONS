@@ -22,7 +22,7 @@ def get_angular_points(jd_ut: float) -> Dict[str, Dict[str, float]]:
     for name, pid in p_names.items():
         # Get Planet RA and Dec
         res = swe.calc_ut(jd_ut, pid, swe.FLG_EQUATORIAL)
-        ra = res[0] # Planet Right Ascension in degrees
+        ra = res[0] if not isinstance(res[0], list) else res[0][0] # Planet Right Ascension in degrees
 
         # MC Longitude: Longitude where Planet RA = RAMC
         # RAMC = GST + Longitude

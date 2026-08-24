@@ -158,6 +158,10 @@ def calculate_dagtha_rashis(tithi_num: int) -> List[int]:
 
 def calculate_special_lagnas(birth_jd: float, sunrise_jd: float, sun_lon: float) -> Dict[str, float]:
     """HL = Hora Lagna, GL = Ghati Lagna, PL = Pranapada Lagna, BL = Bhava Lagna."""
+    # Handle missing ephemeris data (Mock Mode)
+    if sunrise_jd is None:
+        return {"Hora Lagna": sun_lon, "Ghati Lagna": sun_lon, "Bhava Lagna": sun_lon, "Pranapada Lagna": sun_lon}
+
     # Time elapsed in decimal days
     diff = birth_jd - sunrise_jd
     # Convert to hours (1 day = 24 hours)

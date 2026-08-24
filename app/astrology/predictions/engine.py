@@ -80,7 +80,7 @@ def generate_evidence_based_predictions(chart: CanonicalChart, selected_date: da
         "Social Service": (get_life_purpose_prediction, ["Saturn", chart.house_lords[6]], [6, 10]),
         "Mental Stability": (get_health_prediction, ["Moon", "Mercury", chart.house_lords[4]], [1, 4, 5]),
         "Speculation": (get_speculation_prediction, ["Mercury", "Rahu", chart.house_lords[5]], [5, 8, 11]),
-        "Yearly Forecast": (lambda c, date=selected_date: get_yearly_prediction(c, date.year), ["Sun", chart.house_lords[1]], [1, 9, 10])
+        "Yearly Forecast": (lambda c, date=selected_date, **kwargs: get_yearly_prediction(c, date.year), ["Sun", chart.house_lords[1]], [1, 9, 10])
     }
 
     results = []
@@ -143,8 +143,8 @@ def generate_evidence_based_predictions(chart: CanonicalChart, selected_date: da
     micro_timing = get_current_micro_timing(chart)
 
     # 3. Add Panchapakshi & BCP Summary
-    moon_nak = chart.planets["Moon"].nakshatra.index + 1
-    from ..panchang.tithi import get_tithi
+    moon_nak = (chart.planets["Moon"].nakshatra.index or 0) + 1
+    from ..panchang.tithi import get_tithi_info
     from ..panchang.sky import get_sunrise, get_sunset
     from ..core.swe_proxy import swe
     from ..core.datetime import datetime_to_jd
@@ -153,8 +153,8 @@ def generate_evidence_based_predictions(chart: CanonicalChart, selected_date: da
     sr_jd = get_sunrise(jd, chart.latitude, chart.longitude)
     ss_jd = get_sunset(jd, chart.latitude, chart.longitude)
 
-    t_data = get_tithi(jd)
-    bird = get_panchapakshi_info(moon_nak, t_data["number"] <= 15)
+    t_data = get_tithi_info(jd)
+    bird = get_panchapakshi_info(moon_nak, (t_data["number"] or 1) <= 15)
 
     # Calculate Segment (1-5)
     segment = 0

@@ -121,8 +121,8 @@ class TimingEngine:
         t_nak_idx = int(moon_pos["longitude"] / (360/27))
         t_rashi_idx = int(moon_pos["longitude"] // 30)
 
-        n_nak_idx = chart.planets["Moon"].nakshatra.index
-        n_rashi_idx = chart.planets["Moon"].rashi
+        n_nak_idx = chart.planets["Moon"].nakshatra.index or 0
+        n_rashi_idx = chart.planets["Moon"].rashi or 0
 
         tara = calculate_tarabala(n_nak_idx, t_nak_idx)
         chandra = calculate_chandrabala(n_rashi_idx, t_rashi_idx)

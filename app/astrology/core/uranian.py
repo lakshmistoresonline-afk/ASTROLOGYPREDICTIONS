@@ -18,7 +18,8 @@ def get_uranian_positions(jd_ut: float) -> Dict[str, Dict[str, Any]]:
     results = {}
     for name, tid in TNPS.items():
         res = swe.calc_ut(jd_ut, tid)
-        lon = res[0]
+        # Handle both native list return and mock return
+        lon = res[0] if not isinstance(res[0], list) else res[0][0]
         results[name] = {
             "longitude": lon,
             "rashi": int(lon // 30),

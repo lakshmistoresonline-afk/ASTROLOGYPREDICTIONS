@@ -18,7 +18,7 @@ def get_mundane_indicators(jd_ut: float) -> Dict[str, Any]:
     outers = {}
     for name, pid in outer_pid.items():
         res = swe.calc_ut(jd_ut, pid)
-        lon = res[0]
+        lon = res[0] if not isinstance(res[0], list) else res[0][0]
         outers[name] = {"longitude": lon, "rashi": int(lon // 30)}
 
     results["outer_planet_status"] = outers

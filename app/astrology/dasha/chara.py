@@ -1,7 +1,7 @@
 from typing import List, Dict, Any
 from datetime import datetime, timedelta
 
-def calculate_chara_dasha(asc_rashi: int, planets: Dict[str, Any]) -> List[Dict[str, Any]]:
+def calculate_chara_dasha(asc_rashi: int, planets: Dict[str, Any], birth_dt: datetime = None) -> List[Dict[str, Any]]:
     """
     Jaimini Chara Dasha calculation (KN Rao method).
     Signs are 0-indexed (Aries=0).
@@ -41,6 +41,7 @@ def calculate_chara_dasha(asc_rashi: int, planets: Dict[str, Any]) -> List[Dict[
             continue
 
         lord_rashi = lord_p.get("rashi")
+        if lord_rashi is None: lord_rashi = 0
 
         # Years = Distance from Sign to Lord's Sign
         # If Direct sign: count forward

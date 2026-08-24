@@ -114,7 +114,7 @@ def calculate_panchang(target_date: date, lat: float, lon: float, tz_str: str,
     moonset_jd = get_moonset(jd_ut, lat, lon)
 
     def jd_to_local_str(jd):
-        if not jd or jd < 0: return "—"
+        if jd is None or jd < 0: return "—"
         y, m, d, h = swe.revjul(jd)
         hh = int(h)
         mm = int((h - hh) * 60)
@@ -122,11 +122,13 @@ def calculate_panchang(target_date: date, lat: float, lon: float, tz_str: str,
         return dt_utc.astimezone(tz).strftime("%I:%M %p")
 
     def jd_to_diff_hours(jd_target):
-        if not jd_target or jd_target < 0: return 0.0
+        if jd_target is None or jd_target < 0: return 0.0
         return round((jd_target - jd_ut) * 24, 1)
 
-    tithi_idx = (tithi["number"] - 1) % 30
-    yoga_idx = (yoga["number"] - 1) % 27
+    t_num = tithi["number"] or 1
+    tithi_idx = (t_num - 1) % 30
+    yoga_num = yoga["number"] or 1
+    yoga_idx = (yoga_num - 1) % 27
 
     tithi_nature = "Auspicious" if tithi_idx in [1, 2, 4, 6, 9, 10, 12, 14] else "Mixed"
     yoga_nature = "Auspicious" if yoga_idx in [1, 2, 3, 4, 6, 7, 10, 11, 13, 15, 17, 19, 20, 21, 22, 23, 24, 25] else "Inauspicious"
@@ -140,21 +142,21 @@ def calculate_panchang(target_date: date, lat: float, lon: float, tz_str: str,
             "lord": WEEKDAY_LORDS[indian_day_idx]
         },
         "tithi": {
-            "number": tithi["number"],
+            "number": t_num,
             "name": TITHI_NAMES[tithi_idx],
             "paksha": TITHI_PAKSHA[tithi_idx],
             "nature": tithi_nature,
             "hours_remaining": jd_to_diff_hours(get_tithi_end_time(jd_ut)),
-            "is_ekadashi": tithi["number"] in [11, 26],
-            "is_purnima": tithi["number"] == 15,
-            "is_amavasya": tithi["number"] == 30,
+            "is_ekadashi": t_num in [11, 26],
+            "is_purnima": t_num == 15,
+            "is_amavasya": t_num == 30,
         },
         "nakshatra": {
-            "number": nak["number"],
-            "name": NAKSHATRA_NAMES[nak["number"]-1],
-            "lord": NAKSHATRA_LORDS[nak["number"]-1],
-            "nature": "Auspicious" if nak["number"] in [1, 4, 8, 12, 13, 15, 17, 21, 22, 26, 27] else "Mixed",
-            "pada": nak["pada"],
+            "number": nak["number"] or 1,
+            "name": NAKSHATRA_NAMES[(nak["number"] or 1)-1],
+            "lord": NAKSHATRA_LORDS[(nak["number"] or 1)-1],
+            "nature": "Auspicious" if (nak["number"] or 1) in [1, 4, 8, 12, 13, 15, 17, 21, 22, 26, 27] else "Mixed",
+            "pada": nak["pada"] or 1,
             "hours_remaining": jd_to_diff_hours(get_nakshatra_end_time(jd_ut)),
         },
         "yoga": {

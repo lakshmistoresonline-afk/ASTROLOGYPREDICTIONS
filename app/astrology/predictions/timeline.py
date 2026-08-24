@@ -30,19 +30,16 @@ def get_life_timeline(chart: CanonicalChart) -> List[Dict[str, Any]]:
         # Determine core mahadasha theme
         theme = _get_lord_theme(lord)
 
-        # Check for specific "peaks" within the mahadasha (Simplified for 3-year sub-cycles)
-        # In a real engine, we'd check every Antardasha.
-
         events = []
-        for d_name, (planets, houses) in domains.items():
+        for d_name, (planets_list, houses) in domains.items():
              # Check mahadasha lord support
-             if lord in planets:
+             if lord in planets_list:
                   events.append(f"{d_name} Activation")
 
         timeline.append({
             "period": f"{lord} Cycle",
-            "start": m["start"].strftime("%Y"),
-            "end": m["end"].strftime("%Y"),
+            "start": m["start"].strftime("%Y") if hasattr(m["start"], "strftime") else str(m["start"]),
+            "end": m["end"].strftime("%Y") if hasattr(m["end"], "strftime") else str(m["end"]),
             "theme": theme,
             "status": "Active" if m["start"] <= now <= m["end"] else "Past" if m["end"] < now else "Upcoming",
             "lord": lord,

@@ -22,7 +22,7 @@ def get_asteroid_positions(jd_ut: float) -> Dict[str, Dict[str, Any]]:
         # Swiss Ephemeris uses negative IDs or specific flags for asteroids
         # For Ceres (1), Pallas (2), Juno (3), Vesta (4) - they are built-in
         res = swe.calc_ut(jd_ut, aid)
-        lon = res[0]
+        lon = res[0] if not isinstance(res[0], list) else res[0][0]
         results[name] = {
             "longitude": lon,
             "rashi": int(lon // 30),

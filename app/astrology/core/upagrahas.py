@@ -32,6 +32,10 @@ def calculate_upagrahas(jd_ut: float, sr_jd: float, ss_jd: float, next_sr_jd: fl
     Calculate Gulika and Mandi longitudes.
     sr = sunrise, ss = sunset
     """
+    # Handle missing ephemeris data (Mock Mode)
+    if sr_jd is None or ss_jd is None:
+        return {"gulika_jd": jd_ut}
+
     is_day = sr_jd <= jd_ut <= ss_jd
 
     if is_day:

@@ -17,10 +17,13 @@ if not swe:
         def set_sid_mode(self, mode): pass
         def set_topo(self, lon, lat, alt): pass
         def julday(self, y, m, d, h): return 0.0
-        def calc_ut(self, jd, pid, flags=0): return ([0.0]*6, 0)
+        def calc_ut(self, jd, pid, flags=0): return ([0.0, 0.0, 0.0, 0.0, 0.0, 0.0], 0)
         def get_ayanamsa_ut(self, jd): return 0.0
         def sidtime(self, jd): return 0.0
         def houses_ex(self, jd, lat, lon, hsys, flags): return ([0.0]*13, [0.0]*10)
         def revjul(self, jd): return (2000, 1, 1, 12.0)
+        def sol_eclipse_when_next(self, jd, flags): return (0, [0.0]*10)
+        def lun_eclipse_when_next(self, jd, flags): return (0, [0.0]*10)
+        def rise_trans(self, *args): return (0, [0.0]*10)
 
     swe = MockSWE()

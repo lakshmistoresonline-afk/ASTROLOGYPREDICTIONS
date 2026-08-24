@@ -104,7 +104,7 @@ class CanonicalChart(BaseModel):
     arudha_padas: Dict[str, int] = {}    # AL, A2-A12 (Rashi index)
     yogi_details: Dict[str, str] = {}    # Yogi, Avayogi, Saha Yogi planets
     jaimini_aspects: Dict[int, List[int]] = {} # Rashi -> [Aspecting Rashis]
-    argala_analysis: Dict[int, Dict[str, List[int]]] = {} # House -> {"primary": [], "obstructing": []}
+    argala_analysis: Dict[int, Dict[str, List[Any]]] = {} # House -> {"primary": [], "obstructing": []}
     vimsopaka_total: float = 0.0
     panchapakshi: Dict[str, str] = {}    # Bird, Activity, Timing
     dagtha_rashis: List[int] = []        # Burnt signs based on Tithi
@@ -135,7 +135,7 @@ class CanonicalChart(BaseModel):
     kalachakra_dasha: Dict[str, Any] = {}
     shree_lagna: float = 0.0
     varnada_lagna: Dict[int, int] = {} # House -> Rashi
-    chara_dasha: Dict[str, Any] = {}
+    chara_dasha: Any = {}
     pindayu: Dict[str, float] = {}
     shattrimsha_dasha: Dict[str, Any] = {}
     visha_amrit_ghati: Dict[str, List[str]] = {}
@@ -174,12 +174,8 @@ class CanonicalChart(BaseModel):
     human_design: Dict[str, Any] = {}
     hellenistic_lots: Dict[str, float] = {}
     annual_profection: int = 0
-    gene_keys: List[Dict[str, str]] = []
+    gene_keys: List[Dict[str, Any]] = []
     egyptian_bounds: Dict[str, str] = {}
-    galactic_aspects: List[Dict[str, Any]] = []
-    zi_wei_dou_shu: Dict[str, Any] = {}
-    lilith: Dict[str, Any] = {}
-    geomancy: Dict[str, Any] = {}
     zodiacal_releasing: Dict[str, List[Dict[str, Any]]] = {}
     uranian_formulas: Dict[str, float] = {}
     astrocartography: Dict[str, Any] = {}
@@ -187,6 +183,10 @@ class CanonicalChart(BaseModel):
     solar_arc_directions: Dict[str, float] = {}
     draconic_chart: Dict[str, float] = {}
     lal_kitab_year_data: Dict[str, Any] = {}
+    galactic_aspects: List[Dict[str, Any]] = []
+    zi_wei_dou_shu: Dict[str, Any] = {}
+    lilith: Dict[str, Any] = {}
+    geomancy: Dict[str, Any] = {}
 
 class PredictionFactor(BaseModel):
     factor: str

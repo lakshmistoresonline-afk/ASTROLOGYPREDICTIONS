@@ -7,8 +7,6 @@ def calculate_vimshottari(moon_longitude: float, birth_dt: datetime) -> dict:
     balance = calculate_dasha_balance(moon_longitude)
     mahadashas_raw = get_vimshottari_periods(moon_longitude, birth_dt)
 
-    print(f"DEBUG: Starting Vimshottari for {moon_longitude}, balance: {balance['balance_years']}")
-
     # Match timezone awareness of birth_dt
     if birth_dt.tzinfo:
         now = datetime.now(birth_dt.tzinfo)
@@ -27,8 +25,10 @@ def calculate_vimshottari(moon_longitude: float, birth_dt: datetime) -> dict:
 
         m_data = {
             "lord": m["lord"],
-            "start": m_start.strftime("%d %b %Y"),
-            "end": m_end.strftime("%d %b %Y"),
+            "start": m_start, # Keep as datetime
+            "end": m_end,     # Keep as datetime
+            "start_str": m_start.strftime("%d %b %Y"),
+            "end_str": m_end.strftime("%d %b %Y"),
             "years": m["years"],
             "color": PLANET_COLORS.get(m["lord"], "#fff"),
             "is_current": is_m_current,

@@ -1,4 +1,4 @@
-from typing import Dict, List, Any
+from typing import Dict, List, Any, Optional
 
 def get_numerology_data(birth_date: str) -> Dict[str, Any]:
     """

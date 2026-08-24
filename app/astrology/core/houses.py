@@ -46,7 +46,19 @@ RASHI_LORDS = {
     8: "Jupiter", 9: "Saturn", 10: "Saturn", 11: "Jupiter",
 }
 
+RASHI_NAMES = [
+    "Mesha", "Vrishabha", "Mithuna", "Karka",
+    "Simha", "Kanya", "Tula", "Vrishchika",
+    "Dhanu", "Makara", "Kumbha", "Meena",
+]
+
 def get_house_lord(house_num: int, ascendant_rashi: int) -> str:
     """Return the lord of a given house number."""
     rashi = (ascendant_rashi + house_num - 1) % 12
+    return RASHI_LORDS[rashi]
+
+def get_house_lord_kp(house_num: int, cusps: list) -> str:
+    """Return the lord of the sign where a cusp longitude falls."""
+    longitude = cusps[house_num - 1]
+    rashi = int(longitude // 30)
     return RASHI_LORDS[rashi]

@@ -18,6 +18,10 @@ def get_temporal_friendship(p1_house: int, p2_house: int) -> int:
     Planets in 2nd, 3rd, 4th, 10th, 11th, 12th houses from a planet are friends.
     Returns: 1 for Friend, -1 for Enemy.
     """
+    # Handle missing house data (Mock Mode)
+    if p1_house is None or p2_house is None:
+        return 1 # Default to Friend for mock
+
     diff = (p2_house - p1_house + 12) % 12
     # Houses: 2, 3, 4, 10, 11, 12 (0-indexed: 1, 2, 3, 9, 10, 11)
     if diff in {1, 2, 3, 9, 10, 11}:

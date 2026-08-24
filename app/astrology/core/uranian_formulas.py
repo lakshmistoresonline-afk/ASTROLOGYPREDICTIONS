@@ -13,11 +13,16 @@ def calculate_uranian_formulas(planets: Dict[str, Any], tnps: Dict[str, Any]) ->
     all_p = {**planets, **tnps}
     results = {}
 
+    def get_lon(obj):
+        if hasattr(obj, 'longitude'): return obj.longitude
+        if isinstance(obj, dict): return obj.get('longitude', 0.0)
+        return 0.0
+
     for name, (a, b, c) in FORMULAS.items():
         if a in all_p and b in all_p and c in all_p:
-            lon_a = getattr(all_p[a], "longitude", all_p[a].get("longitude", 0))
-            lon_b = getattr(all_p[b], "longitude", all_p[b].get("longitude", 0))
-            lon_c = getattr(all_p[c], "longitude", all_p[c].get("longitude", 0))
+            lon_a = get_lon(all_p[a])
+            lon_b = get_lon(all_p[b])
+            lon_c = get_lon(all_p[c])
 
             results[name] = (lon_a + lon_b - lon_c + 360) % 360
 

@@ -120,7 +120,7 @@ def cross_validate_with_specialized(chart: CanonicalChart, domain_name: str, bas
     # Map domain to house
     house_map = {"Career": 10, "Finance": 2, "Marriage": 7, "Health": 1}
     h_idx = house_map.get(domain_name)
-    if h_idx:
+    if h_idx is not None and chart.asc_rashi is not None:
         target_rashi = (chart.asc_rashi + h_idx - 1) % 12
         for r_idx, aspecting in chart.rashi_drishti.items():
             if target_rashi in aspecting:
@@ -131,9 +131,11 @@ def cross_validate_with_specialized(chart: CanonicalChart, domain_name: str, bas
 
     # 4. Sudarshana Chakra Resonance
     # If the house is strong from all 3 points (Lagna, Moon, Sun)
-    s_chakra = chart.sudarshana_chakra.get(house_map.get(domain_name, 0))
-    if s_chakra and s_chakra["resonance"] == "HIGH":
-        refined.append(EvidenceEngine.create_factor("Sudarshana Resonance", "house", "positive", 20, "This domain is strong from the perspective of the Body, Mind, and Soul (Sudarshana), indicating a definitive karmic promise."))
+    s_h_idx = house_map.get(domain_name)
+    if s_h_idx:
+        s_chakra = chart.sudarshana_chakra.get(s_h_idx)
+        if s_chakra and s_chakra["resonance"] == "HIGH":
+            refined.append(EvidenceEngine.create_factor("Sudarshana Resonance", "house", "positive", 20, "This domain is strong from the perspective of the Body, Mind, and Soul (Sudarshana), indicating a definitive karmic promise."))
 
     # 5. Sensitive Points (Bhrigu Bindu / Khara)
     bb_lon = chart.sensitive_points.get("Bhrigu Bindu")
@@ -147,7 +149,7 @@ def cross_validate_with_specialized(chart: CanonicalChart, domain_name: str, bas
     # 6. KP Significators
     # Level A & B are strongest
     h_num = house_map.get(domain_name)
-    if h_num:
+    if h_num is not None:
         sigs = chart.kp_significators.get(h_num, {})
         strong_sigs = sigs.get("A", []) + sigs.get("B", [])
         for s in strong_sigs:
@@ -157,30 +159,34 @@ def cross_validate_with_specialized(chart: CanonicalChart, domain_name: str, bas
 
     # 7. Bhrigu Chakra Paddhati (BCP) Activation
     bcp = chart.bcp_activation
-    if bcp and bcp.get("active_house") == h_num:
+    if bcp and h_num is not None and bcp.get("active_house") == h_num:
         refined.append(EvidenceEngine.create_factor("BCP Activation", "house", "positive", 25, f"Bhrigu Chakra Paddhati (BCP) confirms this house is currently ACTIVE for your {bcp['age']}th year, bringing matters of {domain_name} to the forefront."))
 
     # 8. Karakamsha / Swamsha Support
     ks = chart.karakamsha_swamsha
-    if ks:
+    if ks and h_num is not None and chart.asc_rashi is not None:
         # Check if domain house relative to Karakamsha is strong
         k_rashi = ks.get("Karakamsha")
-        target_rashi = (chart.asc_rashi + h_num - 1) % 12
-        rel_h = (target_rashi - k_rashi + 12) % 12 + 1
-        if rel_h in [1, 4, 7, 10, 5, 9]:
-            refined.append(EvidenceEngine.create_factor("Soul Strength (Karakamsha)", "yoga", "positive", 12, f"This life area is auspiciously placed (H{rel_h}) from your Atmakaraka's Navamsha seat, ensuring soul-level fulfillment."))
+        if k_rashi is not None:
+            target_rashi = (chart.asc_rashi + h_num - 1) % 12
+            rel_h = (target_rashi - k_rashi + 12) % 12 + 1
+            if rel_h in [1, 4, 7, 10, 5, 9]:
+                refined.append(EvidenceEngine.create_factor("Soul Strength (Karakamsha)", "yoga", "positive", 12, f"This life area is auspiciously placed (H{rel_h}) from your Atmakaraka's Navamsha seat, ensuring soul-level fulfillment."))
 
     # 9. Panchadha Maitri (Planetary Relationships)
     # Check relationship between domain lord and Lagna Lord
     l1_name = chart.house_lords.get(1)
-    d_lord_name = chart.house_lords.get(h_num)
-    if l1_name and d_lord_name and l1_name != d_lord_name:
-        from ..strength.friendship import get_compound_friendship
-        rel = get_compound_friendship(l1_name, d_lord_name, chart.planets[l1_name].house, chart.planets[d_lord_name].house)
-        if rel in ["Great Friend", "Friend"]:
-             refined.append(EvidenceEngine.create_factor("Planetary Relationship", "lord", "positive", 10, f"The lord of this domain ({d_lord_name}) is a {rel} of your Lagna Lord ({l1_name}), indicating ease of manifestation."))
-        elif rel in ["Enemy", "Great Enemy"]:
-             refined.append(EvidenceEngine.create_factor("Planetary Relationship", "lord", "negative", 10, f"The lord of this domain ({d_lord_name}) is an {rel} of your Lagna Lord ({l1_name}), suggesting internal conflict in achieving results."))
+    if h_num is not None:
+        d_lord_name = chart.house_lords.get(h_num)
+        if l1_name and d_lord_name and l1_name != d_lord_name:
+            from ..strength.friendship import get_compound_friendship
+            # Ensure planets exist
+            if l1_name in chart.planets and d_lord_name in chart.planets:
+                rel = get_compound_friendship(l1_name, d_lord_name, chart.planets[l1_name].house, chart.planets[d_lord_name].house)
+                if rel in ["Great Friend", "Friend"]:
+                     refined.append(EvidenceEngine.create_factor("Planetary Relationship", "lord", "positive", 10, f"The lord of this domain ({d_lord_name}) is a {rel} of your Lagna Lord ({l1_name}), indicating ease of manifestation."))
+                elif rel in ["Enemy", "Great Enemy"]:
+                     refined.append(EvidenceEngine.create_factor("Planetary Relationship", "lord", "negative", 10, f"The lord of this domain ({d_lord_name}) is an {rel} of your Lagna Lord ({l1_name}), suggesting internal conflict in achieving results."))
 
     return refined
 

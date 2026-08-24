@@ -34,8 +34,10 @@ def get_marriage_prediction(chart: CanonicalChart, domain_type: str = "Marriage 
     # 4. STABILITY (JUPITER)
     jupiter = planets["Jupiter"]
     from ..strength.aspects import get_graha_drishti
-    j_aspects = get_graha_drishti("Jupiter", jupiter.rashi)
-    if seventh_lord.rashi in j_aspects or 7 in [(r - asc_rashi + 12) % 12 + 1 for r in j_aspects]:
+    j_aspects = get_graha_drishti("Jupiter", jupiter.rashi or 0)
+
+    seventh_lord_rashi = seventh_lord.rashi or 0
+    if seventh_lord_rashi in j_aspects or 7 in [(r - asc_rashi + 12) % 12 + 1 for r in j_aspects]:
         factors.append(EvidenceEngine.create_factor("Marital Stability", "planet", "positive", 12, "Jupiter's benefic gaze on the 7th house/lord ensures wisdom and stability in the bond."))
 
     # 5. SEPARATION INDICATORS
@@ -99,7 +101,7 @@ def get_marriage_prediction(chart: CanonicalChart, domain_type: str = "Marriage 
         factors.append(EvidenceEngine.create_factor("Relational Intensity", "yoga", "positive", 10, "A connection between Venus and Mars indicates a passionate approach to relationships."))
 
     # Delay/Stability (Saturn on 7th)
-    if l7_name == "Saturn" or planets["Saturn"].house == 7:
+    if seventh_lord_name == "Saturn" or planets["Saturn"].house == 7:
         factors.append(EvidenceEngine.create_factor("Relational Maturity", "planet", "neutral", 8, "Saturn's influence on the 7th sector suggests stability or potential delays in marital manifestation."))
 
     # 7. Timing Integration

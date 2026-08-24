@@ -8,6 +8,7 @@ def get_wealth_prediction(chart: CanonicalChart, domain_type: str = "Wealth & Sa
     planets = chart.planets
     house_lords = chart.house_lords
     sav = chart.ashtakavarga.get("SAV", [28] * 12)
+    asc_rashi = chart.asc_rashi
 
     # 1. 2nd HOUSE (SAVINGS)
     l2_name = house_lords[2]

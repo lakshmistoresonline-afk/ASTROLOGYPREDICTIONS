@@ -160,20 +160,25 @@ def calculate_chart_data(birth_dt: datetime, lat: float, lon: float, tz_str: str
         varga = get_varga_chart(planets_lon, ascendant, d)
         divisional_charts[f"D{d}"] = varga
 
+    house_occupants_map = {h: [] for h in range(1, 13)}
+    for name, lon in planets_lon.items():
+        house = get_house_from_longitude(lon, ascendant)
+        house_occupants_map[house].append(name)
+
     # 4. Enhanced Planet Data
     planets = {}
     functional_status_map = get_functional_status(asc_rashi)
 
     # Temporary dict to build Shadbala
     from ..panchang.sky import get_sunrise, get_sunset
-    from ..panchang.tithi import get_tithi
+    from ..panchang.tithi import get_tithi_info
     from ..panchang.hora import WEEKDAY_TO_HORA_START, HORA_ORDER
 
     sunrise_jd = get_sunrise(jd_ut, lat, lon)
     sunset_jd = get_sunset(jd_ut, lat, lon)
     is_day = sunrise_jd < jd_ut < sunset_jd if sunrise_jd and sunset_jd else True
 
-    t_data = get_tithi(jd_ut)
+    t_data = get_tithi_info(jd_ut)
     is_shukla = t_data["number"] <= 15
 
     weekday_idx = (birth_dt.weekday() + 1) % 7 # 0=Sun
@@ -202,7 +207,11 @@ def calculate_chart_data(birth_dt: datetime, lat: float, lon: float, tz_str: str
     shadbala_map = calculate_shadbala(temp_chart_for_shadbala, is_day=is_day, is_shukla=is_shukla, wd_lord=wd_lord, hora_lord=hora_lord)
 
     for name, lon in planets_lon.items():
-        if name == "Ketu":
+        if name in ["Gulika", "Mandi"]:
+            lat_k = 0.0
+            speed_k = 0.0
+            is_retro_k = False
+        elif name == "Ketu":
             # Synthesize Ketu pos from Rahu if needed, or re-calculate
             # For now, simplistic synthesis
             lat_k = -raw_planets["Rahu"]["latitude"]
@@ -417,8 +426,8 @@ def calculate_chart_data(birth_dt: datetime, lat: float, lon: float, tz_str: str
     argala = calculate_full_argala(planets, asc_rashi)
 
     # F. Dagtha Rashis (Burnt Signs)
-    from ..panchang.tithi import get_tithi
-    tithi_data = get_tithi(jd_ut)
+    from ..panchang.tithi import get_tithi_info
+    tithi_data = get_tithi_info(jd_ut)
     dagtha = calculate_dagtha_rashis(tithi_data["number"])
 
     # G. Ishta/Kashta Totals
