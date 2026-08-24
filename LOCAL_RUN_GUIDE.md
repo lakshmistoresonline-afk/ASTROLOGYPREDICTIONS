@@ -13,15 +13,13 @@ This guide explains how to set up and run the Unified Astrology Engine locally f
     git clone https://github.com/lakshmistoresonline-afk/ASTROLOGYPREDICTIONS.git
     cd ASTROLOGYPREDICTIONS
     ```
-2.  **Create and activate a virtual environment**:
-    ```powershell
-    python -m venv .venv
-    .venv\Scripts\activate
-    ```
-3.  **Install dependencies**:
+2.  **Run the Supreme Doctor**:
+    This script will automatically detect and fix most environment issues.
     ```bash
-    pip install -r requirements.txt
+    python scripts/doctor.py
     ```
+    > [!IMPORTANT]
+    > If `pyswisseph` fails, you **MUST** install **Visual Studio C++ Build Tools** from [here](https://visualstudio.microsoft.com/visual-cpp-build-tools/).
 
 ## ⚙️ 3. Configuration
 Ensure your `.env` file exists in the root directory:
