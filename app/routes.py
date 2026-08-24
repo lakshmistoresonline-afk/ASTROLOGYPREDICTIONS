@@ -253,7 +253,7 @@ def get_sunrise_sunset_moonrise(target_date: date, lat: float, lon: float, tz_st
     from .astrology.panchang.sky import (get_sunrise, get_sunset, get_moonrise, get_moonset,
                                          get_rahu_kaal, get_gulika_kaal, get_yamaghanta)
     from .astrology.core.datetime import datetime_to_jd
-    import swisseph as swe
+    from .astrology.core.swe_proxy import swe
 
     tz = pytz.timezone(tz_str)
     noon_dt = datetime.combine(target_date, datetime.min.time()).replace(hour=12)
@@ -383,7 +383,7 @@ def kundli():
 
             # 0. Apply Ayanamsa Preference
             from .astrology.core.ephemeris import set_ayanamsa_mode
-            import swisseph as swe_lib
+            from .astrology.core.swe_proxy import swe as swe_lib
             ayanamsa_map = {"Lahiri": swe_lib.SIDM_LAHIRI, "Raman": swe_lib.SIDM_RAMAN, "KP": swe_lib.SIDM_KRISHNAMURTI}
             pref = session.get("ayanamsa", "Lahiri")
             set_ayanamsa_mode(ayanamsa_map.get(pref, swe_lib.SIDM_LAHIRI))
@@ -775,7 +775,7 @@ def varshaphala():
 
     # Calculate chart for that exact moment
     # We convert JD back to a datetime for calculate_chart_data
-    import swisseph as swe_mod
+    from .astrology.core.swe_proxy import swe as swe_mod
     y, m, d, h = swe_mod.revjul(sr_jd)
     # revjul h is decimal hour in UTC
     sr_dt_utc = datetime(y, m, d, int(h), int((h%1)*60), int(((h%1)*60%1)*60))
@@ -1646,7 +1646,7 @@ def panchang():
     if dob and tob:
         try:
             birth_dt = datetime.strptime(f"{dob} {tob}", "%Y-%m-%d %H:%M")
-            import swisseph as swe_mod
+            from .astrology.core.swe_proxy import swe as swe_mod
             from .astrology.core.datetime import datetime_to_jd
             from .astrology.core.ephemeris import get_planet_position
             jd = datetime_to_jd(birth_dt, tz_str)

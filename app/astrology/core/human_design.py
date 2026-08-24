@@ -46,9 +46,18 @@ def calculate_human_design(planets: Dict[str, Any]) -> Dict[str, Any]:
         if any(g in active_gates for g in gates):
             defined_centers.append(center)
 
+    # Profiles (Simplified: based on Sun/Earth degrees)
+    # Sun degree fractional part determines the line (1-6)
+    sun_lon = planets["Sun"].longitude
+    line = int((sun_lon % 1) * 6) + 1
+    # Earth is exactly opposite Sun
+    earth_lon = (sun_lon + 180) % 360
+    e_line = int((earth_lon % 1) * 6) + 1
+
     return {
         "active_gates": active_gates,
         "active_channels": found_channels,
         "defined_centers": defined_centers,
-        "type": "Projector" if "Sacral" not in defined_centers else "Generator"
+        "type": "Projector" if "Sacral" not in defined_centers else "Generator",
+        "profile": f"{line}/{e_line}"
     }

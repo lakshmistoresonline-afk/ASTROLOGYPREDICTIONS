@@ -1,5 +1,5 @@
 from typing import Dict, List, Any
-import swisseph as swe
+from .swe_proxy import swe
 
 def get_weather_indicators(jd_ut: float) -> Dict[str, Any]:
     """

@@ -1,4 +1,5 @@
-from typing import Dict, List, Tuple
+from typing import Dict, List, Tuple, Any
+from ..predictions.framework import are_associated
 
 def calculate_charakarakas(planets: Dict[str, float]) -> Dict[str, str]:
     """

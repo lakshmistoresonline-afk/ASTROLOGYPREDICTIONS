@@ -1,5 +1,6 @@
 from typing import Dict, Any, List
 from .ephemeris import get_planet_position, get_ayanamsa, set_topocentric
+from .swe_proxy import swe
 from .datetime import datetime_to_jd
 from .houses import get_houses, get_house_from_longitude, get_house_lord, RASHI_LORDS
 from .planets import PLANETS, NAKSHATRA_NAMES, NAKSHATRA_LORDS, NAK_SPAN

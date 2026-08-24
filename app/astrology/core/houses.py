@@ -1,4 +1,4 @@
-import swisseph as swe
+from .swe_proxy import swe
 from typing import Dict, Any
 
 def get_houses(jd_ut: float, lat: float, lon: float, hsys: bytes = b'W') -> Dict[str, Any]:

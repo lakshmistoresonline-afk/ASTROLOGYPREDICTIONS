@@ -2,7 +2,7 @@ from datetime import date
 from typing import Dict, Any
 
 # Maya Tzolkin Calendar
-20_NAMES = [
+MAYA_NAMES = [
     "Imix", "Ik", "Akbal", "Kan", "Chicchan", "Cimi", "Manik", "Lamat", "Muluc", "Oc",
     "Chuen", "Eb", "Ben", "Ix", "Men", "Cib", "Caban", "Etznab", "Cauac", "Ahau"
 ]
@@ -22,8 +22,8 @@ def calculate_maya_tzolkin(y: int, m: int, d: int) -> Dict[str, Any]:
 
     return {
         "number": number,
-        "name": 20_NAMES[name_idx],
-        "karmic_theme": _get_tzolkin_meaning(20_NAMES[name_idx])
+        "name": MAYA_NAMES[name_idx],
+        "karmic_theme": _get_tzolkin_meaning(MAYA_NAMES[name_idx])
     }
 
 def _get_tzolkin_meaning(name: str) -> str:

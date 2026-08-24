@@ -1,5 +1,5 @@
 from typing import Dict, Any, Optional
-import swisseph as swe
+from .swe_proxy import swe
 from .ephemeris import get_planet_position
 
 # Segment order for Day/Night parts (0-7 segments)

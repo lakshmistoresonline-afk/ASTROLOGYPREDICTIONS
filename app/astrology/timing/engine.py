@@ -113,7 +113,7 @@ class TimingEngine:
         from ..core.ephemeris import get_planet_position
         from ..core.datetime import datetime_to_jd
         from ..core.nakshatra_logic import calculate_tarabala, calculate_chandrabala
-        import swisseph as swe
+        from ..core.swe_proxy import swe
 
         jd = datetime_to_jd(target_date, chart.timezone)
         moon_pos = get_planet_position(jd, swe.MOON)

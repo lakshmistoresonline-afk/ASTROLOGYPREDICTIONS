@@ -146,7 +146,7 @@ def generate_evidence_based_predictions(chart: CanonicalChart, selected_date: da
     moon_nak = chart.planets["Moon"].nakshatra.index + 1
     from ..panchang.tithi import get_tithi
     from ..panchang.sky import get_sunrise, get_sunset
-    import swisseph as swe
+    from ..core.swe_proxy import swe
     from ..core.datetime import datetime_to_jd
 
     jd = datetime_to_jd(selected_date, chart.timezone)

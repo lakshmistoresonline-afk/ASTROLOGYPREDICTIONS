@@ -19,7 +19,7 @@ def run_forensic_audit():
     os.environ['SE_EPHE_PATH'] = str(root / "ephe")
 
     try:
-        import swisseph as swe
+        from app.astrology.core.swe_proxy import swe
         import pydantic
         import flask
         print("  ✅ Python Libraries: All critical dependencies found.")

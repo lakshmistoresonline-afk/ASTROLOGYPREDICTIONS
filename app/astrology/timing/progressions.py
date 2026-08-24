@@ -2,7 +2,7 @@ from datetime import datetime, timedelta
 from typing import Dict, List, Any
 from ..core.datetime import datetime_to_jd
 from ..core.ephemeris import get_planet_position, get_ayanamsa
-import swisseph as swe
+from ..core.swe_proxy import swe
 
 def calculate_secondary_progressions(birth_dt: datetime, target_dt: datetime, lat: float, lon: float, tz: str) -> Dict[str, float]:
     """

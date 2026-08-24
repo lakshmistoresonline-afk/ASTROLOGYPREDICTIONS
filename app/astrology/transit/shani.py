@@ -1,6 +1,6 @@
 from datetime import datetime, date, timedelta
 from typing import List, Dict
-import swisseph as swe
+from ..core.swe_proxy import swe
 from ..core.ephemeris import get_planet_position, get_julian_day
 
 def calculate_sade_sati(natal_moon_rashi: int) -> List[Dict]:

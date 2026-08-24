@@ -1,4 +1,4 @@
-import swisseph as swe
+from .swe_proxy import swe
 from typing import Dict, List, Any
 from .datetime import datetime_to_jd
 

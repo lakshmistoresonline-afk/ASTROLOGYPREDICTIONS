@@ -1,5 +1,5 @@
 from typing import Dict, List, Any
-import swisseph as swe
+from ..core.swe_proxy import swe
 from ..core.ephemeris import get_planet_position
 from ..core.panchang.panchang_logic import calculate_panchang
 from datetime import datetime

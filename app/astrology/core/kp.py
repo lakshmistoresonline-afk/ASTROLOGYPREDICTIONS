@@ -1,5 +1,5 @@
 from .planets import NAKSHATRA_LORDS, NAK_SPAN
-from typing import Tuple
+from typing import Tuple, Dict
 
 # Vimshottari years
 DASHA_YEARS = {
@@ -85,7 +85,7 @@ def get_ruling_planets(jd_ut: float, lat: float, lon: float) -> Dict[str, str]:
     """RPs at the moment of calculation."""
     from .ephemeris import get_planet_position
     from .houses import get_houses
-    import swisseph as swe
+    from .swe_proxy import swe
 
     # 1. Moon Rashi and Star Lord
     moon_pos = get_planet_position(jd_ut, swe.MOON)

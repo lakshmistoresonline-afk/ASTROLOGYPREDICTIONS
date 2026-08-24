@@ -1,4 +1,4 @@
-import swisseph as swe
+from .swe_proxy import swe
 from datetime import datetime, date
 from .ephemeris import get_planet_position, get_julian_day
 from ..panchang.utils import find_event

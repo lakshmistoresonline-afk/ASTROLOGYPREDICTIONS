@@ -1,4 +1,4 @@
-import swisseph as swe
+from .swe_proxy import swe
 from typing import Dict, Any
 
 # Uranian Trans-Neptunian Planets (TNPs)

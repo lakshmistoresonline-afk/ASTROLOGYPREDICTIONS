@@ -1,4 +1,4 @@
-import swisseph as swe
+from .swe_proxy import swe
 
 # Common Ayanamsa constants
 AYANAMSA_MODES = {

@@ -1,4 +1,4 @@
-import swisseph as swe
+from .swe_proxy import swe
 from typing import Dict, Any
 
 def get_lilith_positions(jd_ut: float) -> Dict[str, Dict[str, Any]]:

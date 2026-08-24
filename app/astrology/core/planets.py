@@ -1,4 +1,4 @@
-import swisseph as swe
+from .swe_proxy import swe
 
 PLANETS = {
     "Sun":     swe.SUN,

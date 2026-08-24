@@ -9,7 +9,7 @@ from ..core.datetime import datetime_to_jd
 from ..core.ephemeris import get_ayanamsa, get_planet_position
 from ..core.planets import NAKSHATRA_NAMES, NAKSHATRA_LORDS
 import pytz
-import swisseph as swe
+from ..core.swe_proxy import swe
 
 # Legacy names for compatibility
 TITHI_NAMES = [

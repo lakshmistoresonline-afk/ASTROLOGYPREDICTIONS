@@ -1,4 +1,4 @@
-import swisseph as swe
+from ..core.swe_proxy import swe
 from ..core.ephemeris import get_planet_position
 from .utils import find_event
 from typing import Dict, Any
