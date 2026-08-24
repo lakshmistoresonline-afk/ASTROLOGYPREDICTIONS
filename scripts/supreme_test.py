@@ -69,7 +69,8 @@ def run_supreme_test():
         }
 
         for name, attr in checkpoints.items():
-            if hasattr(chart, attr) and getattr(chart, attr):
+            val = getattr(chart, attr, None)
+            if val is not None:
                 print(f"  ✅ {name}: Data layers synchronized.")
             else:
                 print(f"  ❌ {name}: Data layer missing.")

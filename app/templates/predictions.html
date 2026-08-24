@@ -16,6 +16,7 @@
   {% endif %}
 </div>
 
+{% if preds %}
 {# ── Command Center: Total Resonance ─────────────────────── #}
 <div class="row g-4 mb-5">
   <div class="col-lg-8">
@@ -74,7 +75,6 @@
   </div>
 </div>
 
-{% if preds %}
 {# ── Life Timeline Visualization ──────────────────────── #}
 <div class="card-vedic p-5 mb-5 bg-glass overflow-hidden shadow-xl">
    <div class="d-flex align-items-center justify-content-between mb-5">
@@ -170,10 +170,10 @@
 
 {# ── Dimension Filter ───────────────────────────────────── #}
 <div class="mb-5">
-  <div class="kundli-mode-tabs p-2 bg-secondary bg-opacity-10 border border-secondary border-opacity-25 rounded-pill shadow-inner">
-    <button class="kmt-btn active px-4 py-2" onclick="filterDomains(this, 'all')">All Dimensions</button>
-    <button class="kmt-btn px-4 py-2" onclick="filterDomains(this, 'high')">Power Zones</button>
-    <button class="kmt-btn px-4 py-2" onclick="filterDomains(this, 'caution')">Karmic Debts</button>
+  <div class="mode-tabs">
+    <button class="kmt-btn active" onclick="filterDomains(this, 'all')">All Dimensions</button>
+    <button class="kmt-btn" onclick="filterDomains(this, 'high')">Power Zones</button>
+    <button class="kmt-btn" onclick="filterDomains(this, 'caution')">Karmic Debts</button>
   </div>
 </div>
 
@@ -304,7 +304,9 @@
   </div>
 </div>
 {% endif %}
+{% endblock %}
 
+{% block scripts %}
 <script>
 function gotoDate(date) {
   window.location.href = "{{ url_for('main.predictions') }}?date=" + date;
@@ -335,10 +337,4 @@ function downloadObsidian() {
   window.location.href = `/api/export/obsidian?month=${m}&year=${y}`;
 }
 </script>
-
-<style>
-.leading-relaxed { line-height: 1.7; }
-.shadow-inner { box-shadow: inset 0 2px 4px rgba(0,0,0,0.3); }
-.bg-glass { backdrop-filter: blur(15px); }
-</style>
 {% endblock %}

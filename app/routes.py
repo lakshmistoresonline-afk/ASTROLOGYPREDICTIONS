@@ -1,5 +1,5 @@
 from flask import (Blueprint, render_template, request, jsonify, session,
-                   redirect, url_for, flash, Response)
+                   redirect, url_for, flash, Response, send_from_directory)
 from datetime import datetime, date, timedelta
 import calendar as cal_mod
 import zipfile
@@ -333,6 +333,11 @@ def api_transit_heatmap():
 # ─────────────────────────────────────────────
 #  Home — birth-data input + saved charts
 # ─────────────────────────────────────────────
+@main.route("/favicon.ico")
+def favicon():
+    return send_from_directory(os.path.join(main.root_path, 'static', 'img'),
+                               'icon.svg', mimetype='image/svg+xml')
+
 @main.route("/")
 def index():
     try:

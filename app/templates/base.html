@@ -19,110 +19,80 @@
 </head>
 <body class="ethereal-bg">
 
-<!-- ── Ethereal Sidebar ──────────────────────────────── -->
-<nav id="sidebar" class="glass-sidebar">
-  <div class="sidebar-header">
-    <div class="d-flex align-items-center gap-3">
-      <div class="logo-box">
-        <img src="{{ url_for('static', filename='img/icon.svg') }}" alt="Om" width="30" height="30"/>
-      </div>
-      <div>
-        <div class="app-brand text-white">JYOTISH</div>
-        <div class="xsmall text-gold tracking-widest fw-black opacity-50">CELESTIAL v3.1</div>
-      </div>
-    </div>
-  </div>
-
-  <div class="nav-scroll flex-grow-1">
-    <ul class="nav flex-column py-4">
-      <li class="nav-item">
-        <a class="nav-link {% if request.endpoint == 'main.index' %}active{% endif %}" href="{{ url_for('main.index') }}">
-          <i class="bi bi-grid-1x2-fill"></i> <span>Console</span>
-        </a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link {% if request.endpoint == 'main.kundli' %}active{% endif %}" href="{{ url_for('main.kundli') }}">
-          <i class="bi bi-compass-fill"></i> <span>Natal</span>
-        </a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link {% if request.endpoint == 'main.predictions' %}active{% endif %}" href="{{ url_for('main.predictions') }}">
-          <i class="bi bi-magic"></i> <span>Insights</span>
-        </a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link {% if request.endpoint == 'main.transit' %}active{% endif %}" href="{{ url_for('main.transit') }}">
-          <i class="bi bi-stars"></i> <span>Transit</span>
-        </a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link {% if request.endpoint == 'main.panchang' %}active{% endif %}" href="{{ url_for('main.panchang') }}">
-          <i class="bi bi-calendar-range-fill"></i> <span>Almanac</span>
-        </a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link {% if request.endpoint == 'main.dasha' %}active{% endif %}" href="{{ url_for('main.dasha') }}">
-          <i class="bi bi-clock-history"></i> <span>Timeline</span>
-        </a>
-      </li>
-    </ul>
-  </div>
-
-  <div class="sidebar-meta p-4">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-       <button class="btn-theme-toggle" onclick="toggleTheme()">
-          <i class="bi bi-sun-fill light-icon"></i>
-          <i class="bi bi-moon-stars-fill dark-icon"></i>
-       </button>
-       <a href="{{ url_for('main.export_all_data') }}" class="xsmall text-muted text-decoration-none hover-white">BACKUP CLOUD</a>
-    </div>
-    <div class="xsmall text-muted font-mono opacity-25">LAHIRI / SIDEREAL / OFFLINE</div>
-  </div>
-</nav>
-
-<!-- ── Main Viewport ─────────────────────────────────── -->
-<div id="main-content">
-  <header class="master-bar px-5">
-    <div class="d-flex align-items-center justify-content-between h-100">
-      <div class="d-flex align-items-center gap-4">
-        <button id="sidebar-toggle" class="btn-icon-link">
-          <i class="bi bi-list-nested fs-4"></i>
-        </button>
-        <div id="live-clock" class="font-mono text-gold fw-black small">00:00:00</div>
-      </div>
-
-      <div class="d-flex align-items-center gap-4">
-         <span class="xsmall text-muted fw-bold d-none d-lg-inline">COSMIC SYNC: <span class="text-success">ACTIVE</span></span>
-         <div class="user-pill d-flex align-items-center gap-2">
-            <span class="xsmall text-white-50">{{ session.get('birth_name', 'GUEST') }}</span>
-            <div class="avatar-sm"></div>
-         </div>
-      </div>
-    </div>
-  </header>
-
-  <main class="viewport-padding">
-    {% with messages = get_flashed_messages(with_categories=true) %}
-      {% for cat, msg in messages %}
-        <div class="alert-ethereal alert-{{ cat }} mb-5 shadow-lg">
-           <i class="bi bi-info-circle-fill me-3"></i> {{ msg }}
+<div id="layout-wrapper">
+    <!-- --- Sidebar --- -->
+    <aside id="sidebar">
+        <div class="sidebar-header">
+            <div class="d-flex align-items-center gap-3">
+                <img src="{{ url_for('static', filename='img/icon.svg') }}" width="32" height="32" alt="Om"/>
+                <div>
+                    <div class="app-brand fs-5">JYOTISH</div>
+                    <div class="xsmall text-gold tracking-wide opacity-50">CELESTIAL v4.0</div>
+                </div>
+            </div>
         </div>
-      {% endfor %}
-    {% endwith %}
 
-    {% block content %}{% endblock %}
-    <footer class="mt-5 py-5 border-top border-secondary border-opacity-10">
-       <div class="container text-center">
-          <p class="xsmall text-muted mb-2 tracking-widest uppercase">Traditional Vedic Methodology — Deterministic Inference Engine</p>
-          <p class="xsmall text-muted opacity-50 mb-0 px-5">
-             Disclaimer: Astro-logical indications provided are based on traditional Jyotish principles and calculated planetary evidence.
-             These results are intended for self-reflection and general guidance only.
-             They do not constitute professional medical, legal, or financial advice.
-             Exact outcomes are subject to free will and multiple karmic variables.
-          </p>
-       </div>
-    </footer>
-  </main>
+        <nav class="nav-list">
+            <a href="{{ url_for('main.index') }}" class="nav-link {% if request.endpoint == 'main.index' %}active{% endif %}">
+                <i class="bi bi-grid-1x2"></i> <span>Console</span>
+            </a>
+            <a href="{{ url_for('main.kundli') }}" class="nav-link {% if request.endpoint == 'main.kundli' %}active{% endif %}">
+                <i class="bi bi-compass"></i> <span>Natal</span>
+            </a>
+            <a href="{{ url_for('main.predictions') }}" class="nav-link {% if request.endpoint == 'main.predictions' %}active{% endif %}">
+                <i class="bi bi-magic"></i> <span>Insights</span>
+            </a>
+            <a href="{{ url_for('main.transit') }}" class="nav-link {% if request.endpoint == 'main.transit' %}active{% endif %}">
+                <i class="bi bi-stars"></i> <span>Transit</span>
+            </a>
+            <a href="{{ url_for('main.panchang') }}" class="nav-link {% if request.endpoint == 'main.panchang' %}active{% endif %}">
+                <i class="bi bi-calendar3"></i> <span>Almanac</span>
+            </a>
+            <a href="{{ url_for('main.dasha') }}" class="nav-link {% if request.endpoint == 'main.dasha' %}active{% endif %}">
+                <i class="bi bi-clock-history"></i> <span>Timeline</span>
+            </a>
+        </nav>
+
+        <div class="p-4 mt-auto border-top border-white border-opacity-5">
+            <button class="btn btn-sm btn-outline-secondary w-100 mb-3" onclick="toggleTheme()">
+                <i class="bi bi-sun-fill me-2"></i> Mode
+            </button>
+            <div class="xsmall text-center opacity-25 font-mono">LAHIRI / SIDEREAL</div>
+        </div>
+    </aside>
+
+    <!-- --- Main Content --- -->
+    <div id="main-content">
+        <header class="master-header">
+            <div class="d-flex align-items-center gap-4">
+                <div id="live-clock" class="font-mono text-gold fw-bold small">00:00:00</div>
+            </div>
+
+            <div class="d-flex align-items-center gap-4">
+                <span class="xsmall text-muted fw-bold d-none d-lg-inline">SYNC: <span class="text-success">STABLE</span></span>
+                <div class="d-flex align-items-center gap-2">
+                    <span class="xsmall text-muted">{{ session.get('birth_name', 'GUEST') }}</span>
+                    <div style="width: 32px; height: 32px; border-radius: 8px; background: var(--gold-glow); border: 1px solid var(--gold-dim)"></div>
+                </div>
+            </div>
+        </header>
+
+        <main class="viewport-content">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+              {% for cat, msg in messages %}
+                <div class="alert alert-{{ cat }} border-0 shadow-sm rounded-4 mb-4">
+                   <i class="bi bi-info-circle me-2"></i> {{ msg }}
+                </div>
+              {% endfor %}
+            {% endwith %}
+
+            {% block content %}{% endblock %}
+        </main>
+
+        <footer class="p-5 text-center border-top border-white border-opacity-5">
+            <p class="xsmall text-muted mb-0 opacity-50">Unified Global Prediction Engine • Deterministic Inference v4.0</p>
+        </footer>
+    </div>
 </div>
 
 <!-- Essential Scripts -->
