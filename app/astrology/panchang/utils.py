@@ -61,3 +61,21 @@ def calculate_chandra_bala(transit_moon_rashi: int, birth_moon_rashi: int) -> di
         "is_favourable": favourable,
         "quality": "Favorable" if favourable else "Unfavorable"
     }
+
+def check_dagdha_tithi(tithi_num: int, weekday: int) -> bool:
+    """
+    Dagdha Tithi (Burnt Tithi): Specific weekday-tithi combinations.
+    Weekday: 0=Mon, 6=Sun
+    """
+    # 1-indexed tithi in paksha (1-15)
+    t = (tithi_num - 1) % 15 + 1
+    mapping = {
+        6: [12],    # Sun: 12th
+        0: [11],    # Mon: 11th
+        1: [5],     # Tue: 5th
+        2: [3],     # Wed: 3rd
+        3: [6],     # Thu: 6th
+        4: [8],     # Fri: 8th
+        5: [9]      # Sat: 9th
+    }
+    return t in mapping.get(weekday, [])

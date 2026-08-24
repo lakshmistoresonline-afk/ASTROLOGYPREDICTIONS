@@ -1,1039 +1,344 @@
 {% extends "base.html" %}
-{% block title %}Predictions — {{ name or 'Jyotish Dashboard' }}{% endblock %}
+{% block title %}Celestial Insights — Deep Analysis{% endblock %}
 
 {% block content %}
-<div class="page-header mb-3 d-flex justify-content-between align-items-start flex-wrap gap-2">
+<div class="page-header mb-5 d-flex justify-content-between align-items-center flex-wrap gap-4">
   <div>
-    <h1 class="page-title"><i class="bi bi-magic me-2"></i>Daily Predictions</h1>
-    <p class="page-sub">आज का राशिफल — Based on transit, dasha &amp; panchang</p>
+    <span class="text-accent small fw-bold text-uppercase tracking-widest mb-2 d-block">Cosmic Frequency</span>
+    <h1 class="display-4 text-white fw-black mb-1">Celestial <span class="text-gold">Insights</span></h1>
+    <p class="text-muted lead">Deep analytical mapping of your birth promise vs. the current cosmic clock.</p>
   </div>
   {% if preds %}
-  <div class="text-end">
-    <div class="native-name">{{ name }}</div>
-    <div class="native-detail">{{ place }}</div>
-    <div class="native-detail" style="color:var(--gold);font-weight:600">{{ preds.date }}</div>
+  <div class="text-end d-none d-md-block">
+    <div class="h4 text-white mb-0 fw-bold">{{ name }}</div>
+    <div class="badge bg-gold text-black mt-2 px-4 py-2 font-mono shadow-sm">{{ preds.date }}</div>
   </div>
   {% endif %}
 </div>
 
-{# ── Date navigation bar ──────────────────────────────────────────────── #}
-<div class="date-bar">
-  <i class="bi bi-calendar3" style="color:var(--gold);font-size:1.1rem"></i>
-  <span class="date-bar-label">Viewing predictions for</span>
-  <input type="date" id="pred-date-input"
-         value="{{ selected_date }}"
-         max="{{ today }}"
-         onchange="gotoDate(this.value)"/>
-  {% if selected_date != today %}
-  <a href="{{ url_for('main.predictions') }}" class="btn btn-vedic btn-xs ms-auto">
-    <i class="bi bi-arrow-left-circle me-1"></i>Back to Today
-  </a>
-  {% endif %}
-  <button class="btn btn-outline-gold btn-xs ms-auto" onclick="toggleCalendar()"
-          id="cal-toggle-btn">
-    <i class="bi bi-calendar-week me-1"></i>Month View
-  </button>
-</div>
-
-{# ── Month calendar ───────────────────────────────────────────────────── #}
-<div class="pred-calendar" id="pred-calendar" style="display:none">
-  <div class="pred-cal-header">
-    <button class="cal-nav-btn" id="cal-prev">&#8249;</button>
-    <span class="pred-cal-title" id="cal-month-title">Loading…</span>
-    <button class="cal-nav-btn" id="cal-next">&#8250;</button>
-  </div>
-  <div class="cal-weekdays">
-    <div class="cal-wd">Sun</div><div class="cal-wd">Mon</div>
-    <div class="cal-wd">Tue</div><div class="cal-wd">Wed</div>
-    <div class="cal-wd">Thu</div><div class="cal-wd">Fri</div>
-    <div class="cal-wd">Sat</div>
-  </div>
-  <div class="cal-grid" id="cal-grid">
-    <div class="cal-loading"><i class="bi bi-arrow-repeat"></i> Loading panchang…</div>
-  </div>
-  <div class="cal-legend">
-    <span class="cal-legend-item"><span class="cal-legend-dot" style="background:#16a34a"></span>Excellent</span>
-    <span class="cal-legend-item"><span class="cal-legend-dot" style="background:#65a30d"></span>Good</span>
-    <span class="cal-legend-item"><span class="cal-legend-dot" style="background:#d97706"></span>Moderate</span>
-    <span class="cal-legend-item"><span class="cal-legend-dot" style="background:#ea580c"></span>Caution</span>
-    <span class="cal-legend-item"><span class="cal-legend-dot" style="background:#dc2626"></span>Difficult</span>
-  </div>
-  <div id="day-detail-panel"></div>
-</div>
-
-{# ── Export panel ─────────────────────────────────────────────── #}
-<div class="export-panel">
-  <div class="export-panel-header">
-    <i class="bi bi-cloud-arrow-up me-1"></i>Sync &amp; Export
-    {% if config.get('LLM_MODEL') %}
-    <span class="ai-badge ms-auto"><i class="bi bi-stars me-1"></i>AI notes on · {{ config.get('LLM_MODEL') }}</span>
-    {% endif %}
-  </div>
-  <div class="export-panel-body">
-
-    {# iCal / Apple / Outlook #}
-    <div class="export-option">
-      <div class="export-icon" style="background:rgba(0,122,255,0.1);color:#007aff">📅</div>
-      <div class="export-info">
-        <div class="export-title">iCal — Apple / Outlook / Any calendar</div>
-        <div class="export-desc">Download a .ics file with daily quality events, panchang notes, Rahu Kaal &amp; Abhijit times. Import once or subscribe.</div>
+{# ── Command Center: Total Resonance ─────────────────────── #}
+<div class="row g-4 mb-5">
+  <div class="col-lg-8">
+    <div class="card-vedic h-100 p-5 d-flex align-items-center gap-5 bg-glass">
+      <div class="score-portal shadow-lg">
+        <div class="portal-num text-gold fw-black" style="font-size: 3rem">{{ preds.score if preds else '--' }}</div>
+        <div class="xsmall text-muted tracking-widest mt-1">RESONANCE</div>
       </div>
-      <div class="export-controls">
-        <select class="export-month-sel" id="ics-month-sel">
-          {% for m in range(1, 13) %}
-          <option value="{{ m }}" {% if m == today[5:7]|int %}selected{% endif %}>
-            {{ ['','Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][m] }}
-          </option>
-          {% endfor %}
-        </select>
-        <select class="export-month-sel" id="ics-year-sel">
-          {% for y in range(today[:4]|int - 1, today[:4]|int + 2) %}
-          <option value="{{ y }}" {% if y == today[:4]|int %}selected{% endif %}>{{ y }}</option>
-          {% endfor %}
-        </select>
-        <a id="ics-download-btn" href="#" onclick="downloadIcs()" class="btn btn-vedic btn-xs">
-          <i class="bi bi-download me-1"></i>Download .ics
-        </a>
-      </div>
-    </div>
-
-    {# Google Calendar #}
-    <div class="export-option">
-      <div class="export-icon" style="background:rgba(66,133,244,0.1);color:#4285f4">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M19.5 3h-15A1.5 1.5 0 003 4.5v15A1.5 1.5 0 004.5 21h15a1.5 1.5 0 001.5-1.5v-15A1.5 1.5 0 0019.5 3zM9 17.25H6.75v-7.5H9v7.5zm-1.125-8.625a1.313 1.313 0 110-2.625 1.313 1.313 0 010 2.625zM18 17.25h-2.25v-3.75c0-.84-.69-1.5-1.5-1.5s-1.5.66-1.5 1.5v3.75H10.5v-7.5h2.25v1.14A3.75 3.75 0 0118 14.25v3z"/></svg>
-      </div>
-      <div class="export-info">
-        <div class="export-title">Google Calendar</div>
-        <div class="export-desc">Import the .ics file above into Google Calendar, or click any day in the calendar below and use "Add to Google Calendar".</div>
-      </div>
-      <div class="export-controls">
-        <a href="https://calendar.google.com/calendar/r/settings/import" target="_blank"
-           class="btn btn-outline-gold btn-xs">
-          <i class="bi bi-box-arrow-up-right me-1"></i>Open GCal Import
-        </a>
-      </div>
-    </div>
-
-    {# Obsidian #}
-    <div class="export-option">
-      <div class="export-icon" style="background:rgba(124,58,237,0.1);color:#7c3aed">🔮</div>
-      <div class="export-info">
-        <div class="export-title">Obsidian Vault</div>
-        <div class="export-desc">Download a ZIP of daily <code>.md</code> notes with YAML frontmatter, panchang tables, sky times, muhurtas, and an INDEX file.
-          {% if config.get('LLM_MODEL') %}<span class="ai-badge ms-1"><i class="bi bi-stars"></i> +AI insights ({{ config.get('LLM_MODEL') }})</span>{% endif %}
+      <div class="flex-grow-1">
+        <div class="d-flex align-items-center gap-3 mb-3">
+          <h2 class="display-6 text-white mb-0 fw-black">{{ preds.score_label }}</h2>
+          <div class="badge bg-{{ 'success' if preds.panchang_ok else 'warning' }} bg-opacity-10 text-{{ 'success' if preds.panchang_ok else 'warning' }} border border-{{ 'success' if preds.panchang_ok else 'warning' }} border-opacity-25 px-3 py-2 rounded-pill">
+             <i class="bi bi-shield-check me-1"></i> {{ 'Optimal Flow' if preds.panchang_ok else 'Remedial Phase' }}
+          </div>
         </div>
-      </div>
-      <div class="export-controls">
-        <select class="export-month-sel" id="obs-month-sel">
-          {% for m in range(1, 13) %}
-          <option value="{{ m }}" {% if m == today[5:7]|int %}selected{% endif %}>
-            {{ ['','Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][m] }}
-          </option>
-          {% endfor %}
-        </select>
-        <select class="export-month-sel" id="obs-year-sel">
-          {% for y in range(today[:4]|int - 1, today[:4]|int + 2) %}
-          <option value="{{ y }}" {% if y == today[:4]|int %}selected{% endif %}>{{ y }}</option>
-          {% endfor %}
-        </select>
-        <a href="#" onclick="downloadObsidian()" class="btn btn-vedic btn-xs" style="background:linear-gradient(135deg,#4c1d95,#7c3aed)">
-          <i class="bi bi-download me-1"></i>Download ZIP
-        </a>
+        <p class="text-muted mb-4 fs-5">Calculated across 12 karmic vectors, your current frequency indicates a period of <strong>{{ 'high dynamic growth' if preds.score > 7 else 'steady consolidation' if preds.score > 4 else 'introspective caution' }}</strong>.</p>
+        <div class="d-flex flex-wrap gap-4">
+          <div class="d-flex align-items-center gap-2">
+             <i class="bi bi-moon-stars text-accent"></i>
+             <div class="small fw-bold text-white-50">{{ preds.tithi_name }}</div>
+          </div>
+          <div class="d-flex align-items-center gap-2">
+             <i class="bi bi-sun text-gold"></i>
+             <div class="small fw-bold text-white-50">{{ preds.panchang.vara.name }}</div>
+          </div>
+          <div class="d-flex align-items-center gap-2">
+             <i class="bi bi-stars text-white-50"></i>
+             <div class="small fw-bold text-white-50">{{ preds.yoga_name }}</div>
+          </div>
+        </div>
+
+        {% if preds.ai_note %}
+        <div class="mt-4 p-4 rounded-4 bg-gold bg-opacity-10 border border-gold border-opacity-25">
+           <div class="xsmall text-gold fw-black text-uppercase tracking-widest mb-2"><i class="bi bi-stars"></i> Vedic AI Insight</div>
+           <p class="text-white-50 small font-serif mb-0 italic">"{{ preds.ai_note }}"</p>
+        </div>
+        {% endif %}
       </div>
     </div>
-
-    <div class="text-muted" style="font-size:0.72rem;margin-top:6px">
-      <i class="bi bi-info-circle me-1"></i>
-      Set <code>LLM_MODEL</code> in your <code>.env</code> to enrich exports with 2-sentence Vedic AI insights per day.
-      Works with <strong>Ollama</strong> (local/free), Groq, or OpenRouter — see <code>.env.example</code> for setup.
-      All astrology calculations are <strong>fully offline</strong> — AI is optional.
+  </div>
+  <div class="col-lg-4">
+    <div class="card-vedic h-100 p-5 border-dashed">
+      <div class="text-gold small fw-bold text-uppercase mb-4 tracking-widest opacity-75">Temporal Sync</div>
+      <div class="d-flex flex-column gap-4">
+        <div class="position-relative">
+          <input type="date" id="pred-date-input" class="form-control form-control-vedic py-3 fs-5"
+                 value="{{ selected_date }}" max="{{ today }}" onchange="gotoDate(this.value)"/>
+        </div>
+        {% if selected_date != today %}
+        <a href="{{ url_for('main.predictions') }}" class="btn btn-vedic w-100 py-3 shadow-lg">
+          <i class="bi bi-arrow-left-circle me-2"></i>Return to Now
+        </a>
+        {% endif %}
+      </div>
     </div>
   </div>
 </div>
-
-{% if error %}
-<div class="alert alert-warning">
-  <i class="bi bi-exclamation-triangle me-2"></i>{{ error }}
-  <a href="{{ url_for('main.index') }}" class="alert-link ms-2">Generate Kundli first →</a>
-</div>
-{% endif %}
 
 {% if preds %}
-
-{# ── ALERTS: Sade Sati / Kantaka ──────────────────────────────────────── #}
-{% if preds.sade_sati %}
-<div class="alert-vedic danger mb-3">
-  <i class="bi bi-exclamation-triangle-fill me-2"></i>
-  <strong>{{ preds.sade_sati.phase }}</strong> — {{ preds.sade_sati.message }}
-</div>
-{% endif %}
-{% if preds.kantaka_shani %}
-<div class="alert-vedic warning mb-3">
-  <i class="bi bi-exclamation-circle-fill me-2"></i>{{ preds.kantaka_shani.message }}
-</div>
-{% endif %}
-
-{# ── ROW 1: Overall score + Day lord + Dasha ─────────────────────────── #}
-<div class="row g-3 mb-4">
-
-  {# Overall Score #}
-  <div class="col-md-4">
-    <div class="card-vedic h-100">
-      <div class="card-vedic-header"><i class="bi bi-stars me-2"></i>Overall Day Score</div>
-      <div class="card-vedic-body d-flex align-items-center gap-4">
-        <div class="score-circle" style="border-color:{{ preds.score_color }};color:{{ preds.score_color }}">
-          <div class="score-num">{{ preds.score }}</div>
-          <div class="score-label-sm">/ 10</div>
-        </div>
-        <div>
-          <div class="fw-bold fs-5" style="color:{{ preds.score_color }}">{{ preds.score_label }}</div>
-          <div class="text-muted small mt-1">
-            Yoga: <span class="text-white">{{ preds.yoga_name }}</span><br>
-            Tithi: <span class="text-white">{{ preds.tithi_name }}</span><br>
-            Day: <span class="text-white">{{ preds.panchang.vara.name }}</span>
-              (Lord: <span style="color:{{ preds.maha_color }}">{{ preds.panchang.vara.lord }}</span>)
-          </div>
-          {% if preds.panchang.tarabala %}
-          <div class="mt-2 p-1 rounded bg-dark border border-secondary small">
-            <i class="bi bi-person-check-fill text-gold me-1"></i>
-            Personal Tara: <strong class="{{ 'text-success' if 'Auspicious' in preds.panchang.tarabala.quality else 'text-danger' if 'Inauspicious' in preds.panchang.tarabala.quality else 'text-white' }}">
-              {{ preds.panchang.tarabala.name }}
-            </strong>
-          </div>
-          {% endif %}
-          <div class="mt-2">
-            <span class="warning-pill {{ 'positive' if preds.panchang_ok else 'caution' }}">
-              {{ '✓ Auspicious Day' if preds.panchang_ok else '⚠ Mixed Day' }}
-            </span>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  {# Day Lord info #}
-  <div class="col-md-4">
-    <div class="card-vedic h-100">
-      <div class="card-vedic-header"><i class="bi bi-sun me-2"></i>Today's Ruling Planet</div>
-      <div class="card-vedic-body">
-        <div class="d-flex align-items-center gap-3 mb-3">
-          <div class="planet-big-icon" style="color:{{ preds.day_info.color }}">
-            {{ preds.day_info.vara_lord[0] }}
-          </div>
-          <div>
-            <div class="fw-bold fs-5" style="color:{{ preds.day_info.color }}">
-              {{ preds.day_info.vara_lord }}
-            </div>
-            <div class="text-muted small">Vara Lord (Day Ruler)</div>
-          </div>
-        </div>
-        <div class="row g-2 text-center">
-          <div class="col-4">
-            <div class="dayinfo-box">
-              <div class="dayinfo-label">Color</div>
-              <div class="dayinfo-val">{{ preds.day_info.favorable_color }}</div>
-            </div>
-          </div>
-          <div class="col-4">
-            <div class="dayinfo-box">
-              <div class="dayinfo-label">Number</div>
-              <div class="dayinfo-val">{{ preds.day_info.lucky_number }}</div>
-            </div>
-          </div>
-          <div class="col-4">
-            <div class="dayinfo-box">
-              <div class="dayinfo-label">Mantra</div>
-              <div class="dayinfo-val small">{{ preds.day_info.mantra[:12] }}…</div>
-            </div>
-          </div>
-        </div>
-        <hr class="divider-gold my-2"/>
-        <div class="d-flex gap-3 small">
-          <div>
-            <span class="text-muted">Friend:</span>
-            {% for f in preds.day_info.friends[:3] %}
-            <span class="warning-pill positive ms-1" style="padding:2px 6px">{{ f }}</span>
-            {% endfor %}
-          </div>
-        </div>
-        <div class="d-flex gap-3 small mt-1">
-          <div>
-            <span class="text-muted">Enemy:</span>
-            {% for e in preds.day_info.enemies[:3] %}
-            <span class="warning-pill danger ms-1" style="padding:2px 6px">{{ e }}</span>
-            {% endfor %}
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  {# Running Dasha #}
-  <div class="col-md-4">
-    <div class="card-vedic h-100">
-      <div class="card-vedic-header"><i class="bi bi-bar-chart-steps me-2"></i>Running Dasha</div>
-      <div class="card-vedic-body">
-        <div class="dasha-strip mb-2" style="border-color:{{ preds.maha_color }}">
-          <div class="ds-strip-label">Mahadasha</div>
-          <div class="ds-strip-planet" style="color:{{ preds.maha_color }}">{{ preds.maha_lord }}</div>
-          <div class="ds-strip-end text-muted small">Until {{ preds.maha_end }}</div>
-        </div>
-        <div class="dasha-strip mb-2" style="border-color:{{ preds.antar_color }}">
-          <div class="ds-strip-label">Antardasha</div>
-          <div class="ds-strip-planet" style="color:{{ preds.antar_color }}">{{ preds.antar_lord }}</div>
-          <div class="ds-strip-end text-muted small">Until {{ preds.antar_end }}</div>
-        </div>
-        <div class="dasha-strip" style="border-color:{{ preds.prat_color }}">
-          <div class="ds-strip-label">Pratyantardasha</div>
-          <div class="ds-strip-planet" style="color:{{ preds.prat_color }}">{{ preds.prat_lord }}</div>
-        </div>
-        <div class="mt-3">
-          <p class="small text-muted mb-0">{{ preds.dasha_text }}</p>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-{# ── ROW 2: Mana Ki Baat (Emotional) + Enemy of Day ──────────────────── #}
-<div class="row g-3 mb-4">
-
-  {# Mana Ki Baat #}
-  <div class="col-md-8">
-    <div class="card-vedic h-100">
-      <div class="card-vedic-header">
-        <i class="bi bi-heart-pulse me-2" style="color:#FF69B4"></i>
-        मन की बात — Emotional &amp; Mental State
-      </div>
-      <div class="card-vedic-body">
-        <div class="row g-3">
-          <div class="col-sm-6">
-            <div class="emo-block">
-              <div class="emo-label">Current Mood</div>
-              <div class="emo-value" style="color:#FF69B4">{{ preds.emo_label }}</div>
-              <div class="emo-detail">{{ preds.emo_detail }}</div>
-            </div>
-          </div>
-          <div class="col-sm-6">
-            <div class="emo-block">
-              <div class="emo-label">Moon Phase Influence</div>
-              <div class="emo-value text-moon">{{ preds.moon_phase }}</div>
-              <div class="emo-detail">{{ preds.moon_phase_mood }}</div>
-            </div>
-          </div>
-          <div class="col-sm-6">
-            <div class="emo-block">
-              <div class="emo-label">Emotional Ruling Planet</div>
-              <div class="emo-value" style="color:{{ preds.moon_nak_lord_color }}">
-                {{ preds.moon_nak_lord }}
-              </div>
-              <div class="emo-detail">
-                Moon in <strong>{{ preds.moon_nak }}</strong> nakshatra
-                (Lord: {{ preds.moon_nak_lord }}) — {{ preds.moon_nak_meaning }}
-              </div>
-            </div>
-          </div>
-          <div class="col-sm-6">
-            <div class="emo-block">
-              <div class="emo-label">Moon Position from Natal</div>
-              <div class="emo-value text-gold">
-                House {{ preds.moon_house_from_natal }}
-              </div>
-              <div class="emo-detail">
-                Transit Moon is in house {{ preds.moon_house_from_natal }}
-                from your natal Moon sign.
-                {% if preds.moon_house_from_natal in [1,5,9] %}
-                <span class="warning-pill positive ms-1">Favorable</span>
-                {% elif preds.moon_house_from_natal in [6,8,12] %}
-                <span class="warning-pill warning ms-1">Challenging</span>
-                {% else %}
-                <span class="warning-pill neutral ms-1">Neutral</span>
-                {% endif %}
-              </div>
-            </div>
-          </div>
-        </div>
-        {% if preds.moon_nak_warning %}
-        <div class="alert-vedic {{ preds.moon_nak_warning[0] }} mt-3">
-          <i class="bi bi-moon-stars me-2"></i>
-          <strong>{{ preds.moon_nak }}</strong> alert: {{ preds.moon_nak_warning[1] }}
-        </div>
-        {% endif %}
-        <div class="mt-3 small text-muted">
-          <strong style="color:var(--gold)">Antardasha influence:</strong> {{ preds.antar_text }}
-        </div>
-      </div>
-    </div>
-  </div>
-
-  {# Enemy / Friend of the Day #}
-  <div class="col-md-4">
-    <div class="card-vedic h-100">
-      <div class="card-vedic-header">
-        <i class="bi bi-shield-exclamation me-2" style="color:#ef4444"></i>
-        Enemy &amp; Friend Planets Today
-      </div>
-      <div class="card-vedic-body">
-        <div class="mb-3">
-          <div class="emo-label mb-2">⚔ Enemy Planets</div>
-          {% for e in preds.day_info.enemies %}
-          <div class="enemy-row mb-2">
-            <span class="planet-dot" style="background:{{ {'Sun':'#FF6B35','Moon':'#C8D8E8','Mars':'#FF4444','Mercury':'#00CC88','Jupiter':'#FFD700','Venus':'#FF69B4','Saturn':'#9CA3AF','Rahu':'#8B5CF6','Ketu':'#EC4899'}.get(e,'#fff') }}"></span>
-            <span class="warning-pill danger">{{ e }}</span>
-            <span class="text-muted small ms-2">— avoid {{ e }}-related activities</span>
-          </div>
-          {% endfor %}
-        </div>
-        <hr class="divider-gold"/>
-        <div>
-          <div class="emo-label mb-2">✦ Friend Planets</div>
-          {% for f in preds.day_info.friends %}
-          <div class="enemy-row mb-2">
-            <span class="planet-dot" style="background:{{ {'Sun':'#FF6B35','Moon':'#C8D8E8','Mars':'#FF4444','Mercury':'#00CC88','Jupiter':'#FFD700','Venus':'#FF69B4','Saturn':'#9CA3AF','Rahu':'#8B5CF6','Ketu':'#EC4899'}.get(f,'#fff') }}"></span>
-            <span class="warning-pill positive">{{ f }}</span>
-            <span class="text-muted small ms-2">— favorable influence</span>
-          </div>
-          {% endfor %}
-        </div>
-        <hr class="divider-gold mt-2"/>
-        <div class="text-muted small">
-          <i class="bi bi-lightbulb me-1 text-gold"></i>
-          Mantra for today:<br>
-          <span class="text-white">{{ preds.day_info.mantra }}</span>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-{# ── ROW 3: Love + Career ────────────────────────────────────────────── #}
-<div class="row g-3 mb-4">
-
-  {# Love #}
-  <div class="col-md-6">
-    <div class="card-vedic h-100">
-      <div class="card-vedic-header">
-        <i class="bi bi-heart-fill me-2" style="color:#FF69B4"></i>
-        प्रेम — Love &amp; Relationships
-        <span class="warning-pill {{ preds.love_severity }} ms-auto">
-          {{ preds.love_severity | title }}
-        </span>
-      </div>
-      <div class="card-vedic-body">
-        <div class="love-overall mb-3">
-          <i class="bi bi-info-circle me-1 text-gold"></i>
-          {{ preds.love_overall }}
-        </div>
-        {% if preds.love_texts %}
-          {% for l in preds.love_texts %}
-          <div class="pred-card {{ l.severity }} mb-2">
-            <div class="d-flex align-items-center gap-2 mb-1">
-              <span style="color:{{ l.color }};font-size:1.1rem">{{ l.symbol }}</span>
-              <span class="pred-planet" style="color:{{ l.color }}">{{ l.planet }}</span>
-              <span class="text-muted small">in House {{ l.house }}</span>
-              <span class="warning-pill {{ l.severity }} ms-auto" style="font-size:0.65rem">{{ l.severity }}</span>
-            </div>
-            <div class="pred-text">{{ l.text }}</div>
-          </div>
-          {% endfor %}
-        {% else %}
-          <div class="text-muted small">
-            <i class="bi bi-heart me-1"></i>
-            No major planetary triggers in love houses today.
-            Steady, calm energy in relationships.
-            {% if preds.venus_retro %}
-            <span class="warning-pill warning mt-1">Venus Retrograde — avoid new commitments.</span>
-            {% endif %}
-          </div>
-        {% endif %}
-      </div>
-    </div>
-  </div>
-
-  {# Career #}
-  <div class="col-md-6">
-    <div class="card-vedic h-100">
-      <div class="card-vedic-header">
-        <i class="bi bi-briefcase-fill me-2" style="color:#FFD700"></i>
-        करियर — Career &amp; Finance
-        <span class="warning-pill {{ preds.career_severity }} ms-auto">
-          {{ preds.career_severity | title }}
-        </span>
-      </div>
-      <div class="card-vedic-body">
-        <div class="love-overall mb-3">
-          <i class="bi bi-info-circle me-1 text-gold"></i>
-          {{ preds.dasha_career }}
-        </div>
-        {% if preds.career_texts %}
-          {% for c in preds.career_texts %}
-          <div class="pred-card {{ c.severity }} mb-2">
-            <div class="d-flex align-items-center gap-2 mb-1">
-              <span style="color:{{ c.color }};font-size:1.1rem">{{ c.symbol }}</span>
-              <span class="pred-planet" style="color:{{ c.color }}">{{ c.planet }}</span>
-              <span class="text-muted small">in House {{ c.house }}</span>
-              <span class="warning-pill {{ c.severity }} ms-auto" style="font-size:0.65rem">{{ c.severity }}</span>
-            </div>
-            <div class="pred-text">{{ c.text }}</div>
-          </div>
-          {% endfor %}
-        {% else %}
-          <div class="text-muted small">
-            <i class="bi bi-briefcase me-1"></i>
-            No major planetary triggers in career houses today.
-            Focus on steady, disciplined work and existing tasks.
-          </div>
-        {% endif %}
-      </div>
-    </div>
-  </div>
-</div>
-
-{# ── ROW 4: Major Changes ─────────────────────────────────────────────── #}
-{% if preds.change_alerts %}
-<div class="card-vedic mb-4">
-  <div class="card-vedic-header">
-    <i class="bi bi-arrow-repeat me-2" style="color:#8B5CF6"></i>
-    बड़े बदलाव — Major Life Changes &amp; Karmic Transits
-  </div>
-  <div class="card-vedic-body">
-    <div class="row g-3">
-      {% for c in preds.change_alerts %}
-      <div class="col-md-6">
-        <div class="pred-card {{ c.severity }}">
-          <div class="d-flex align-items-center gap-2 mb-2">
-            <span class="planet-dot" style="background:{{ c.color }}"></span>
-            <span class="fw-bold" style="color:{{ c.color }}">{{ c.planet }}</span>
-            {% if c.house %}<span class="text-muted small">House {{ c.house }}</span>{% endif %}
-            <span class="warning-pill {{ c.severity }} ms-auto">{{ c.severity | title }}</span>
-          </div>
-          <p class="pred-text mb-0">{{ c.message }}</p>
-        </div>
-      </div>
-      {% endfor %}
-    </div>
-  </div>
-</div>
-{% endif %}
-
-{# ── ROW 4: Evidence-based Domain Predictions ───────────────────────── #}
-<div class="card-vedic mb-4">
-  <div class="card-vedic-header d-flex align-items-center">
-    <i class="bi bi-shield-check me-2" style="color:var(--gold)"></i>
-    Complete Life Domain Analysis (32 Categories)
-    <div class="ms-auto position-relative" style="width: 200px">
-      <input type="text" id="domain-search" class="form-control form-control-xs bg-black text-white border-gold border-opacity-25"
-             placeholder="Filter domains..." oninput="filterDomains()">
-      <i class="bi bi-filter position-absolute top-50 end-0 translate-middle-y me-2 small text-muted"></i>
-    </div>
-  </div>
-  <div class="card-vedic-body">
-    <div class="row g-4" id="domains-grid">
-      {% for d in preds.domains %}
-      <div class="col-md-6 col-xl-4 domain-item" data-domain="{{ d.domain | lower }}">
-        <div class="domain-card h-100">
-          <div class="d-flex justify-content-between align-items-center mb-3">
-            <h4 class="mb-0 text-white fw-bold small text-uppercase" style="letter-spacing: 1px">{{ d.domain }}</h4>
-            <div class="text-end">
-              <span class="fs-4 fw-black text-gold">{{ d.score }}%</span>
-            </div>
-          </div>
-
-          <div class="progress mb-4" style="height: 4px; background: rgba(255,255,255,0.05)">
-            <div class="progress-bar bg-gold" style="width: {{ d.score }}%"></div>
-          </div>
-
-          <p class="xsmall text-muted italic mb-3" style="font-size: 0.72rem">{{ d.summary }}</p>
-
-          <div class="evidence-list mb-3">
-            {% for e in d.evidence %}
-            <div class="mb-1 d-flex gap-2 align-items-start" style="font-size: 0.78rem">
-                <span class="{{ 'text-success' if '✓' in e else 'text-warning' if '⚠' in e else 'text-muted' }}">
-                  {{ '✓' if '✓' in e else '⚠' if '⚠' in e else '·' }}
-                </span>
-                <span>{{ e | replace('✓','') | replace('⚠','') }}</span>
-            </div>
-            {% endfor %}
-          </div>
-
-          <div class="mt-auto d-flex justify-content-between align-items-center pt-2 border-top border-secondary border-opacity-10">
-             <span class="badge bg-dark text-muted" style="font-size: 0.55rem">{{ d.confidence }} CONFIDENCE</span>
-             <button class="btn btn-link btn-xs text-gold p-0" onclick="toggleDomainDetail(this)">Details</button>
-          </div>
-
-          <div class="domain-factors-extra mt-3" style="display:none">
-            {% if d.positive_factors or d.negative_factors %}
-              {% for f in d.positive_factors %}
-                <div class="p-1 mb-1 rounded bg-success bg-opacity-10 text-success xsmall" style="font-size: 0.7rem">
-                  <i class="bi bi-shield-check me-1"></i>{{ f.explanation }}
-                </div>
-              {% endfor %}
-              {% for f in d.negative_factors %}
-                <div class="p-1 mb-1 rounded bg-danger bg-opacity-10 text-danger xsmall" style="font-size: 0.7rem">
-                  <i class="bi bi-shield-exclamation me-1"></i>{{ f.explanation }}
-                </div>
-              {% endfor %}
-            {% endif %}
-          </div>
-        </div>
-      </div>
-      {% endfor %}
-    </div>
-  </div>
-</div>
-
-{# ── ROW 5: Planet-by-planet grid ─────────────────────────────────────── #}
-<div class="card-vedic mb-4">
-  <div class="card-vedic-header">
-    <i class="bi bi-grid-3x3 me-2"></i>
-    ग्रह विवरण — Planet-by-Planet Transit Forecast
-  </div>
-  <div class="card-vedic-body p-0">
-    <div class="table-responsive">
-      <table class="table table-vedic mb-0">
-        <thead>
-          <tr>
-            <th>Planet</th><th>Transit Position</th><th>Nakshatra</th>
-            <th>Natal House</th><th>Area</th><th>Forecast</th><th>Status</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for f in preds.planet_forecasts %}
-          <tr class="nak-house-row">
-            <td>
-              <span class="planet-dot" style="background:{{ f.color }}"></span>
-              <span style="color:{{ f.color }}" class="fw-bold">{{ f.symbol }} {{ f.planet }}</span>
-              {% if f.retrograde %}<span class="retro-badge ms-1">℞</span>{% endif %}
-            </td>
-            <td>
-              <div class="font-mono text-white small">{{ f.dms }}</div>
-              <div class="text-muted" style="font-size:0.72rem">{{ f.rashi }}</div>
-            </td>
-            <td>
-              <div class="nak-tag">{{ f.nakshatra }}</div>
-              <div class="text-muted mt-1" style="font-size:0.68rem">
-                Lord: <span style="color:{{ f.nak_lord_color }}">{{ f.nak_lord }}</span>
-              </div>
-              <div class="text-gold mt-1 italic" style="font-size:0.65rem; max-width:140px">
-                "{{ f.nak_sutra }}"
-              </div>
-              {% if f.nak_warning %}
-              <div class="warning-pill {{ f.nak_warning[0] }} mt-1" style="font-size:0.62rem">
-                ⚠ {{ f.nak_warning[0] | title }}
-              </div>
-              {% endif %}
-            </td>
-            <td class="text-center">
-              {% if f.natal_house %}
-              <span class="badge rounded-pill bg-dark border border-secondary text-white px-2">
-                H{{ f.natal_house }}
-              </span>
-              {% if f.conjoined_natal %}
-              <div class="mt-1" style="font-size:0.68rem;color:var(--text-muted)">
-                with {{ f.conjoined_natal | join(', ') }}
-              </div>
-              {% endif %}
-              {% else %}—{% endif %}
-            </td>
-            <td class="text-muted small">{{ f.house_area }}</td>
-            <td style="max-width:240px;font-size:0.8rem">
-              {{ f.prediction or '—' }}
-            </td>
-            <td>
-              <span class="warning-pill {{ f.severity }}">
-                {% if f.severity == 'danger' %}⚠ Danger
-                {% elif f.severity == 'warning' %}⚡ Warning
-                {% elif f.severity == 'positive' %}✓ Positive
-                {% else %}· Neutral{% endif %}
-              </span>
-            </td>
-          </tr>
-          {% endfor %}
-        </tbody>
-      </table>
-    </div>
-  </div>
-</div>
-
-{# ── ROW 6: Transit Aspects ────────────────────────────────────────────── #}
-{% if preds.aspects %}
-<div class="card-vedic mb-4">
-  <div class="card-vedic-header">
-    <i class="bi bi-diagram-2 me-2"></i>
-    Transit–Natal Aspects (Conjunctions &amp; Oppositions)
-  </div>
-  <div class="card-vedic-body">
-    <div class="row g-3">
-      {% for a in preds.aspects %}
-      <div class="col-md-6 col-lg-4">
-        <div class="pred-card {{ a.severity }}">
-          <div class="d-flex align-items-center gap-2 mb-1">
-            <span style="color:{{ a.transit_color }}" class="fw-bold">{{ a.transit_planet }}</span>
-            <span class="text-muted small">{{ a.aspect }}</span>
-            <span style="color:{{ a.natal_color }}" class="fw-bold">{{ a.natal_planet }}</span>
-            <span class="ms-auto text-muted small">{{ a.orb }}°</span>
-          </div>
-          <div class="pred-text small">{{ a.message }}</div>
-        </div>
-      </div>
-      {% endfor %}
-    </div>
-  </div>
-</div>
-{% endif %}
-
-{# ── Panchang Summary ─────────────────────────────────────────────────── #}
-<div class="card-vedic mb-4">
-  <div class="card-vedic-header">
-    <i class="bi bi-calendar3 me-2"></i>Panchang for Today
-    <a href="{{ url_for('main.panchang') }}" class="btn btn-outline-gold btn-xs ms-auto">
-      Full Panchang →
-    </a>
-  </div>
-  <div class="card-vedic-body">
-    <div class="row g-2 text-center">
-      {% set panch = preds.panchang %}
-      <div class="col"><div class="panch-mini"><div class="pm-label">Vara</div>
-        <div class="pm-val">{{ panch.vara.name }}</div>
-        <div class="pm-sub">{{ panch.vara.lord }}</div></div></div>
-      <div class="col"><div class="panch-mini {{ 'auspicious' if panch.tithi.nature == 'Auspicious' else '' }}">
-        <div class="pm-label">Tithi</div>
-        <div class="pm-val">{{ panch.tithi.name }}</div>
-        <div class="pm-sub">{{ panch.tithi.paksha }}</div></div></div>
-      <div class="col"><div class="panch-mini">
-        <div class="pm-label">Nakshatra</div>
-        <div class="pm-val">{{ panch.nakshatra.name }}</div>
-        <div class="pm-sub">{{ panch.nakshatra.lord }}</div></div></div>
-      <div class="col"><div class="panch-mini {{ 'auspicious' if panch.yoga.nature == 'Auspicious' else 'inauspicious' }}">
-        <div class="pm-label">Yoga</div>
-        <div class="pm-val">{{ panch.yoga.name }}</div>
-        <div class="pm-sub">{{ panch.yoga.nature }}</div></div></div>
-      <div class="col"><div class="panch-mini {{ 'inauspicious' if panch.karana.is_vishti else '' }}">
-        <div class="pm-label">Karana</div>
-        <div class="pm-val">{{ panch.karana.name }}</div>
-        <div class="pm-sub">{{ panch.karana.nature[:10] }}</div></div></div>
-    </div>
-    <hr class="divider-gold my-3"/>
-    <div class="row g-3 text-center small">
-      <div class="col-6 col-md-3">
-        <div class="text-muted">Sunrise</div>
-        <div class="text-white fw-bold">{{ panch.sky.sunrise }}</div>
-      </div>
-      <div class="col-6 col-md-3">
-        <div class="text-muted">Moonrise</div>
-        <div class="text-moon fw-bold">{{ panch.sky.moonrise }}</div>
-      </div>
-      <div class="col-6 col-md-3">
-        <div class="text-muted">Rahu Kaal</div>
-        <div style="color:#8B5CF6" class="fw-bold">{{ panch.sky.rahu_kaal }}</div>
-      </div>
-      <div class="col-6 col-md-3">
-        <div class="text-muted">Abhijit Muhurta</div>
-        <div class="text-gold fw-bold">{{ panch.abhijit_muhurta }}</div>
-      </div>
-    </div>
-  </div>
-</div>
-
-{% endif %}
-{% endblock %}
-
-{% block scripts %}
-<script>
-// ── Date navigation ─────────────────────────────────────────────
-function gotoDate(val) {
-  if (val) window.location.href = '/predictions?date=' + val;
-}
-
-// ── Calendar state ──────────────────────────────────────────────
-const TODAY_STR = "{{ today }}";
-const SEL_STR   = "{{ selected_date }}";
-const LAT = {{ session.get('birth_lat', 28.6139) }};
-const LON = {{ session.get('birth_lon', 77.2090) }};
-const TZ  = "{{ session.get('birth_tz', 'Asia/Kolkata') }}";
-
-let calYear, calMonth, activeDetailDate = null;
-
-(function init() {
-  const d = new Date(SEL_STR + "T12:00:00");
-  calYear  = d.getFullYear();
-  calMonth = d.getMonth() + 1;
-})();
-
-const MONTH_NAMES = ["January","February","March","April","May","June",
-                     "July","August","September","October","November","December"];
-const MOON_EMOJIS = pct =>
-  pct<5?"🌑":pct<25?"🌒":pct<45?"🌓":pct<55?"🌔":pct<75?"🌕":pct<85?"🌖":pct<95?"🌗":"🌘";
-
-let scoreCache = {}, detailCache = {};
-
-// ── Toggle month-view calendar ──────────────────────────────────
-function toggleCalendar() {
-  const cal = document.getElementById("pred-calendar");
-  const btn = document.getElementById("cal-toggle-btn");
-  if (cal.style.display === "none") {
-    cal.style.display = "block";
-    btn.innerHTML = '<i class="bi bi-x-circle me-1"></i>Close Calendar';
-    loadMonth(calYear, calMonth);
-  } else {
-    cal.style.display = "none";
-    btn.innerHTML = '<i class="bi bi-calendar-week me-1"></i>Month View';
-    clearDetailPanel();
-  }
-}
-
-// ── Load month scores ───────────────────────────────────────────
-function loadMonth(year, month) {
-  const key = `${year}-${month}`;
-  document.getElementById("cal-month-title").textContent = MONTH_NAMES[month-1] + " " + year;
-  clearDetailPanel();
-
-  if (scoreCache[key]) { renderCalendar(year, month, scoreCache[key]); return; }
-
-  document.getElementById("cal-grid").innerHTML =
-    '<div class="cal-loading"><i class="bi bi-arrow-repeat"></i> Loading panchang…</div>';
-
-  fetch(`/api/month-scores?year=${year}&month=${month}&lat=${LAT}&lon=${LON}&tz=${encodeURIComponent(TZ)}`)
-    .then(r => r.json()).then(data => { scoreCache[key] = data; renderCalendar(year, month, data); })
-    .catch(() => {
-      document.getElementById("cal-grid").innerHTML =
-        '<div class="cal-loading" style="color:#dc2626">Could not load data.</div>';
-    });
-}
-
-// ── Render calendar grid ────────────────────────────────────────
-function renderCalendar(year, month, scores) {
-  const grid      = document.getElementById("cal-grid");
-  const firstDay  = new Date(year, month - 1, 1).getDay();
-  const daysInMon = new Date(year, month, 0).getDate();
-  const todayD    = new Date(TODAY_STR + "T12:00:00");
-
-  let html = "";
-  for (let i = 0; i < firstDay; i++) html += '<div class="cal-day empty"></div>';
-
-  for (let day = 1; day <= daysInMon; day++) {
-    const d      = new Date(year, month - 1, day);
-    const iso    = `${year}-${String(month).padStart(2,"0")}-${String(day).padStart(2,"0")}`;
-    const isToday  = d.toDateString() === todayD.toDateString();
-    const isActive = iso === activeDetailDate;
-    const score    = scores[String(day)] || {color:"#9ca3af", label:"—", score:5};
-    const future   = d > todayD;
-
-    let cls = "cal-day";
-    if (isToday)  cls += " today";
-    if (isActive) cls += " active-detail";
-    if (future)   cls += " future";
-
-    const clickHandler = future ? "return false" : `selectDay('${iso}',event)`;
-
-    html += `<div class="${cls}" onclick="${clickHandler}" title="${score.label} · ${score.tithi||''} · ${score.vara||''}">
-      <div class="cal-d-num">${day}</div>
-      <div class="cal-d-dot" style="background:${score.color}"></div>
-      <div class="cal-d-label" style="color:${score.color}">${score.label}</div>
-    </div>`;
-  }
-  grid.innerHTML = html;
-}
-
-// ── Select a day → load detail panel ───────────────────────────
-function selectDay(iso, e) {
-  if (e) e.preventDefault();
-
-  // Toggle off if same day clicked again
-  if (activeDetailDate === iso) {
-    activeDetailDate = null;
-    clearDetailPanel();
-    renderCalendar(calYear, calMonth, scoreCache[`${calYear}-${calMonth}`] || {});
-    return;
-  }
-
-  activeDetailDate = iso;
-  // Re-render grid to mark active cell
-  if (scoreCache[`${calYear}-${calMonth}`])
-    renderCalendar(calYear, calMonth, scoreCache[`${calYear}-${calMonth}`]);
-
-  const panel = document.getElementById("day-detail-panel");
-  panel.innerHTML = '<div class="cal-loading"><i class="bi bi-arrow-repeat"></i> Loading day detail…</div>';
-  panel.scrollIntoView({behavior:"smooth", block:"nearest"});
-
-  if (detailCache[iso]) { renderDetailPanel(detailCache[iso]); return; }
-
-  fetch(`/api/day-detail?date=${iso}&lat=${LAT}&lon=${LON}&tz=${encodeURIComponent(TZ)}`)
-    .then(r => r.json()).then(data => {
-      if (data.error) throw new Error(data.error);
-      detailCache[iso] = data;
-      renderDetailPanel(data);
-    })
-    .catch(err => {
-      document.getElementById("day-detail-panel").innerHTML =
-        `<div class="cal-loading" style="color:#dc2626">Error: ${err.message}</div>`;
-    });
-}
-
-function clearDetailPanel() {
-  document.getElementById("day-detail-panel").innerHTML = "";
-  activeDetailDate = null;
-}
-
-// ── Render the full day detail panel ───────────────────────────
-function renderDetailPanel(d) {
-  const sc = d.score;
-  const pct = d.moon_phase_pct || 0;
-
-  const qClass = {positive:"ddp-q-positive", neutral:"ddp-q-neutral", negative:"ddp-q-negative"};
-  const qLabel = {positive:"Good", neutral:"Neutral", negative:"Caution"};
-
-  const limbs = (d.breakdown || []).map(b => `
-    <div class="ddp-limb">
-      <span class="ddp-limb-tag">${b.limb}</span>
-      <span class="ddp-limb-name">${b.name}</span>
-      <span class="ddp-limb-detail">${b.detail}</span>
-      <span class="ddp-limb-q ${qClass[b.quality]||'ddp-q-neutral'}">${qLabel[b.quality]||'—'}</span>
-    </div>`).join("");
-
-  const sky = `
-    <div class="ddp-section-title"><i class="bi bi-sunrise me-1"></i>Sky</div>
-    <div class="ddp-sky-grid">
-      <div class="ddp-sky-item"><div class="ddp-sky-label">Sunrise</div><div class="ddp-sky-val">${d.sunrise||'—'}</div></div>
-      <div class="ddp-sky-item"><div class="ddp-sky-label">Sunset</div><div class="ddp-sky-val">${d.sunset||'—'}</div></div>
-      <div class="ddp-sky-item"><div class="ddp-sky-label">Solar Noon</div><div class="ddp-sky-val">${d.solar_noon||'—'}</div></div>
-      <div class="ddp-sky-item"><div class="ddp-sky-label">Moonrise</div><div class="ddp-sky-val">${d.moonrise||'—'}</div></div>
-      <div class="ddp-sky-item"><div class="ddp-sky-label">Moonset</div><div class="ddp-sky-val">${d.moonset||'—'}</div></div>
-      <div class="ddp-sky-item"><div class="ddp-sky-label">Day Length</div><div class="ddp-sky-val">${d.day_length||'—'}</div></div>
-    </div>`;
-
-  const kaals = (d.inauspicious || []).map(k => `
-    <div class="ddp-kaal" style="border-color:${k.color};background:${k.color}18">
-      <div class="ddp-kaal-name">${k.name}</div>
-      <div class="ddp-kaal-time" style="color:${k.color}">${k.time}</div>
-    </div>`).join("");
-
-  const tarabala = d.tarabala || {};
-  const cbala    = d.chandra_bala || {};
-  const balaColor = v => v === "Favorable" ? "#15803d" : v === "Unfavorable" ? "#dc2626" : "#6b7280";
-  const balaStyle = v => `background:${balaColor(v)}18;border-color:${balaColor(v)};color:${balaColor(v)}`;
-
-  const bala = `
-    <div class="ddp-section-title"><i class="bi bi-stars me-1"></i>Bala (Strength)</div>
-    <div class="ddp-bala-row">
-      <div class="ddp-bala-pill" style="${balaStyle(tarabala.quality||'')}">
-        <i class="bi bi-star-fill"></i>Tarabala: ${tarabala.name||'—'} — ${tarabala.quality||'—'}
-      </div>
-      <div class="ddp-bala-pill" style="${balaStyle(cbala.quality||'')}">
-        <i class="bi bi-moon-fill"></i>Chandra Bala: ${cbala.quality||'—'}
-      </div>
-    </div>`;
-
-  const isToday = d.date === TODAY_STR;
-  const isFuture = new Date(d.date+"T12:00:00") > new Date(TODAY_STR+"T12:00:00");
-
-  // Google Calendar quick-add URL for this day
-  const gcTitle = encodeURIComponent(`${sc.label} day — ${d.panchang?.nakshatra || ''} Nakshatra`);
-  const gcDetails = encodeURIComponent(`Tithi: ${d.panchang?.tithi||''} | Vara: ${d.weekday} | ${sc.label}\nRahu Kaal: ${d.sky?.rahu_kaal||''}`);
-  const gcDate = d.date.replace(/-/g,'');
-  const gcUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${gcTitle}&dates=${gcDate}/${gcDate}&details=${gcDetails}`;
-
-  const cta = `
-    <div class="ddp-cta">
-      ${!isFuture ? `<a href="/predictions?date=${d.date}" class="btn btn-vedic btn-xs flex-grow-1">
-        <i class="bi bi-magic me-1"></i>${isToday ? "Today's Full Predictions" : "Predictions for this Day"} →
-      </a>` : `<span class="text-muted small"><i class="bi bi-lock me-1"></i>Future date — predictions unavailable</span>`}
-      <a href="${gcUrl}" target="_blank" class="btn btn-outline-gold btn-xs" title="Add to Google Calendar">
-        <i class="bi bi-google me-1"></i>GCal
-      </a>
-      <button class="btn btn-outline-gold btn-xs" onclick="clearDetailPanel();renderCalendar(calYear,calMonth,scoreCache[calYear+'-'+calMonth]||{})">
-        <i class="bi bi-x"></i>
-      </button>
-    </div>`;
-
-  document.getElementById("day-detail-panel").innerHTML = `
-  <div class="day-detail-panel">
-    <div class="ddp-header">
+{# ── Life Timeline Visualization ──────────────────────── #}
+<div class="card-vedic p-5 mb-5 bg-glass overflow-hidden shadow-xl">
+   <div class="d-flex align-items-center justify-content-between mb-5">
       <div>
-        <span class="ddp-date">${new Date(d.date+"T12:00:00").toLocaleDateString("en-IN",{day:"numeric",month:"long",year:"numeric"})}</span>
-        <span class="ddp-weekday">${d.weekday}</span>
+         <span class="text-accent small fw-bold text-uppercase tracking-widest mb-1 d-block">Temporal Map</span>
+         <h3 class="text-white mb-0 fw-black">Life <span class="text-gold">Progression</span></h3>
       </div>
-      <div class="ddp-score-badge" style="border-color:${sc.color};color:${sc.color}">
-        <span class="ddp-score-num">${sc.score}</span>
-        <span>/10 &nbsp; ${sc.label}</span>
+      <div class="text-end d-none d-md-block">
+         <span class="badge bg-gold text-black px-3 py-2 rounded-pill font-mono xsmall">120-YEAR VIMSHOTTARI SCALE</span>
+      </div>
+   </div>
+
+   <div class="timeline-scroll-container pb-4">
+      <div class="d-flex gap-4">
+         {% for item in preds.timeline %}
+         <div class="timeline-node p-4 rounded-4 border {{ 'border-gold shadow-lg active-cycle' if item.status == 'Active' else 'border-secondary opacity-50' }} bg-secondary bg-opacity-10 flex-shrink-0" style="min-width: 320px; transition: 0.4s">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+               <span class="xsmall fw-black tracking-widest text-uppercase {{ 'text-gold' if item.status == 'Active' else 'text-muted' }}">{{ item.status }} CYCLE</span>
+               <div class="planet-dot shadow-sm" style="background: {{ item.color }}; width: 14px; height: 14px"></div>
+            </div>
+            <h4 class="text-white mb-1 fw-black">{{ item.period }}</h4>
+            <div class="font-mono xsmall text-gold mb-3">{{ item.start }} — {{ item.end }}</div>
+            <p class="small text-muted mb-0 leading-relaxed">{{ item.theme }}</p>
+         </div>
+         {% endfor %}
+      </div>
+   </div>
+</div>
+
+{# ── Detailed Bhava Analysis ────────────────────────────── #}
+<div class="card-vedic p-5 mb-5 bg-glass">
+  <div class="mb-5">
+    <span class="text-accent small fw-bold text-uppercase tracking-widest mb-1 d-block">House-by-House Map</span>
+    <h3 class="text-white mb-0 fw-black">Bhava <span class="text-gold">Intelligence</span></h3>
+    <p class="text-muted small">Deep mapping of the 12 cosmic departments of your life.</p>
+  </div>
+
+  <div class="accordion accordion-flush" id="bhavaAccordion">
+    {% for bhava in preds.bhava_analysis %}
+    <div class="accordion-item bg-transparent border-bottom border-secondary border-opacity-25 mb-3">
+      <h2 class="accordion-header">
+        <button class="accordion-button collapsed bg-transparent text-white shadow-none py-4" type="button" data-bs-toggle="collapse" data-bs-target="#bhava{{ bhava.house }}">
+          <div class="d-flex align-items-center w-100 pe-4">
+            <div class="h3 fw-black text-gold mb-0 me-4 opacity-50">H{{ bhava.house }}</div>
+            <div class="flex-grow-1">
+              <div class="fw-bold text-white">{{ bhava.theme }}</div>
+              <div class="xsmall text-muted font-mono tracking-widest uppercase">LORD: {{ bhava.lord }} | KARAKA: {{ bhava.karaka }} | SAV: {{ bhava.sav }}</div>
+            </div>
+            <div class="text-end d-none d-md-block">
+               <div class="progress" style="width: 100px; height: 4px; background: rgba(255,255,255,0.05)">
+                  <div class="progress-bar bg-accent" style="width: {{ bhava.bala }}%"></div>
+               </div>
+               <div class="xsmall text-muted mt-1">POWER: {{ bhava.bala|int }}%</div>
+            </div>
+          </div>
+        </button>
+      </h2>
+      <div id="bhava{{ bhava.house }}" class="accordion-collapse collapse" data-bs-parent="#bhavaAccordion">
+        <div class="accordion-body bg-black bg-opacity-25 rounded-4 p-5">
+           <div class="row g-5">
+              <div class="col-lg-8">
+                 <h5 class="text-gold mb-3 fw-bold">Detailed Interpretation</h5>
+                 <p class="text-white-50 leading-relaxed fs-6 mb-4">{{ bhava.interpretation }}</p>
+
+                 <div class="d-flex flex-wrap gap-4">
+                    <div class="p-3 rounded-3 bg-secondary bg-opacity-10 border border-secondary border-opacity-25">
+                       <div class="xsmall text-muted uppercase tracking-widest mb-1">Status</div>
+                       <div class="small fw-bold text-{{ 'success' if bhava.bala > 40 else 'warning' if bhava.bala > 25 else 'danger' }}">
+                          {{ 'Dominant' if bhava.bala > 40 else 'Balanced' if bhava.bala > 25 else 'Challenged' }}
+                       </div>
+                    </div>
+                    <div class="p-3 rounded-3 bg-secondary bg-opacity-10 border border-secondary border-opacity-25">
+                       <div class="xsmall text-muted uppercase tracking-widest mb-1">Occupants</div>
+                       <div class="small fw-bold text-white">{{ bhava.occupants|join(', ') if bhava.occupants else 'None' }}</div>
+                    </div>
+                 </div>
+              </div>
+              <div class="col-lg-4">
+                 <div class="p-4 rounded-4 border border-dashed border-gold border-opacity-25 text-center">
+                    <div class="h1 fw-black text-gold mb-0">{{ bhava.sav }}</div>
+                    <div class="xsmall text-muted tracking-widest">SAV POINTS</div>
+                    <hr class="my-3 opacity-10">
+                    <p class="xsmall text-muted mb-0">Energy capacity for theme manifestation in physical reality.</p>
+                 </div>
+              </div>
+           </div>
+        </div>
       </div>
     </div>
-    <div class="ddp-body">
-      <div class="d-flex gap-3 align-items-start">
-        <div class="ddp-score-ring" style="border-color:${sc.color};color:${sc.color}">
-          <div class="ddp-ring-num">${sc.score}</div>
-          <div class="ddp-ring-label">${sc.label}</div>
+    {% endfor %}
+  </div>
+</div>
+
+{# ── Dimension Filter ───────────────────────────────────── #}
+<div class="mb-5">
+  <div class="kundli-mode-tabs p-2 bg-secondary bg-opacity-10 border border-secondary border-opacity-25 rounded-pill shadow-inner">
+    <button class="kmt-btn active px-4 py-2" onclick="filterDomains(this, 'all')">All Dimensions</button>
+    <button class="kmt-btn px-4 py-2" onclick="filterDomains(this, 'high')">Power Zones</button>
+    <button class="kmt-btn px-4 py-2" onclick="filterDomains(this, 'caution')">Karmic Debts</button>
+  </div>
+</div>
+
+{% if preds.monthly_forecast %}
+{# ── Monthly Strategy ───────────────────────────────────── #}
+<div class="card-vedic p-5 mb-5 bg-glass border-dashed border-accent border-opacity-25">
+  <div class="row align-items-center g-5">
+    <div class="col-lg-7">
+      <span class="text-accent small fw-bold text-uppercase tracking-widest mb-1 d-block">Monthly Synthesis</span>
+      <h3 class="text-white mb-3 fw-black">{{ preds.monthly_forecast.month }} — <span class="text-gold">{{ preds.monthly_forecast.overall_trend }}</span></h3>
+      <p class="text-white-50 small mb-4">Strategic overview synthesized from transit-dasha alignment for the current lunar cycle.</p>
+
+      <div class="d-flex flex-wrap gap-3 mb-4">
+        {% for opp in preds.monthly_forecast.opportunities %}
+        <div class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 px-3 py-2 rounded-pill small">
+           <i class="bi bi-rocket-takeoff me-2"></i>{{ opp }}
         </div>
-        <div class="ddp-limbs">${limbs}</div>
-      </div>
-
-      <div class="ddp-moon-bar mt-3">
-        <div class="ddp-moon-icon">${MOON_EMOJIS(pct)}</div>
-        <div class="ddp-moon-info">
-          <div class="ddp-moon-phase">${d.moon_phase||'—'} &nbsp;<span style="color:var(--text-muted);font-size:0.78rem;font-weight:400">${pct}%</span></div>
-          <div class="ddp-moon-bar-track"><div class="ddp-moon-bar-fill" style="width:${pct}%"></div></div>
+        {% endfor %}
+        {% for cau in preds.monthly_forecast.cautions %}
+        <div class="badge bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25 px-3 py-2 rounded-pill small">
+           <i class="bi bi-shield-lock me-2"></i>{{ cau }}
         </div>
+        {% endfor %}
       </div>
-
-      ${sky}
-
-      <div class="ddp-section-title"><i class="bi bi-hourglass-split me-1"></i>Inauspicious Periods</div>
-      <div class="ddp-inauspicious">${kaals}</div>
-
-      <div class="ddp-muhurta">
-        <span class="ddp-muhurta-label"><i class="bi bi-sun me-1"></i>Abhijit Muhurta</span>
-        <span class="ddp-muhurta-val">${d.abhijit||'—'}</span>
-      </div>
-
-      ${bala}
-      ${cta}
     </div>
-  </div>`;
+    <div class="col-lg-5">
+       <div class="row g-3">
+          {% for domain, data in preds.monthly_forecast.scores.items() %}
+          <div class="col-6">
+             <div class="p-3 rounded-4 bg-secondary bg-opacity-10 border border-secondary border-opacity-25 text-center">
+                <div class="xsmall text-muted uppercase tracking-widest mb-1">{{ domain }}</div>
+                <div class="h4 fw-black text-{{ 'success' if data.score > 7 else 'warning' if data.score > 4 else 'danger' }} mb-0">{{ data.score|round(1) }}</div>
+                <div class="xsmall text-{{ 'success' if data.score > 7 else 'warning' if data.score > 4 else 'danger' }} opacity-75">{{ data.label }}</div>
+             </div>
+          </div>
+          {% endfor %}
+       </div>
+    </div>
+  </div>
+</div>
+{% endif %}
+
+{# ── Insight Showcase (Categorized) ─────────────────────── #}
+{% for cat, domains in preds.categorized_domains.items() %}
+<div class="mb-5">
+  <h3 class="text-white fw-black mb-4 border-start border-gold border-4 ps-3">{{ cat }} <span class="text-gold">Vectors</span></h3>
+  <div class="domain-grid mb-4">
+    {% for domain in domains %}
+    <div class="prediction-card domain-item" data-score="{{ domain.score }}">
+      <div class="prediction-hero p-5">
+        <div class="d-flex justify-content-between align-items-start mb-4">
+          <div class="flex-grow-1 pe-4">
+             <h3 class="prediction-title text-gold mb-2" style="font-size: 1.8rem">{{ domain.domain }}</h3>
+             <p class="small text-muted mb-0 leading-relaxed">{{ domain.summary }}</p>
+          </div>
+          <div class="text-end">
+             <div class="h2 fw-black text-white mb-0" style="font-size: 2.5rem">{{ domain.score|round|int }}%</div>
+             <div class="xsmall text-accent font-mono tracking-widest">INTENSITY</div>
+             <div class="badge bg-{{ 'success' if domain.confidence == 'HIGH' else 'warning' if domain.confidence == 'MEDIUM' else 'danger' }} bg-opacity-20 text-{{ 'success' if domain.confidence == 'HIGH' else 'warning' if domain.confidence == 'MEDIUM' else 'danger' }} xsmall mt-1 px-2">
+               {{ domain.confidence }} CONFIDENCE
+             </div>
+          </div>
+        </div>
+        <div class="progress bg-secondary bg-opacity-20 rounded-pill" style="height: 10px;">
+          <div class="progress-bar"
+               style="width: {{ domain.score }}%; background: linear-gradient(90deg, var(--gold), var(--accent-2)); box-shadow: 0 0 15px var(--accent-glow);"></div>
+        </div>
+      </div>
+
+      <div class="evidence-list p-5 pt-0">
+        {% if domain.contradictions %}
+        <div class="contradiction-box mb-4 p-3 rounded-3 bg-danger bg-opacity-10 border border-danger border-opacity-25">
+           <div class="xsmall text-danger fw-black text-uppercase tracking-widest mb-2"><i class="bi bi-exclamation-triangle-fill"></i> Complexity Alert</div>
+           {% for contra in domain.contradictions %}
+           <div class="small text-danger opacity-75 mb-1">• {{ contra }}</div>
+           {% endfor %}
+        </div>
+        {% endif %}
+
+        <div class="xsmall text-muted text-uppercase tracking-widest mb-4 opacity-50 fw-black">Cosmic Evidence</div>
+        {% for item in domain.evidence %}
+        <div class="evidence-item">
+          <div class="d-flex gap-4">
+             <div class="fs-4">
+                {% if '✓' in item %}<i class="bi bi-patch-check-fill text-success"></i>
+                {% elif '⚠' in item %}<i class="bi bi-shield-exclamation text-danger"></i>
+                {% elif '⏳' in item %}<i class="bi bi-hourglass-top text-gold"></i>
+                {% elif '🚀' in item %}<i class="bi bi-lightning-charge-fill text-accent"></i>
+                {% else %}<i class="bi bi-record-circle text-muted opacity-25"></i>{% endif %}
+             </div>
+             <div class="small text-white-50 leading-relaxed">
+                {{ item.replace('✓ ', '').replace('⚠ ', '').replace('⏳ ', '').replace('🚀 ', '').replace('🌪 ', '') }}
+             </div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+
+      {% if domain.timing %}
+      <div class="px-5 py-3 bg-accent bg-opacity-10 border-top border-accent border-opacity-10 d-flex justify-content-between align-items-center">
+         <span class="xsmall text-accent fw-black tracking-widest"><i class="bi bi-activity me-1"></i> {{ domain.timing[0].impact | upper }} SUPPORT</span>
+         <span class="badge bg-accent text-white px-2 py-1" style="font-size: 0.6rem">TIMING PEAK</span>
+      </div>
+      {% endif %}
+    </div>
+    {% endfor %}
+  </div>
+</div>
+{% endfor %}
+
+{# ── Global Sync ────────────────────────────────────────── #}
+<div class="card-vedic p-5 bg-glass text-center border-dashed mb-5">
+  <div class="row align-items-center">
+     <div class="col-lg-7 text-lg-start mb-4 mb-lg-0">
+        <h2 class="display-6 text-white fw-black mb-2">Synchronize Your <span class="text-gold">Universe</span></h2>
+        <p class="text-muted mb-0">Bridge your cosmic insights with your digital workflow. Private, local, and encrypted.</p>
+     </div>
+     <div class="col-lg-5 text-lg-end">
+        <div class="d-flex flex-wrap justify-content-center justify-content-lg-end gap-3">
+          <button class="btn btn-vedic px-5 py-3" onclick="downloadObsidian()">
+            <i class="bi bi-journal-code me-2"></i>Obsidian
+          </button>
+          <button class="btn btn-outline-gold px-5 py-3" onclick="downloadIcs()">
+            <i class="bi bi-calendar-event me-2"></i>Calendar
+          </button>
+        </div>
+     </div>
+  </div>
+</div>
+{% endif %}
+
+<script>
+function gotoDate(date) {
+  window.location.href = "{{ url_for('main.predictions') }}?date=" + date;
 }
 
-// ── Month navigation ────────────────────────────────────────────
-document.getElementById("cal-prev").addEventListener("click", () => {
-  calMonth--; if (calMonth < 1) { calMonth = 12; calYear--; }
-  loadMonth(calYear, calMonth);
-});
-document.getElementById("cal-next").addEventListener("click", () => {
-  // Allow browsing up to 12 months ahead (panchang is fully calculable for future)
-  const now = new Date(TODAY_STR + "T12:00:00");
-  const maxYear  = now.getFullYear() + 1;
-  const maxMonth = now.getMonth() + 1;   // same month next year
-  if (calYear > maxYear || (calYear === maxYear && calMonth >= maxMonth)) return;
-  calMonth++; if (calMonth > 12) { calMonth = 1; calYear++; }
-  loadMonth(calYear, calMonth);
-});
+function filterDomains(btn, type) {
+  const items = document.querySelectorAll('.domain-item');
+  document.querySelectorAll('.kmt-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
 
-// ── Export helpers ─────────────────────────────────────────────────────────
-function downloadIcs() {
-  const y = document.getElementById('ics-year-sel').value;
-  const m = document.getElementById('ics-month-sel').value;
-  window.location.href = `/export/ics?year=${y}&month=${m}&lat=${LAT}&lon=${LON}&tz=${encodeURIComponent(TZ)}`;
-}
-function downloadObsidian() {
-  const y = document.getElementById('obs-year-sel').value;
-  const m = document.getElementById('obs-month-sel').value;
-  window.location.href = `/export/obsidian?year=${y}&month=${m}&lat=${LAT}&lon=${LON}&tz=${encodeURIComponent(TZ)}`;
-}
-function filterDomains() {
-  const q = document.getElementById("domain-search").value.toLowerCase();
-  document.querySelectorAll(".domain-item").forEach(item => {
-    const name = item.dataset.domain;
-    item.style.display = name.includes(q) ? 'block' : 'none';
+  items.forEach(item => {
+    const score = parseFloat(item.dataset.score);
+    if (type === 'all') item.style.display = 'block';
+    else if (type === 'high') item.style.display = score > 65 ? 'block' : 'none';
+    else if (type === 'caution') item.style.display = score < 50 ? 'block' : 'none';
   });
 }
 
-function toggleDomainDetail(btn) {
-  const extra = btn.closest('.domain-card').querySelector('.domain-factors-extra');
-  if (extra.style.display === 'none') {
-    extra.style.display = 'block';
-    btn.textContent = 'Hide';
-  } else {
-    extra.style.display = 'none';
-    btn.textContent = 'Details';
-  }
+function downloadIcs() {
+  const m = new Date().getMonth() + 1;
+  const y = new Date().getFullYear();
+  window.location.href = `/api/export/ics?month=${m}&year=${y}`;
+}
+
+function downloadObsidian() {
+  const m = new Date().getMonth() + 1;
+  const y = new Date().getFullYear();
+  window.location.href = `/api/export/obsidian?month=${m}&year=${y}`;
 }
 </script>
+
+<style>
+.leading-relaxed { line-height: 1.7; }
+.shadow-inner { box-shadow: inset 0 2px 4px rgba(0,0,0,0.3); }
+.bg-glass { backdrop-filter: blur(15px); }
+</style>
 {% endblock %}

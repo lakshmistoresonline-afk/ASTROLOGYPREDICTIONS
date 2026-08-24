@@ -107,8 +107,54 @@ def _get_pratyantardashas(antar_lord: str, antar_start: datetime, antar_years: f
             "start": current_start,
             "end": current_end,
             "years": years,
-            "days": int(duration_days)
+            "days": int(duration_days),
+            "sookshma": _get_sookshma_dashas(lord, current_start, years)
         })
         current_start = current_end
 
     return pratys
+
+def _get_sookshma_dashas(praty_lord: str, praty_start: datetime, praty_years: float) -> List[Dict[str, Any]]:
+    sookshmas = []
+    lord_idx = DASHA_SEQUENCE.index(praty_lord)
+    current_start = praty_start
+
+    for i in range(9):
+        lord = DASHA_SEQUENCE[(lord_idx + i) % 9]
+        years = (praty_years * DASHA_YEARS[lord]) / TOTAL_YEARS
+        duration_days = years * DAYS_PER_YEAR
+        current_end = current_start + timedelta(days=duration_days)
+
+        sookshmas.append({
+            "lord": lord,
+            "start": current_start,
+            "end": current_end,
+            "years": years,
+            "hours": int(duration_days * 24),
+            "prana": _get_prana_dashas(lord, current_start, years)
+        })
+        current_start = current_end
+
+    return sookshmas
+
+def _get_prana_dashas(sookshma_lord: str, sookshma_start: datetime, sookshma_years: float) -> List[Dict[str, Any]]:
+    pranas = []
+    lord_idx = DASHA_SEQUENCE.index(sookshma_lord)
+    current_start = sookshma_start
+
+    for i in range(9):
+        lord = DASHA_SEQUENCE[(lord_idx + i) % 9]
+        years = (sookshma_years * DASHA_YEARS[lord]) / TOTAL_YEARS
+        duration_days = years * DAYS_PER_YEAR
+        current_end = current_start + timedelta(days=duration_days)
+
+        pranas.append({
+            "lord": lord,
+            "start": current_start,
+            "end": current_end,
+            "years": years,
+            "minutes": int(duration_days * 24 * 60)
+        })
+        current_start = current_end
+
+    return pranas

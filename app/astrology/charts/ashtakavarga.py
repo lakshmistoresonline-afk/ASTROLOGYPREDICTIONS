@@ -104,17 +104,43 @@ def apply_trikona_shodhana(bav: List[int]) -> List[int]:
             reduced[i] -= m
     return reduced
 
-def calculate_shodhya_pinda(bav: List[int], planet_rashis: Dict[str, int], planet_name: str) -> int:
-    """Calculate the final Shodhya Pinda for a planet."""
-    trikona = apply_trikona_shodhana(bav)
-    # Simple Shodhya Pinda calculation (Simplified for performance)
-    rashi_sum = sum(trikona[i] * RASHI_MULTIPLIERS[i] for i in range(12))
+def apply_ekadhipatya_shodhana(trikona_bav: List[int], planet_rashis: Dict[str, int]) -> List[int]:
+    """Second reduction for signs owned by the same planet."""
+    reduced = list(trikona_bav)
+    # Signs paired by lord: (Mars: 0,7), (Ven: 1,6), (Merc: 2,5), (Jup: 8,11), (Sat: 9,10)
+    pairs = [(0, 7), (1, 6), (2, 5), (8, 11), (9, 10)]
 
-    # Planet sum: sum of reduced points where planets are located
+    occupied = set(planet_rashis.values())
+
+    for s1, s2 in pairs:
+        occ1 = s1 in occupied
+        occ2 = s2 in occupied
+        v1, v2 = reduced[s1], reduced[s2]
+
+        if occ1 and occ2: continue
+        elif not occ1 and not occ2:
+            m = min(v1, v2)
+            reduced[s1], reduced[s2] = m, m
+        elif occ1 and not occ2:
+            if v2 >= v1: reduced[s2] = 0
+            else: reduced[s2] = v1 - v2 # Simplified classic rule
+        elif not occ1 and occ2:
+            if v1 >= v2: reduced[s1] = 0
+            else: reduced[s1] = v2 - v1
+
+    return reduced
+
+def calculate_shodhya_pinda(bav: List[int], planet_rashis: Dict[str, int], planet_name: str) -> int:
+    """Calculate the final Shodhya Pinda (Pure points)."""
+    trikona = apply_trikona_shodhana(bav)
+    ekadhipatya = apply_ekadhipatya_shodhana(trikona, planet_rashis)
+
+    rashi_sum = sum(ekadhipatya[i] * RASHI_MULTIPLIERS[i] for i in range(12))
+
     planet_sum = 0
     p_rashi = planet_rashis.get(planet_name)
     if p_rashi is not None:
-        planet_sum = trikona[p_rashi] * PLANET_MULTIPLIERS.get(planet_name, 5)
+        planet_sum = ekadhipatya[p_rashi] * PLANET_MULTIPLIERS.get(planet_name, 5)
 
     return rashi_sum + planet_sum
 

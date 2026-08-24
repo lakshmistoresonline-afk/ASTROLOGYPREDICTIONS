@@ -30,11 +30,33 @@ def calculate_varga_rashi(longitude: float, division: int) -> int:
         # 1st: Same, 2nd: 4th, 3rd: 7th, 4th: 10th
         return (rashi + div_idx * 3) % 12
 
+    if division == 5: # D5: Panchamsha
+        # Odd: Aries(0), Leo(4), Sag(8), Gem(2), Libra(6)
+        # Even: Taurus(1), Virgo(5), Cap(9), Cancer(3), Scorp(7)
+        is_odd = rashi % 2 == 0
+        if is_odd:
+            seq = [0, 4, 8, 2, 6]
+        else:
+            seq = [1, 5, 9, 3, 7]
+        return seq[div_idx % 5]
+
+    if division == 6: # D6: Shashtamsha
+        # Odd: Starts from Aries(0). Even: Starts from Libra(6).
+        is_odd = rashi % 2 == 0
+        start = 0 if is_odd else 6
+        return (start + div_idx) % 12
+
     if division == 7: # D7: Saptamsha
         # Odd signs: Starts from same sign
         # Even signs: Starts from 7th sign
         is_odd = rashi % 2 == 0
         start = rashi if is_odd else (rashi + 6) % 12
+        return (start + div_idx) % 12
+
+    if division == 8: # D8: Ashtamsha
+        # Movable: Aries(0), Fixed: Sag(8), Dual: Leo(4)
+        starts = [0, 8, 4]
+        start = starts[rashi % 3]
         return (start + div_idx) % 12
 
     if division == 9: # D9: Navamsha
@@ -53,7 +75,13 @@ def calculate_varga_rashi(longitude: float, division: int) -> int:
         start = rashi if is_odd else (rashi + 8) % 12
         return (start + div_idx) % 12
 
+    if division == 11: # D11: Rudramsha
+        # Starts from Aries(0) for all, but moves backwards?
+        # Common: starts from Aries and moves forward.
+        return (0 + div_idx) % 12
+
     if division == 12: # D12: Dwadashamsha
+        # ...
         # Starts from same sign
         return (rashi + div_idx) % 12
 
@@ -80,13 +108,11 @@ def calculate_varga_rashi(longitude: float, division: int) -> int:
         start = 4 if is_odd else 3
         return (start + div_idx) % 12
 
-    if division == 27: # D27: Saptavimshamsha
-        # Movable: Aries (0)
-        # Fixed: Cancer (3)
-        # Dual: Libra (6)
-        # Wait, there's another cycle: Scorpio (7)... no, standard is 1st-Aries, 2nd-Cancer, 3rd-Libra, 4th-Capricorn
-        # Each sign start: (rashi * 27 / 1) % 12? No.
-        # Fire: 0, Earth: 3, Air: 6, Water: 9
+    if division == 27: # D27: Saptavimshamsha (Nakshatramsha)
+        # Fire signs: Starts from Aries (0)
+        # Earth signs: Starts from Cancer (3)
+        # Air signs: Starts from Libra (6)
+        # Water signs: Starts from Capricorn (9)
         starts = [0, 3, 6, 9]
         start = starts[rashi % 4]
         return (start + div_idx) % 12
@@ -128,8 +154,11 @@ def calculate_varga_rashi(longitude: float, division: int) -> int:
         return (start + div_idx) % 12
 
     if division == 60: # D60: Shashtiamsha
-        # Starts from same sign
-        return (rashi + div_idx) % 12
+        # Odd signs (0, 2, 4, 6, 8, 10): Starts from Aries (0)
+        # Even signs (1, 3, 5, 7, 9, 11): Starts from Libra (6)
+        is_odd = rashi % 2 == 0
+        start = 0 if is_odd else 6
+        return (start + div_idx) % 12
 
     # Default fallback: linear division
     return (rashi + div_idx) % 12

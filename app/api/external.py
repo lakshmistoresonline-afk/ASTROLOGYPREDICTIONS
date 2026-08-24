@@ -85,7 +85,7 @@ def _tz_from_coords(lat: float, lon: float) -> str:
     # TimeZoneDB API fallback
     if TIMEZONEDB_KEY:
         try:
-            url = "http://api.timezonedb.com/v2.1/get-time-zone"
+            url = "https://api.timezonedb.com/v2.1/get-time-zone"
             params = {
                 "key": TIMEZONEDB_KEY, "format": "json",
                 "by": "position", "lat": lat, "lng": lon,
@@ -160,19 +160,20 @@ def _prokerala_token() -> str | None:
 def get_ip_location() -> dict:
     """
     Auto-detect approximate location from the server's public IP.
-    Uses ip-api.com (free, no key needed, 45 req/min).
+    Uses freeipapi.com (free, HTTPS support).
     Returns dict with lat, lon, city, timezone.
     """
     try:
-        resp = requests.get("http://ip-api.com/json/?fields=lat,lon,city,country,timezone", timeout=4)
+        # Switching to freeipapi.com for HTTPS support
+        resp = requests.get("https://freeipapi.com/api/json", timeout=4)
         if resp.status_code == 200:
             data = resp.json()
             return {
-                "lat": data.get("lat", 20.5937),
-                "lon": data.get("lon", 78.9629),
-                "city": data.get("city", "India"),
-                "country": data.get("country", "India"),
-                "timezone": data.get("timezone", "Asia/Kolkata"),
+                "lat": data.get("latitude", 20.5937),
+                "lon": data.get("longitude", 78.9629),
+                "city": data.get("cityName", "India"),
+                "country": data.get("countryName", "India"),
+                "timezone": data.get("timeZone", "Asia/Kolkata"),
             }
     except Exception:
         pass

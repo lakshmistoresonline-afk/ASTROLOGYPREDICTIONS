@@ -2,6 +2,26 @@
 
 NAK_SPAN = 360 / 27
 
+HOUSE_INTERPRETATIONS = {
+    1: "Focused on self, identity, and physical vitality.",
+    2: "Associated with family, speech, and accumulated wealth.",
+    3: "Relates to siblings, communication, courage, and short travels.",
+    4: "Connected to mother, home, happiness, and real estate.",
+    5: "Linked to intelligence, creativity, education, and children.",
+    6: "Deals with service, health challenges, enemies, and competition.",
+    7: "Represents partnerships, marriage, and public relations.",
+    8: "Involved with transformation, research, longevity, and secrets.",
+    9: "Relates to wisdom, higher education, long travels, and dharma.",
+    10: "Connected to career, status, authority, and public reputation.",
+    11: "Linked to gains, networking, goals, and elder siblings.",
+    12: "Associated with isolation, spirituality, foreign lands, and liberation."
+}
+
+UPAGRAHA_INTERPRETATIONS = {
+    "Gulika": "Represents karmic pressure, delays, or hidden obstacles in the house it occupies.",
+    "Mandi": "Slightly less intense than Gulika, but still indicates karmic sensitivities and technical hurdles."
+}
+
 NAKSHATRA_MEANINGS = {
     "Ashwini":"New beginnings, healing, speed.",
     "Bharani":"Transformation, creativity, Yama's energy.",

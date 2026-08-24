@@ -64,5 +64,7 @@ def get_functional_status(asc_rashi_idx: int) -> Dict[str, str]:
     # Rahu/Ketu usually take the nature of their dispositor and planets they conjoin
     status["Rahu"] = "Shadow (Mixed)"
     status["Ketu"] = "Shadow (Mixed)"
+    status["Gulika"] = "Functional Malefic"
+    status["Mandi"] = "Functional Malefic"
 
     return status

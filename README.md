@@ -1,272 +1,74 @@
-# 🔮 Jyotish Vedic Dashboard
+# 🔮 ASTROLOGYPREDICTIONS — Comprehensive Vedic Intelligence Engine
 
-> **Free, open-source Vedic astrology software** — Kundli, Panchang, Transit, Dasha, Daily Predictions, Prediction Calendar, and iCal/Obsidian sync. Runs entirely on your machine. No subscription, no ads, no cloud required.
+An evidence-based, professional-grade Vedic Astrology (Jyotish) prediction platform utilizing a deterministic inference chain.
 
 ---
 
 ## ✨ Features
 
-| Section | What you get |
+| Category | Mathematical Precision |
 |---|---|
-| **Kundli (Birth Chart)** | North-Indian & Navamsa D9 canvas chart · planet positions · dignity · nakshatra |
-| **Panchang** | Tithi · Nakshatra · Yoga · Karana · Vara · Tarabala · Chandra Bala · Abhijit Muhurta |
-| **Transit Chart** | Live planetary positions · nakshatra → natal-house map · danger/warning/positive alerts |
-| **Vimshottari Dasha** | Full Mahadasha → Antardasha → Pratyantardasha tree with timeline |
-| **Daily Predictions** | Overall score · Emotional state · Love · Career · Major changes · Planet forecasts |
-| **Prediction Calendar** | Month view with per-day quality dots · click any day for full panchang detail panel |
-| **Sky panel** | Sunrise · Sunset · Moonrise · Moonset · Rahu Kaal · Gulika Kaal · Abhijit Muhurta |
-| **iCal Export** | Download `.ics` for Apple / Outlook / Google Calendar with panchang notes per day |
-| **Obsidian Export** | ZIP of daily `.md` notes with YAML frontmatter, panchang tables, sky grid |
-| **AI day notes** | Optional 2-sentence Vedic insight per exported day via Ollama / Groq / OpenRouter |
-| **Save charts** | Store multiple Kundlis locally; load/delete from home screen |
-| **Auto location** | IP-based city pre-fill · geocode by city name · browser GPS |
-
-All calculations use **Lahiri ayanamsa** (sidereal zodiac, Whole Sign houses) via **Swiss Ephemeris** — the same engine used by professional Jyotish software. All astro runs **100% offline**.
+| **Core Engine** | Swiss Ephemeris (Topocentric) · 16 Parashari Vargas (D1-D60) · Lahiri Ayanamsa |
+| **Strength (Bala)** | Full Shadbala · Bhava Bala · Vimsopaka (16-Varga) · Harsha Bala · Patyayini · Vaisheshikamsha |
+| **Dashas (Timing)** | Vimshottari (4 levels) · Yogini · Chara · Kala Chakra · Narayan · Mandook |
+| **Jaimini System** | 7/8 Charakarakas · Arudha Padas (AL-A12) · Upapada · Karakamsha · Swamsha · Rajayogas |
+| **Advanced Systems** | KP System (SSL, Significators A-D, Ruling Planets) · Tajika (Ithasala, Varsheshwar, Sahams) |
+| **Destiny Points** | Bhrigu Bindu · BCP Activation · Pushkar Navamsha · 64th Navamsha · 150 Nadi Amshas |
+| **Bio-Rhythms** | Panchapakshi (5-Bird Activities) · Tatva (Elemental Cycles) · Baladi & Deeptadi Avasthas |
+| **Inference Framework** | **Deterministic Evidence Engine** · Contradiction Detection · Multi-system Confidence Scoring |
 
 ---
 
-## 🚀 Quick Start
+## 🏗️ Architecture: The Deterministic Inference Chain
 
-### Option 1 — Interactive installer (recommended)
+Unlike generic horoscope generators, this application follows a strictly tiered analytical pipeline:
 
+`CALCULATION → ASTROLOGICAL FACTS → STRENGTH ANALYSIS → YOGAS → VARGAS → DASHA → TRANSITS → DOMAIN ANALYSIS → EVENT DETECTION → TIMING → CONTRADICTION ANALYSIS → CONFIDENCE → EXPLANATION`
+
+Every life insight is derived from calculated evidence. If the engine finds conflicting signals (e.g., strong D1 potential but weak D9 fruit), the **Contradiction Engine** alerts the user and adjusts the **Confidence Score**.
+
+---
+
+## 🚀 Key Modules
+
+- **[framework.py](file:///D:/ASTROLOGYPREDICTIONS/app/astrology/predictions/framework.py)**: Centralized inference logic that cross-validates 60+ data layers.
+- **[chart.py](file:///D:/ASTROLOGYPREDICTIONS/app/astrology/core/chart.py)**: The "Master Engine" that synthesizes global astrological data into a canonical model.
+- **[engine.py](file:///D:/ASTROLOGYPREDICTIONS/app/astrology/predictions/engine.py)**: Aggregates 32+ domain-specific predictions (Career, Wealth, Moksha, etc.).
+- **[muhurta.py](file:///D:/ASTROLOGYPREDICTIONS/app/astrology/panchang/muhurta.py)**: Precision timing for surgery, litigation, and financial ventures.
+
+---
+
+## 🤖 AI Explainer (Optional)
+
+The system includes an optional **AI Consultation** layer. The AI *never* replaces deterministic logic; instead, it receives structured astrological facts and "Cosmic Evidence" to provide natural language explanations, acting as a bridge between high-math Jyotish and the user.
+
+---
+
+## 🛠️ Setup & Deployment
+
+### Local Run
 ```bash
-# 1. Clone
-git clone https://github.com/Aerofarmer/jyotish-dashboard.git
-cd jyotish-dashboard
-
-# 2. Run the installer — it guides you through everything
 bash install.sh
-```
-
-The installer will:
-- Check for updates from GitHub
-- Set up a Python virtual environment
-- Install all dependencies
-- Download Swiss Ephemeris data files (~30 MB)
-- Ask about optional AI notes (Ollama / Groq / OpenRouter)
-- Offer to create a desktop shortcut or app-menu entry
-- Ask if you want to launch the app immediately
-
-**Update later:**
-```bash
-bash install.sh --update
-```
-
----
-
-### Option 2 — Manual (step by step)
-
-```bash
-git clone https://github.com/Aerofarmer/jyotish-dashboard.git
-cd jyotish-dashboard
-
-# Python virtual environment
-python3 -m venv .venv
-source .venv/bin/activate          # Windows: .venv\Scripts\activate
-pip install -r requirements.txt
-
-# Download Swiss Ephemeris data
-mkdir -p ephe && cd ephe
-curl -O https://www.astro.com/ftp/swisseph/ephe/seas_18.se1
-curl -O https://www.astro.com/ftp/swisseph/ephe/semo_18.se1
-curl -O https://www.astro.com/ftp/swisseph/ephe/sepl_18.se1
-cd ..
-
-# Configure (optional)
-cp .env.example .env   # edit .env if you want AI notes or geocoding API keys
-
-# Run
 ./start.sh
-# Opens http://localhost:5001
 ```
 
----
-
-### Option 3 — Docker (one command, no Python setup needed)
-
+### Docker
 ```bash
-git clone https://github.com/Aerofarmer/jyotish-dashboard.git
-cd jyotish-dashboard
-cp .env.example .env          # edit FLASK_SECRET_KEY at minimum
-docker compose up -d
-# App at http://localhost:5000
-docker compose logs -f        # view logs
+docker-compose up -d
 ```
 
-> Docker downloads the Swiss Ephemeris files automatically on first build.
-
----
-
-## ☁️ Cloud Deployment (Firebase + Cloud Run)
-
-You can host this dashboard for **free** (within usage limits) using Google Cloud.
-
-### 1. Prerequisites
-- [Google Cloud SDK](https://cloud.google.com/sdk/docs/install) installed and authenticated.
-- [Firebase CLI](https://firebase.google.com/docs/cli) installed.
-- A Firebase project created in the console.
-
-### 2. Deploy to Cloud Run & Firebase Hosting
-
-I have provided a script to automate this for your specific account.
-
-**For Windows (PowerShell):**
+### Cloud (Firebase + Cloud Run)
 ```powershell
 .\scripts\deploy.ps1
 ```
 
-**For Linux/Mac (Bash):**
-```bash
-bash scripts/deploy.sh
-```
-
-These scripts will:
-1. Log you into the correct account (`srinathrajiran007@gmail.com`).
-2. Build and deploy the container to Cloud Run.
-3. Push static assets to Firebase Hosting.
-
 ---
 
-## 🔄 Sync / Update
+## 🛡️ Security & Privacy
 
-```bash
-# Pull latest, reinstall packages, keep your .env
-bash install.sh --update
-
-# Or manually
-git pull origin main
-source .venv/bin/activate
-pip install -r requirements.txt   # picks up any new packages
-./start.sh
-```
-
----
-
-## 🤖 AI Day Notes (optional)
-
-The iCal and Obsidian exports can include a 2-sentence Vedic AI insight per day, generated by an open LLM tuned with a Jyotishi system prompt. Three zero-cost options:
-
-### Ollama — fully local, private, free
-
-```bash
-# 1. Install Ollama
-#    macOS:  brew install ollama   OR   https://ollama.com
-#    Linux:  curl -fsSL https://ollama.com/install.sh | sh
-
-# 2. Pull a model
-ollama pull llama3.2
-
-# 3. Add to .env
-LLM_BASE_URL=http://localhost:11434/v1
-LLM_API_KEY=ollama
-LLM_MODEL=llama3.2
-```
-
-### Groq — free cloud API, very fast
-
-```bash
-# Get a free key at https://console.groq.com
-LLM_BASE_URL=https://api.groq.com/openai/v1
-LLM_API_KEY=your_groq_key
-LLM_MODEL=llama-3.1-8b-instant
-```
-
-### OpenRouter — free cloud models
-
-```bash
-# Get a free key at https://openrouter.ai
-LLM_BASE_URL=https://openrouter.ai/api/v1
-LLM_API_KEY=your_openrouter_key
-LLM_MODEL=meta-llama/llama-3.2-3b-instruct:free
-```
-
-> Leave `LLM_MODEL` empty (or unset) to disable AI notes. The app is fully functional without them.
-
----
-
-## 🌐 API Keys — What's required?
-
-| Key | Required? | What it enables |
-|---|---|---|
-| `FLASK_SECRET_KEY` | **Yes** | Session security — auto-generated by `install.sh` |
-| `LLM_MODEL` + friends | No | AI Vedic notes in iCal/Obsidian exports |
-| `OPENCAGE_API_KEY` | No | Better geocoding (2500 req/day free at opencagedata.com) |
-| `TIMEZONEDB_API_KEY` | No | Timezone fallback (free at timezonedb.com) |
-
-Without any keys: geocoding uses Nominatim (OpenStreetMap), timezone is computed offline via `timezonefinder`. Fully functional.
-
----
-
-## 📅 Calendar & Obsidian Sync
-
-On the **Predictions** page, scroll to the **Sync & Export** panel:
-
-- **iCal (.ics)** — pick month/year → download → import into Apple Calendar, Outlook, or Google Calendar (File → Import)
-- **Google Calendar** — use the "Open GCal Import" button to import the `.ics`, or click any calendar day and hit "Add to GCal" for a single event
-- **Obsidian ZIP** — pick month/year → download ZIP → extract into your Obsidian vault. Each day becomes a `YYYY-MM-DD.md` note with YAML frontmatter (score, tithi, nakshatra, vara, sunrise, Rahu Kaal) plus panchang tables and sky times
-
----
-
-## 🏗️ Architecture
-
-```
-jyotish-dashboard/
-├── app/
-│   ├── astrology/
-│   │   ├── calculator.py   # Planet positions, lagna, nakshatra (pyswisseph)
-│   │   ├── dasha.py        # Vimshottari Dasha engine
-│   │   ├── panchang.py     # 5-limb panchang + muhurta + sky (ephem)
-│   │   ├── predictions.py  # Daily prediction engine
-│   │   └── store.py        # JSON chart persistence
-│   ├── api/
-│   │   └── external.py     # Geocoding, IP location
-│   ├── templates/          # Jinja2 HTML templates
-│   ├── static/
-│   │   ├── css/style.css   # Light Vedic theme
-│   │   └── js/chart.js     # Canvas North-Indian chart renderer
-│   └── routes.py           # Flask routes + export endpoints
-├── ephe/                   # Swiss Ephemeris files (downloaded by installer)
-├── data/                   # Saved charts (local JSON, git-ignored)
-├── install.sh              # Interactive cross-platform installer
-├── start.sh                # App launcher
-├── Dockerfile
-├── docker-compose.yml
-├── requirements.txt
-└── run.py
-```
-
-**Tech stack:** Python 3.10+ · Flask · pyswisseph · ephem · Bootstrap 5 · Canvas 2D · openai SDK (LLM client) · Nominatim · Docker
-
----
-
-## 📋 Prerequisites
-
-- **Python 3.10+** (3.11 or 3.12 recommended)
-- **C compiler** for pyswisseph: `sudo apt install gcc` on Debian/Ubuntu, Xcode CLT on macOS (`xcode-select --install`)
-- **Internet** — only for geocoding and ephemeris download; all astro calculations run offline after that
-
----
-
-## 🔐 Privacy
-
-All calculations happen **locally on your machine**. Birth data is stored only in your browser session or in `data/charts.json` on your own disk. Nothing is sent externally except:
-- Nominatim (OpenStreetMap) for city → coordinates
-- ip-api.com for auto-detecting your city on the home page (no account)
-- Your chosen LLM endpoint (only if `LLM_MODEL` is set; Ollama stays local)
+All calculations are performed **locally** or within your private cloud instance. Sensitive birth data is stored in encrypted local vaults. The application enforces `FLASK_SECRET_KEY` and utilizes secure production headers (HSTS, CSP) to ensure your cosmic data remains private.
 
 ---
 
 ## 📜 License
-
-MIT — free to use, modify, and self-host. Attribution appreciated.
-
----
-
-## 🙏 Credits
-
-- **Swiss Ephemeris** by Astrodienst AG — planet position engine
-- **pyswisseph** — Python bindings
-- **ephem** — sunrise/moonrise calculations
-- **Nominatim / OpenStreetMap** — geocoding
-- **Bootstrap 5** + **Bootstrap Icons** — UI framework
-- **Ollama / Groq / OpenRouter** — open LLM inference
+MIT — Professional Jyotish for everyone.

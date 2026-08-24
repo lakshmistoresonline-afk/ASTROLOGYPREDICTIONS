@@ -66,6 +66,7 @@ const PLANET_COLORS = {
 const PLANET_SYMBOLS = {
   Sun: "☉", Moon: "☽", Mars: "♂", Mercury: "☿",
   Jupiter: "♃", Venus: "♀", Saturn: "♄", Rahu: "☊", Ketu: "☋",
+  Gulika: "G", Mandi: "M"
 };
 
 let currentChartStyle = localStorage.getItem("chartStyle") || "north";

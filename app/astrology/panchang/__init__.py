@@ -232,7 +232,37 @@ def calculate_panchang(target_date: date, lat: float, lon: float, tz_str: str,
         from .utils import calculate_tarabala, calculate_chandra_bala
         res["tarabala"] = calculate_tarabala(nak["number"]-1, birth_nak_idx)
         moon_rashi = int(moon_pos["longitude"] / 30)
-        # Legacy passed birth_nak_idx as rashi in some paths. This is still a bit broken but better.
         res["chandra_bala"] = calculate_chandra_bala(moon_rashi, int(birth_nak_idx / 2.25))
+
+    # 5. Special Limb Yogas
+    from .yogas_limb import check_limb_yogas
+    res["panchang_yogas"] = check_limb_yogas(res["vara"]["name"], res["nakshatra"]["name"])
+
+    # 6. Dagdha Tithi
+    from .utils import check_dagdha_tithi
+    if check_dagdha_tithi(tithi["number"], weekday_idx):
+        res["dagdha_tithi"] = True
+        res["is_auspicious"] = False
+    else:
+        res["dagdha_tithi"] = False
+
+    # 7. Tatva (Elemental timing)
+    from .tatva import get_current_tatva
+    res["tatva"] = get_current_tatva(sunrise_jd or jd_ut, jd_ut)
+
+    # 8. Hora (Hourly Lord)
+    from .hora import get_horas
+    if sunrise_jd and next_sr:
+        res["horas"] = get_horas(sunrise_jd, next_sr, weekday_idx)
+        # Current Hora
+        diff_h = (jd_ut - sunrise_jd) * 24.0
+        curr_h_idx = int(diff_h) if 0 <= diff_h < 24 else 0
+        if curr_h_idx < len(res["horas"]):
+            res["current_hora"] = res["horas"][curr_h_idx]["lord"]
+
+    # 9. Gowri Panchangam
+    from .gowri import get_gowri_segments
+    if sunrise_jd and sunset_jd:
+        res["gowri"] = get_gowri_segments(sunrise_jd, sunset_jd, vara["name"])
 
     return res

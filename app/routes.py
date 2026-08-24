@@ -11,6 +11,7 @@ import traceback
 
 from .astrology.core.chart import calculate_chart_data
 from .astrology.core.planets import PLANET_COLORS
+from .astrology.predictions.data import HOUSE_INTERPRETATIONS
 from .astrology.panchang import calculate_panchang
 from .astrology.dasha import calculate_vimshottari
 from .astrology.predictions.engine import generate_evidence_based_predictions
@@ -79,10 +80,31 @@ def _enrich_chart_for_template(chart: dict):
             "rashi_name": rashi_names[r_idx]
         })
 
-    # planets cleanup for legacy templates
+    # houses cleanup for legacy templates
+    chart["houses_list"] = []
+    for h in chart["houses"]:
+        chart["houses_list"].append(h)
+
     from .astrology.core.planets import NAKSHATRA_NAMES, NAKSHATRA_LORDS, NAK_SPAN
-    for p, data in chart["planets"].items():
+
+    # 0. Ensure upagrahas are enriched
+    rashi_names = ["Mesha","Vrishabha","Mithuna","Karka","Simha","Kanya",
+                   "Tula","Vrishchika","Dhanu","Makara","Kumbha","Meena"]
+
+    for p in list(chart["planets"].keys()):
+        data = chart["planets"][p]
+        data["name"] = p
         data["retrograde"] = data.get("is_retrograde", False)
+        if "color" not in data:
+            data["color"] = PLANET_COLORS.get(p, "#fff")
+        # Rashi name
+        if "rashi_name" not in data:
+            data["rashi_name"] = rashi_names[data["rashi"]]
+        # Nakshatra
+        if "nakshatra" not in data or isinstance(data["nakshatra"], str):
+             lon = data.get("longitude", 0)
+             nak_idx = int(lon / NAK_SPAN)
+             data["nakshatra"] = {"name": NAKSHATRA_NAMES[nak_idx]}
         # Add color if missing
         if "color" not in data:
             data["color"] = PLANET_COLORS.get(p, "#fff")
@@ -629,10 +651,14 @@ def predictions():
         from .astrology.panchang import calculate_panchang
         # We need the natal moon nakshatra for Tarabala
         moon_nak_idx = natal_chart.planets["Moon"].nakshatra.index
+        # Get yesterday for next_sr calculation
+        yest = selected_date - timedelta(days=1)
         panchang = calculate_panchang(selected_date, float(lat), float(lon), tz, moon_nak_idx)
 
         # 2. Generate evidence-based predictions
-        preds = generate_evidence_based_predictions(natal_chart)
+        # Convert selected_date (date object) to datetime for the engine
+        dt_for_engine = datetime.combine(selected_date, datetime.min.time())
+        preds = generate_evidence_based_predictions(natal_chart, selected_date=dt_for_engine)
 
         # 3. Merge for template compatibility
         preds["date"] = selected_date.strftime("%A, %d %B %Y")
@@ -656,6 +682,10 @@ def predictions():
         # 4. Fill extras for template compatibility
         _enrich_predictions_with_extras(preds, natal_chart, panchang)
 
+        # 4b. AI Insight (optional)
+        if os.getenv("LLM_MODEL"):
+             preds["ai_note"] = _llm_day_note(panchang, {"score": preds["score"], "label": preds["score_label"]}, selected_date.isoformat())
+
         # 5. Personalized Day Score Adjustment
         if "tarabala" in panchang:
             if panchang["tarabala"]["quality"] == "Inauspicious":
@@ -663,6 +693,15 @@ def predictions():
                 preds["panchang_ok"] = False
             elif "Auspicious" in panchang["tarabala"]["quality"]:
                 preds["score"] = min(10.0, preds["score"] + 1.0)
+
+        # 6. House Activation for Day
+        transit_moon_house = preds.get("moon_house_from_natal", 1)
+        preds["activated_house_theme"] = HOUSE_INTERPRETATIONS.get(transit_moon_house, "General themes.")
+
+        # 7. Hora Awareness
+        preds["hora_status"] = "Neutral"
+        if panchang.get("current_hora") == natal_chart.house_lords[1]:
+            preds["hora_status"] = "Peak Performance: Current hour lord aligns with your Lagna Lord."
 
     except Exception as e:
         error = str(e)
@@ -756,6 +795,13 @@ def varshaphala():
     chart["muntha_rashi"] = extra["muntha_rashi"]
     chart["muntha_house"] = extra["muntha_house"]
 
+    # Year Lord
+    chart["varsheshwar"] = yearly_chart.varsheshwar
+
+    # Mudda Dasha
+    from .astrology.dasha.mudda import calculate_mudda_dasha
+    chart["mudda_dasha"] = calculate_mudda_dasha(chart["planets"]["Moon"]["longitude"], sr_dt_utc)
+
     _enrich_chart_for_template(chart)
 
     return render_template("kundli.html", chart=chart, is_yearly=True)
@@ -763,7 +809,7 @@ def varshaphala():
 # ─────────────────────────────────────────────
 #  Prashna (Horary)
 # ─────────────────────────────────────────────
-@main.route("/prashna")
+@main.route("/prashna", methods=["GET", "POST"])
 def prashna():
     lat    = session.get("birth_lat", 28.6139)
     lon    = session.get("birth_lon", 77.2090)
@@ -772,11 +818,22 @@ def prashna():
 
     now = datetime.now(pytz.timezone(tz_str))
 
+    # Optional question processing
+    question_type = request.form.get("question_type", "Career")
+
     chart_obj = calculate_chart_data(now, float(lat), float(lon), tz_str)
     chart = chart_obj.model_dump()
 
+    # Get current panchang for Prashna micro-timing
+    from .astrology.panchang import calculate_panchang
+    # Assuming user's natal moon nak idx is not needed for prashna daily resonance, or using a proxy
+    prashna_panchang = calculate_panchang(now.date(), float(lat), float(lon), tz_str)
+
+    from .astrology.prashna.engine import analyze_prashna
+    prashna_result = analyze_prashna(chart_obj, question_type, panchang=prashna_panchang)
+
     # Enrichment
-    chart["name"] = "Prashna Chart"
+    chart["name"] = f"Prashna: {question_type}"
     chart["place"] = f"Calculated for: {place}"
     chart["birth_dob"] = now.strftime("%Y-%m-%d")
     chart["birth_tob"] = now.strftime("%H:%M")
@@ -790,7 +847,8 @@ def prashna():
     moon_lon = chart["planets"]["Moon"]["longitude"]
     dasha    = calculate_vimshottari(moon_lon, now)
 
-    return render_template("kundli.html", chart=chart, dasha=dasha, is_prashna=True)
+    return render_template("kundli.html", chart=chart, dasha=dasha,
+                           prashna=prashna_result, is_prashna=True)
 
 # ─────────────────────────────────────────────
 #  Matchmaking (Guna Milan)
@@ -834,10 +892,7 @@ def matchmaking():
             g_chart = calculate_chart_data(g_dt, g_geo["lat"], g_geo["lon"], g_geo["timezone"])
             g_moon = g_chart.planets["Moon"]
 
-            result = get_matchmaking_score(
-                {"rashi": b_moon.rashi, "nakshatra_idx": b_moon.nakshatra.index},
-                {"rashi": g_moon.rashi, "nakshatra_idx": g_moon.nakshatra.index}
-            )
+            result = get_matchmaking_score(b_chart, g_chart)
 
             boy_info = {"name": b_name, "nak": b_moon.nakshatra.name, "rashi": b_moon.rashi}
             girl_info = {"name": g_name, "nak": g_moon.nakshatra.name, "rashi": g_moon.rashi}
@@ -876,61 +931,143 @@ def kundli_pdf():
 
         pdf = FPDF()
         pdf.add_page()
-        pdf.set_font("helvetica", "B", 20)
-        pdf.cell(0, 10, "Jyotish Vedic Dashboard - Birth Report", ln=True, align="C")
+
+        # Background Aesthetic
+        pdf.set_fill_color(10, 10, 15) # Dark Space
+        pdf.rect(0, 0, 210, 297, "F")
+
+        # Header Box
+        pdf.set_fill_color(251, 191, 36) # Gold
+        pdf.rect(10, 10, 190, 40, "F")
+
+        pdf.set_font("helvetica", "B", 24)
+        pdf.set_text_color(0, 0, 0)
+        pdf.cell(0, 30, "CELESTIAL BLUEPRINT", ln=True, align="C")
+        pdf.set_font("helvetica", "B", 12)
+        pdf.cell(0, -10, f"Birth Record for: {name}", ln=True, align="C")
+        pdf.ln(25)
+
+        # Content Background
+        pdf.set_text_color(241, 245, 249) # White-ish
+
+        # Section 1: Vital Stats
+        pdf.set_font("helvetica", "B", 14)
+        pdf.set_draw_color(139, 92, 246) # Accent
+        pdf.cell(0, 10, "1. NATAL COORDINATES", ln=True)
+        pdf.line(10, pdf.get_y(), 200, pdf.get_y())
         pdf.ln(5)
 
-        # Native Info
+        pdf.set_font("helvetica", "", 11)
+        pdf.cell(95, 8, f"Date: {dob}", ln=0)
+        pdf.cell(95, 8, f"Time: {tob} ({tz})", ln=True)
+        pdf.cell(95, 8, f"Location: {place}", ln=0)
+        pdf.cell(95, 8, f"Geo: {lat}N, {lon}E", ln=True)
+        pdf.cell(95, 8, f"Ayanamsa: {round(chart.ayanamsa, 4)} (Lahiri)", ln=1)
+        pdf.ln(10)
+
+        # Section 2: Planetary Alignment
         pdf.set_font("helvetica", "B", 14)
-        pdf.cell(0, 10, f"Native: {name}", ln=True)
-        pdf.set_font("helvetica", "", 12)
-        pdf.cell(0, 8, f"Birth: {dob} {tob}", ln=True)
-        pdf.cell(0, 8, f"Place: {place} ({lat}, {lon})", ln=True)
+        pdf.cell(0, 10, "2. COSMIC ALIGNMENT (GRAHA STHITI)", ln=True)
+        pdf.line(10, pdf.get_y(), 200, pdf.get_y())
         pdf.ln(5)
 
-        # Lagna Info
-        pdf.set_font("helvetica", "B", 14)
-        pdf.cell(0, 10, "Birth Details", ln=True)
-        pdf.set_font("helvetica", "", 12)
-        pdf.cell(0, 8, f"Ascendant (Lagna): {chart.asc_rashi} - {chart.asc_nakshatra.name}", ln=True)
-        pdf.cell(0, 8, f"Ayanamsa: {round(chart.ayanamsa, 4)}", ln=True)
-        pdf.ln(5)
-
-        # Planets
-        pdf.set_font("helvetica", "B", 14)
-        pdf.cell(0, 10, "Planetary Positions", ln=True)
+        pdf.set_fill_color(20, 20, 30)
+        pdf.set_text_color(251, 191, 36)
         pdf.set_font("helvetica", "B", 10)
-        pdf.cell(30, 8, "Planet", border=1)
-        pdf.cell(30, 8, "Rashi", border=1)
-        pdf.cell(40, 8, "Degree", border=1)
-        pdf.cell(20, 8, "House", border=1)
-        pdf.cell(50, 8, "Dignity", border=1, ln=True)
+        pdf.cell(30, 10, " Planet", border=0, fill=True)
+        pdf.cell(30, 10, " Sign", border=0, fill=True)
+        pdf.cell(35, 10, " Degree", border=0, fill=True)
+        pdf.cell(20, 10, " House", border=0, fill=True)
+        pdf.cell(45, 10, " Dignity", border=0, fill=True)
+        pdf.cell(30, 10, " Status", border=0, fill=True, ln=True)
 
+        pdf.set_text_color(241, 245, 249)
         pdf.set_font("helvetica", "", 10)
         for p_name, p in chart.planets.items():
-            pdf.cell(30, 8, p_name, border=1)
-            pdf.cell(30, 8, str(p.rashi), border=1)
-            pdf.cell(40, 8, f"{round(p.degree, 2)}", border=1)
-            pdf.cell(20, 8, str(p.house), border=1)
-            pdf.cell(50, 8, p.dignity, border=1, ln=True)
+            pdf.cell(30, 9, f" {p_name}", border=0)
+            pdf.cell(30, 9, f" {p.rashi_name}", border=0)
+            pdf.cell(35, 9, f" {p.dms}", border=0)
+            pdf.cell(20, 9, f" {p.house}", border=0)
+            pdf.cell(45, 9, f" {p.dignity}", border=0)
+            status = "Direct" if not p.is_retrograde else "Retrograde"
+            if p.is_combust: status += " (C)"
+            pdf.cell(30, 9, f" {status}", border=0, ln=True)
+        pdf.ln(10)
+
+        # Section 3: Yogas
+        pdf.set_font("helvetica", "B", 14)
+        pdf.cell(0, 10, "3. FORMED YOGAS (CELESTIAL COMBINATIONS)", ln=True)
+        pdf.line(10, pdf.get_y(), 200, pdf.get_y())
         pdf.ln(5)
 
-        # Predictions
+        for yoga in chart.yogas:
+            pdf.set_font("helvetica", "B", 11)
+            pdf.set_text_color(251, 191, 36)
+            pdf.cell(0, 8, yoga["name"], ln=True)
+            pdf.set_font("helvetica", "I", 10)
+            pdf.set_text_color(161, 161, 170)
+            pdf.multi_cell(0, 6, yoga["interpretation"])
+            pdf.ln(2)
+        pdf.ln(10)
+
+        # Section 4: Domain Predictions
         pdf.add_page()
+        pdf.set_fill_color(10, 10, 15); pdf.rect(0, 0, 210, 297, "F")
+        pdf.set_text_color(241, 245, 249)
+
         pdf.set_font("helvetica", "B", 16)
-        pdf.cell(0, 10, "Domain Analysis & Predictions", ln=True)
-        pdf.ln(5)
+        pdf.cell(0, 15, "4. KARMIC INDICATORS & LIFE AREAS", ln=True)
+        pdf.line(10, pdf.get_y(), 200, pdf.get_y())
+        pdf.ln(8)
 
         for domain in preds["domains"]:
-            pdf.set_font("helvetica", "B", 14)
-            pdf.cell(0, 10, f"{domain['domain']} - {domain['score']}%", ln=True)
-            pdf.set_font("helvetica", "I", 10)
-            pdf.multi_cell(0, 8, domain["summary"])
+            # Domain Card Start
+            start_y = pdf.get_y()
+            if start_y > 240: pdf.add_page(); pdf.set_fill_color(10, 10, 15); pdf.rect(0, 0, 210, 297, "F"); start_y = 20
+
+            pdf.set_font("helvetica", "B", 13)
+            pdf.set_text_color(251, 191, 36)
+            pdf.cell(0, 10, f"{domain['domain'].upper()} — {int(domain['score'])}% Intensity", ln=True)
+
             pdf.set_font("helvetica", "", 10)
+            pdf.set_text_color(241, 245, 249)
+            pdf.multi_cell(0, 6, domain["summary"])
+            pdf.ln(2)
+
+            pdf.set_font("helvetica", "I", 9)
+            pdf.set_text_color(148, 163, 184)
             for ev in domain["evidence"]:
-                pdf.cell(10) # indent
-                pdf.multi_cell(0, 6, f"- {ev}")
+                pdf.cell(5)
+                pdf.multi_cell(0, 5, f"> {ev}")
+
             pdf.ln(5)
+
+        # Section 5: Life Timeline
+        pdf.add_page()
+        pdf.set_fill_color(10, 10, 15); pdf.rect(0, 0, 210, 297, "F")
+        pdf.set_text_color(241, 245, 249)
+        pdf.set_font("helvetica", "B", 16)
+        pdf.cell(0, 15, "5. LIFE TIMELINE (VIMSHOTTARI FORECAST)", ln=True)
+        pdf.line(10, pdf.get_y(), 200, pdf.get_y())
+        pdf.ln(10)
+
+        for item in preds["timeline"]:
+            pdf.set_font("helvetica", "B", 12)
+            pdf.set_text_color(251, 191, 36)
+            pdf.cell(60, 8, f"{item['period']}", ln=0)
+            pdf.set_font("helvetica", "", 10)
+            pdf.set_text_color(148, 163, 184)
+            pdf.cell(60, 8, f"({item['start']} - {item['end']})", ln=0)
+            pdf.set_font("helvetica", "B", 10)
+            pdf.set_text_color(241, 245, 249)
+            pdf.cell(0, 8, f" {item['theme']}", ln=True)
+            pdf.ln(2)
+
+        # Footer
+        pdf.set_y(280)
+        pdf.set_font("helvetica", "I", 8)
+        pdf.set_text_color(100, 116, 139)
+        pdf.cell(0, 10, "Generated by Jyotish Celestial OS. All data computed locally using Swiss Ephemeris.", align="C")
 
         from flask import Response
         return Response(
@@ -1543,6 +1680,15 @@ def panchang():
             panchang_data = calculate_panchang(target_date, float(lat), float(lon),
                                                tz_str, birth_nak_idx)
             sky_data = panchang_data["sky"]
+
+            # Check suitability for common events
+            from .astrology.panchang.muhurta import check_muhurta_suitability
+            panchang_data["event_suitability"] = {
+                "Marriage": check_muhurta_suitability("Marriage", panchang_data),
+                "Business Opening": check_muhurta_suitability("Business Opening", panchang_data),
+                "Property Purchase": check_muhurta_suitability("Property Purchase", panchang_data),
+                "Vehicle Purchase": check_muhurta_suitability("Vehicle Purchase", panchang_data)
+            }
         except Exception as e:
             error = str(e)
             traceback.print_exc()
@@ -1551,6 +1697,14 @@ def panchang():
             panchang_data = calculate_panchang(today, float(lat), float(lon),
                                                tz_str, birth_nak_idx)
             sky_data = panchang_data["sky"]
+
+            from .astrology.panchang.muhurta import check_muhurta_suitability
+            panchang_data["event_suitability"] = {
+                "Marriage": check_muhurta_suitability("Marriage", panchang_data),
+                "Business Opening": check_muhurta_suitability("Business Opening", panchang_data),
+                "Property Purchase": check_muhurta_suitability("Property Purchase", panchang_data),
+                "Vehicle Purchase": check_muhurta_suitability("Vehicle Purchase", panchang_data)
+            }
         except Exception as e:
             error = str(e)
 

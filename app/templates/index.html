@@ -1,337 +1,385 @@
 {% extends "base.html" %}
-{% block title %}Jyotish Dashboard — Home{% endblock %}
+{% block title %}Console — Jyotish Celestial OS{% endblock %}
 
 {% block content %}
-<div class="page-header mb-4">
-  <h1 class="page-title"><span class="om-glyph">ॐ</span> Jyotish Vedic Dashboard</h1>
-  <p class="page-sub">Kundli · Panchang · Transit · Dasha · Predictions — fully local, free</p>
-</div>
-
-{# ── Mode tabs (only shown when saved charts exist) ───────────────── #}
-{% if saved_charts %}
-<div class="kundli-mode-tabs mb-4 d-flex align-items-center">
-  <button class="kmt-btn active" id="tab-saved" onclick="switchTab('saved')">
-    <i class="bi bi-folder2-open me-2"></i>Saved Vault
-    <span class="kmt-count">{{ saved_charts|length }}</span>
-  </button>
-  <button class="kmt-btn" id="tab-new" onclick="switchTab('new')">
-    <i class="bi bi-plus-circle me-2"></i>New Kundli
-  </button>
-
-  <div class="ms-auto position-relative" style="width: 220px" id="vault-search-container">
-    <input type="text" id="vault-search" class="form-control form-control-sm bg-dark text-white border-gold border-opacity-25"
-           placeholder="Search saved profiles..." oninput="searchVault()">
-    <i class="bi bi-search position-absolute top-50 end-0 translate-middle-y me-2 small text-muted"></i>
-  </div>
-</div>
-
-{# ── Saved kundli cards ───────────────────────────────────────────── #}
-<div id="panel-saved">
-  <div class="row g-4">
-    {% for c in saved_charts %}
-    <div class="col-md-6 col-xl-4">
-      <div class="card-vedic h-100 kundli-card-modern">
-        <div class="card-vedic-body d-flex flex-column h-100">
-          <div class="d-flex align-items-center gap-3 mb-3">
-            <div class="kc-avatar">{{ (c.name or '?')[0].upper() }}</div>
-            <div class="flex-grow-1">
-              <h5 class="kc-name mb-0">{{ c.name or 'Unnamed' }}</h5>
-              <div class="small text-muted">{{ c.birth_datetime[:10] }} · {{ c.birth_datetime[11:16] }}</div>
-            </div>
-            <button class="btn btn-link text-danger p-0" onclick="deleteChart('{{ c.id }}', this)" title="Delete">
-              <i class="bi bi-trash3"></i>
-            </button>
-          </div>
-
-          <div class="small text-muted mb-4">
-            <i class="bi bi-geo-alt me-1"></i> {{ c.place[:40] if c.place else '—' }}
-          </div>
-
-          <div class="mt-auto pt-3 border-top border-secondary border-opacity-10 d-flex flex-wrap gap-2">
-            <a href="{{ url_for('main.load_kundli', cid=c.id) }}" class="btn btn-vedic btn-xs flex-grow-1">Chart</a>
-            <a href="{{ url_for('main.load_kundli', cid=c.id) }}?next=predictions" class="btn btn-outline-gold btn-xs flex-grow-1">Predictions</a>
-            <a href="{{ url_for('main.load_kundli', cid=c.id) }}?next=transit" class="btn btn-outline-gold btn-xs flex-grow-1">Transit</a>
-          </div>
-        </div>
-      </div>
+<div class="page-header mb-5 d-flex justify-content-between align-items-center">
+  <div class="d-flex align-items-center gap-4">
+    <div class="logo-box d-none d-md-flex shadow-lg" style="width: 70px; height: 70px; background: radial-gradient(circle, var(--accent) 0%, transparent 100%); opacity: 0.8">
+      <img src="{{ url_for('static', filename='img/icon.svg') }}" alt="Om" width="40" height="40"/>
     </div>
-    {% endfor %}
+    <div>
+      <h1 class="display-4 fw-black text-white tracking-tight mb-1">Celestial <span class="text-gold">Console</span></h1>
+      <p class="lead text-muted mb-0 leading-relaxed">High-precision Vedic algorithms for karmic analysis. System status: <span class="text-success fw-bold">Synchronized</span></p>
+    </div>
   </div>
 </div>
 
-{# ── New kundli form (hidden by default when saved charts exist) ───── #}
-<div id="panel-new" style="display:none">
-{% endif %}{# end if saved_charts #}
+<div class="row g-5">
 
-<div class="row g-4">
-  <!-- Birth data form -->
+  {# ── Left: Profile Hub ─────────────────────────────────── #}
   <div class="col-lg-7">
-    <div class="card-vedic border-0 shadow-lg">
-      <div class="card-vedic-header border-0 bg-transparent py-4">
-        <div class="d-flex flex-column">
-          <span class="text-gold small fw-bold text-uppercase mb-1" style="letter-spacing: 2px">Divine Blueprint</span>
-          <h2 class="text-white mb-0 fw-black h4">Birth Details (जन्म विवरण)</h2>
-        </div>
-      </div>
-      <div class="card-vedic-body pt-0">
-        <form action="{{ url_for('main.kundli') }}" method="POST" id="kundli-form">
-          <div class="row g-4">
-            <div class="col-12">
-              <label class="form-label-vedic">Full Name</label>
-              <input type="text" name="name" class="form-control form-control-vedic py-3"
-                     placeholder="e.g. Arjun Sharma" autocomplete="off"/>
-            </div>
-            <div class="col-md-6">
-              <label class="form-label-vedic">Date of Birth</label>
-              <input type="date" name="dob" class="form-control form-control-vedic py-3" required
-                     max="{{ today }}"/>
-            </div>
-            <div class="col-md-6">
-              <label class="form-label-vedic">Time of Birth</label>
-              <input type="time" name="tob" class="form-control form-control-vedic py-3" required step="60"/>
-            </div>
-            <div class="col-12">
-              <label class="form-label-vedic">Place of Birth</label>
-              <div class="input-group">
-                <input type="text" name="place" id="place-input"
-                       class="form-control form-control-vedic py-3"
-                       placeholder="e.g. New Delhi, India"
-                       value="{{ ip_loc.city if ip_loc else '' }}"
-                       autocomplete="off"/>
-                <button type="button" class="btn btn-outline-gold px-4" id="geo-btn"
-                        title="Use my location">
-                  <i class="bi bi-geo-alt-fill"></i>
+
+    <!-- Profile Mode Switcher -->
+    <div class="d-flex align-items-center justify-content-between mb-4">
+       <div class="kundli-mode-tabs p-2 bg-secondary bg-opacity-10 border border-secondary border-opacity-25 rounded-pill shadow-inner">
+         <button class="kmt-btn active px-4 py-2" id="tab-saved" onclick="switchTab('saved')">
+           <i class="bi bi-safe2 me-2"></i>Vault <span class="badge bg-gold text-black ms-1">{{ saved_charts|length if saved_charts else 0 }}</span>
+         </button>
+         <button class="kmt-btn px-4 py-2" id="tab-new" onclick="switchTab('new')">
+           <i class="bi bi-plus-lg me-2"></i>New Profile
+         </button>
+       </div>
+
+       <div class="d-none d-md-block" id="vault-search-container">
+          <div class="position-relative">
+            <input type="text" id="vault-search" class="form-control form-control-vedic ps-5 rounded-pill"
+                   placeholder="Search Archives..." oninput="searchVault()">
+            <i class="bi bi-search position-absolute top-50 start-0 translate-middle-y ms-3 text-muted"></i>
+          </div>
+       </div>
+    </div>
+
+    {# ── Saved Profiles ── #}
+    <div id="panel-saved">
+      {% if saved_charts %}
+      <div class="row g-4">
+        {% for c in saved_charts %}
+        <div class="col-md-6 vault-item">
+          <div class="card-vedic h-100 hover-glow">
+            <div class="p-4">
+              <div class="d-flex align-items-center gap-4 mb-4">
+                <div class="vc-avatar shadow-lg">{{ (c.name or '?')[0].upper() }}</div>
+                <div class="flex-grow-1">
+                  <h5 class="text-white mb-0 fw-bold vc-name">{{ c.name or 'Unnamed' }}</h5>
+                  <div class="xsmall text-muted font-mono tracking-widest mt-1">{{ c.birth_datetime[:10] }}</div>
+                </div>
+                <button class="btn btn-link text-muted p-0 opacity-25 hover-white" onclick="deleteChart('{{ c.id }}', this)">
+                  <i class="bi bi-trash3"></i>
                 </button>
               </div>
-              <small class="text-muted">Coordinates auto-fetched from city name</small>
-            </div>
-            <input type="hidden" name="lat"      id="lat-input"/>
-            <input type="hidden" name="lon"      id="lon-input"/>
-            <input type="hidden" name="timezone" id="tz-input" value="Asia/Kolkata"/>
-            <div class="col-12 d-flex gap-3 mt-4">
-              <button type="submit" class="btn btn-vedic flex-grow-1 py-3 fs-5">
-                <i class="bi bi-stars me-2"></i>Generate Kundli
-              </button>
-              <button type="reset" class="btn btn-outline-secondary px-4">
-                <i class="bi bi-arrow-counterclockwise fs-5"></i>
-              </button>
+
+              <div class="text-muted small mb-4 d-flex align-items-center gap-2">
+                <i class="bi bi-geo-alt text-gold"></i>
+                <span class="text-truncate opacity-75">{{ c.place[:40] if c.place else 'Remote Location' }}</span>
+              </div>
+
+              <div class="d-flex gap-2">
+                <a href="{{ url_for('main.load_kundli', cid=c.id) }}" class="btn btn-vedic flex-grow-1 py-2">
+                   Blueprint
+                </a>
+                <a href="{{ url_for('main.load_kundli', cid=c.id) }}?next=predictions" class="btn btn-outline-gold px-3">
+                   <i class="bi bi-magic"></i>
+                </a>
+              </div>
             </div>
           </div>
-        </form>
+        </div>
+        {% endfor %}
       </div>
+      {% else %}
+      <div class="card-vedic p-5 text-center border-dashed">
+         <i class="bi bi-inbox fs-1 text-muted mb-3 d-block"></i>
+         <p class="text-muted mb-0">Your cosmic archives are empty. Create a new profile to begin.</p>
+      </div>
+      {% endif %}
+    </div>
+
+    {# ── New Profile Form ── #}
+    <div id="panel-new" style="display:none">
+       <div class="card-vedic p-1 bg-glass">
+         <div class="p-5">
+           <div class="mb-5 text-center">
+             <span class="text-accent small fw-bold text-uppercase tracking-widest mb-2 d-block">Data Initialization</span>
+             <h2 class="text-white fw-black h3 mb-1">Compute Natal Alignment</h2>
+             <p class="text-muted">Enter precise parameters to synchronize with the planetary clock.</p>
+           </div>
+
+           <form action="{{ url_for('main.kundli') }}" method="POST" id="kundli-form">
+             <div class="row g-4">
+               <div class="col-12">
+                 <label class="form-label-vedic">Native Identifier</label>
+                 <input type="text" name="name" class="form-control form-control-vedic py-3"
+                        placeholder="e.g. Siddhartha Gautama" autocomplete="off"/>
+               </div>
+               <div class="col-md-6">
+                 <label class="form-label-vedic">Solar Date</label>
+                 <input type="date" name="dob" class="form-control form-control-vedic py-3" required/>
+               </div>
+               <div class="col-md-6">
+                 <label class="form-label-vedic">Exact Time</label>
+                 <input type="time" name="tob" class="form-control form-control-vedic py-3" required step="60"/>
+               </div>
+               <div class="col-12">
+                 <label class="form-label-vedic">Spatial Coordinates (City)</label>
+                 <div class="input-group shadow-sm">
+                   <input type="text" name="place" id="place-input"
+                          class="form-control form-control-vedic py-3"
+                          placeholder="Search global database..."
+                          value="{{ ip_loc.city if ip_loc else '' }}"
+                          autocomplete="off"/>
+                   <button type="button" class="btn btn-outline-gold border-start-0 px-4" id="geo-btn">
+                     <i class="bi bi-crosshair"></i>
+                   </button>
+                 </div>
+                 <div class="mt-3 d-flex justify-content-between xsmall text-muted font-mono">
+                    <span id="coord-status">PENDING GEO-SYNC…</span>
+                    <span class="text-accent">AUTO-PRECISION ACTIVE</span>
+                 </div>
+               </div>
+
+               <input type="hidden" name="lat"      id="lat-input"/>
+               <input type="hidden" name="lon"      id="lon-input"/>
+               <input type="hidden" name="timezone" id="tz-input" value="Asia/Kolkata"/>
+
+               <div class="col-12 pt-4">
+                 <button type="submit" class="btn btn-vedic w-100 py-4 fs-5 shadow-lg fw-black tracking-widest">
+                   GENERATE DIVINE BLUEPRINT
+                 </button>
+               </div>
+             </div>
+           </form>
+         </div>
+       </div>
     </div>
   </div>
 
-  <!-- Right panel: today's sky + quick nav -->
+  {# ── Right: Sky Intelligence ───────────────────────────── #}
   <div class="col-lg-5">
-    <div class="card-vedic mb-4" id="sky-card">
-      <div class="card-vedic-header">
-        <i class="bi bi-sunrise-fill me-2"></i>Today's Sky
-        <span class="badge badge-location ms-auto" id="sky-place">Loading…</span>
-      </div>
-      <div class="card-vedic-body" id="sky-body">
-        <div class="sky-grid">
-          <div class="sky-item">
-            <i class="bi bi-sunrise text-sunrise"></i>
-            <div class="sky-label">Sunrise</div>
-            <div class="sky-value" id="s-sunrise">—</div>
+
+    <div class="card-vedic p-5 mb-5 bg-glass overflow-hidden shadow-xl">
+       <div class="d-flex align-items-center justify-content-between mb-5">
+         <h5 class="text-white mb-0 fw-black tracking-tight"><i class="bi bi-compass me-3 text-gold"></i>Sky Intelligence</h5>
+         <span class="badge bg-gold text-black px-3 py-2 rounded-pill font-mono xsmall" id="sky-place">SYNCING…</span>
+       </div>
+
+       {# Sun Arc Visualization #}
+       <div class="sky-viz-container mb-5 text-center p-4 rounded-4 bg-black bg-opacity-40 border border-secondary border-opacity-25 shadow-inner">
+          <div id="sky-arc" style="height: 120px; position: relative;">
+             <svg width="100%" height="120" viewBox="0 0 200 100">
+                <path d="M 20,90 A 80,80 0 0,1 180,90" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="4"/>
+                <path id="sky-arc-filled" d="M 20,90 A 80,80 0 0,1 180,90" fill="none" stroke="var(--gold)" stroke-width="4" stroke-dasharray="0,500"/>
+                <circle id="sky-sun" cx="20" cy="90" r="7" fill="var(--gold)" style="filter: drop-shadow(0 0 8px var(--gold))"/>
+             </svg>
           </div>
-          <div class="sky-item">
-            <i class="bi bi-sunset text-sunset"></i>
-            <div class="sky-label">Sunset</div>
-            <div class="sky-value" id="s-sunset">—</div>
+          <div class="d-flex justify-content-between xsmall text-muted font-mono mt-2 px-4 tracking-widest opacity-50">
+             <span>RISE</span>
+             <span>ZENITH</span>
+             <span>SET</span>
           </div>
-          <div class="sky-item">
-            <i class="bi bi-moon-stars text-moon"></i>
-            <div class="sky-label">Moonrise</div>
-            <div class="sky-value" id="s-moonrise">—</div>
+       </div>
+
+       <div class="row g-4">
+         <div class="col-6">
+           <div class="p-4 rounded-4 bg-secondary bg-opacity-10 border border-secondary border-opacity-25 shadow-sm">
+             <div class="xsmall text-muted text-uppercase tracking-widest mb-2 opacity-50">Sunrise</div>
+             <div class="h4 mb-0 font-mono text-white fw-bold" id="s-sunrise">— : —</div>
+           </div>
+         </div>
+         <div class="col-6">
+           <div class="p-4 rounded-4 bg-secondary bg-opacity-10 border border-secondary border-opacity-25 shadow-sm">
+             <div class="xsmall text-muted text-uppercase tracking-widest mb-2 opacity-50">Sunset</div>
+             <div class="h4 mb-0 font-mono text-white fw-bold" id="s-sunset">— : —</div>
+           </div>
+         </div>
+         <div class="col-12">
+           <div class="p-4 rounded-4 bg-secondary bg-opacity-10 border border-secondary border-opacity-25 d-flex align-items-center justify-content-between shadow-sm">
+             <div>
+               <div class="xsmall text-muted text-uppercase tracking-widest mb-1 opacity-50">Lunar Phase</div>
+               <div class="h5 mb-0 text-white fw-bold" id="s-moonphase">CALCULATING…</div>
+             </div>
+             <div class="display-5" id="moon-phase-icon">🌖</div>
+           </div>
+         </div>
+       </div>
+
+       <div class="mt-5 p-4 rounded-4 border border-dashed border-danger border-opacity-30 bg-danger bg-opacity-0">
+          <div class="d-flex align-items-center justify-content-between mb-3">
+             <span class="xsmall text-danger fw-black tracking-widest"><i class="bi bi-shield-slash me-2"></i>RAHU KAAL</span>
+             <span class="badge bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25" id="s-rahu-status">INACTIVE</span>
           </div>
-          <div class="sky-item">
-            <i class="bi bi-moon text-moon"></i>
-            <div class="sky-label">Moonset</div>
-            <div class="sky-value" id="s-moonset">—</div>
-          </div>
-          <div class="sky-item">
-            <i class="bi bi-brightness-high text-gold"></i>
-            <div class="sky-label">Solar Noon</div>
-            <div class="sky-value" id="s-noon">—</div>
-          </div>
-          <div class="sky-item">
-            <i class="bi bi-hourglass-split text-rahu"></i>
-            <div class="sky-label">Day Length</div>
-            <div class="sky-value" id="s-daylength">—</div>
-          </div>
-        </div>
-        <hr class="divider-gold my-3"/>
-        <div class="row g-2 text-center">
-          <div class="col-4">
-            <div class="kaal-box rahu">
-              <div class="kaal-label">Rahu Kaal</div>
-              <div class="kaal-time" id="s-rahu">—</div>
-            </div>
-          </div>
-          <div class="col-4">
-            <div class="kaal-box gulika">
-              <div class="kaal-label">Gulika Kaal</div>
-              <div class="kaal-time" id="s-gulika">—</div>
-            </div>
-          </div>
-          <div class="col-4">
-            <div class="kaal-box yama">
-              <div class="kaal-label">Yamaghanta</div>
-              <div class="kaal-time" id="s-yama">—</div>
-            </div>
-          </div>
-        </div>
-        <div class="moon-phase-row mt-3 d-flex align-items-center gap-3">
-          <div class="moon-phase-icon" id="moon-phase-icon">🌕</div>
+          <div class="h3 mb-0 font-mono text-white fw-black" id="s-rahu">— : —</div>
+       </div>
+
+       {# Hora Status #}
+       <div class="mt-4 p-4 rounded-4 bg-secondary bg-opacity-10 border border-secondary border-opacity-25 d-flex align-items-center gap-4">
+          <div class="hora-icon shadow-sm" id="hora-planet-color"></div>
           <div>
-            <div class="sky-label">Moon Phase</div>
-            <div class="sky-value" id="s-moonphase">—</div>
-            <div class="progress moon-progress mt-1">
-              <div class="progress-bar bg-moon" id="moon-progress" style="width:0%"></div>
-            </div>
+             <div class="xsmall text-muted text-uppercase tracking-widest mb-1 opacity-50">Current Planetary Hora</div>
+             <div class="h5 mb-0 text-white fw-bold" id="s-hora">CALCULATING…</div>
           </div>
-        </div>
-      </div>
+       </div>
     </div>
 
-    <div class="row g-3">
+    <!-- Quick Access Matrix -->
+    <div class="row g-4">
+      {% for label, route, icon, desc, color in [
+          ('Almanac', 'main.panchang', 'calendar-range', 'Panchang & Muhurtas', 'gold'),
+          ('Transit', 'main.transit', 'stars', 'Planetary Movements', 'accent'),
+          ('Insights', 'main.predictions', 'magic', 'Personalized Reports', 'accent-2'),
+          ('Timeline', 'main.dasha', 'clock-history', 'Vimshottari Cycles', 'gold')
+      ] %}
       <div class="col-6">
-        <a href="{{ url_for('main.panchang') }}" class="quick-card">
-          <i class="bi bi-calendar3 fs-2"></i><div>Panchang</div>
+        <a href="{{ url_for(route) }}" class="card-vedic p-4 text-center text-decoration-none d-block hover-glow border-opacity-50 h-100">
+          <i class="bi bi-{{ icon }} fs-1 text-{{ color }} mb-3 d-block opacity-75"></i>
+          <span class="small fw-black text-white tracking-widest text-uppercase d-block">{{ label }}</span>
+          <span class="xsmall text-muted mt-2 d-none d-md-block">{{ desc }}</span>
         </a>
       </div>
-      <div class="col-6">
-        <a href="{{ url_for('main.transit') }}" class="quick-card">
-          <i class="bi bi-stars fs-2"></i><div>Transit</div>
-        </a>
-      </div>
-      <div class="col-6">
-        <a href="{{ url_for('main.predictions') }}" class="quick-card">
-          <i class="bi bi-magic fs-2"></i><div>Predictions</div>
-        </a>
-      </div>
-      <div class="col-6">
-        <a href="{{ url_for('main.dasha') }}" class="quick-card">
-          <i class="bi bi-bar-chart-steps fs-2"></i><div>Dasha</div>
-        </a>
-      </div>
+      {% endfor %}
     </div>
   </div>
 </div>
-
-{% if saved_charts %}
-</div>{# end panel-new #}
-{% endif %}
 
 {% endblock %}
 
 {% block scripts %}
 <script>
-const today = new Date().toISOString().split("T")[0];
-document.querySelector("input[name='dob']").setAttribute("max", today);
-
-// ── Tab switcher ────────────────────────────────────────
+// Tab Management
 function switchTab(tab) {
   const isSaved = tab === 'saved';
-  document.getElementById('panel-saved').style.display = isSaved ? '' : 'none';
-  document.getElementById('panel-new').style.display   = isSaved ? 'none' : '';
+  document.getElementById('panel-saved').style.display = isSaved ? 'block' : 'none';
+  document.getElementById('panel-new').style.display   = isSaved ? 'none' : 'block';
+
   document.getElementById('tab-saved').classList.toggle('active', isSaved);
   document.getElementById('tab-new').classList.toggle('active', !isSaved);
-  document.getElementById('vault-search-container').style.display = isSaved ? 'block' : 'none';
+
+  const search = document.getElementById('vault-search-container');
+  search.style.opacity = isSaved ? '1' : '0';
+  search.style.pointerEvents = isSaved ? 'all' : 'none';
 }
 
 function searchVault() {
   const q = document.getElementById("vault-search").value.toLowerCase();
-  document.querySelectorAll(".kundli-card").forEach(card => {
-    const name = card.querySelector(".kc-name").textContent.toLowerCase();
-    card.style.display = name.includes(q) ? 'flex' : 'none';
+  document.querySelectorAll(".vault-item").forEach(item => {
+    const name = item.querySelector(".vc-name").textContent.toLowerCase();
+    item.style.display = name.includes(q) ? 'block' : 'none';
   });
 }
 
-// ── Sky data ────────────────────────────────────────────
-(function loadSky() {
+// Global Sky Update
+(function initSky() {
   const lat  = {{ ip_loc.lat if ip_loc else 28.6139 }};
   const lon  = {{ ip_loc.lon if ip_loc else 77.2090 }};
   const tz   = "{{ ip_loc.timezone if ip_loc else 'Asia/Kolkata' }}";
-  const city = "{{ ip_loc.city if ip_loc else 'India' }}";
+  const city = "{{ ip_loc.city if ip_loc else 'New Delhi' }}";
 
-  document.getElementById("sky-place").textContent = city;
-  if (document.getElementById("tz-input"))
-    document.getElementById("tz-input").value = tz;
+  document.getElementById("sky-place").textContent = city.toUpperCase();
 
   fetch(`/api/sky?lat=${lat}&lon=${lon}&tz=${encodeURIComponent(tz)}`)
     .then(r => r.json()).then(d => {
-      setText("s-sunrise",   d.sunrise);
-      setText("s-sunset",    d.sunset);
-      setText("s-moonrise",  d.moonrise);
-      setText("s-moonset",   d.moonset);
-      setText("s-noon",      d.solar_noon);
-      setText("s-daylength", d.day_length);
-      setText("s-rahu",      d.rahu_kaal);
-      setText("s-gulika",    d.gulika_kaal);
-      setText("s-yama",      d.yamaghanta);
-      setText("s-moonphase", `${d.moon_phase_name} (${d.moon_phase_pct}%)`);
-      document.getElementById("moon-progress").style.width = d.moon_phase_pct + "%";
-      document.getElementById("moon-phase-icon").textContent = moonEmoji(d.moon_phase_pct);
-    }).catch(() => {});
+      document.getElementById("s-sunrise").textContent = d.sunrise;
+      document.getElementById("s-sunset").textContent = d.sunset;
+      document.getElementById("s-rahu").textContent = d.rahu_kaal;
+      document.getElementById("s-moonphase").textContent = d.moon_phase_name.toUpperCase();
+      document.getElementById("moon-phase-icon").textContent = getMoonEmoji(d.moon_phase_pct);
+
+      updateSunArc(d.sunrise, d.sunset);
+      updateHora(d.sunrise, d.sunset);
+    });
 })();
 
-function setText(id, val) {
-  const el = document.getElementById(id);
-  if (el) el.textContent = val || "—";
+function updateHora(sunrise, sunset) {
+  const now = new Date();
+  const parse = (t) => {
+     if(!t) return null;
+     const [h, m] = t.split(':').map(Number);
+     const d = new Date(); d.setHours(h, m, 0); return d;
+  };
+  const sRise = parse(sunrise);
+  if(!sRise) return;
+
+  const diffMs = now - sRise;
+  const diffHours = diffMs / (1000 * 60 * 60);
+  const horaIndex = Math.floor(diffHours);
+
+  const dayLords = ["Sun", "Moon", "Mars", "Mercury", "Jupiter", "Venus", "Saturn"];
+  const dayIndex = now.getDay();
+  const startLord = dayLords[dayIndex];
+
+  const horaSequence = ["Sun", "Venus", "Mercury", "Moon", "Saturn", "Jupiter", "Mars"];
+  const startIdx = horaSequence.indexOf(startLord);
+  const currentHora = horaSequence[(startIdx + Math.abs(horaIndex)) % 7];
+
+  const colors = {"Sun":"#FF6B35","Moon":"#C8D8E8","Mars":"#FF4444","Mercury":"#00CC88","Jupiter":"#FFD700","Venus":"#FF69B4","Saturn":"#9CA3AF"};
+
+  document.getElementById("s-hora").textContent = currentHora.toUpperCase();
+  document.getElementById("hora-planet-color").style.background = colors[currentHora];
 }
 
-function moonEmoji(pct) {
+function getMoonEmoji(pct) {
   const phases = ["🌑","🌒","🌓","🌔","🌕","🌖","🌗","🌘"];
   return phases[Math.round(pct / 12.5) % 8];
 }
 
-// ── Geolocation ─────────────────────────────────────────
-const geoBtn = document.getElementById("geo-btn");
-if (geoBtn) geoBtn.addEventListener("click", () => {
-  if (!navigator.geolocation) return alert("Geolocation not supported.");
+function updateSunArc(sunrise, sunset) {
+  const now = new Date();
+  const parse = (t) => {
+     if(!t) return null;
+     const [h, m] = t.split(':').map(Number);
+     const d = new Date(); d.setHours(h, m, 0); return d;
+  };
+  const sRise = parse(sunrise), sSet = parse(sunset);
+  if(!sRise || !sSet) return;
+
+  let pct = (now - sRise) / (sSet - sRise);
+  pct = Math.max(0, Math.min(1, pct));
+
+  const sun = document.getElementById("sky-sun");
+  const path = document.getElementById("sky-arc-filled");
+
+  // Update Sun Position
+  const angle = Math.PI + (pct * Math.PI);
+  const cx = 100, cy = 90, r = 80;
+  sun.setAttribute("cx", cx + r * Math.cos(angle));
+  sun.setAttribute("cy", cy + r * Math.sin(angle));
+
+  // Update Progress Path
+  const dashLength = pct * 251.3; // 251.3 is approx half-circumference of r=80
+  path.setAttribute("stroke-dasharray", `${dashLength}, 500`);
+}
+
+// Geolocation
+document.getElementById("geo-btn").addEventListener("click", () => {
+  const status = document.getElementById("coord-status");
+  status.textContent = "ATTEMPTING SATELLITE LOCK…";
   navigator.geolocation.getCurrentPosition(pos => {
     const lat = pos.coords.latitude, lon = pos.coords.longitude;
     document.getElementById("lat-input").value = lat;
     document.getElementById("lon-input").value = lon;
+    status.textContent = `SYNCED: ${lat.toFixed(4)}N, ${lon.toFixed(4)}E`;
     fetch(`/api/geocode?q=${lat},${lon}`)
       .then(r => r.json()).then(d => {
         if (d.display_name) document.getElementById("place-input").value = d.display_name;
         if (d.timezone)     document.getElementById("tz-input").value    = d.timezone;
-      }).catch(() => {});
-  }, () => alert("Could not get location."));
+      });
+  }, () => status.textContent = "SIGNAL BLOCKED. ENTER MANUALLY.");
 });
 
-// ── Place auto-geocode ───────────────────────────────────
-const placeEl = document.getElementById("place-input");
-if (placeEl) {
-  let timer;
-  placeEl.addEventListener("input", function() {
-    clearTimeout(timer);
-    const q = this.value.trim();
-    if (q.length < 3) return;
-    timer = setTimeout(() => {
-      fetch(`/api/geocode?q=${encodeURIComponent(q)}`)
-        .then(r => r.json()).then(d => {
-          if (!d.error) {
-            document.getElementById("lat-input").value = d.lat;
-            document.getElementById("lon-input").value = d.lon;
-            document.getElementById("tz-input").value  = d.timezone;
-          }
-        }).catch(() => {});
-    }, 600);
-  });
-}
+// Auto-Geocode
+let geoTimer;
+document.getElementById("place-input").addEventListener("input", function() {
+  clearTimeout(geoTimer);
+  const q = this.value.trim();
+  if (q.length < 3) return;
+  geoTimer = setTimeout(() => {
+    fetch(`/api/geocode?q=${encodeURIComponent(q)}`)
+      .then(r => r.json()).then(d => {
+        if (!d.error) {
+          document.getElementById("lat-input").value = d.lat;
+          document.getElementById("lon-input").value = d.lon;
+          document.getElementById("tz-input").value  = d.timezone;
+          document.getElementById("coord-status").textContent = `DB MATCH: ${parseFloat(d.lat).toFixed(2)}N, ${parseFloat(d.lon).toFixed(2)}E`;
+        }
+      });
+  }, 800);
+});
 
-// ── Delete saved chart ───────────────────────────────────
 function deleteChart(id, btn) {
-  if (!confirm("Delete this saved chart?")) return;
+  if (!confirm("Permanently purge this profile from memory?")) return;
   fetch(`/kundli/delete/${id}`, { method: "POST" })
     .then(r => r.json()).then(d => {
-      if (d.ok) btn.closest(".kundli-card").remove();
-    }).catch(() => {});
+      if (d.ok) btn.closest(".vault-item").remove();
+    });
 }
 </script>
 {% endblock %}

@@ -15,8 +15,8 @@ services:
     volumes:
       # Persist ephemeris data between rebuilds
       - ephe_data:/app/ephe
-      # Persist user charts
-      - ./data:/app/data
+      # Persist user charts and database
+      - app_data:/app/data
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:5000/"]
@@ -27,3 +27,4 @@ services:
 
 volumes:
   ephe_data:
+  app_data:

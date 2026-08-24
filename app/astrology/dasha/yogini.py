@@ -43,12 +43,30 @@ def calculate_yogini_dasha(moon_nak_idx: int, birth_dt: datetime) -> Dict:
             start_date = current_dt
             end_date = start_date + timedelta(days=years * 365.2425)
 
+            # Sub-periods (Antardashas)
+            antars = []
+            a_start = start_date
+            for j in range(8):
+                a_idx = (idx + j) % 8
+                a_name, a_years, a_lord = YOGINIS[a_idx]
+                # Proportion: (Maha Years * Antar Years) / 36
+                a_dur_years = (years * a_years) / 36.0
+                a_end = a_start + timedelta(days=a_dur_years * 365.2425)
+                antars.append({
+                    "name": a_name,
+                    "start": a_start,
+                    "end": a_end,
+                    "lord": a_lord
+                })
+                a_start = a_end
+
             mahadashas.append({
                 "name": name,
                 "years": years,
                 "lord": lord,
                 "start": start_date,
                 "end": end_date,
+                "antardashas": antars,
                 "is_current": start_date <= datetime.now() < end_date
             })
             current_dt = end_date

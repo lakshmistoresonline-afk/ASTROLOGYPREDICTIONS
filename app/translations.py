@@ -16,7 +16,14 @@ TRANSLATIONS = {
         "strength": "Planetary Strength",
         "remedies": "Remedies",
         "download_pdf": "PDF",
-        "save_chart": "Save Chart"
+        "save_chart": "Save Chart",
+        "arudha": "Arudha Padas",
+        "special_lagnas": "Special Lagnas",
+        "timing_support": "Timing Support",
+        "confidence": "Confidence",
+        "evidence": "Cosmic Evidence",
+        "contradiction": "Contradiction",
+        "muhurta_suit": "Muhurta Suitability"
     },
     "hi": {
         "nav_home": "मुखपृष्ठ",
@@ -35,7 +42,14 @@ TRANSLATIONS = {
         "strength": "ग्रह बल",
         "remedies": "उपाय",
         "download_pdf": "पीडीएफ",
-        "save_chart": "सुरक्षित करें"
+        "save_chart": "सुरक्षित करें",
+        "arudha": "आरूढ़ पद",
+        "special_lagnas": "विशेष लग्न",
+        "timing_support": "समय समर्थन",
+        "confidence": "विश्वास स्तर",
+        "evidence": "ब्रह्मांडीय साक्ष्य",
+        "contradiction": "विरोधाभास",
+        "muhurta_suit": "मुहूर्त उपयुक्तता"
     }
 }
 

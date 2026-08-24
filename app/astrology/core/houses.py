@@ -14,7 +14,11 @@ def get_houses(jd_ut: float, lat: float, lon: float, hsys: bytes = b'W') -> Dict
         "ascendant": ascmc[0],
         "mc": ascmc[1],
         "armc": ascmc[2],
-        "vertex": ascmc[3]
+        "vertex": ascmc[3],
+        "equatorial_ascendant": ascmc[4], # East Point
+        "co_ascendant_koch": ascmc[5],
+        "co_ascendant_munk": ascmc[6],
+        "polar_ascendant": ascmc[7]
     }
 
 def get_house_from_cusps(longitude: float, cusps: list) -> int:
