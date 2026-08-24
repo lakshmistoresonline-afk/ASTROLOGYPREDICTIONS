@@ -1,40 +1,38 @@
-# 🔮 ASTROLOGYPREDICTIONS — Comprehensive Vedic Intelligence Engine
+# 🔮 ASTROLOGYPREDICTIONS — Unified Global Intelligence Engine
 
-An evidence-based, professional-grade Vedic Astrology (Jyotish) prediction platform utilizing a deterministic inference chain.
+An evidence-based, professional-grade prediction platform synthesizing Vedic, Western, Chinese, and Esoteric traditions into a single deterministic inference chain.
 
 ---
 
 ## ✨ Features
 
-| Category | Mathematical Precision |
+| Tradition | Key Systems & Metrics |
 |---|---|
-| **Core Engine** | Swiss Ephemeris (Topocentric) · 16 Parashari Vargas (D1-D60) · Lahiri Ayanamsa |
-| **Strength (Bala)** | Full Shadbala · Bhava Bala · Vimsopaka (16-Varga) · Harsha Bala · Patyayini · Vaisheshikamsha |
-| **Dashas (Timing)** | Vimshottari (4 levels) · Yogini · Chara · Kala Chakra · Narayan · Mandook |
-| **Jaimini System** | 7/8 Charakarakas · Arudha Padas (AL-A12) · Upapada · Karakamsha · Swamsha · Rajayogas |
-| **Advanced Systems** | KP System (SSL, Significators A-D, Ruling Planets) · Tajika (Ithasala, Varsheshwar, Sahams) |
-| **Destiny Points** | Bhrigu Bindu · BCP Activation · Pushkar Navamsha · 64th Navamsha · 150 Nadi Amshas |
-| **Bio-Rhythms** | Panchapakshi (5-Bird Activities) · Tatva (Elemental Cycles) · Baladi & Deeptadi Avasthas |
-| **Inference Framework** | **Deterministic Evidence Engine** · Contradiction Detection · Multi-system Confidence Scoring |
+| **Vedic (Jyotish)** | Shadbala · 16 Vargas · Vimshottari (5 levels) · Jaimini · KP 4-Step · Nadi D-150 · Lal Kitab |
+| **Western** | Secondary Progressions · Solar Arcs · 31 Harmonics · Natal Aspects · Asteroids · Fixed Stars |
+| **East Asian** | Bazi (Four Pillars) · Zi Wei Dou Shu (Purple Star) · Mahabote (Burmese) · Tibetan Mewa |
+| **Sacred/Esoteric** | Human Design (Gates/Channels) · Gene Keys · Maya Tzolkin · Celtic Tree · Kabbalah · Geomancy |
+| **Modern Science** | Biorhythms · Financial/Crypto Market Indicators · Astrometeorology · AstroCartoGraphy |
+| **Inference Framework** | **Unified Evidence Engine** · Contradiction Analysis · Multi-Tradition Confidence Scoring |
 
 ---
 
-## 🏗️ Architecture: The Deterministic Inference Chain
+## 🏗️ Architecture: The Universal Inference Chain
 
-Unlike generic horoscope generators, this application follows a strictly tiered analytical pipeline:
+This platform transcends traditional boundaries by cross-validating life themes across multiple world-systems:
 
-`CALCULATION → ASTROLOGICAL FACTS → STRENGTH ANALYSIS → YOGAS → VARGAS → DASHA → TRANSITS → DOMAIN ANALYSIS → EVENT DETECTION → TIMING → CONTRADICTION ANALYSIS → CONFIDENCE → EXPLANATION`
+`CALCULATION → DATA SYNTHESIS → TRADITION ANALYSIS → CROSS-SYSTEM VERIFICATION → CONTRADICTION DETECTION → INTEGRATED PREDICTION`
 
-Every life insight is derived from calculated evidence. If the engine finds conflicting signals (e.g., strong D1 potential but weak D9 fruit), the **Contradiction Engine** alerts the user and adjusts the **Confidence Score**.
+Every insight is backed by high-math calculations. For example, a "Career" prediction is cross-verified using Vedic D10, Chinese Bazi Day Master, Western Harmonics, and Hellenistic Zodiacal Releasing.
 
 ---
 
 ## 🚀 Key Modules
 
-- **[framework.py](file:///D:/ASTROLOGYPREDICTIONS/app/astrology/predictions/framework.py)**: Centralized inference logic that cross-validates 60+ data layers.
-- **[chart.py](file:///D:/ASTROLOGYPREDICTIONS/app/astrology/core/chart.py)**: The "Master Engine" that synthesizes global astrological data into a canonical model.
-- **[engine.py](file:///D:/ASTROLOGYPREDICTIONS/app/astrology/predictions/engine.py)**: Aggregates 32+ domain-specific predictions (Career, Wealth, Moksha, etc.).
-- **[muhurta.py](file:///D:/ASTROLOGYPREDICTIONS/app/astrology/panchang/muhurta.py)**: Precision timing for surgery, litigation, and financial ventures.
+- **[engine.py](file:///D:/ASTROLOGYPREDICTIONS/app/astrology/predictions/engine.py)**: The central synthesis hub that aggregates 38+ domain predictions.
+- **[chart.py](file:///D:/ASTROLOGYPREDICTIONS/app/astrology/core/chart.py)**: A master data-miner that calculates 500+ astrological facts in milliseconds.
+- **[human_design.py](file:///D:/ASTROLOGYPREDICTIONS/app/astrology/core/human_design.py)**: Precision evolutionary mechanics for soul-level analysis.
+- **[relocation.py](file:///D:/ASTROLOGYPREDICTIONS/app/astrology/core/relocation.py)**: Advanced ACG lines for identifying global power locations.
 
 ---
 
