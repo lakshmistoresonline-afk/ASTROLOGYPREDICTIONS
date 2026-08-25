@@ -76,6 +76,18 @@ HERBAL_REMEDIES = {
     "Saturn": "Bichu booti", "Rahu": "Chandan", "Ketu": "Ashwagandha"
 }
 
+RUDRAKSHA_DATABASE = {
+    "Sun": "1 Mukhi (Eka Mukhi) or 12 Mukhi",
+    "Moon": "2 Mukhi (Dwi Mukhi)",
+    "Mars": "3 Mukhi (Tri Mukhi)",
+    "Mercury": "4 Mukhi (Chatur Mukhi)",
+    "Jupiter": "5 Mukhi (Pancha Mukhi)",
+    "Venus": "6 Mukhi (Shan Mukhi)",
+    "Saturn": "7 Mukhi (Sapta Mukhi)",
+    "Rahu": "8 Mukhi (Ashta Mukhi)",
+    "Ketu": "9 Mukhi (Nava Mukhi)"
+}
+
 def get_remedies(chart: CanonicalChart) -> List[Dict]:
     """Identify planets needing remedies and suggest Upayas with Quests."""
     remedies = []
@@ -92,6 +104,7 @@ def get_remedies(chart: CanonicalChart) -> List[Dict]:
                 "lifestyle": db_rem.get("lifestyle"),
                 "quest": db_rem.get("quest"),
                 "gemstone": GEMSTONE_DATABASE.get(name),
+                "rudraksha": RUDRAKSHA_DATABASE.get(name),
                 "herb": HERBAL_REMEDIES.get(name)
             })
 
@@ -105,7 +118,8 @@ def get_remedies(chart: CanonicalChart) -> List[Dict]:
                 "charity": cb_rem.get("charity"),
                 "lifestyle": cb_rem.get("lifestyle"),
                 "quest": cb_rem.get("quest"),
-                "gemstone": GEMSTONE_DATABASE.get(name)
+                "gemstone": GEMSTONE_DATABASE.get(name),
+                "rudraksha": RUDRAKSHA_DATABASE.get(name)
             })
 
     # 3. Functional Malefics in difficult houses (6, 8, 12)

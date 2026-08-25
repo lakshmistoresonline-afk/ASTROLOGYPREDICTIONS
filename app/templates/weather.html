@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+{% block title %}Cosmic Weather — Mundane Audit{% endblock %}
+
+{% block head %}
+<style>
+.weather-indicator-pill {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 25px;
+    margin-bottom: 20px;
+}
+
+.weather-icon-large {
+    font-size: 3rem;
+    margin-bottom: 20px;
+    display: block;
+    color: var(--gold);
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="mb-5">
+    <span class="text-gold xsmall fw-black tracking-widest mb-2 d-block">MUNDANE FORECAST</span>
+    <h1 class="display-5 fw-black text-white mb-2">Cosmic <span class="text-gold">Weather</span></h1>
+    <p class="text-dim">Analyzing collective energy, environmental triggers, and global mundane shifts.</p>
+</div>
+
+<div class="row g-4 mb-5">
+    <!-- LOCAL ENVIRONMENT -->
+    <div class="col-lg-6">
+        <div class="card-vedic p-5">
+            <i class="bi bi-cloud-sun weather-icon-large"></i>
+            <h5 class="text-white fw-bold mb-4 opacity-50 uppercase tracking-widest">Environment Logic</h5>
+            <div class="d-flex flex-column gap-3">
+                {% for indicator in weather %}
+                <div class="weather-indicator-pill">
+                    <div class="d-flex gap-4 align-items-center">
+                        <i class="bi bi-broadcast text-accent fs-4"></i>
+                        <div class="small text-dim leading-relaxed">{{ indicator }}</div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <!-- GLOBAL MUNDANE -->
+    <div class="col-lg-6">
+        <div class="card-vedic p-5" style="background: radial-gradient(circle at top right, rgba(239, 68, 68, 0.05) 0%, transparent 70%)">
+            <i class="bi bi-globe weather-icon-large text-danger"></i>
+            <h5 class="text-white fw-bold mb-4 opacity-50 uppercase tracking-widest">Collective Pulse</h5>
+            <div class="d-flex flex-column gap-3">
+                {% for ind in mundane %}
+                <div class="weather-indicator-pill border-danger border-opacity-10">
+                    <div class="d-flex gap-4 align-items-center">
+                        <i class="bi bi-activity text-danger fs-4"></i>
+                        <div class="small text-dim leading-relaxed">{{ ind }}</div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card-vedic p-5 bg-dark border-gold border-opacity-20 text-center">
+    <h5 class="fw-black text-white mb-3">MUNDANE SYNERGY</h5>
+    <p class="text-dim max-width-800 mx-auto italic">
+        The "Weather" system maps planetary longitudinal boundaries to natural phenomena like wind, moisture, and collective heat. These transits influence the subconscious "mood" of the environment you inhabit.
+    </p>
+</div>
+{% endblock %}

@@ -21,40 +21,48 @@
 {% if dasha %}
 
 <!-- Current running periods strip -->
-<div class="row g-3 mb-4">
-  {% if dasha.current_maha %}
-  <div class="col-md-4">
-    <div class="summary-pill" style="border-color:{{ dasha.current_maha.color }}">
-      <div class="sp-label">Mahadasha (Major)</div>
-      <div class="sp-value" style="color:{{ dasha.current_maha.color }}">
-        {{ dasha.current_maha.lord }} Dasha
+<div class="row g-4 mb-4">
+  <div class="col-lg-8">
+    <div class="row g-3">
+      {% if dasha.current_maha %}
+      <div class="col-md-6">
+        <div class="summary-pill h-100" style="border-color:{{ dasha.current_maha.color }}">
+          <div class="sp-label">Mahadasha (Major)</div>
+          <div class="sp-value" style="color:{{ dasha.current_maha.color }}">
+            {{ dasha.current_maha.lord }} Dasha
+          </div>
+          <div class="sp-sub">{{ dasha.current_maha.start }} – {{ dasha.current_maha.end }}</div>
+        </div>
       </div>
-      <div class="sp-sub">{{ dasha.current_maha.start }} – {{ dasha.current_maha.end }}</div>
+      {% endif %}
+      {% if dasha.current_antar %}
+      <div class="col-md-6">
+        <div class="summary-pill h-100" style="border-color:{{ dasha.current_antar.color }}">
+          <div class="sp-label">Antardasha (Sub)</div>
+          <div class="sp-value" style="color:{{ dasha.current_antar.color }}">
+            {{ dasha.current_antar.lord }} Bhukti
+          </div>
+          <div class="sp-sub">{{ dasha.current_antar.start }} – {{ dasha.current_antar.end }}</div>
+        </div>
+      </div>
+      {% endif %}
     </div>
   </div>
-  {% endif %}
-  {% if dasha.current_antar %}
-  <div class="col-md-4">
-    <div class="summary-pill" style="border-color:{{ dasha.current_antar.color }}">
-      <div class="sp-label">Antardasha (Sub)</div>
-      <div class="sp-value" style="color:{{ dasha.current_antar.color }}">
-        {{ dasha.current_antar.lord }} Bhukti
+
+  <!-- Active House activations -->
+  <div class="col-lg-4">
+    <div class="card-vedic p-4 h-100 border-accent border-opacity-10 bg-accent bg-opacity-5">
+      <h6 class="text-white fw-bold mb-3 xsmall uppercase tracking-widest">Active Focus Areas</h6>
+      <div class="d-flex flex-wrap gap-2">
+        {% for h in dasha.activated_houses %}
+        <div class="badge bg-white bg-opacity-5 text-white-50 border border-white border-opacity-10 p-2 text-start">
+          <div class="xsmall fw-black text-accent mb-1">HOUSE {{ h.house }}</div>
+          <div class="xxsmall">{{ h.theme.split(',')[0] }}</div>
+        </div>
+        {% endfor %}
       </div>
-      <div class="sp-sub">{{ dasha.current_antar.start }} – {{ dasha.current_antar.end }}</div>
     </div>
   </div>
-  {% endif %}
-  {% if dasha.current_pratyantar %}
-  <div class="col-md-4">
-    <div class="summary-pill" style="border-color:{{ dasha.current_pratyantar.color }}">
-      <div class="sp-label">Pratyantardasha (Sub-Sub)</div>
-      <div class="sp-value" style="color:{{ dasha.current_pratyantar.color }}">
-        {{ dasha.current_pratyantar.lord }} Prana
-      </div>
-      <div class="sp-sub">{{ dasha.current_pratyantar.start }} – {{ dasha.current_pratyantar.end }}</div>
-    </div>
-  </div>
-  {% endif %}
 </div>
 
 <!-- Birth nakshatra info -->

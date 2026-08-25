@@ -1,5 +1,50 @@
 {% extends "base.html" %}
-{% block title %}Panchang — The Five Limbs{% endblock %}
+{% block title %}Panchang — The Five Limbs{% block scripts %}
+<script>
+let geoTimer;
+const placeInput = document.getElementById("panch-place");
+if (placeInput) {
+    placeInput.addEventListener("input", function() {
+        clearTimeout(geoTimer);
+        const q = this.value.trim();
+        if (q.length < 3) return;
+        geoTimer = setTimeout(() => {
+            fetch(`/api/geocode?q=${encodeURIComponent(q)}`)
+                .then(r => r.json()).then(d => {
+                    if (!d.error) {
+                        document.getElementById("panch-lat").value = d.lat;
+                        document.getElementById("panch-lon").value = d.lon;
+                        document.getElementById("panch-tz").value  = d.timezone;
+                        document.getElementById("panchang-form").submit();
+                    }
+                });
+        }, 1000);
+    });
+}
+
+document.querySelectorAll('.auto-sync').forEach(el => {
+    if(el.id !== 'panch-place') {
+        el.addEventListener('change', () => {
+            document.getElementById("panchang-form").submit();
+        });
+    }
+});
+
+document.getElementById("geo-btn-panch")?.addEventListener("click", () => {
+    navigator.geolocation.getCurrentPosition(pos => {
+        const lat = pos.coords.latitude, lon = pos.coords.longitude;
+        document.getElementById("panch-lat").value = lat;
+        document.getElementById("panch-lon").value = lon;
+        fetch(`/api/geocode?q=${lat},${lon}`)
+            .then(r => r.json()).then(d => {
+                if (d.display_name) document.getElementById("panch-place").value = d.display_name;
+                if (d.timezone) document.getElementById("panch-tz").value = d.timezone;
+                document.getElementById("panchang-form").submit();
+            });
+    });
+});
+</script>
+{% endblock %}
 
 {% block content %}
 <div class="page-header mb-5 d-flex justify-content-between align-items-end flex-wrap gap-4">
@@ -17,25 +62,25 @@
 
 {# ── Filter & Search ────────────────────────────────────────────── #}
 <div class="card-vedic mb-5 p-4 bg-glass border-dashed">
-  <form method="POST" class="row g-4 align-items-end">
+  <form method="POST" class="row g-4 align-items-end" id="panchang-form">
     <div class="col-md-3">
       <label class="form-label-vedic">Celestial Date</label>
-      <input type="date" name="date" class="form-control form-control-vedic"
+      <input type="date" name="date" id="in-date" class="form-control form-control-vedic auto-sync"
              value="{{ panchang.date_iso if panchang else today }}" required/>
     </div>
     <div class="col-md-5">
       <label class="form-label-vedic">Geographic Focus</label>
       <div class="input-group">
-        <input type="text" name="place" id="panch-place" class="form-control form-control-vedic"
+        <input type="text" name="place" id="panch-place" class="form-control form-control-vedic auto-sync"
                value="{{ place }}" placeholder="Search city..."/>
-        <button type="button" class="btn btn-outline-gold px-3"><i class="bi bi-geo"></i></button>
+        <button type="button" class="btn btn-outline-gold px-3" id="geo-btn-panch"><i class="bi bi-geo"></i></button>
       </div>
       <input type="hidden" name="lat" id="panch-lat"/>
       <input type="hidden" name="lon" id="panch-lon"/>
       <input type="hidden" name="timezone" id="panch-tz" value="Asia/Kolkata"/>
     </div>
     <div class="col-md-2 ms-auto">
-      <button type="submit" class="btn btn-vedic w-100 py-3">
+      <button type="submit" class="btn btn-vedic w-100 py-3" id="sync-btn">
         Sync Data
       </button>
     </div>
@@ -177,4 +222,49 @@
   </div>
 </div>
 {% endif %}
+{% block scripts %}
+<script>
+let geoTimer;
+const placeInput = document.getElementById("panch-place");
+if (placeInput) {
+    placeInput.addEventListener("input", function() {
+        clearTimeout(geoTimer);
+        const q = this.value.trim();
+        if (q.length < 3) return;
+        geoTimer = setTimeout(() => {
+            fetch(`/api/geocode?q=${encodeURIComponent(q)}`)
+                .then(r => r.json()).then(d => {
+                    if (!d.error) {
+                        document.getElementById("panch-lat").value = d.lat;
+                        document.getElementById("panch-lon").value = d.lon;
+                        document.getElementById("panch-tz").value  = d.timezone;
+                        document.getElementById("panchang-form").submit();
+                    }
+                });
+        }, 1000);
+    });
+}
+
+document.querySelectorAll('.auto-sync').forEach(el => {
+    if(el.id !== 'panch-place') {
+        el.addEventListener('change', () => {
+            document.getElementById("panchang-form").submit();
+        });
+    }
+});
+
+document.getElementById("geo-btn-panch")?.addEventListener("click", () => {
+    navigator.geolocation.getCurrentPosition(pos => {
+        const lat = pos.coords.latitude, lon = pos.coords.longitude;
+        document.getElementById("panch-lat").value = lat;
+        document.getElementById("panch-lon").value = lon;
+        fetch(`/api/geocode?q=${lat},${lon}`)
+            .then(r => r.json()).then(d => {
+                if (d.display_name) document.getElementById("panch-place").value = d.display_name;
+                if (d.timezone) document.getElementById("panch-tz").value = d.timezone;
+                document.getElementById("panchang-form").submit();
+            });
+    });
+});
+</script>
 {% endblock %}

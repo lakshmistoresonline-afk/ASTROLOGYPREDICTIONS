@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+{% block title %}Eclipse Watch — Karmic Triggers{% endblock %}
+
+{% block head %}
+<style>
+.eclipse-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 30px;
+    margin-bottom: 20px;
+    transition: var(--transition);
+}
+
+.eclipse-card:hover {
+    border-color: #ef4444;
+    background: rgba(220, 38, 38, 0.02);
+}
+
+.impact-badge {
+    padding: 10px 20px;
+    background: rgba(220, 38, 38, 0.1);
+    border: 1px solid rgba(220, 38, 38, 0.2);
+    border-radius: 12px;
+    color: #ef4444;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 700;
+    margin-bottom: 20px;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="mb-5">
+    <span class="text-gold xsmall fw-black tracking-widest mb-2 d-block">CELESTIAL ALERTS</span>
+    <h1 class="display-5 fw-black text-white mb-2">Eclipse <span class="text-gold">Watch</span></h1>
+    <p class="text-dim">Tracking upcoming solar and lunar eclipses and their personalized impact on your natal points.</p>
+</div>
+
+<div class="row g-5">
+    <!-- UPCOMING ECLIPSES -->
+    <div class="col-lg-5">
+        <h5 class="text-white fw-bold mb-4 opacity-50 uppercase tracking-widest">Next Triggers</h5>
+        <div class="d-flex flex-column gap-3">
+            {% for ec in eclipses %}
+            <div class="eclipse-card">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <span class="fw-bold text-white">{{ ec.type }}</span>
+                    <span class="xsmall text-gold fw-black">{{ ec.date[:10] }}</span>
+                </div>
+                <div class="xsmall text-dim font-mono">{{ (ec.longitude / 30)|int + 1 }} Sign {{ (ec.longitude % 30)|round(1) }}°</div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- PERSONAL IMPACTS -->
+    <div class="col-lg-7">
+        <h5 class="text-white fw-bold mb-4 opacity-50 uppercase tracking-widest">Natal Impact Audit</h5>
+        <div class="d-flex flex-column gap-3">
+            {% for impact in impacts %}
+            <div class="card-vedic p-5 border-danger border-opacity-20 shadow-lg">
+                <div class="impact-badge">
+                    <i class="bi bi-exclamation-triangle-fill"></i>
+                    CRITICAL ALIGNMENT
+                </div>
+                <h4 class="text-white fw-black mb-3">Natal {{ impact.planet }} vs {{ impact.eclipse }}</h4>
+                <p class="small text-dim leading-relaxed mb-0">{{ impact.interpretation }}</p>
+            </div>
+            {% endfor %}
+            {% if not impacts %}
+            <div class="p-5 text-center opacity-30 border border-dashed rounded-4">
+                <i class="bi bi-shield-check fs-1 mb-3 d-block"></i>
+                <h5 class="fw-bold">CLEAR HORIZON</h5>
+                <p class="small">No upcoming eclipses fall directly on your major natal points (Orb 2°).</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<div class="mt-5 p-5 card-vedic text-center">
+    <h5 class="fw-black text-white mb-3">ECLIPSE PHILOSOPHY</h5>
+    <p class="text-dim max-width-800 mx-auto leading-relaxed italic">
+        "Eclipses represent the shadowy influence of Rahu and Ketu on the luminaries. When an eclipse triggers a natal planet, it acts as a karmic portal—accelerating changes that might otherwise take years to manifest."
+    </p>
+</div>
+{% endblock %}

@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+{% block title %}Chakra Alignment — Energy Centers{% endblock %}
+
+{% block head %}
+<style>
+.chakra-body-container {
+    position: relative;
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+.chakra-visual {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    margin-bottom: 20px;
+    border: 3px solid currentColor;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 0 20px -5px currentColor;
+    transition: var(--transition);
+}
+
+.chakra-node {
+    display: flex;
+    align-items: center;
+    gap: 25px;
+    padding: 20px;
+    background: rgba(255,255,255,0.02);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    margin-bottom: 15px;
+    transition: var(--transition);
+}
+
+.chakra-node:hover {
+    background: rgba(255,255,255,0.04);
+    transform: translateX(10px);
+}
+
+.chakra-strength-bar {
+    height: 4px;
+    background: rgba(255,255,255,0.05);
+    border-radius: 2px;
+    flex-grow: 1;
+}
+
+.chakra-strength-bar .fill { height: 100%; border-radius: 2px; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="mb-5 text-center">
+    <span class="text-gold xsmall fw-black tracking-widest mb-2 d-block">HOLISTIC BIO-GEOMETRY</span>
+    <h1 class="display-5 fw-black text-white mb-2">Chakra <span class="text-gold">Alignment</span></h1>
+    <p class="text-dim">Mapping your natal planetary strengths to the traditional human energy centers.</p>
+</div>
+
+<div class="row g-5">
+    <div class="col-lg-6">
+        <div class="d-flex flex-column gap-1">
+            {% for c in chakras|reverse %}
+            <div class="chakra-node">
+                <div class="chakra-visual" style="color: {{ c.color }}">
+                    <div class="h4 fw-black mb-0">{{ c.name[0] }}</div>
+                </div>
+                <div class="flex-grow-1">
+                    <div class="d-flex justify-content-between align-items-center mb-1">
+                        <h6 class="text-white fw-bold mb-0">{{ c.name }}</h6>
+                        <span class="xsmall text-gold fw-black uppercase">{{ c.planet }}</span>
+                    </div>
+                    <div class="xsmall text-dim mb-3">{{ c.theme }}</div>
+
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="chakra-strength-bar"><div class="fill" style="width: {{ (c.strength / 600) * 100 }}%; background: {{ c.color }}"></div></div>
+                        <span class="xsmall fw-black font-mono text-white">{{ (c.strength / 600 * 100)|round|int }}%</span>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="col-lg-6">
+        <div class="card-vedic p-5 d-flex flex-column justify-content-center h-100">
+            <h5 class="text-white fw-bold mb-4 opacity-50 uppercase tracking-widest">Energetic Logic</h5>
+            <p class="small text-dim leading-relaxed mb-5">
+                In Tantric and Ayurvedic traditions, each Chakra (vortex of energy) is governed by a specific Graha (Planet).
+                The strength of your Chakras is derived from the **Shadbala** (Six-fold strength) of the ruling planet in your birth chart.
+            </p>
+
+            <div class="row g-4">
+                {% for c in chakras %}
+                <div class="col-md-6">
+                    <div class="p-3 rounded-4 bg-white bg-opacity-5 border border-white border-opacity-5">
+                        <div class="xsmall fw-black text-white-50 mb-1">{{ c.name.split(' ')[0] }} VITALITY</div>
+                        <div class="small fw-bold text-white mb-2">{{ c.dignity }}</div>
+                        <div class="xxsmall text-dim">Active in House {{ c.house }}</div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

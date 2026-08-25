@@ -9,7 +9,11 @@ def calculate_secondary_progressions(birth_dt: datetime, target_dt: datetime, la
     Secondary Progressions: A day for a year.
     Calculates planetary positions for the 'progressed' time.
     """
-    age_days = (target_dt - birth_dt).days
+    # Fix timezone mismatch for subtraction
+    b_dt = birth_dt.replace(tzinfo=None)
+    t_dt = target_dt.replace(tzinfo=None)
+
+    age_days = (t_dt - b_dt).days
     # Progressed time = birth time + 1 day for every year (roughly)
     # Exact: 1 day = 1 year of life.
     # So if age is 30 years, we look at 30 days after birth.

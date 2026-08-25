@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+{% block title %}Astro-Locality — Your Global Power Lines{% endblock %}
+
+{% block head %}
+<style>
+.power-line-card {
+    background: rgba(255,255,255,0.02);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 20px;
+    margin-bottom: 15px;
+}
+
+.city-rank-item {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 15px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+
+.rank-number {
+    width: 30px; font-weight: 900; color: var(--gold); opacity: 0.5;
+}
+
+.power-score-bar {
+    height: 4px; background: rgba(255,255,255,0.05); border-radius: 2px; flex-grow: 1;
+}
+
+.power-score-bar .fill { height: 100%; background: var(--gold); border-radius: 2px; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="mb-5">
+    <span class="text-gold xsmall fw-black tracking-widest mb-2 d-block">GEOGRAPHIC RESONANCE</span>
+    <h1 class="display-5 fw-black text-white mb-2">Destiny <span class="text-gold">Map</span></h1>
+    <p class="text-dim">Discover where on Earth your planetary energies are most powerful.</p>
+</div>
+
+<div class="row g-5">
+    <div class="col-lg-5">
+        <h5 class="text-white fw-bold mb-4 opacity-50 uppercase tracking-widest">Active Power Lines</h5>
+        <div class="d-flex flex-column gap-2">
+            {% for planet, data in lines.items() %}
+            <div class="power-line-card">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <span class="fw-bold text-white">{{ planet }} Zenith (MC)</span>
+                    <span class="font-mono small text-gold">{{ data.MC_Longitude }}° Lon</span>
+                </div>
+                <p class="xsmall text-dim mb-0">{{ data.interpretation }}</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="col-lg-7">
+        <div class="card-vedic p-5">
+            <h5 class="text-white fw-bold mb-4 opacity-50 uppercase tracking-widest">Top Relocation Potentials</h5>
+            <div class="city-rank-list">
+                {% for city in city_scores[:10] %}
+                <div class="city-rank-item">
+                    <span class="rank-number">#{{ loop.index }}</span>
+                    <div style="width: 120px">
+                        <div class="small fw-bold text-white">{{ city.name }}</div>
+                        <div class="xxsmall text-dim font-mono">{{ city.lat }}N, {{ city.lon }}E</div>
+                    </div>
+                    <div class="power-score-bar"><div class="fill" style="width: {{ city.score }}%"></div></div>
+                    <div class="text-end" style="width: 60px">
+                        <div class="small fw-black text-gold">{{ city.score }}%</div>
+                        <div class="xxsmall text-dim">SYNC</div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+
+            <div class="mt-5 p-4 rounded-4 bg-white bg-opacity-5 border border-white border-opacity-5">
+                <div class="d-flex gap-3 align-items-start">
+                    <i class="bi bi-info-circle text-gold fs-4"></i>
+                    <p class="small text-dim mb-0 leading-relaxed">
+                        Relocation astrology (Astrocartography) maps your birth chart onto the globe. Moving to a city near one of your power lines can "amplify" that planet's specific themes in your daily life.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

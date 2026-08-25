@@ -141,6 +141,24 @@ def get_career_prediction(chart: CanonicalChart, domain_type: str = "Career & Au
     if "Exalted" in venus.dignity:
         factors.append(EvidenceEngine.create_factor("Creative Path", "planet", "positive", 8, "Strong Venus favors professions in design, media, or diplomacy."))
 
+    # 6b. Professional Archetype
+    archetypes = {
+        "Sun": "Leadership, Governance, or Public Office",
+        "Moon": "Healthcare, Hospitality, or Psychology",
+        "Mars": "Engineering, Technical sectors, or competitive roles",
+        "Mercury": "Trade, IT, Writing, or Analytical roles",
+        "Jupiter": "Advisory, Law, Teaching, or Finance",
+        "Venus": "Art, Luxury, Design, or Diplomacy",
+        "Saturn": "Manufacturing, Real Estate, or specialized labor",
+        "Rahu": "Innovation, Foreign trade, or High-tech ventures",
+        "Ketu": "Research, Metaphysics, or unconventional paths"
+    }
+    main_influence = tenth_lord_name
+    factors.append(EvidenceEngine.create_factor(
+        "Professional Archetype", "lord", "positive", 10,
+        f"Your primary career influence ({main_influence}) favors roles in {archetypes.get(main_influence, 'General Professional sectors')}."
+    ))
+
     # 7. Timing Integration
     t_conf = False
     if timing_data:
@@ -151,7 +169,11 @@ def get_career_prediction(chart: CanonicalChart, domain_type: str = "Career & Au
         if t_conf:
             factors.append(EvidenceEngine.create_factor("Immediate Opportunity", "transit", "positive", 8, "Current transits are exceptionally favorable for new ventures or promotions."))
 
-    summary_template = "Your professional trajectory strength is {score}%. Confidence: {confidence}."
+    summary_template = (
+        "Your professional trajectory shows {score}% alignment. "
+        "With {confidence} confidence, we see that "
+        + ("your career path is currently in a high-growth phase with strong institutional support." if tenth_lord.house in [1, 4, 7, 10] else "your professional life requires steady perseverance and attention to detail to overcome current hurdles.")
+    )
 
     return analyze_domain(
         "Career & Authority",

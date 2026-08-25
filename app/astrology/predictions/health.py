@@ -127,7 +127,11 @@ def get_health_prediction(chart: CanonicalChart, domain_type: str = "Health & Vi
         if timing_data.get("total_timing_score", 0) < 0.4:
             factors.append(EvidenceEngine.create_factor("Caution Period", "transit", "negative", 10, "Current planetary cycles suggest a period where extra attention to health and vitality is recommended."))
 
-    summary_template = domain_type + " strength: {score}%. Confidence: {confidence}."
+    summary_template = (
+        domain_type + " alignment is {score}%. "
+        "With {confidence} confidence, the analysis suggests "
+        + ("exceptional natural resilience and high energy levels currently." if ll.house in [1, 4, 7, 10, 5, 9, 11] and "Exalted" in ll.dignity else "that maintaining physical and mental balance should be a priority through disciplined lifestyle choices.")
+    )
 
     return analyze_domain(
         domain_type,

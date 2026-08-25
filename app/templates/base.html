@@ -20,59 +20,129 @@
 <body class="ethereal-bg">
 
 <div id="layout-wrapper">
-    <!-- --- Sidebar --- -->
+    <!-- Sidebar -->
     <aside id="sidebar">
         <div class="sidebar-header">
             <div class="d-flex align-items-center gap-3">
-                <img src="{{ url_for('static', filename='img/icon.svg') }}" width="32" height="32" alt="Om"/>
+                <div class="vc-avatar" style="width: 36px; height: 36px; font-size: 0.9rem">ॐ</div>
                 <div>
                     <div class="app-brand fs-5">JYOTISH</div>
-                    <div class="xsmall text-gold tracking-wide opacity-50">CELESTIAL v4.0</div>
+                    <div class="xsmall text-gold opacity-50 fw-bold">CELESTIAL OS</div>
                 </div>
             </div>
         </div>
 
         <nav class="nav-list">
+            <div class="xsmall text-gold opacity-30 fw-black tracking-widest mb-3 px-3">CORE NAVIGATION</div>
             <a href="{{ url_for('main.index') }}" class="nav-link {% if request.endpoint == 'main.index' %}active{% endif %}">
-                <i class="bi bi-grid-1x2"></i> <span>Console</span>
+                <i class="bi bi-house-door"></i> <span>Home</span>
+            </a>
+            <a href="{{ url_for('main.dashboard') }}" class="nav-link {% if request.endpoint == 'main.dashboard' %}active{% endif %}">
+                <i class="bi bi-grid-1x2"></i> <span>Dashboard</span>
             </a>
             <a href="{{ url_for('main.kundli') }}" class="nav-link {% if request.endpoint == 'main.kundli' %}active{% endif %}">
-                <i class="bi bi-compass"></i> <span>Natal</span>
+                <i class="bi bi-compass"></i> <span>Birth Chart</span>
             </a>
             <a href="{{ url_for('main.predictions') }}" class="nav-link {% if request.endpoint == 'main.predictions' %}active{% endif %}">
-                <i class="bi bi-magic"></i> <span>Insights</span>
+                <i class="bi bi-stars"></i> <span>Insights</span>
             </a>
+
+            <div class="xsmall text-gold opacity-30 fw-black tracking-widest mb-3 mt-4 px-3">ANALYSIS & SYNTHESIS</div>
+            <a href="{{ url_for('main.cosmic_dna') }}" class="nav-link {% if request.endpoint == 'main.cosmic_dna' %}active{% endif %}">
+                <i class="bi bi-dna"></i> <span>Cosmic DNA</span>
+            </a>
+            <a href="{{ url_for('main.varshaphala') }}" class="nav-link {% if request.endpoint == 'main.varshaphala' %}active{% endif %}">
+                <i class="bi bi-calendar-event"></i> <span>Yearly Progress</span>
+            </a>
+            <a href="{{ url_for('main.friendship_matrix') }}" class="nav-link {% if request.endpoint == 'main.friendship_matrix' %}active{% endif %}">
+                <i class="bi bi-diagram-2"></i> <span>Friendship Matrix</span>
+            </a>
+            <a href="{{ url_for('main.chakra_alignment') }}" class="nav-link {% if request.endpoint == 'main.chakra_alignment' %}active{% endif %}">
+                <i class="bi bi-person-bounding-box"></i> <span>Chakras</span>
+            </a>
+            <a href="{{ url_for('main.galactic_audit') }}" class="nav-link {% if request.endpoint == 'main.galactic_audit' %}active{% endif %}">
+                <i class="bi bi-stars"></i> <span>Galactic Audit</span>
+            </a>
+            <a href="{{ url_for('main.eclipse_watch') }}" class="nav-link {% if request.endpoint == 'main.eclipse_watch' %}active{% endif %}">
+                <i class="bi bi-moon-stars"></i> <span>Eclipse Watch</span>
+            </a>
+            <a href="{{ url_for('main.nakshatra_symphony') }}" class="nav-link {% if request.endpoint == 'main.nakshatra_symphony' %}active{% endif %}">
+                <i class="bi bi-stars"></i> <span>Nakshatras</span>
+            </a>
+            <a href="{{ url_for('main.ashtakavarga') }}" class="nav-link {% if request.endpoint == 'main.ashtakavarga' %}active{% endif %}">
+                <i class="bi bi-grid-3x3-gap"></i> <span>Ashtakavarga</span>
+            </a>
+            <a href="{{ url_for('main.yoga_gallery') }}" class="nav-link {% if request.endpoint == 'main.yoga_gallery' %}active{% endif %}">
+                <i class="bi bi-gem"></i> <span>Yoga Gallery</span>
+            </a>
+            <a href="{{ url_for('main.esoteric_audit') }}" class="nav-link {% if request.endpoint == 'main.esoteric_audit' %}active{% endif %}">
+                <i class="bi bi-vault"></i> <span>Esoteric Vault</span>
+            </a>
+            <a href="{{ url_for('main.numerology') }}" class="nav-link {% if request.endpoint == 'main.numerology' %}active{% endif %}">
+                <i class="bi bi-hash"></i> <span>Lo Shu Grid</span>
+            </a>
+            <a href="{{ url_for('main.life_calendar') }}" class="nav-link {% if request.endpoint == 'main.life_calendar' %}active{% endif %}">
+                <i class="bi bi-calendar-check"></i> <span>Life Calendar</span>
+            </a>
+            <a href="{{ url_for('main.shani_report') }}" class="nav-link {% if request.endpoint == 'main.shani_report' %}active{% endif %}">
+                <i class="bi bi-shield-fill-check"></i> <span>Shani Engine</span>
+            </a>
+
+            <div class="xsmall text-gold opacity-30 fw-black tracking-widest mb-3 mt-4 px-3">GLOBAL SYSTEMS</div>
+            <a href="{{ url_for('main.cosmic_markets') }}" class="nav-link {% if request.endpoint == 'main.cosmic_markets' %}active{% endif %}">
+                <i class="bi bi-currency-exchange"></i> <span>Cosmic Markets</span>
+            </a>
+            <a href="{{ url_for('main.relocation') }}" class="nav-link {% if request.endpoint == 'main.relocation' %}active{% endif %}">
+                <i class="bi bi-globe-americas"></i> <span>Destiny Map</span>
+            </a>
+            <a href="{{ url_for('main.cosmic_weather') }}" class="nav-link {% if request.endpoint == 'main.cosmic_weather' %}active{% endif %}">
+                <i class="bi bi-cloud-sun"></i> <span>Cosmic Weather</span>
+            </a>
+
+            <div class="xsmall text-gold opacity-30 fw-black tracking-widest mb-3 mt-4 px-3">TRADITIONAL TOOLS</div>
             <a href="{{ url_for('main.transit') }}" class="nav-link {% if request.endpoint == 'main.transit' %}active{% endif %}">
-                <i class="bi bi-stars"></i> <span>Transit</span>
+                <i class="bi bi-clock-history"></i> <span>Transits</span>
             </a>
             <a href="{{ url_for('main.panchang') }}" class="nav-link {% if request.endpoint == 'main.panchang' %}active{% endif %}">
                 <i class="bi bi-calendar3"></i> <span>Almanac</span>
             </a>
-            <a href="{{ url_for('main.dasha') }}" class="nav-link {% if request.endpoint == 'main.dasha' %}active{% endif %}">
-                <i class="bi bi-clock-history"></i> <span>Timeline</span>
+            <a href="{{ url_for('main.prashna') }}" class="nav-link {% if request.endpoint == 'main.prashna' %}active{% endif %}">
+                <i class="bi bi-question-circle"></i> <span>Prashna Oracle</span>
+            </a>
+            <a href="{{ url_for('main.matchmaking') }}" class="nav-link {% if request.endpoint == 'main.matchmaking' %}active{% endif %}">
+                <i class="bi bi-heart-pulse"></i> <span>Matchmaking</span>
+            </a>
+            <a href="{{ url_for('main.lexicon') }}" class="nav-link {% if request.endpoint == 'main.lexicon' %}active{% endif %}">
+                <i class="bi bi-journal-text"></i> <span>Lexicon</span>
             </a>
         </nav>
 
         <div class="p-4 mt-auto border-top border-white border-opacity-5">
-            <button class="btn btn-sm btn-outline-secondary w-100 mb-3" onclick="toggleTheme()">
-                <i class="bi bi-sun-fill me-2"></i> Mode
-            </button>
-            <div class="xsmall text-center opacity-25 font-mono">LAHIRI / SIDEREAL</div>
+            <div class="d-flex align-items-center justify-content-between">
+                <span class="xsmall text-dim">Night Mode</span>
+                <button class="btn btn-sm p-0 text-gold" onclick="toggleTheme()">
+                    <i class="bi bi-moon-stars"></i>
+                </button>
+            </div>
         </div>
     </aside>
 
-    <!-- --- Main Content --- -->
+    <!-- Main Content -->
     <div id="main-content">
         <header class="master-header">
             <div class="d-flex align-items-center gap-4">
-                <div id="live-clock" class="font-mono text-gold fw-bold small">00:00:00</div>
+                <div id="live-clock" class="small text-gold fw-bold font-mono">00:00:00</div>
             </div>
 
             <div class="d-flex align-items-center gap-4">
-                <span class="xsmall text-muted fw-bold d-none d-lg-inline">SYNC: <span class="text-success">STABLE</span></span>
+                <button class="btn btn-sm btn-vedic py-1 px-3 xsmall" onclick="toggleAstroChat()">
+                    <i class="bi bi-chat-dots-fill me-2"></i> ASTRO CHAT
+                </button>
                 <div class="d-flex align-items-center gap-2">
-                    <span class="xsmall text-muted">{{ session.get('birth_name', 'GUEST') }}</span>
-                    <div style="width: 32px; height: 32px; border-radius: 8px; background: var(--gold-glow); border: 1px solid var(--gold-dim)"></div>
+                    <span class="xsmall text-dim">{{ session.get('birth_name', 'Visitor') }}</span>
+                    <div style="width: 32px; height: 32px; border-radius: 50%; background: var(--gold-glow); display: flex; align-items: center; justify-content: center">
+                        <i class="bi bi-person text-gold opacity-50"></i>
+                    </div>
                 </div>
             </div>
         </header>
@@ -80,7 +150,7 @@
         <main class="viewport-content">
             {% with messages = get_flashed_messages(with_categories=true) %}
               {% for cat, msg in messages %}
-                <div class="alert alert-{{ cat }} border-0 shadow-sm rounded-4 mb-4">
+                <div class="alert alert-{{ cat }} border-0 rounded-4 shadow-sm mb-4">
                    <i class="bi bi-info-circle me-2"></i> {{ msg }}
                 </div>
               {% endfor %}
@@ -88,10 +158,6 @@
 
             {% block content %}{% endblock %}
         </main>
-
-        <footer class="p-5 text-center border-top border-white border-opacity-5">
-            <p class="xsmall text-muted mb-0 opacity-50">Unified Global Prediction Engine • Deterministic Inference v4.0</p>
-        </footer>
     </div>
 </div>
 
@@ -105,10 +171,15 @@ function updateClock() {
 }
 setInterval(updateClock, 1000); updateClock();
 
-document.getElementById("sidebar-toggle").addEventListener("click", () => {
-  document.getElementById("sidebar").classList.toggle("collapsed");
-  document.getElementById("main-content").classList.toggle("expanded");
-});
+const sidebarToggle = document.getElementById("sidebar-toggle");
+if (sidebarToggle) {
+    sidebarToggle.addEventListener("click", () => {
+      const sidebar = document.getElementById("sidebar");
+      const mainContent = document.getElementById("main-content");
+      if (sidebar) sidebar.classList.toggle("collapsed");
+      if (mainContent) mainContent.classList.toggle("expanded");
+    });
+}
 
 function toggleTheme() {
   const html = document.documentElement;
@@ -119,6 +190,96 @@ function toggleTheme() {
 }
 const savedTheme = localStorage.getItem("theme") || "dark";
 document.documentElement.setAttribute("data-bs-theme", savedTheme);
+</script>
+
+<!-- AstroChat Floating Interface -->
+<div id="astrochat-container" class="astrochat-collapsed">
+    <div class="astrochat-header">
+        <div class="d-flex align-items-center gap-3">
+            <div class="vc-avatar bg-gold text-dark" style="width: 32px; height: 32px; font-size: 0.8rem">ॐ</div>
+            <div>
+                <div class="xsmall fw-black text-white">JYOTISHI AI</div>
+                <div class="xxsmall text-success fw-bold">ONLINE</div>
+            </div>
+        </div>
+        <button class="btn-close btn-close-white" onclick="toggleAstroChat()"></button>
+    </div>
+    <div id="astrochat-messages" class="astrochat-body">
+        <div class="chat-msg system">Namaste! I am your AI Jyotishi. How can I help you decode your blueprint today?</div>
+    </div>
+    <div class="astrochat-footer">
+        <input type="text" id="chat-input" placeholder="Ask about your career, marriage..." onkeypress="handleChatKey(event)">
+        <button onclick="sendChatMessage()"><i class="bi bi-send-fill"></i></button>
+    </div>
+</div>
+
+<style>
+#astrochat-container {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    width: 380px;
+    height: 550px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 24px;
+    display: flex;
+    flex-direction: column;
+    z-index: 1000;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.8);
+    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s;
+}
+#astrochat-container.astrochat-collapsed {
+    transform: translateY(120%) scale(0.8);
+    opacity: 0;
+    pointer-events: none;
+}
+.astrochat-header { padding: 20px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+.astrochat-body { flex-grow: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 15px; }
+.astrochat-footer { padding: 15px; border-top: 1px solid var(--border); display: flex; gap: 10px; }
+.astrochat-footer input { flex-grow: 1; background: rgba(255,255,255,0.03); border: 1px solid var(--border); border-radius: 12px; padding: 10px 15px; color: #fff; font-size: 0.85rem; outline: none; }
+.astrochat-footer button { width: 42px; height: 42px; background: var(--gold); border: none; border-radius: 12px; display: flex; align-items: center; justify-content: center; color: #000; }
+
+.chat-msg { padding: 12px 18px; border-radius: 18px; font-size: 0.85rem; max-width: 85%; line-height: 1.5; }
+.chat-msg.system { background: rgba(255,255,255,0.04); color: var(--text-dim); align-self: flex-start; border-bottom-left-radius: 4px; }
+.chat-msg.user { background: var(--gold-glow); color: var(--gold); align-self: flex-end; border-bottom-right-radius: 4px; border: 1px solid rgba(251,191,36,0.1); }
+.chat-msg.ai { background: rgba(167, 139, 250, 0.05); color: var(--accent-soft); align-self: flex-start; border-bottom-left-radius: 4px; border: 1px solid rgba(167, 139, 250, 0.1); }
+
+.xxsmall { font-size: 0.6rem; }
+</style>
+
+<script>
+function toggleAstroChat() {
+    document.getElementById("astrochat-container").classList.toggle("astrochat-collapsed");
+}
+
+function handleChatKey(e) { if(e.key === 'Enter') sendChatMessage(); }
+
+function sendChatMessage() {
+    const input = document.getElementById("chat-input");
+    const msg = input.value.trim();
+    if(!msg) return;
+
+    appendChatMsg('user', msg);
+    input.value = "";
+
+    fetch("/api/chat", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({message: msg})
+    }).then(r => r.json()).then(data => {
+        appendChatMsg('ai', data.response);
+    });
+}
+
+function appendChatMsg(type, text) {
+    const container = document.getElementById("astrochat-messages");
+    const div = document.createElement("div");
+    div.className = `chat-msg ${type}`;
+    div.innerText = text;
+    container.appendChild(div);
+    container.scrollTop = container.scrollHeight;
+}
 </script>
 
 {% block scripts %}{% endblock %}

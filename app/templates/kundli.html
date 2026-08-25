@@ -1,511 +1,178 @@
 {% extends "base.html" %}
-{% block title %}Natal Blueprint — {{ chart.name if chart else 'Jyotish' }}{% endblock %}
+{% block title %}Birth Chart — Jyotish Celestial OS{% endblock %}
 
 {% block content %}
-<div class="page-header mb-5 d-flex justify-content-between align-items-end flex-wrap gap-4">
-  <div>
-    <span class="text-accent small fw-bold text-uppercase tracking-widest mb-2 d-block">Natal Analysis</span>
-    <h1 class="display-5 fw-black text-white mb-0">The <span class="text-gold">Natal Blueprint</span></h1>
-  </div>
-  {% if chart %}
-  <div class="text-end d-flex align-items-center gap-4">
-    <div class="d-none d-md-block">
-      <div class="h4 text-white mb-0 fw-bold">{{ chart.name or 'Native' }}</div>
-      <div class="xsmall text-muted font-mono">{{ chart.birth_datetime[:16].replace('T',' ') }}</div>
+<div class="mb-5 d-flex justify-content-between align-items-center">
+    <div>
+        <h2 class="fw-black text-white mb-1">{{ chart.name if chart else 'Natal Blueprint' }}</h2>
+        <p class="text-dim small">{{ chart.birth_datetime[:16].replace('T',' ') if chart else 'Planetary positions at birth.' }}</p>
     </div>
-    <div class="vc-avatar shadow-lg">{{ (chart.name or '?')[0].upper() }}</div>
+    {% if chart %}
     <div class="dropdown">
-      <button class="btn btn-outline-gold btn-sm" data-bs-toggle="dropdown">
-        <i class="bi bi-three-dots-vertical"></i>
-      </button>
-      <ul class="dropdown-menu dropdown-menu-dark dropdown-menu-end">
-        <li><a class="dropdown-item" href="{{ url_for('main.kundli_pdf') }}"><i class="bi bi-file-pdf me-2"></i>Export PDF</a></li>
-        <li><button class="dropdown-item" onclick="downloadChartImage()"><i class="bi bi-image me-2"></i>Save as Image</button></li>
-        <li><hr class="dropdown-divider"></li>
-        <li><button class="dropdown-item text-gold" onclick="saveChart()"><i class="bi bi-cloud-arrow-up me-2"></i>Save to Vault</button></li>
-      </ul>
+        <button class="btn btn-vedic dropdown-toggle py-2 px-4 xsmall fw-bold" data-bs-toggle="dropdown">ACTIONS</button>
+        <ul class="dropdown-menu dropdown-menu-dark dropdown-menu-end shadow-lg border-white border-opacity-5">
+            <li><a class="dropdown-item xsmall fw-bold" href="{{ url_for('main.kundli_pdf') }}">Export PDF</a></li>
+            <li><button class="dropdown-item xsmall fw-bold" onclick="saveChart()">Save to Vault</button></li>
+        </ul>
     </div>
-  </div>
-  {% endif %}
+    {% endif %}
 </div>
 
 {% if not chart %}
 <div class="card-vedic text-center py-5 border-dashed">
-  <div class="py-5">
-    <i class="bi bi-compass fs-1 text-gold mb-4 d-block"></i>
-    <h3 class="text-white">No Blueprint Initialized</h3>
-    <p class="text-muted mb-4">You must first initialize a birth profile to view the celestial geometry.</p>
-    <a href="{{ url_for('main.index') }}" class="btn btn-vedic px-5 py-3">
-      Initialize Profile
-    </a>
-  </div>
+    <div class="mb-4">
+        <i class="bi bi-person-plus fs-1 text-dim opacity-20"></i>
+    </div>
+    <h4 class="text-white fw-bold mb-2">No profile active.</h4>
+    <p class="text-dim mb-5">Create a new birth record below to generate your blueprint.</p>
+
+    <div class="max-width-600 mx-auto text-start">
+        <div id="panel-new">
+            <!-- Reuse same automated form logic -->
+            <form action="{{ url_for('main.kundli') }}" method="POST" id="kundli-form-standalone">
+                <div class="row g-4">
+                    <div class="col-12">
+                        <label class="form-label-vedic">Full Name</label>
+                        <input type="text" name="name" id="in-name" class="form-control-vedic auto-field-k" placeholder="e.g. John Doe"/>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label-vedic">Birth Date</label>
+                        <input type="date" name="dob" id="in-dob" class="form-control-vedic auto-field-k" required/>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label-vedic">Birth Time</label>
+                        <input type="time" name="tob" id="in-tob" class="form-control-vedic auto-field-k" required step="60"/>
+                    </div>
+                    <div class="col-12">
+                        <label class="form-label-vedic">Birth Location</label>
+                        <div class="position-relative">
+                            <input type="text" name="place" id="place-input" class="form-control-vedic pe-5 auto-field-k" placeholder="City name..."/>
+                        </div>
+                    </div>
+                    <input type="hidden" name="lat" id="lat-input"/>
+                    <input type="hidden" name="lon" id="lon-input"/>
+                    <input type="hidden" name="timezone" id="tz-input" value="Asia/Kolkata"/>
+                </div>
+            </form>
+        </div>
+    </div>
 </div>
-{% endif %}
+{% else %}
 
-{% if chart %}
 <div class="row g-5">
-
-  {# ── Left Column: Geometric Visualizations ────────── #}
-  <div class="col-xl-5">
-
-    <!-- Main D1 Chart -->
-    <div class="card-vedic mb-4 overflow-hidden">
-      <div class="card-vedic-header d-flex align-items-center justify-content-between">
-        <div class="d-flex align-items-center gap-3">
-           <i class="bi bi-grid-3x3 text-accent"></i>
-           <span>D1 — Natal Geometry</span>
-        </div>
-        <div class="d-flex gap-2">
-           <button class="btn btn-outline-gold btn-xs" onclick="toggleAspectLines()" id="btn-aspects">Aspects</button>
-           <button class="btn btn-outline-gold btn-xs" onclick="toggleChartStyle()"><i class="bi bi-palette"></i></button>
-        </div>
-      </div>
-      <div class="card-vedic-body bg-black bg-opacity-50 p-4 text-center">
-        <canvas id="kundliCanvas" width="440" height="440" class="kundli-canvas mw-100" data-chart="{{ chart | tojson | e }}"></canvas>
-        <div class="mt-3 xsmall text-muted font-mono text-uppercase tracking-widest">
-           ASCENDANT: {{ chart.lagna.rashi_name }} ({{ chart.lagna.dms }})
-        </div>
-      </div>
-    </div>
-
-    <!-- Planetary Aspects (Drishti) -->
-    <div class="card-vedic mb-5">
-      <div class="card-vedic-header border-0 bg-transparent py-4 px-4">
-        <h5 class="mb-0 text-white"><i class="bi bi-intersect me-2 text-gold"></i>Planetary Drishti (Aspects)</h5>
-      </div>
-      <div class="card-vedic-body p-4 pt-0">
-         <div class="row g-3">
-            {% for insight in chart.aspect_insights %}
-            <div class="col-md-6">
-               <div class="p-3 rounded-4 bg-secondary bg-opacity-10 border border-secondary border-opacity-25 d-flex align-items-start gap-3">
-                  <div class="planet-dot mt-1" style="background: {{ chart.planets[insight.from].color }}"></div>
-                  <div>
-                     <div class="small fw-bold text-white">{{ insight.from }} ➔ {{ insight.to }}</div>
-                     <div class="xsmall text-muted mb-2 font-mono uppercase">HOUSE {{ insight.house }} | {{ insight.type }}</div>
-                     <p class="xsmall text-white-50 mb-0 italic">"{{ insight.impact }}"</p>
-                  </div>
-               </div>
+    <!-- Visual Chart -->
+    <div class="col-xl-5">
+        <div class="card-vedic p-0 overflow-hidden mb-5">
+            <div class="p-4 bg-black bg-opacity-20 d-flex justify-content-between align-items-center border-bottom border-white border-opacity-5">
+                <div class="dropdown">
+                    <button class="btn btn-link text-white text-decoration-none xsmall fw-black tracking-widest uppercase p-0 dropdown-toggle" data-bs-toggle="dropdown" id="active-varga-label">
+                        Main Chart (D1)
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-dark shadow-lg">
+                        <li><button class="dropdown-item xsmall fw-bold" onclick="switchVarga('D1')">Rashi (D1)</button></li>
+                        <li><button class="dropdown-item xsmall fw-bold" onclick="switchVarga('Chalit')">Bhava Chalit</button></li>
+                        <li><button class="dropdown-item xsmall fw-bold" onclick="switchVarga('D9')">Navamsa (D9)</button></li>
+                        <li><button class="dropdown-item xsmall fw-bold" onclick="switchVarga('D10')">Dashamsha (D10)</button></li>
+                    </ul>
+                </div>
+                <div class="d-flex gap-2">
+                    <button class="btn btn-outline-secondary btn-xs xsmall py-1 px-3" onclick="toggleChartStyle()">STYLE</button>
+                </div>
             </div>
-            {% endfor %}
-         </div>
-         {% if not chart.aspect_insights %}
-         <p class="text-center text-muted small py-4">No major planetary aspects formed today.</p>
-         {% endif %}
-      </div>
-    </div>
+            <div class="p-4 p-md-5 text-center">
+                <canvas id="kundliCanvas" width="400" height="400" class="kundli-canvas mw-100" data-chart="{{ chart | tojson | e }}"></canvas>
+            </div>
+        </div>
 
-    <!-- Advanced Jyotish Layers -->
-    <div class="card-vedic mb-5">
-      <div class="card-vedic-header border-0 bg-transparent py-4 px-4">
-        <h5 class="mb-0 text-white"><i class="bi bi-layers-half me-2 text-gold"></i>Advanced Analytical Layers</h5>
-      </div>
-      <div class="card-vedic-body p-4 pt-0">
-        <div class="row g-4">
-          <!-- Arudha Padas -->
-          <div class="col-md-12 mb-2">
-             <div class="xsmall text-accent fw-bold text-uppercase mb-3 tracking-widest">ARUDHA PADAS (Public Image)</div>
-             <div class="d-flex flex-wrap gap-2">
-                {% for name, rashi_idx in chart.arudha_padas.items() %}
-                <div class="p-2 rounded bg-secondary bg-opacity-10 border border-secondary border-opacity-25 text-center" style="min-width: 60px">
-                   <div class="xsmall text-muted">{{ name }}</div>
-                   <div class="small fw-bold text-white">{{ ["Mesha","Vri","Mith","Kark","Sim","Kan","Tula","Vri","Dha","Mak","Kum","Mee"][rashi_idx] }}</div>
+        <div class="card-vedic">
+            <h6 class="text-white fw-bold mb-4 opacity-50 uppercase tracking-widest">Key Markers</h6>
+            <div class="d-flex flex-column gap-3">
+                <div class="d-flex justify-content-between border-bottom border-white border-opacity-5 pb-2">
+                    <span class="small text-dim">Ascendant</span>
+                    <span class="small fw-bold text-white">{{ chart.lagna.rashi_name }}</span>
                 </div>
-                {% endfor %}
-             </div>
-          </div>
-
-          <!-- Special Lagnas -->
-          <div class="col-md-6">
-             <div class="xsmall text-accent fw-bold text-uppercase mb-3 tracking-widest">SPECIAL LAGNAS</div>
-             <div class="list-group list-group-flush bg-transparent">
-                <div class="list-group-item bg-transparent border-secondary border-opacity-25 px-0 d-flex justify-content-between">
-                   <span class="small text-white-50">Hora Lagna (Wealth)</span>
-                   <span class="small fw-bold text-gold">{{ (chart.special_lagnas['Hora Lagna'] // 30)|int + 1 }} Rashi</span>
+                <div class="d-flex justify-content-between border-bottom border-white border-opacity-5 pb-2">
+                    <span class="small text-dim">Nakshatra</span>
+                    <span class="small fw-bold text-white">{{ chart.lagna.nakshatra.name }}</span>
                 </div>
-                <div class="list-group-item bg-transparent border-secondary border-opacity-25 px-0 d-flex justify-content-between">
-                   <span class="small text-white-50">Ghati Lagna (Power)</span>
-                   <span class="small fw-bold text-gold">{{ (chart.special_lagnas['Ghati Lagna'] // 30)|int + 1 }} Rashi</span>
-                </div>
-                <div class="list-group-item bg-transparent border-0 px-0 d-flex justify-content-between">
-                   <span class="small text-white-50">Indu Lagna (Prosperity)</span>
-                   <span class="small fw-bold text-success">{{ (chart.special_lagnas['Indu Lagna'] // 30)|int + 1 }} Rashi</span>
-                </div>
-             </div>
-          </div>
-
-          <!-- Yogi / Avayogi -->
-          <div class="col-md-6">
-             <div class="xsmall text-accent fw-bold text-uppercase mb-3 tracking-widest">LUCK INDICATORS</div>
-             <div class="p-3 rounded-4 bg-secondary bg-opacity-10 border border-secondary border-opacity-25">
-                <div class="d-flex justify-content-between mb-2">
-                   <span class="xsmall text-muted">Yogi (Luck)</span>
-                   <span class="small fw-bold text-success">{{ chart.yogi_details.Yogi }}</span>
-                </div>
-                <div class="d-flex justify-content-between mb-2">
-                   <span class="xsmall text-muted">Avayogi (Obstacle)</span>
-                   <span class="small fw-bold text-danger">{{ chart.yogi_details.Avayogi }}</span>
+                <div class="d-flex justify-content-between border-bottom border-white border-opacity-5 pb-2">
+                    <span class="small text-dim">Moon Sign</span>
+                    <span class="small fw-bold text-white">{{ chart.planets.Moon.rashi_name }}</span>
                 </div>
                 <div class="d-flex justify-content-between">
-                   <span class="xsmall text-muted">Saha Yogi</span>
-                   <span class="small fw-bold text-white">{{ chart.yogi_details['Saha Yogi'] }}</span>
+                    <span class="small text-dim">Atmakaraka</span>
+                    <span class="small fw-bold text-gold">{{ chart.jaimini_karakas['Atmakaraka (AK) - Self'] }}</span>
                 </div>
-             </div>
-          </div>
-
-          {% if chart.dagtha_rashis %}
-          <div class="col-md-12">
-             <div class="p-3 rounded-4 bg-danger bg-opacity-5 border border-danger border-opacity-10">
-                <span class="xsmall text-danger fw-bold uppercase tracking-widest"><i class="bi bi-fire me-1"></i> Dagtha Rashis (Burnt Signs)</span>
-                <p class="xsmall text-white-50 mb-0 mt-1">
-                   Houses in these signs may face hurdles:
-                   {% for r in chart.dagtha_rashis %}
-                   <span class="badge bg-danger bg-opacity-20 text-danger ms-1">{{ ["Aries","Taurus","Gemini","Cancer","Leo","Virgo","Libra","Scorpio","Sagittarius","Capricorn","Aquarius","Pisces"][r] }}</span>
-                   {% endfor %}
-                </p>
-             </div>
-          </div>
-          {% endif %}
+            </div>
         </div>
-      </div>
     </div>
 
-    <!-- Visual Strength (Shadbala) -->
-    <div class="card-vedic mb-5" id="active-planet-info" style="display:none">
-      <div class="card-vedic-header border-0 bg-transparent py-4 px-4">
-        <h5 class="mb-0 text-white"><i class="bi bi-bar-chart-fill me-2 text-gold"></i>Planet Focus: <span id="ap-name" class="text-accent"></span></h5>
-      </div>
-      <div class="card-vedic-body p-4 pt-0">
+    <!-- Planet Data -->
+    <div class="col-xl-7">
+        <div class="card-vedic p-0 overflow-hidden mb-5">
+            <div class="p-4 bg-black bg-opacity-20 border-bottom border-white border-opacity-5">
+                <span class="xsmall fw-bold text-white uppercase tracking-widest">Planetary Grid</span>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-vedic mb-0 align-middle">
+                    <thead>
+                        <tr class="xsmall text-dim border-bottom border-white border-opacity-5">
+                            <th class="px-4 py-3">PLANET</th>
+                            <th>SIGN</th>
+                            <th>DEGREE</th>
+                            <th>HOUSE</th>
+                            <th>DIGNITY</th>
+                            <th class="text-end px-4">STRENGTH</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for name, p in chart.planets.items() %}
+                        <tr class="border-bottom border-white border-opacity-5">
+                            <td class="px-4 py-4">
+                                <div class="d-flex align-items-center gap-3">
+                                    <div class="planet-dot" style="background: {{ p.color }}; width: 8px; height: 8px"></div>
+                                    <span class="small fw-bold text-white">{{ name }}</span>
+                                </div>
+                            </td>
+                            <td class="small text-dim">{{ p.rashi_name[:3].upper() }}</td>
+                            <td class="small text-dim font-mono">{{ p.dms }}</td>
+                            <td class="small text-white fw-bold">{{ p.house }}</td>
+                            <td>
+                                <span class="badge bg-{{ 'success' if 'Exalted' in p.dignity else 'danger' if 'Debilitated' in p.dignity else 'white' }} bg-opacity-5 text-{{ 'success' if 'Exalted' in p.dignity else 'danger' if 'Debilitated' in p.dignity else 'dim' }} border border-white border-opacity-5 xsmall fw-bold">
+                                    {{ p.dignity.upper() }}
+                                </span>
+                            </td>
+                            <td class="text-end px-4 fw-bold text-gold small">{{ p.shadbala_score }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
         <div class="row g-4">
-          <div class="col-md-6">
-            <div class="d-flex justify-content-between mb-2"><span>Sthana (Positional)</span><span id="ap-sthana" class="text-gold fw-bold"></span></div>
-            <div class="d-flex justify-content-between mb-2"><span>Dig (Directional)</span><span id="ap-dig" class="text-gold fw-bold"></span></div>
-            <div class="d-flex justify-content-between mb-2"><span>Kala (Temporal)</span><span id="ap-kala" class="text-gold fw-bold"></span></div>
-            <div class="d-flex justify-content-between mb-2"><span>Naisargika (Natural)</span><span id="ap-nais" class="text-gold fw-bold"></span></div>
-          </div>
-          <div class="col-md-6">
-             <div class="p-4 rounded-4 bg-black bg-opacity-25 border border-secondary border-opacity-25 text-center">
-                <div class="xsmall text-muted mb-2">TOTAL SHADBALA</div>
-                <div class="h2 fw-black text-success mb-0" id="ap-total"></div>
-                <div class="xsmall text-muted mt-2">VIMSOPAKA: <span id="ap-vims" class="text-gold"></span>/20</div>
-             </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Planetary Aspects (Drishti) -->
-    <div class="card-vedic mb-5">
-      <div class="card-vedic-header border-0 bg-transparent py-4 px-4">
-        <h5 class="mb-0 text-white"><i class="bi bi-intersect me-2 text-gold"></i>Planetary Drishti (Aspects)</h5>
-      </div>
-      <div class="card-vedic-body p-4 pt-0">
-         <div class="row g-3">
-            {% for insight in chart.aspect_insights %}
             <div class="col-md-6">
-               <div class="p-3 rounded-4 bg-secondary bg-opacity-10 border border-secondary border-opacity-25 d-flex align-items-start gap-3">
-                  <div class="planet-dot mt-1" style="background: {{ chart.planets[insight.from].color }}"></div>
-                  <div>
-                     <div class="small fw-bold text-white">{{ insight.from }} ➔ {{ insight.to }}</div>
-                     <div class="xsmall text-muted mb-2 font-mono uppercase">HOUSE {{ insight.house }} | {{ insight.type }}</div>
-                     <p class="xsmall text-white-50 mb-0 italic">"{{ insight.impact }}"</p>
-                  </div>
-               </div>
-            </div>
-            {% endfor %}
-         </div>
-         {% if not chart.aspect_insights %}
-         <p class="text-center text-muted small py-4">No major planetary aspects formed today.</p>
-         {% endif %}
-      </div>
-    </div>
-
-    <!-- Divisional Charts (Accordions for space) -->
-    <div class="accordion accordion-flush card-vedic" id="vargaAccordion">
-      <div class="accordion-item bg-transparent border-bottom border-secondary border-opacity-25">
-        <h2 class="accordion-header">
-          <button class="accordion-button collapsed bg-transparent text-white shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#v9">
-            <i class="bi bi-grid-3x3-gap me-3 text-gold"></i> D9 Navamsha (Soul Strength)
-          </button>
-        </h2>
-        <div id="v9" class="accordion-collapse collapse" data-bs-parent="#vargaAccordion">
-          <div class="accordion-body text-center bg-black bg-opacity-25 p-4">
-             <canvas id="navamsaCanvas" width="400" height="400" class="kundli-canvas mw-100" data-varga="{{ chart.navamsa | tojson | e }}"></canvas>
-          </div>
-        </div>
-      </div>
-      <div class="accordion-item bg-transparent border-bottom border-secondary border-opacity-25">
-        <h2 class="accordion-header">
-          <button class="accordion-button collapsed bg-transparent text-white shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#v10">
-            <i class="bi bi-briefcase me-3 text-gold"></i> D10 Dashamsha (Career Path)
-          </button>
-        </h2>
-        <div id="v10" class="accordion-collapse collapse" data-bs-parent="#vargaAccordion">
-          <div class="accordion-body text-center bg-black bg-opacity-25 p-4">
-             <canvas id="dashamshaCanvas" width="400" height="400" class="kundli-canvas mw-100" data-varga="{{ chart.dashamsha | tojson | e }}"></canvas>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Planetary Aspects (Drishti) -->
-    <div class="card-vedic mb-5">
-      <div class="card-vedic-header border-0 bg-transparent py-4 px-4">
-        <h5 class="mb-0 text-white"><i class="bi bi-intersect me-2 text-gold"></i>Planetary Drishti (Aspects)</h5>
-      </div>
-      <div class="card-vedic-body p-4 pt-0">
-         <div class="row g-3">
-            {% for insight in chart.aspect_insights %}
-            <div class="col-md-6">
-               <div class="p-3 rounded-4 bg-secondary bg-opacity-10 border border-secondary border-opacity-25 d-flex align-items-start gap-3">
-                  <div class="planet-dot mt-1" style="background: {{ chart.planets[insight.from].color }}"></div>
-                  <div>
-                     <div class="small fw-bold text-white">{{ insight.from }} ➔ {{ insight.to }}</div>
-                     <div class="xsmall text-muted mb-2 font-mono uppercase">HOUSE {{ insight.house }} | {{ insight.type }}</div>
-                     <p class="xsmall text-white-50 mb-0 italic">"{{ insight.impact }}"</p>
-                  </div>
-               </div>
-            </div>
-            {% endfor %}
-         </div>
-         {% if not chart.aspect_insights %}
-         <p class="text-center text-muted small py-4">No major planetary aspects formed today.</p>
-         {% endif %}
-      </div>
-    </div>
-  </div>
-
-  {# ── Right Column: Data Intelligence ──────────────── #}
-  <div class="col-xl-7">
-
-    <!-- Status Strip -->
-    <div class="row g-4 mb-5">
-      <div class="col-md-6">
-        <div class="card-vedic p-4 border-accent border-opacity-25">
-          <div class="xsmall text-accent fw-bold text-uppercase mb-2 tracking-widest">Life Force</div>
-          <div class="h3 text-white mb-1 fw-black">{{ chart.lagna.rashi_name }}</div>
-          <div class="small text-muted">{{ chart.lagna.nakshatra.name }} · {{ chart.lagna.nakshatra.pada }} Pada</div>
-        </div>
-      </div>
-      <div class="col-md-6">
-        {% if dasha and dasha.current_maha %}
-        <div class="card-vedic p-4 border-gold border-opacity-25">
-          <div class="xsmall text-gold fw-bold text-uppercase mb-2 tracking-widest">Current Cycle</div>
-          <div class="h3 text-white mb-1 fw-black">{{ dasha.current_maha.lord }} Dasha</div>
-          <div class="small text-muted">Transition: {{ dasha.current_maha.end }}</div>
-        </div>
-        {% endif %}
-      </div>
-    </div>
-
-    <!-- Planetary Alignment Table -->
-    <div class="card-vedic mb-5">
-      <div class="card-vedic-header border-0 bg-transparent py-4 px-4">
-        <h5 class="mb-0 text-white"><i class="bi bi-table me-2 text-gold"></i>Planetary Alignment</h5>
-      </div>
-      <div class="card-vedic-body pt-0 px-4 pb-4">
-        <div class="table-responsive">
-          <table class="table table-vedic border-0 align-middle">
-            <thead>
-              <tr class="xsmall text-muted border-bottom border-secondary">
-                <th class="border-0">GRAHA</th>
-                <th class="border-0">SIGN</th>
-                <th class="border-0">DEGREE</th>
-                <th class="border-0">STATUS</th>
-                <th class="border-0 text-end">SHADBALA</th>
-              </tr>
-            </thead>
-            <tbody>
-              {% for pname, p in chart.planets.items() %}
-              <tr class="border-bottom border-secondary border-opacity-25" onclick="updateActivePlanetInfo('{{ pname }}', chartData.planets)" style="cursor:pointer">
-                <td class="border-0 py-3">
-                  <div class="d-flex align-items-center gap-3">
-                    <span class="planet-dot" style="background:{{ p.color }}"></span>
-                    <div class="d-flex flex-column">
-                       <span class="fw-bold text-white">{{ pname }}</span>
-                       {% if p.is_vargottama %}<span class="xsmall text-accent fw-bold">VARGOTTAMA</span>{% endif %}
-                       {% if p.vaisheshikamsha %}<span class="xsmall text-gold fw-bold">{{ p.vaisheshikamsha }}</span>{% endif %}
+                <div class="card-vedic p-4">
+                    <h6 class="text-white fw-bold mb-3 opacity-50 xsmall tracking-widest">LUCK (YOGI)</h6>
+                    <div class="d-flex justify-content-between">
+                        <span class="small text-dim">Yogi</span>
+                        <span class="small fw-bold text-success">{{ chart.yogi_details.Yogi }}</span>
                     </div>
-                  </div>
-                </td>
-                <td class="border-0 font-mono small">{{ p.rashi_name }}</td>
-                <td class="border-0 font-mono small">{{ p.dms }}</td>
-                <td class="border-0">
-                  <span class="badge bg-{{ 'success' if 'Exalted' in p.dignity or 'Own' in p.dignity else 'danger' if 'Debilitated' in p.dignity else 'secondary' }} bg-opacity-10 text-{{ 'success' if 'Exalted' in p.dignity or 'Own' in p.dignity else 'danger' if 'Debilitated' in p.dignity else 'white' }} xsmall p-2">
-                    {{ p.dignity }}
-                  </span>
-                </td>
-                <td class="border-0 text-end">
-                   <div class="d-flex flex-column align-items-end">
-                     <span class="fw-bold text-gold small">{{ p.shadbala_score }}</span>
-                     <div class="xsmall text-muted">V: {{ p.vimsopaka_score }}</div>
-                   </div>
-                </td>
-              </tr>
-              {% if p.dispositor_rel %}
-              <tr class="xsmall text-muted bg-secondary bg-opacity-5">
-                 <td colspan="5" class="py-2 px-4 border-0">
-                    <i class="bi bi-link-45deg me-1"></i>
-                    Host: <span class="text-white-50">{{ p.dispositor }}</span> ({{ p.dispositor_rel }}) |
-                    Nakshatra Lord: <span class="text-white-50">{{ p.nakshatra.lord }}</span> ({{ p.nakshatra_lord_rel }})
-                 </td>
-              </tr>
-              {% endif %}
-              {% endfor %}
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-
-    <!-- Planetary Aspects (Drishti) -->
-    <div class="card-vedic mb-5">
-      <div class="card-vedic-header border-0 bg-transparent py-4 px-4">
-        <h5 class="mb-0 text-white"><i class="bi bi-intersect me-2 text-gold"></i>Planetary Drishti (Aspects)</h5>
-      </div>
-      <div class="card-vedic-body p-4 pt-0">
-         <div class="row g-3">
-            {% for insight in chart.aspect_insights %}
+                </div>
+            </div>
             <div class="col-md-6">
-               <div class="p-3 rounded-4 bg-secondary bg-opacity-10 border border-secondary border-opacity-25 d-flex align-items-start gap-3">
-                  <div class="planet-dot mt-1" style="background: {{ chart.planets[insight.from].color }}"></div>
-                  <div>
-                     <div class="small fw-bold text-white">{{ insight.from }} ➔ {{ insight.to }}</div>
-                     <div class="xsmall text-muted mb-2 font-mono uppercase">HOUSE {{ insight.house }} | {{ insight.type }}</div>
-                     <p class="xsmall text-white-50 mb-0 italic">"{{ insight.impact }}"</p>
-                  </div>
-               </div>
+                <div class="card-vedic p-4">
+                    <h6 class="text-white fw-bold mb-3 opacity-50 xsmall tracking-widest">OBSTACLE (AVAYOGI)</h6>
+                    <div class="d-flex justify-content-between">
+                        <span class="small text-dim">Avayogi</span>
+                        <span class="small fw-bold text-danger">{{ chart.yogi_details.Avayogi }}</span>
+                    </div>
+                </div>
             </div>
-            {% endfor %}
-         </div>
-         {% if not chart.aspect_insights %}
-         <p class="text-center text-muted small py-4">No major planetary aspects formed today.</p>
-         {% endif %}
-      </div>
-    </div>
-
-    <!-- House Occupants Grid -->
-    <div class="card-vedic mb-5">
-      <div class="card-vedic-header d-flex justify-content-between align-items-center">
-         <span><i class="bi bi-houses-fill me-2 text-gold"></i>Bhava Geometry</span>
-         <div class="btn-group btn-group-xs">
-           <button class="btn btn-outline-gold active px-3" onclick="switchBhava('whole')" id="btn-bhava-whole">Whole Sign</button>
-           <button class="btn btn-outline-gold px-3" onclick="switchBhava('chalit')" id="btn-bhava-chalit">Chalit</button>
-         </div>
-      </div>
-      <div class="card-vedic-body p-4">
-        <div class="house-grid" id="bhava-grid-whole">
-          {% for h in chart.houses %}
-          <div class="house-cell p-3">
-            <div class="house-num xsmall text-muted fw-bold">HOUSE {{ h.house }}</div>
-            <div class="house-rashi small text-gold mb-2">{{ h.rashi_name }}</div>
-            <div class="d-flex flex-wrap gap-1">
-              {% for p in chart.house_occupants[h.house] %}
-              <span class="badge bg-secondary bg-opacity-50 text-white border border-secondary p-1" style="font-size: 0.6rem">
-                {{ p[:3].upper() }}
-              </span>
-              {% endfor %}
-            </div>
-          </div>
-          {% endfor %}
         </div>
-      </div>
     </div>
-
-    <!-- Planetary Aspects (Drishti) -->
-    <div class="card-vedic mb-5">
-      <div class="card-vedic-header border-0 bg-transparent py-4 px-4">
-        <h5 class="mb-0 text-white"><i class="bi bi-intersect me-2 text-gold"></i>Planetary Drishti (Aspects)</h5>
-      </div>
-      <div class="card-vedic-body p-4 pt-0">
-         <div class="row g-3">
-            {% for insight in chart.aspect_insights %}
-            <div class="col-md-6">
-               <div class="p-3 rounded-4 bg-secondary bg-opacity-10 border border-secondary border-opacity-25 d-flex align-items-start gap-3">
-                  <div class="planet-dot mt-1" style="background: {{ chart.planets[insight.from].color }}"></div>
-                  <div>
-                     <div class="small fw-bold text-white">{{ insight.from }} ➔ {{ insight.to }}</div>
-                     <div class="xsmall text-muted mb-2 font-mono uppercase">HOUSE {{ insight.house }} | {{ insight.type }}</div>
-                     <p class="xsmall text-white-50 mb-0 italic">"{{ insight.impact }}"</p>
-                  </div>
-               </div>
-            </div>
-            {% endfor %}
-         </div>
-         {% if not chart.aspect_insights %}
-         <p class="text-center text-muted small py-4">No major planetary aspects formed today.</p>
-         {% endif %}
-      </div>
-    </div>
-
-    <!-- Ashtakavarga & Bhava Strength Heatmap -->
-    <div class="card-vedic mb-5">
-      <div class="card-vedic-header border-0 bg-transparent py-4 px-4 d-flex justify-content-between align-items-center">
-        <h5 class="mb-0 text-white"><i class="bi bi-grid-3x2-gap-fill me-2 text-gold"></i>Karmic Power Grid</h5>
-        <div class="btn-group btn-group-xs">
-           <button class="btn btn-outline-gold active px-3" onclick="switchHeatmap('sav')" id="btn-hm-sav">SAV</button>
-           <button class="btn btn-outline-gold px-3" onclick="switchHeatmap('bala')" id="btn-hm-bala">Bhava Bala</button>
-        </div>
-      </div>
-      <div class="card-vedic-body p-4 pt-0">
-        <!-- SAV Grid -->
-        <div class="row g-3" id="grid-sav">
-          {% set sav = chart.ashtakavarga.SAV %}
-          {% for h in chart.houses %}
-          {% set points = sav[h.rashi] %}
-          <div class="col-3 col-md-2">
-            <div class="text-center p-3 rounded-4 border border-secondary"
-                 style="background: {{ 'rgba(34, 197, 94, 0.15)' if points >= 30 else 'rgba(234, 179, 8, 0.1)' if points >= 25 else 'rgba(239, 68, 68, 0.1)' }};
-                        border-color: {{ 'rgba(34, 197, 94, 0.3)' if points >= 30 else 'rgba(234, 179, 8, 0.3)' if points >= 25 else 'rgba(239, 68, 68, 0.3)' }} !important;">
-              <div class="xsmall text-muted mb-1">H{{ h.house }}</div>
-              <div class="h4 fw-black text-white mb-0">{{ points }}</div>
-            </div>
-          </div>
-          {% endfor %}
-        </div>
-        <!-- Bhava Bala Grid -->
-        <div class="row g-3" id="grid-bala" style="display:none">
-          {% for h_num, score in chart.bhava_bala.items() %}
-          <div class="col-3 col-md-2">
-            <div class="text-center p-3 rounded-4 border border-secondary"
-                 style="background: {{ 'rgba(139, 92, 246, 0.15)' if score >= 40 else 'rgba(234, 179, 8, 0.1)' if score >= 25 else 'rgba(239, 68, 68, 0.1)' }};
-                        border-color: {{ 'rgba(139, 92, 246, 0.3)' if score >= 40 else 'rgba(234, 179, 8, 0.3)' if score >= 25 else 'rgba(239, 68, 68, 0.3)' }} !important;">
-              <div class="xsmall text-muted mb-1">H{{ h_num }}</div>
-              <div class="h4 fw-black text-white mb-0">{{ score|int }}</div>
-            </div>
-          </div>
-          {% endfor %}
-        </div>
-      </div>
-    </div>
-
-    <!-- Planetary Aspects (Drishti) -->
-    <div class="card-vedic mb-5">
-      <div class="card-vedic-header border-0 bg-transparent py-4 px-4">
-        <h5 class="mb-0 text-white"><i class="bi bi-intersect me-2 text-gold"></i>Planetary Drishti (Aspects)</h5>
-      </div>
-      <div class="card-vedic-body p-4 pt-0">
-         <div class="row g-3">
-            {% for insight in chart.aspect_insights %}
-            <div class="col-md-6">
-               <div class="p-3 rounded-4 bg-secondary bg-opacity-10 border border-secondary border-opacity-25 d-flex align-items-start gap-3">
-                  <div class="planet-dot mt-1" style="background: {{ chart.planets[insight.from].color }}"></div>
-                  <div>
-                     <div class="small fw-bold text-white">{{ insight.from }} ➔ {{ insight.to }}</div>
-                     <div class="xsmall text-muted mb-2 font-mono uppercase">HOUSE {{ insight.house }} | {{ insight.type }}</div>
-                     <p class="xsmall text-white-50 mb-0 italic">"{{ insight.impact }}"</p>
-                  </div>
-               </div>
-            </div>
-            {% endfor %}
-         </div>
-         {% if not chart.aspect_insights %}
-         <p class="text-center text-muted small py-4">No major planetary aspects formed today.</p>
-         {% endif %}
-      </div>
-    </div>
-
-  </div>
 </div>
+
 {% endif %}
 {% endblock %}
 
@@ -515,41 +182,51 @@
 {% if chart %}
 const chartData = {{ chart | tojson }};
 renderNorthIndianChart("kundliCanvas", chartData.house_occupants, chartData.lagna.rashi, chartData.planets);
-renderVargaChart("navamsaCanvas", {{ chart.navamsa | tojson }});
-renderVargaChart("dashamshaCanvas", {{ chart.dashamsha | tojson }});
 
-function switchBhava(mode) {
-  const isWhole = mode === 'whole';
-  document.getElementById('bhava-grid-whole').style.display = isWhole ? 'grid' : 'none';
-  // If chalit grid existed, toggle it here
-  document.getElementById('btn-bhava-whole').classList.toggle('active', isWhole);
-  document.getElementById('btn-bhava-chalit').classList.toggle('active', !isWhole);
-}
-
-function switchHeatmap(mode) {
-  const isSav = mode === 'sav';
-  document.getElementById('grid-sav').style.display = isSav ? 'flex' : 'none';
-  document.getElementById('grid-bala').style.display = isSav ? 'none' : 'flex';
-  document.getElementById('btn-hm-sav').classList.toggle('active', isSav);
-  document.getElementById('btn-hm-bala').classList.toggle('active', !isSav);
+function switchVarga(v) {
+    const label = document.getElementById("active-varga-label");
+    if (v === 'D1') {
+        label.innerText = "Main Chart (D1)";
+        renderNorthIndianChart("kundliCanvas", chartData.house_occupants, chartData.lagna.rashi, chartData.planets);
+    } else if (v === 'Chalit') {
+        label.innerText = "Bhava Chalit";
+        renderNorthIndianChart("kundliCanvas", chartData.chalit_occupants, chartData.lagna.rashi, chartData.planets);
+    } else {
+        const occ = chartData.varga_occupants[v];
+        const lagna = chartData.varga_occupants[v + "_Lagna"];
+        if (occ) {
+            label.innerText = v + " Chart";
+            renderNorthIndianChart("kundliCanvas", occ, lagna, chartData.planets);
+        } else {
+            alert(v + " data not available for this profile.");
+        }
+    }
 }
 
 function saveChart() {
-  fetch("/kundli/save", {
-    method: "POST",
-    headers: {"Content-Type": "application/json"},
-    body: JSON.stringify({ chart: chartData })
-  }).then(r => r.json()).then(d => {
-    alert("Profile successfully archived in the celestial vault.");
-  });
+    fetch("/kundli/save", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({ chart: chartData })
+    }).then(r => r.json()).then(d => {
+        alert("Saved to vault.");
+    });
 }
+{% else %}
+// Auto-field logic for standalone form
+document.querySelectorAll('.auto-field-k').forEach(el => {
+    el.addEventListener('change', checkAndAutoSubmitK);
+});
 
-function downloadChartImage() {
-  const canvas = document.getElementById("kundliCanvas");
-  const link = document.createElement('a');
-  link.download = `kundli_${chartData.name || 'native'}.png`;
-  link.href = canvas.toDataURL("image/png");
-  link.click();
+function checkAndAutoSubmitK() {
+    const name = document.getElementById('in-name').value.trim();
+    const dob = document.getElementById('in-dob').value;
+    const tob = document.getElementById('in-tob').value;
+    const place = document.getElementById('place-input').value;
+
+    if (name && dob && tob && place) {
+        document.getElementById('kundli-form-standalone').submit();
+    }
 }
 {% endif %}
 </script>

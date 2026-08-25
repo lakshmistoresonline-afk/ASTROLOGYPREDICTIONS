@@ -1,77 +1,130 @@
 {% extends "base.html" %}
 {% block title %}Shani Report — {{ name }}{% endblock %}
 
+{% block head %}
+<style>
+.shani-heavy-bg {
+    background: radial-gradient(circle at top right, rgba(148, 163, 184, 0.1) 0%, transparent 70%);
+}
+
+.timeline-row {
+    transition: var(--transition);
+}
+
+.timeline-row:hover {
+    background: rgba(255, 255, 255, 0.02) !important;
+}
+
+.timeline-row.active-phase {
+    border-left: 4px solid var(--gold);
+    background: var(--gold-glow) !important;
+}
+</style>
+{% endblock %}
+
 {% block content %}
-<div class="page-header mb-4">
-  <h1 class="page-title"><i class="bi bi-shield-fill me-2" style="color:#9CA3AF"></i>Shani (Saturn) Transit Report</h1>
-  <p class="page-sub">Analysis of Sade Sati, Dhaiya, and Kantaka Shani for {{ name }}.</p>
+<div class="page-header mb-5 d-flex justify-content-between align-items-end flex-wrap gap-4">
+    <div>
+        <span class="text-accent small fw-bold text-uppercase tracking-widest mb-2 d-block">Saturnine Influence Audit</span>
+        <h1 class="display-5 fw-black text-white mb-0">The <span class="text-gold">Shani Engine</span></h1>
+    </div>
+    <div class="text-end">
+        <div class="h4 text-white mb-0 fw-bold">{{ name }}</div>
+        <div class="xsmall text-dim font-mono tracking-widest uppercase">Natal Moon: {{ rashi_names[status.moon_rashi] }}</div>
+    </div>
 </div>
 
-<div class="row g-4">
-  <!-- ── Current Status ───────── -->
-  <div class="col-lg-4">
-    <div class="card-vedic h-100">
-      <div class="card-vedic-header">Current Shani Status</div>
-      <div class="card-vedic-body text-center py-5">
-        <div class="mb-4">
-          <i class="bi bi-planet fs-1 text-muted"></i>
-          <h4 class="mt-2 text-white">Saturn in {{ rashi_names[status.saturn_rashi] }}</h4>
+<div class="row g-5">
+    <!-- ── Current Status ───────── -->
+    <div class="col-lg-4">
+        <div class="card-vedic h-100 shani-heavy-bg p-5 border-white border-opacity-5">
+            <div class="text-center">
+                <div class="mb-5 position-relative d-inline-block">
+                    <div style="position: absolute; inset: -15px; border: 1px dashed rgba(255,255,255,0.1); border-radius: 50%; animation: rotate 30s linear infinite"></div>
+                    <i class="bi bi-shield-shaded display-1 text-dim opacity-40"></i>
+                </div>
+
+                <h4 class="text-white fw-bold mb-4">Saturn in {{ rashi_names[status.saturn_rashi] }}</h4>
+
+                {% if status.is_heavy %}
+                <div class="p-4 rounded-4 bg-danger bg-opacity-10 border border-danger border-opacity-20 mb-4">
+                    <div class="xsmall text-danger fw-black tracking-widest uppercase mb-2">ACTIVE TRANSIT STATUS</div>
+                    <div class="d-flex flex-wrap gap-2 justify-content-center">
+                        {% if status.sade_sati %}<span class="badge bg-danger px-3 py-2 rounded-pill xsmall fw-bold">{{ status.sade_sati|upper }}</span>{% endif %}
+                        {% if status.dhaiya %}<span class="badge bg-warning text-dark px-3 py-2 rounded-pill xsmall fw-bold">{{ status.dhaiya|upper }}</span>{% endif %}
+                        {% if status.kantaka %}<span class="badge bg-info text-dark px-3 py-2 rounded-pill xsmall fw-bold">{{ status.kantaka|upper }}</span>{% endif %}
+                    </div>
+                </div>
+                <p class="small text-dim italic">A period requiring discipline, patience, and structural adjustment.</p>
+                {% else %}
+                <div class="p-4 rounded-4 bg-success bg-opacity-10 border border-success border-opacity-20">
+                    <i class="bi bi-check-circle text-success fs-3 mb-2 d-block"></i>
+                    <div class="xsmall text-success fw-black tracking-widest uppercase mb-1">OPTIMAL CLEARANCE</div>
+                    <p class="small text-white-50 mb-0">No major Saturnine afflictions currently detected.</p>
+                </div>
+                {% endif %}
+            </div>
+
+            <div class="mt-5 pt-5 border-top border-white border-opacity-5">
+                <h6 class="xsmall fw-black text-gold uppercase mb-3">Betterment Protocol</h6>
+                <ul class="list-unstyled mb-0 d-flex flex-column gap-2">
+                    <li class="xsmall text-dim d-flex gap-2"><i class="bi bi-check2 text-success"></i> Saturday charity for the needy</li>
+                    <li class="xsmall text-dim d-flex gap-2"><i class="bi bi-check2 text-success"></i> Hanuman Chalisa recitation</li>
+                    <li class="xsmall text-dim d-flex gap-2"><i class="bi bi-check2 text-success"></i> Disciplined routine development</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── 30-Year Timeline ───────── -->
+    <div class="col-lg-8">
+        <div class="card-vedic p-0 overflow-hidden shadow-2xl">
+            <div class="p-4 border-bottom border-white border-opacity-5 bg-black bg-opacity-20 d-flex justify-content-between align-items-center">
+                <h5 class="mb-0 text-white fw-black tracking-tight"><i class="bi bi-calendar-range me-2 text-gold"></i>30-Year Saturnine Cycle</h5>
+                <span class="xsmall text-dim font-mono fw-bold opacity-50 uppercase">Timeline Integrated</span>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-vedic mb-0 align-middle">
+                    <thead>
+                        <tr class="xsmall text-dim border-bottom border-white border-opacity-5">
+                            <th class="px-5 py-3">PHASE OF INFLUENCE</th>
+                            <th>START CYCLE</th>
+                            <th>END CYCLE</th>
+                            <th class="px-5 text-end">DURATION</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for phase in timeline %}
+                        <tr class="timeline-row {{ 'active-phase' if 'Active' in phase.phase else '' }} border-bottom border-white border-opacity-5">
+                            <td class="px-5 py-4">
+                                <div class="d-flex align-items-center gap-3">
+                                    <div class="planet-dot" style="background: {{ '#dc2626' if 'Peak' in phase.phase else '#d97706' if 'Phase' in phase.phase else '#94a3b8' }}"></div>
+                                    <span class="fw-bold text-white">{{ phase.phase }}</span>
+                                </div>
+                            </td>
+                            <td class="font-mono text-white small">{{ phase.start }}</td>
+                            <td class="font-mono text-white small">{{ phase.end }}</td>
+                            <td class="px-5 text-end">
+                                <span class="xsmall text-dim fw-bold uppercase">~2.5 Years</span>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
         </div>
 
-        {% if status.is_heavy %}
-          <div class="alert alert-danger">
-            <i class="bi bi-exclamation-triangle-fill me-2"></i>
-            <strong>Active Influence Detected</strong>
-          </div>
-          <div class="d-flex flex-column gap-2 mt-3">
-            {% if status.sade_sati %}<span class="badge bg-danger p-2 fs-6">{{ status.sade_sati }}</span>{% endif %}
-            {% if status.dhaiya %}<span class="badge bg-warning text-dark p-2 fs-6">{{ status.dhaiya }}</span>{% endif %}
-            {% if status.kantaka %}<span class="badge bg-info text-dark p-2 fs-6">{{ status.kantaka }}</span>{% endif %}
-          </div>
-        {% else %}
-          <div class="alert alert-success">
-            <i class="bi bi-check-circle-fill me-2"></i>
-            No major Saturn affliction (Sade Sati/Dhaiya) currently active.
-          </div>
-        {% endif %}
-      </div>
-    </div>
-  </div>
-
-  <!-- ── 30-Year Timeline ───────── -->
-  <div class="col-lg-8">
-    <div class="card-vedic">
-      <div class="card-vedic-header d-flex justify-content-between">
-        <span>Sade Sati Timeline (30 Years)</span>
-        <span class="badge bg-dark border border-secondary text-muted">Apotheosis Engine</span>
-      </div>
-      <div class="card-vedic-body p-0">
-        <div class="table-responsive">
-          <table class="table table-vedic mb-0">
-            <thead>
-              <tr>
-                <th>Phase</th><th>Start Date</th><th>End Date</th><th>Duration</th>
-              </tr>
-            </thead>
-            <tbody>
-              {% for phase in timeline %}
-              <tr class="{{ 'bg-danger bg-opacity-10' if 'Peak' in phase.phase else 'bg-warning bg-opacity-10' }}">
-                <td class="fw-bold">{{ phase.phase }}</td>
-                <td class="font-mono">{{ phase.start }}</td>
-                <td class="font-mono">{{ phase.end }}</td>
-                <td class="small text-muted">~2.5 Years</td>
-              </tr>
-              {% endfor %}
-            </tbody>
-          </table>
+        <div class="mt-5 p-4 rounded-4 bg-white bg-opacity-5 border border-white border-opacity-5">
+            <div class="d-flex gap-4 align-items-start">
+                <i class="bi bi-info-circle text-gold fs-3"></i>
+                <div>
+                    <h6 class="text-white fw-bold mb-1">Saturnine Logic</h6>
+                    <p class="small text-dim mb-0 leading-relaxed">
+                        Saturn transits define the "Law of Karma" in your chart. <strong>Sade Sati</strong> (7.5 years) occurs when Saturn passes through the 12th, 1st, and 2nd houses from your natal Moon. While often challenging, these periods serve as massive structural corrections that lead to permanent life achievements.
+                    </p>
+                </div>
+            </div>
         </div>
-      </div>
     </div>
-
-    <div class="mt-4 p-3 rounded bg-dark border border-secondary small text-muted">
-      <h6 class="text-gold"><i class="bi bi-info-circle me-2"></i>About Shani Transits</h6>
-      <p>Saturn stays in one sign for approximately 2.5 years. <strong>Sade Sati</strong> is a 7.5-year period that occurs when Saturn traverses the sign before, during, and after your natal Moon. It is a time of profound restructuring, hard work, and eventual growth.</p>
-    </div>
-  </div>
 </div>
 {% endblock %}

@@ -1,103 +1,99 @@
 {% extends "base.html" %}
-{% block title %}Console — Celestial Engine{% endblock %}
+{% block title %}Dashboard — Jyotish Celestial OS{% endblock %}
 
 {% block content %}
-<div class="row align-items-end mb-5">
-    <div class="col-auto">
-        <div class="vc-avatar shadow-lg" style="width: 64px; height: 64px; font-size: 1.5rem">Ω</div>
-    </div>
-    <div class="col">
-        <h1 class="h2 fw-black text-white mb-1 tracking-tight">Celestial <span class="text-gold">Console</span></h1>
-        <p class="text-muted mb-0 small">Unified Engine • Real-time Planetary Synchronization</p>
-    </div>
+<div class="mb-5">
+    <h2 class="fw-black text-white mb-1">Namaste, {{ session.get('birth_name', 'Explorer') }}</h2>
+    <p class="text-dim small">Explore your birth promise and the current planetary flow.</p>
 </div>
 
 <div class="row g-4">
-    <!-- --- Left: Profile Management --- -->
-    <div class="col-xl-8 col-lg-7">
-        <div class="d-flex align-items-center justify-content-between mb-4">
+    <!-- Main Actions -->
+    <div class="col-lg-8">
+        <div class="d-flex align-items-center gap-3 mb-4">
             <div class="mode-tabs">
-                <button class="kmt-btn active" id="tab-saved" onclick="switchTab('saved')">
-                    Vault <span class="badge bg-gold text-dark ms-2">{{ saved_charts|length if saved_charts else 0 }}</span>
-                </button>
-                <button class="kmt-btn" id="tab-new" onclick="switchTab('new')">
-                    New Profile
-                </button>
+                <button class="kmt-btn active" id="tab-saved" onclick="switchTab('saved')">Saved Profiles</button>
+                <button class="kmt-btn" id="tab-new" onclick="switchTab('new')">New Profile</button>
             </div>
 
-            <div class="search-box d-none d-md-block" id="vault-search-container">
-                <i class="bi bi-search search-icon"></i>
-                <input type="text" id="vault-search" class="search-input" placeholder="Search archives..." oninput="searchVault()">
+            <div class="search-box position-relative flex-grow-1" id="vault-search-container">
+                <i class="bi bi-search position-absolute top-50 start-0 translate-middle-y ms-3 text-dim small"></i>
+                <input type="text" id="vault-search" class="form-control-vedic ps-5" placeholder="Find profile..." oninput="searchVault()">
             </div>
         </div>
 
-        <!-- Saved Archives -->
         <div id="panel-saved">
             {% if saved_charts %}
             <div class="row g-3">
                 {% for c in saved_charts %}
                 <div class="col-md-6 vault-item">
-                    <div class="card-vedic">
-                        <div class="d-flex align-items-center gap-3 mb-3">
-                            <div class="vc-avatar">{{ (c.name or '?')[0].upper() }}</div>
+                    <div class="card-vedic p-4">
+                        <div class="d-flex align-items-center gap-3 mb-4">
+                            <div class="vc-avatar">{{ (c.name or 'N')[0].upper() }}</div>
                             <div class="flex-grow-1 min-width-0">
-                                <h6 class="text-white mb-0 text-truncate vc-name">{{ c.name or 'Unnamed' }}</h6>
-                                <div class="xsmall text-muted font-mono mt-1 opacity-50">{{ c.birth_datetime[:10] }}</div>
+                                <h6 class="text-white mb-0 text-truncate vc-name fw-bold">{{ c.name or 'Unknown' }}</h6>
+                                <div class="xsmall text-dim">{{ c.birth_datetime[:10] }}</div>
                             </div>
-                            <button class="btn btn-link text-muted p-0 opacity-25 hover-white" onclick="deleteChart('{{ c.id }}', this)">
+                            <button class="btn btn-link text-dim p-0 opacity-40 hover-white" onclick="deleteChart('{{ c.id }}', this)">
                                 <i class="bi bi-trash"></i>
                             </button>
                         </div>
-                        <div class="d-flex gap-2">
-                            <a href="{{ url_for('main.load_kundli', cid=c.id) }}" class="btn-vedic flex-grow-1 text-center py-2 small text-decoration-none">
-                                Open Blueprint
-                            </a>
-                            <a href="{{ url_for('main.load_kundli', cid=c.id) }}?next=predictions" class="btn btn-outline-secondary px-3 py-2 border-white border-opacity-10">
-                                <i class="bi bi-magic text-gold"></i>
-                            </a>
+                        <div class="row g-2">
+                            <div class="col-6">
+                                <a href="{{ url_for('main.load_kundli', cid=c.id) }}" class="btn btn-outline-secondary w-100 py-2 xsmall fw-bold">CHART</a>
+                            </div>
+                            <div class="col-6">
+                                <a href="{{ url_for('main.load_kundli', cid=c.id) }}?next=predictions" class="btn btn-vedic w-100 py-2 xsmall fw-bold">INSIGHTS</a>
+                            </div>
                         </div>
                     </div>
                 </div>
                 {% endfor %}
             </div>
             {% else %}
-            <div class="card-vedic p-5 text-center border-dashed">
-                <i class="bi bi-safe2 fs-1 text-muted mb-3 d-block opacity-25"></i>
-                <p class="text-muted small">Your cosmic archives are empty. Initialize a new profile to begin.</p>
+            <div class="card-vedic p-5 text-center border-dashed opacity-50">
+                <p class="text-dim mb-0">Your profile vault is empty. Start by adding a new birth profile.</p>
             </div>
             {% endif %}
         </div>
 
-        <!-- New Profile Form -->
         <div id="panel-new" style="display:none">
-            <div class="card-vedic">
+            <div class="card-vedic p-4 p-md-5">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h4 class="text-white fw-bold mb-0">New Birth Profile</h4>
+                    <div id="auto-status" class="xsmall text-gold fw-black tracking-widest opacity-0">SYNCING...</div>
+                </div>
                 <form action="{{ url_for('main.kundli') }}" method="POST" id="kundli-form">
                     <div class="row g-4">
                         <div class="col-12">
-                            <label class="xsmall text-uppercase tracking-widest text-muted mb-2 fw-bold">Native Identifier</label>
-                            <input type="text" name="name" class="form-control bg-white bg-opacity-5 border-0 rounded-4 py-3 text-white" placeholder="Name or Subject"/>
+                            <label class="form-label-vedic">Full Name</label>
+                            <input type="text" name="name" id="in-name" class="form-control-vedic auto-field" placeholder="e.g. John Doe"/>
                         </div>
                         <div class="col-md-6">
-                            <label class="xsmall text-uppercase tracking-widest text-muted mb-2 fw-bold">Date of Birth</label>
-                            <input type="date" name="dob" class="form-control bg-white bg-opacity-5 border-0 rounded-4 py-3 text-white" required/>
+                            <label class="form-label-vedic">Birth Date</label>
+                            <input type="date" name="dob" id="in-dob" class="form-control-vedic auto-field" required/>
                         </div>
                         <div class="col-md-6">
-                            <label class="xsmall text-uppercase tracking-widest text-muted mb-2 fw-bold">Time of Birth</label>
-                            <input type="time" name="tob" class="form-control bg-white bg-opacity-5 border-0 rounded-4 py-3 text-white" required step="60"/>
+                            <label class="form-label-vedic">Birth Time</label>
+                            <input type="time" name="tob" id="in-tob" class="form-control-vedic auto-field" required step="60"/>
                         </div>
                         <div class="col-12">
-                            <label class="xsmall text-uppercase tracking-widest text-muted mb-2 fw-bold">Location</label>
-                            <div class="input-group">
-                                <input type="text" name="place" id="place-input" class="form-control bg-white bg-opacity-5 border-0 rounded-start-4 py-3 text-white" placeholder="Search city..."/>
-                                <button type="button" class="btn bg-white bg-opacity-5 border-0 rounded-end-4 px-3" id="geo-btn">
-                                    <i class="bi bi-crosshair text-gold"></i>
+                            <label class="form-label-vedic">Birth Location</label>
+                            <div class="position-relative">
+                                <input type="text" name="place" id="place-input" class="form-control-vedic pe-5 auto-field" placeholder="City name..."/>
+                                <button type="button" class="btn position-absolute top-50 end-0 translate-middle-y me-2 text-gold p-2 border-0 bg-transparent" id="geo-btn">
+                                    <i class="bi bi-crosshair"></i>
                                 </button>
                             </div>
+                            <div class="mt-2 xsmall text-dim font-mono" id="coord-status">Precision: Ready</div>
                         </div>
-                        <input type="hidden" name="lat" id="lat-input"/><input type="hidden" name="lon" id="lon-input"/>
+
+                        <input type="hidden" name="lat" id="lat-input"/>
+                        <input type="hidden" name="lon" id="lon-input"/>
                         <input type="hidden" name="timezone" id="tz-input" value="Asia/Kolkata"/>
-                        <div class="col-12 pt-2">
-                            <button type="submit" class="btn-vedic w-100 py-3 tracking-widest text-uppercase">Compute Destiny</button>
+
+                        <div class="col-12 pt-4">
+                            <button type="submit" id="submit-btn" class="btn-vedic w-100 py-3 fs-6">CALCULATE MY CHART</button>
                         </div>
                     </div>
                 </form>
@@ -105,71 +101,57 @@
         </div>
     </div>
 
-    <!-- --- Right: System Intelligence --- -->
-    <div class="col-xl-4 col-lg-5">
-        <div class="card-vedic sky-card">
+    <!-- Sky Tracker -->
+    <div class="col-lg-4">
+        <div class="card-vedic">
             <div class="d-flex align-items-center justify-content-between mb-4">
-                <h6 class="text-white mb-0 fw-black tracking-tight"><i class="bi bi-stars me-2 text-gold"></i>Sky Intelligence</h6>
-                <span class="xsmall font-mono text-gold opacity-50" id="sky-place">...</span>
+                <h6 class="text-white mb-0 fw-bold">Live Sky Intelligence</h6>
+                <span class="xsmall text-gold fw-bold" id="sky-place">...</span>
             </div>
 
             <div class="sun-arc-container">
-                <svg class="sun-arc-svg" viewBox="0 0 200 100">
+                <svg viewBox="0 0 200 100" class="w-100 h-100">
                     <path class="arc-bg" d="M 20,90 A 80,80 0 0,1 180,90"/>
                     <path id="sky-arc-filled" class="arc-progress" d="M 20,90 A 80,80 0 0,1 180,90" stroke-dasharray="0,500"/>
-                    <circle id="sky-sun" class="sun-orb" cx="20" cy="90" r="6"/>
+                    <circle id="sky-sun" fill="var(--gold)" r="6" cx="20" cy="90" style="filter: drop-shadow(0 0 8px var(--gold))"/>
                 </svg>
-                <div class="d-flex justify-content-between xsmall text-muted font-mono px-3 mt-n2 opacity-50 tracking-widest">
+                <div class="d-flex justify-content-between xsmall text-dim font-mono px-3 mt-n2 opacity-50">
                     <span>RISE</span>
                     <span>ZENITH</span>
                     <span>SET</span>
                 </div>
             </div>
 
-            <div class="row g-3 mb-4">
-                <div class="col-6 text-center">
-                    <div class="p-3 rounded-4 bg-white bg-opacity-5">
-                        <div class="xsmall text-muted text-uppercase mb-1 opacity-50">Sunrise</div>
-                        <div class="small font-mono text-white fw-bold" id="s-sunrise">--:--</div>
+            <div class="row g-2 mb-4">
+                <div class="col-6">
+                    <div class="sky-stat-card">
+                        <div class="xsmall text-dim mb-1 fw-bold uppercase tracking-wider">Sunrise</div>
+                        <div class="small fw-black text-white" id="s-sunrise">--:--</div>
                     </div>
                 </div>
-                <div class="col-6 text-center">
-                    <div class="p-3 rounded-4 bg-white bg-opacity-5">
-                        <div class="xsmall text-muted text-uppercase mb-1 opacity-50">Sunset</div>
-                        <div class="small font-mono text-white fw-bold" id="s-sunset">--:--</div>
+                <div class="col-6">
+                    <div class="sky-stat-card">
+                        <div class="xsmall text-dim mb-1 fw-bold uppercase tracking-wider">Sunset</div>
+                        <div class="small fw-black text-white" id="s-sunset">--:--</div>
                     </div>
                 </div>
             </div>
 
-            <div class="p-3 rounded-4 bg-white bg-opacity-5 mb-4 d-flex align-items-center justify-content-between">
-                <div>
-                    <div class="xsmall text-muted text-uppercase mb-1 opacity-50">Current Hora</div>
-                    <div class="small text-white fw-black" id="s-hora">CALCULATING...</div>
+            <div class="rahu-kaal-card mb-4">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <span class="xsmall text-danger fw-black tracking-widest">RAHU KAAL</span>
+                    <span class="badge bg-danger bg-opacity-20 text-danger xsmall px-2" id="s-rahu-status">ACTIVE</span>
                 </div>
-                <div id="hora-planet-color" style="width: 24px; height: 24px; border-radius: 50%"></div>
+                <div class="h5 text-white font-mono fw-black mb-0" id="s-rahu">--:--</div>
             </div>
 
-            <div class="p-3 rounded-4 bg-danger bg-opacity-10 border border-danger border-opacity-20">
-                <div class="d-flex justify-content-between align-items-center mb-1">
-                    <span class="xsmall text-danger fw-bold tracking-widest">RAHU KAAL</span>
-                    <span class="xsmall text-danger opacity-75" id="s-rahu-status">ACTIVE</span>
+            <div class="row g-2">
+                <div class="col-6">
+                    <a href="{{ url_for('main.panchang') }}" class="btn btn-outline-secondary w-100 py-3 xsmall fw-bold border-white border-opacity-5">PANCHANG</a>
                 </div>
-                <div class="small font-mono text-white" id="s-rahu">--:--</div>
-            </div>
-        </div>
-
-        <div class="row g-3 mt-2">
-            <div class="col-6">
-                <a href="{{ url_for('main.panchang') }}" class="card-vedic p-3 text-center text-decoration-none d-block">
-                    <i class="bi bi-calendar3 d-block fs-4 text-gold mb-2"></i>
-                    <span class="xsmall text-white fw-bold text-uppercase tracking-widest">Almanac</span>
-                </a>
-            </div>
-            <div class="col-6">
-                <a href="{{ url_for('main.transit') }}" class="card-vedic p-3 text-center text-decoration-none d-block">
-                    <i class="bi bi-stars d-block fs-4 text-accent mb-2"></i>
-                    <span class="xsmall text-white fw-bold text-uppercase tracking-widest">Transit</span>
-                </a>
+                <div class="col-6">
+                    <a href="{{ url_for('main.transit') }}" class="btn btn-outline-secondary w-100 py-3 xsmall fw-bold border-white border-opacity-5">TRANSIT</a>
+                </div>
             </div>
         </div>
     </div>
@@ -180,11 +162,15 @@
 <script>
 function switchTab(tab) {
     const isSaved = tab === 'saved';
-    document.getElementById('panel-saved').style.display = isSaved ? 'block' : 'none';
-    document.getElementById('panel-new').style.display   = isSaved ? 'none' : 'block';
-    document.getElementById('tab-saved').classList.toggle('active', isSaved);
-    document.getElementById('tab-new').classList.toggle('active', !isSaved);
-    document.getElementById('vault-search-container').style.visibility = isSaved ? 'visible' : 'hidden';
+    const panelSaved = document.getElementById('panel-saved');
+    const panelNew = document.getElementById('panel-new');
+    if (panelSaved) panelSaved.style.display = isSaved ? 'block' : 'none';
+    if (panelNew) panelNew.style.display   = isSaved ? 'none' : 'block';
+
+    const tabSaved = document.getElementById('tab-saved');
+    const tabNew = document.getElementById('tab-new');
+    if (tabSaved) tabSaved.classList.toggle('active', isSaved);
+    if (tabNew) tabNew.classList.toggle('active', !isSaved);
 }
 
 function searchVault() {
@@ -195,7 +181,34 @@ function searchVault() {
     });
 }
 
-// Global Sky Update
+const parseTime = (t) => {
+    if(!t || typeof t !== 'string' || t.includes('-') || t.includes('S')) return null;
+    const parts = t.split(':');
+    if (parts.length < 2) return null;
+    const h = parseInt(parts[0], 10), m = parseInt(parts[1], 10);
+    if (isNaN(h) || isNaN(m)) return null;
+    const d = new Date(); d.setHours(h, m, 0, 0); return d;
+};
+
+function updateSunArc(sunrise, sunset) {
+    const now = new Date();
+    const sRise = parseTime(sunrise), sSet = parseTime(sunset);
+    if(!sRise || !sSet || sRise.getTime() === sSet.getTime()) return;
+
+    let pct = (now - sRise) / (sSet - sRise);
+    pct = Math.max(0, Math.min(1, pct));
+
+    const sun = document.getElementById("sky-sun");
+    const path = document.getElementById("sky-arc-filled");
+    if (!sun || !path) return;
+
+    const angle = Math.PI + (pct * Math.PI);
+    const cx = 100, cy = 90, r = 80;
+    sun.setAttribute("cx", cx + r * Math.cos(angle));
+    sun.setAttribute("cy", cy + r * Math.sin(angle));
+    path.setAttribute("stroke-dasharray", `${pct * 251.3}, 500`);
+}
+
 (function initSky() {
     const lat  = {{ ip_loc.lat if ip_loc else 28.6139 }};
     const lon  = {{ ip_loc.lon if ip_loc else 77.2090 }};
@@ -206,101 +219,108 @@ function searchVault() {
 
     fetch(`/api/sky?lat=${lat}&lon=${lon}&tz=${encodeURIComponent(tz)}`)
         .then(r => r.json()).then(d => {
-            document.getElementById("s-sunrise").textContent = d.sunrise;
-            document.getElementById("s-sunset").textContent = d.sunset;
-            document.getElementById("s-rahu").textContent = d.rahu_kaal;
-
+            document.getElementById("s-sunrise").textContent = d.sunrise || "--:--";
+            document.getElementById("s-sunset").textContent = d.sunset || "--:--";
+            document.getElementById("s-rahu").textContent = d.rahu_kaal || "--:--";
             updateSunArc(d.sunrise, d.sunset);
-            updateHora(d.sunrise, d.sunset);
         });
 })();
 
-function updateHora(sunrise, sunset) {
-    const now = new Date();
-    const parse = (t) => {
-        if(!t) return null;
-        const [h, m] = t.split(':').map(Number);
-        const d = new Date(); d.setHours(h, m, 0); return d;
-    };
-    const sRise = parse(sunrise);
-    if(!sRise) return;
-
-    const diffMs = now - sRise;
-    const diffHours = diffMs / (1000 * 60 * 60);
-    const horaIndex = Math.floor(diffHours);
-
-    const dayLords = ["Sun", "Moon", "Mars", "Mercury", "Jupiter", "Venus", "Saturn"];
-    const dayIndex = now.getDay();
-    const startLord = dayLords[dayIndex];
-
-    const horaSequence = ["Sun", "Venus", "Mercury", "Moon", "Saturn", "Jupiter", "Mars"];
-    const startIdx = horaSequence.indexOf(startLord);
-    const currentHora = horaSequence[(startIdx + Math.abs(horaIndex)) % 7];
-
-    const colors = {"Sun":"#FF6B35","Moon":"#C8D8E8","Mars":"#FF4444","Mercury":"#00CC88","Jupiter":"#FFD700","Venus":"#FF69B4","Saturn":"#9CA3AF"};
-
-    document.getElementById("s-hora").textContent = currentHora.toUpperCase();
-    document.getElementById("hora-planet-color").style.background = colors[currentHora];
-}
-
-function updateSunArc(sunrise, sunset) {
-    const now = new Date();
-    const parse = (t) => {
-        if(!t) return null;
-        const [h, m] = t.split(':').map(Number);
-        const d = new Date(); d.setHours(h, m, 0); return d;
-    };
-    const sRise = parse(sunrise), sSet = parse(sunset);
-    if(!sRise || !sSet) return;
-
-    let pct = (now - sRise) / (sSet - sRise);
-    pct = Math.max(0, Math.min(1, pct));
-
-    const sun = document.getElementById("sky-sun");
-    const path = document.getElementById("sky-arc-filled");
-
-    const angle = Math.PI + (pct * Math.PI);
-    const cx = 100, cy = 90, r = 80;
-    sun.setAttribute("cx", cx + r * Math.cos(angle));
-    sun.setAttribute("cy", cy + r * Math.sin(angle));
-
-    const dashLength = pct * 251.3;
-    path.setAttribute("stroke-dasharray", `${dashLength}, 500`);
-}
-
-// Geolocation
-document.getElementById("geo-btn").addEventListener("click", () => {
+document.getElementById("geo-btn")?.addEventListener("click", () => {
+    const status = document.getElementById("coord-status");
+    status.textContent = "Locating...";
     navigator.geolocation.getCurrentPosition(pos => {
         const lat = pos.coords.latitude, lon = pos.coords.longitude;
         document.getElementById("lat-input").value = lat;
         document.getElementById("lon-input").value = lon;
+        status.textContent = `Locked: ${lat.toFixed(2)}, ${lon.toFixed(2)}`;
         fetch(`/api/geocode?q=${lat},${lon}`)
             .then(r => r.json()).then(d => {
                 if (d.display_name) document.getElementById("place-input").value = d.display_name;
-                if (d.timezone)     document.getElementById("tz-input").value    = d.timezone;
+                if (d.timezone) document.getElementById("tz-input").value = d.timezone;
             });
     });
 });
 
 let geoTimer;
-document.getElementById("place-input").addEventListener("input", function() {
-    clearTimeout(geoTimer);
-    const q = this.value.trim();
-    if (q.length < 3) return;
-    geoTimer = setTimeout(() => {
-        fetch(`/api/geocode?q=${encodeURIComponent(q)}`)
-            .then(r => r.json()).then(d => {
-                if (!d.error) {
-                    document.getElementById("lat-input").value = d.lat;
-                    document.getElementById("lon-input").value = d.lon;
-                    document.getElementById("tz-input").value  = d.timezone;
-                }
-            });
-    }, 800);
+const placeInput = document.getElementById("place-input");
+if (placeInput) {
+    placeInput.addEventListener("input", function() {
+        clearTimeout(geoTimer);
+        const q = this.value.trim();
+        if (q.length < 3) return;
+        geoTimer = setTimeout(() => {
+            fetch(`/api/geocode?q=${encodeURIComponent(q)}`)
+                .then(r => r.json()).then(d => {
+                    if (!d.error) {
+                        document.getElementById("lat-input").value = d.lat;
+                        document.getElementById("lon-input").value = d.lon;
+                        document.getElementById("tz-input").value  = d.timezone;
+                        checkAndAutoSubmit();
+                    }
+                });
+        }, 800);
+    });
+}
+
+function checkAndAutoSubmit() {
+    const name = document.getElementById('in-name').value.trim();
+    const dob = document.getElementById('in-dob').value;
+    const tob = document.getElementById('in-tob').value;
+    const lat = document.getElementById('lat-input').value;
+    const lon = document.getElementById('lon-input').value;
+
+    if (name && dob && tob && lat && lon) {
+        autoGenerate();
+    }
+}
+
+document.querySelectorAll('.auto-field').forEach(el => {
+    el.addEventListener('change', checkAndAutoSubmit);
+    if(el.id !== 'place-input') el.addEventListener('input', checkAndAutoSubmit);
 });
 
+function autoGenerate() {
+    const status = document.getElementById('auto-status');
+    const btn = document.getElementById('submit-btn');
+    if (status.classList.contains('syncing')) return; // Avoid double trigger
+
+    status.classList.add('syncing');
+    status.style.opacity = '1';
+    btn.disabled = true;
+    btn.innerText = "SYNCING COSMOS...";
+
+    const form = document.getElementById('kundli-form');
+    const formData = new FormData(form);
+
+    fetch(form.action, {
+        method: 'POST',
+        body: formData,
+        headers: { 'X-Requested-With': 'XMLHttpRequest' }
+    })
+    .then(r => r.json())
+    .then(data => {
+        if (data.ok) {
+            window.location.href = data.redirect;
+        } else {
+            alert("Sync failed: " + (data.error || "Unknown error"));
+            status.classList.remove('syncing');
+            status.style.opacity = '0';
+            btn.disabled = false;
+            btn.innerText = "CALCULATE MY CHART";
+        }
+    })
+    .catch(err => {
+        console.error(err);
+        status.classList.remove('syncing');
+        status.style.opacity = '0';
+        btn.disabled = false;
+        btn.innerText = "CALCULATE MY CHART";
+    });
+}
+
 function deleteChart(id, btn) {
-    if (!confirm("Permanently purge this profile from memory?")) return;
+    if (!confirm("Remove this profile?")) return;
     fetch(`/kundli/delete/${id}`, { method: "POST" })
         .then(r => r.json()).then(d => {
             if (d.ok) btn.closest(".vault-item").remove();

@@ -94,7 +94,11 @@ def get_finance_prediction(chart: CanonicalChart, domain_type: str = "Finance & 
         if timing_data.get("total_timing_score", 0) > 0.7:
             factors.append(EvidenceEngine.create_factor("Financial High", "transit", "positive", 12, "Current planetary cycles are exceptionally favorable for financial gains and investments."))
 
-    summary_template = "Financial potential and wealth strength: {score}%. Confidence: {confidence}."
+    summary_template = (
+        "Wealth and finance potential is {score}% aligned. "
+        "With {confidence} confidence, the cosmic treasury indicates "
+        + ("a significant capacity for wealth accumulation and resource security." if second_lord.house in [1, 4, 7, 10, 5, 9, 11] else "that financial matters require careful budgeting and realistic management to avoid drainage.")
+    )
 
     return analyze_domain(
         "Finance & Wealth",

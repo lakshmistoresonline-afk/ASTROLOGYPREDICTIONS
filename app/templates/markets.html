@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+{% block title %}Cosmic Markets — Financial Astrology{% endblock %}
+
+{% block head %}
+<style>
+.sentiment-badge {
+    padding: 15px 40px;
+    border-radius: 100px;
+    font-weight: 900;
+    letter-spacing: 4px;
+    font-size: 1.5rem;
+    display: inline-block;
+    box-shadow: 0 10px 30px -5px currentColor;
+}
+
+.bullish { color: #16a34a; background: rgba(22, 163, 74, 0.1); border: 2px solid #16a34a; }
+.bearish { color: #dc2626; background: rgba(220, 38, 38, 0.1); border: 2px solid #dc2626; }
+
+.market-indicator-card {
+    background: rgba(255,255,255,0.02);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 25px;
+    margin-bottom: 20px;
+    transition: var(--transition);
+}
+
+.market-indicator-card:hover {
+    border-color: var(--gold-glow);
+    background: rgba(255,255,255,0.04);
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="mb-5 text-center">
+    <span class="text-gold xsmall fw-black tracking-widest mb-2 d-block">FINANCIAL ASTROLOGY</span>
+    <h1 class="display-5 fw-black text-white mb-4">Cosmic <span class="text-gold">Markets</span></h1>
+
+    <div class="sentiment-badge {{ financial.market_sentiment|lower }}">
+        {{ financial.market_sentiment }}
+    </div>
+    <p class="text-dim mt-4 max-width-600 mx-auto">Analyzing global market liquidity, expansion cycles, and speculative volatility based on current planetary transits.</p>
+</div>
+
+<div class="row g-5">
+    <!-- TRADITIONAL MARKETS -->
+    <div class="col-lg-6">
+        <div class="card-vedic p-5 h-100">
+            <h5 class="text-white fw-bold mb-5 opacity-50 uppercase tracking-widest">Global Financial Indicators</h5>
+            <div class="d-flex flex-column gap-3">
+                {% for ind in financial.key_indicators %}
+                <div class="market-indicator-card">
+                    <div class="d-flex gap-4 align-items-start">
+                        <i class="bi bi-graph-up-arrow text-gold fs-4"></i>
+                        <p class="small text-dim mb-0 leading-relaxed">{{ ind }}</p>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <!-- CRYPTO PULSE -->
+    <div class="col-lg-6">
+        <div class="card-vedic p-5 h-100 border-accent border-opacity-10" style="background: radial-gradient(circle at bottom right, rgba(167, 139, 250, 0.05) 0%, transparent 70%)">
+            <h5 class="text-white fw-bold mb-5 opacity-50 uppercase tracking-widest">Crypto & Innovation Pulse</h5>
+            <div class="p-4 rounded-4 bg-white bg-opacity-5 border border-white border-opacity-5 mb-5">
+                <div class="row align-items-center">
+                    <div class="col-md">
+                        <div class="xsmall text-dim uppercase mb-1">Rahu Speculation Score</div>
+                        <div class="h3 fw-black text-white mb-0">HIGH VOLATILITY</div>
+                    </div>
+                    <div class="col-md-auto text-end">
+                        <i class="bi bi-currency-bitcoin display-4 text-accent"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="d-flex flex-column gap-3">
+                {% for ind in crypto.indicators %}
+                <div class="market-indicator-card border-accent border-opacity-10">
+                    <div class="d-flex gap-4 align-items-start">
+                        <i class="bi bi-cpu text-accent fs-4"></i>
+                        <p class="small text-dim mb-0 leading-relaxed">{{ ind }}</p>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="mt-5 p-5 rounded-4 bg-white bg-opacity-5 border border-white border-opacity-5 text-center">
+    <h6 class="text-white fw-bold mb-3 uppercase tracking-widest opacity-40">Strategic Wisdom</h6>
+    <p class="small text-dim max-width-800 mx-auto italic leading-relaxed">
+        "When Jupiter transits the 2nd or 11th house, the cosmic treasury opens. However, Rahu's influence on these sectors often masks drainage as gain. True financial mastery requires balancing expansion with Saturnian discipline."
+    </p>
+</div>
+{% endblock %}

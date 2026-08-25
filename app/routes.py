@@ -32,11 +32,18 @@ def _enrich_chart_for_template(chart: dict):
     elif isinstance(chart.get("birth_datetime"), datetime):
         chart["birth_datetime"] = chart["birth_datetime"].isoformat()
 
-    # House occupants
+    # House occupants (Whole Sign)
     chart["house_occupants"] = {h: [] for h in range(1, 13)}
     for p, data in chart["planets"].items():
         chart["house_occupants"][data["house"]] = chart["house_occupants"].get(data["house"], [])
         chart["house_occupants"][data["house"]].append(p)
+
+    # Bhava Chalit Occupants
+    if "bhava_chalit" in chart:
+        # bhava_chalit is {house: [planets]}
+        chart["chalit_occupants"] = {int(h): list(p) for h, p in chart["bhava_chalit"].items()}
+    else:
+        chart["chalit_occupants"] = chart["house_occupants"]
 
     # Lagna
     rashi_names = ["Mesha","Vrishabha","Mithuna","Karka","Simha","Kanya",
@@ -90,6 +97,18 @@ def _enrich_chart_for_template(chart: dict):
     # 0. Ensure upagrahas are enriched
     rashi_names = ["Mesha","Vrishabha","Mithuna","Karka","Simha","Kanya",
                    "Tula","Vrishchika","Dhanu","Makara","Kumbha","Meena"]
+
+    # 0.5 Build Divisional Occupants
+    chart["varga_occupants"] = {}
+    for v_name, v_data in divs.items():
+        v_lagna = v_data.get("Lagna", 0)
+        v_occ = {h: [] for h in range(1, 13)}
+        for p, r in v_data.items():
+            if p == "Lagna": continue
+            h_v = (r - v_lagna + 12) % 12 + 1
+            v_occ[h_v].append(p)
+        chart["varga_occupants"][v_name] = v_occ
+        chart["varga_occupants"][f"{v_name}_Lagna"] = v_lagna
 
     for p in list(chart["planets"].keys()):
         data = chart["planets"][p]
@@ -341,6 +360,10 @@ def favicon():
 @main.route("/")
 def index():
     try:
+        # If a chart is already in session, lead with the Dashboard for a "returning user" feel
+        if session.get("birth_dob") and session.get("birth_tob"):
+            return redirect(url_for("main.dashboard"))
+
         ip_loc   = get_ip_location()
         saved    = list_charts()
         return render_template("index.html", ip_loc=ip_loc, saved_charts=saved)
@@ -348,6 +371,55 @@ def index():
         traceback.print_exc()
         return f"Internal Server Error: {str(e)}", 500
 
+
+def _load_active_chart():
+    """Helper to load chart from session or most recent in vault."""
+    dob = session.get("birth_dob")
+    tob = session.get("birth_tob")
+
+    if dob and tob:
+        try:
+            lat    = session.get("birth_lat", 28.6139)
+            lon    = session.get("birth_lon", 77.2090)
+            tz_str = session.get("birth_tz", "Asia/Kolkata")
+            name   = session.get("birth_name", "")
+            place  = session.get("birth_place", "")
+
+            birth_dt = datetime.strptime(f"{dob} {tob}", "%Y-%m-%d %H:%M")
+            chart_obj = calculate_chart_data(birth_dt, float(lat), float(lon), tz_str)
+            chart = chart_obj.model_dump()
+            chart.update({"name": name, "place": place, "birth_dob": dob, "birth_tob": tob,
+                          "latitude": float(lat), "longitude_coord": float(lon),
+                          "timezone": tz_str, "birth_datetime": birth_dt.isoformat()})
+            _enrich_chart_for_template(chart)
+            return chart, chart_obj
+        except Exception:
+            pass
+
+    # Fallback to Vault
+    latest = list_charts()
+    if latest:
+        chart = latest[0]
+        _enrich_chart_for_template(chart)
+        # Sync session for consistency
+        session["birth_lat"]   = chart.get("latitude", 28.6139)
+        session["birth_lon"]   = chart.get("longitude_coord", 77.2090)
+        session["birth_tz"]    = chart.get("timezone", "Asia/Kolkata")
+        session["birth_name"]  = chart.get("name", "")
+        session["birth_place"] = chart.get("place", "")
+        bd = chart.get("birth_datetime", "")[:16]
+        if "T" in bd:
+            session["birth_dob"] = bd[:10]
+            session["birth_tob"] = bd[11:16]
+
+        try:
+            birth_dt = datetime.fromisoformat(chart["birth_datetime"])
+            chart_obj = calculate_chart_data(birth_dt, float(session["birth_lat"]), float(session["birth_lon"]), session["birth_tz"])
+            return chart, chart_obj
+        except Exception:
+            pass
+
+    return None, None
 
 # ─────────────────────────────────────────────
 #  Kundli (birth chart)
@@ -358,6 +430,14 @@ def kundli():
     chart = None
     dasha = None
     remedies = None
+
+    if request.method == "GET":
+        chart, chart_obj = _load_active_chart()
+        if chart_obj:
+            remedies = get_remedies(chart_obj)
+            birth_dt = datetime.fromisoformat(chart["birth_datetime"])
+            moon_lon = chart["planets"]["Moon"]["longitude"]
+            dasha    = calculate_vimshottari(moon_lon, birth_dt)
 
     if request.method == "POST":
         try:
@@ -373,58 +453,11 @@ def kundli():
                 raise ValueError("Date and time of birth are required.")
 
             if not lat or not lon:
-                if not place:
-                    raise ValueError("Enter a place or coordinates.")
-                geo = geocode_place(place)
-                if "error" in geo:
-                    raise ValueError(geo["error"])
-                lat    = geo["lat"]
-                lon    = geo["lon"]
-                tz_str = geo["timezone"]
-                place  = geo.get("display_name", place)
-            else:
-                lat = float(lat)
-                lon = float(lon)
+                geo = geocode_place(place or "New Delhi")
+                lat, lon, tz_str = geo["lat"], geo["lon"], geo["timezone"]
+                place = geo.get("display_name", place)
 
-            # 0. Apply Ayanamsa Preference
-            from .astrology.core.ephemeris import set_ayanamsa_mode
-            from .astrology.core.swe_proxy import swe as swe_lib
-            ayanamsa_map = {"Lahiri": swe_lib.SIDM_LAHIRI, "Raman": swe_lib.SIDM_RAMAN, "KP": swe_lib.SIDM_KRISHNAMURTI}
-            pref = session.get("ayanamsa", "Lahiri")
-            set_ayanamsa_mode(ayanamsa_map.get(pref, swe_lib.SIDM_LAHIRI))
-
-            birth_dt = datetime.strptime(f"{dob} {tob}", "%Y-%m-%d %H:%M")
-
-            # 1. Apply Rectification (Nudge birth time)
-            rect = request.form.get("rectify") or request.args.get("rectify")
-            if rect:
-                try: birth_dt += timedelta(minutes=int(rect))
-                except Exception: pass
-
-            chart_obj = calculate_chart_data(birth_dt, float(lat), float(lon), tz_str)
-            chart = chart_obj.model_dump()
-
-            moon_lon = chart["planets"]["Moon"]["longitude"]
-            dasha    = calculate_vimshottari(moon_lon, birth_dt)
-
-            print(f"DEBUG: Kundli Dasha keys: {list(dasha.keys()) if dasha else 'None'}")
-            if dasha:
-                print(f"DEBUG: balance_years = {dasha.get('balance_years')}")
-
-            # Enrich chart with metadata for UI
-            chart["name"] = name
-            chart["place"] = place
-            chart["birth_dob"] = dob
-            chart["birth_tob"] = tob
-            chart["latitude"] = float(lat)
-            chart["longitude_coord"] = float(lon)
-            chart["timezone"] = tz_str
-            chart["birth_datetime"] = birth_dt.isoformat()
-
-            _enrich_chart_for_template(chart)
-            remedies = get_remedies(chart_obj)
-
-            # Persist in session for transit/dasha/predictions
+            # Session Sync
             session["birth_lat"]   = float(lat)
             session["birth_lon"]   = float(lon)
             session["birth_tz"]    = tz_str
@@ -432,6 +465,20 @@ def kundli():
             session["birth_place"] = place
             session["birth_dob"]   = dob
             session["birth_tob"]   = tob
+
+            birth_dt = datetime.strptime(f"{dob} {tob}", "%Y-%m-%d %H:%M")
+            chart_obj = calculate_chart_data(birth_dt, float(lat), float(lon), tz_str)
+            chart = chart_obj.model_dump()
+            chart.update({"name": name, "place": place, "birth_dob": dob, "birth_tob": tob,
+                          "latitude": float(lat), "longitude_coord": float(lon),
+                          "timezone": tz_str, "birth_datetime": birth_dt.isoformat()})
+
+            _enrich_chart_for_template(chart)
+            save_chart(chart)
+
+            if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+                return jsonify({"ok": True, "redirect": url_for("main.dashboard")})
+            return redirect(url_for("main.dashboard"))
 
         except Exception as e:
             error = str(e)
@@ -501,6 +548,525 @@ def load_kundli(cid):
 def delete_kundli(cid):
     delete_chart(cid)
     return jsonify({"ok": True})
+
+
+# ─────────────────────────────────────────────
+#  User Dashboard (Redesigned)
+# ─────────────────────────────────────────────
+@main.route("/dashboard")
+def dashboard():
+    chart, chart_obj = _load_active_chart()
+
+    if not chart_obj:
+        flash("Please generate a Kundli first to view your dashboard.", "warning")
+        return redirect(url_for("main.index"))
+
+    try:
+        name = session.get("birth_name", "Native")
+        lat = session.get("birth_lat")
+        lon = session.get("birth_lon")
+        tz = session.get("birth_tz")
+
+        # Generate full insight engine results
+        from .astrology.predictions.engine import generate_evidence_based_predictions
+        from .astrology.panchang import calculate_panchang
+
+        preds = generate_evidence_based_predictions(chart_obj)
+        panchang = calculate_panchang(datetime.now().date(), float(lat), float(lon), tz, chart_obj.planets["Moon"].nakshatra.index)
+
+        # Add sky data directly
+        sky = get_sunrise_sunset_moonrise(datetime.now().date(), float(lat), float(lon), tz)
+
+        # Add panchang and sky to preds for Resonance Center
+        preds["panchang"] = panchang
+        preds["sky"] = sky
+        preds["name"] = name
+
+        # 0.4. Add Panchapakshi details
+        from .astrology.core.panchapakshi import get_panchapakshi_info, get_current_activity
+        moon_nak_idx = chart_obj.planets["Moon"].nakshatra.index
+        is_shukla = panchang["tithi"]["number"] <= 15
+        bird = get_panchapakshi_info(moon_nak_idx + 1, is_shukla)
+
+        # Calculate Segment (Simplified for dashboard)
+        weekday = datetime.now().weekday()
+        # Segment 2 is typically afternoon
+        activity = get_current_activity(bird, (weekday + 1) % 7, 2)
+        preds["panchapakshi"] = {"bird": bird, "activity": activity}
+
+        # 0.5. Add Muhurta Highlights
+        from .astrology.panchang.muhurta import check_muhurta_suitability
+        events = ["Financial Investment", "Travel", "New Job Joining", "Business Opening"]
+        preds["muhurta_highlights"] = []
+        for ev in events:
+            suit = check_muhurta_suitability(ev, panchang)
+            if suit["status"] == "Auspicious":
+                preds["muhurta_highlights"].append({"name": ev, "status": suit["status"], "score": suit["score"]})
+
+        # 0.6. Add Active Remedy Quests
+        from .astrology.remedies.engine import get_remedies
+        remedies = get_remedies(chart_obj)
+        preds["active_quests"] = [r for r in remedies if r.get("quest")][:2]
+
+        # 0.7. Add Retrograde (Karmic) Alerts
+        preds["karmic_alerts"] = []
+        for p, info in chart_obj.planets.items():
+            if info.is_retrograde:
+                preds["karmic_alerts"].append({
+                    "planet": p,
+                    "interpretation": f"{p} is Retrograde, indicating deep karmic review in House {info.house} themes."
+                })
+
+        # Map fields for template compatibility
+        preds["score"] = round(preds["overall_score"] / 10, 1)
+        preds["score_label"] = preds["overall_label"]
+        preds["score_color"] = (
+            "#16a34a" if preds["overall_score"] >= 80 else
+            "#65a30d" if preds["overall_score"] >= 65 else
+            "#d97706" if preds["overall_score"] >= 45 else
+            "#dc2626"
+        )
+
+        return render_template("dashboard.html", preds=preds, chart=chart)
+    except Exception as e:
+        traceback.print_exc()
+        return f"Error loading dashboard: {str(e)}", 500
+
+
+# ─────────────────────────────────────────────
+#  Cosmic DNA (Multiversal Profile)
+# ─────────────────────────────────────────────
+@main.route("/cosmic-dna")
+def cosmic_dna():
+    chart, chart_obj = _load_active_chart()
+    if not chart_obj:
+        flash("Generate a Kundli first to unlock your Cosmic DNA profile.", "info")
+        return redirect(url_for("main.index"))
+
+    try:
+        dna = {
+            "vedic": {
+                "lagna": chart["lagna"]["rashi_name"],
+                "moon": chart["planets"]["Moon"]["rashi_name"],
+                "atmakaraka": chart["jaimini_karakas"].get('Atmakaraka (AK) - Self'),
+                "yogi": chart["yogi_details"].get('Yogi'),
+            },
+            "bazi": chart_obj.bazi_pillars,
+            "human_design": chart_obj.human_design,
+            "maya": chart_obj.maya_tzolkin,
+            "tibetan": {"mewa": chart_obj.tibetan_data.get('mewa'), "parkha": chart_obj.tibetan_data.get('parkha')},
+            "celtic": chart_obj.celtic_tree,
+            "native_american": chart_obj.native_american,
+            "numerology": chart_obj.numerology,
+            "iching": chart_obj.mundane_indicators.get('iching_hexagram'),
+            "kabbalah": chart_obj.kabbalah
+        }
+        return render_template("cosmic_dna.html", dna=dna, chart=chart)
+    except Exception as e:
+        traceback.print_exc()
+        return f"Error decoding DNA: {str(e)}", 500
+
+
+# ─────────────────────────────────────────────
+#  Lexicon (Metaphysical Guide)
+# ─────────────────────────────────────────────
+@main.route("/lexicon")
+def lexicon():
+    from .astrology.core.lexicon import VEDIC_LEXICON
+    return render_template("lexicon.html", terms=VEDIC_LEXICON)
+
+
+# ─────────────────────────────────────────────
+#  Cosmic Weather (Mundane)
+# ─────────────────────────────────────────────
+@main.route("/weather")
+def cosmic_weather():
+    chart, chart_obj = _load_active_chart()
+    if not chart_obj:
+        flash("Generate a Kundli first to see the local cosmic weather.", "info")
+        return redirect(url_for("main.index"))
+
+    try:
+        weather = chart_obj.weather_indicators
+        mundane = chart_obj.mundane_indicators
+        return render_template("weather.html", weather=weather, mundane=mundane, chart=chart)
+    except Exception as e:
+        traceback.print_exc()
+        return f"Error in weather engine: {str(e)}", 500
+
+
+# ─────────────────────────────────────────────
+#  Numerology (Lo Shu)
+# ─────────────────────────────────────────────
+@main.route("/numerology")
+def numerology():
+    chart, chart_obj = _load_active_chart()
+    if not chart_obj:
+        flash("Generate a Kundli first to unlock your Numerical Blueprint.", "info")
+        return redirect(url_for("main.index"))
+
+    try:
+        from .astrology.core.numerology import get_numerology_data, get_lo_shu_grid
+        dob = chart.get("birth_dob")
+        num = get_numerology_data(dob)
+        grid = get_lo_shu_grid(dob)
+        return render_template("numerology.html", num=num, grid=grid, chart=chart)
+    except Exception as e:
+        traceback.print_exc()
+        return f"Error in numerology engine: {str(e)}", 500
+
+
+# ─────────────────────────────────────────────
+#  Cosmic Markets (Financial Astrology)
+# ─────────────────────────────────────────────
+@main.route("/markets")
+def cosmic_markets():
+    chart, chart_obj = _load_active_chart()
+    if not chart_obj:
+        flash("Generate a Kundli first to unlock the Cosmic Markets pulse.", "info")
+        return redirect(url_for("main.index"))
+
+    try:
+        from .astrology.predictions.financial import get_financial_market_indicators
+        from .astrology.predictions.crypto import get_crypto_market_analysis
+
+        financial = get_financial_market_indicators(chart_obj)
+        crypto = get_crypto_market_analysis(chart_obj)
+
+        return render_template("markets.html", financial=financial, crypto=crypto, chart=chart)
+    except Exception as e:
+        traceback.print_exc()
+        return f"Error in market engine: {str(e)}", 500
+
+
+# ─────────────────────────────────────────────
+#  Yoga Gallery (Celestial Combinations)
+# ─────────────────────────────────────────────
+@main.route("/yogas")
+def yoga_gallery():
+    chart, chart_obj = _load_active_chart()
+    if not chart_obj:
+        flash("Generate a Kundli first to view your yoga gallery.", "info")
+        return redirect(url_for("main.index"))
+
+    try:
+        # All detected yogas in user's chart
+        user_yogas = chart_obj.yogas
+
+        # Build a master list of possible yogas for the gallery
+        from .astrology.yogas.detector import check_pancha_mahapurusha
+        # Mocking a full planets dict to see all possible yogas (simplified)
+        master_yogas = [
+            {"name": "Gaja Kesari Yoga", "theme": "Success & Wisdom", "desc": "Jupiter in a Kendra from Moon."},
+            {"name": "Budha Aditya Yoga", "theme": "Intelligence", "desc": "Sun and Mercury conjunction."},
+            {"name": "Lakshmi Yoga", "theme": "Wealth", "desc": "Strong 9th and 1st lords association."},
+            {"name": "Ruchaka Yoga", "theme": "Courage", "desc": "Strong Mars in Kendra."},
+            {"name": "Hamsa Yoga", "theme": "Prosperity", "desc": "Strong Jupiter in Kendra."},
+            {"name": "Malavya Yoga", "theme": "Art & Luxury", "desc": "Strong Venus in Kendra."},
+            {"name": "Shasha Yoga", "theme": "Persistence", "desc": "Strong Saturn in Kendra."},
+            {"name": "Bhadra Yoga", "theme": "Analytical", "desc": "Strong Mercury in Kendra."},
+            {"name": "Adhi Yoga", "theme": "Leadership", "desc": "Benefics in 6, 7, 8 from Moon."},
+            {"name": "Saraswati Yoga", "theme": "Learning", "desc": "Jupiter, Venus, Mercury in specific houses."},
+            {"name": "Vipareeta Raja Yoga", "theme": "Sudden Success", "desc": "Dusthana lords in other Dusthanas."},
+            {"name": "Kala Sarpa Yoga", "theme": "Karmic Struggle", "desc": "Planets hemmed between nodes."},
+            {"name": "Kemadruma Yoga", "theme": "Isolation", "desc": "No planets adjacent to Moon."}
+        ]
+
+        present_names = [y["name"] for y in user_yogas]
+        for y in master_yogas:
+            y["is_present"] = any(name in y["name"] for name in present_names)
+
+        return render_template("yogas.html", master_yogas=master_yogas, user_yogas=user_yogas, chart=chart)
+    except Exception as e:
+        traceback.print_exc()
+        return f"Error building yoga gallery: {str(e)}", 500
+
+
+# ─────────────────────────────────────────────
+#  Ashtakavarga Matrix
+# ─────────────────────────────────────────────
+@main.route("/ashtakavarga")
+def ashtakavarga():
+    chart, chart_obj = _load_active_chart()
+    if not chart_obj:
+        flash("Generate a Kundli first to view the Ashtakavarga matrix.", "info")
+        return redirect(url_for("main.index"))
+
+    try:
+        av = chart_obj.ashtakavarga
+        # BAV = Benefic Points for each planet (Dict[Planet, List[int]])
+        # SAV = Sarvashtakavarga (Sum of all BAVs)
+        return render_template("ashtakavarga.html", av=av, chart=chart)
+    except Exception as e:
+        traceback.print_exc()
+        return f"Error building ashtakavarga matrix: {str(e)}", 500
+
+
+# ─────────────────────────────────────────────
+#  Nakshatra Symphony (Lunar Mansions)
+# ─────────────────────────────────────────────
+@main.route("/nakshatras")
+def nakshatra_symphony():
+    chart, chart_obj = _load_active_chart()
+    if not chart_obj:
+        flash("Generate a Kundli first to view your Nakshatra Symphony.", "info")
+        return redirect(url_for("main.index"))
+
+    try:
+        from .astrology.core.nakshatra_data import NAKSHATRA_DEITIES, NAKSHATRA_SYMBOLS
+        from .astrology.core.planets import NAKSHATRA_NAMES
+
+        nak_data = []
+        for i in range(27):
+            planets_in = [p for p, info in chart_obj.planets.items() if info.nakshatra.index == i]
+            nak_data.append({
+                "index": i + 1,
+                "name": NAKSHATRA_NAMES[i],
+                "deity": NAKSHATRA_DEITIES[i],
+                "symbol": NAKSHATRA_SYMBOLS[i],
+                "planets": planets_in
+            })
+
+        return render_template("nakshatras.html", nak_data=nak_data, chart=chart)
+    except Exception as e:
+        traceback.print_exc()
+        return f"Error building symphony: {str(e)}", 500
+
+
+# ─────────────────────────────────────────────
+#  Esoteric Audit (Supreme Precision)
+# ─────────────────────────────────────────────
+@main.route("/esoteric")
+def esoteric_audit():
+    chart, chart_obj = _load_active_chart()
+    if not chart_obj:
+        flash("Generate a Kundli first to unlock the Esoteric Audit.", "info")
+        return redirect(url_for("main.index"))
+
+    try:
+        # Vaisheshikamsha Audit
+        vaisheshika = {}
+        for p_name, p_info in chart_obj.planets.items():
+            if p_info.vaisheshikamsha and p_info.vaisheshikamsha != "None":
+                vaisheshika[p_name] = {
+                    "level": p_info.vaisheshikamsha,
+                    "count": p_info.shadbala_details.naisargika_bala # Placeholder for count if not stored
+                }
+
+        metrics = {
+            "special_lagnas": chart_obj.special_lagnas,
+            "arudha_padas": chart_obj.arudha_padas,
+            "nadi_signatures": chart_obj.nadi_signatures,
+            "harmonic_resonances": chart_obj.harmonic_resonances,
+            "bazi_pillars": chart_obj.bazi_pillars,
+            "kp_4_steps": chart_obj.kp_4_steps,
+            "vaisheshikamsha": vaisheshika
+        }
+        return render_template("esoteric.html", metrics=metrics, chart=chart)
+    except Exception as e:
+        traceback.print_exc()
+        return f"Error in esoteric engine: {str(e)}", 500
+
+
+# ─────────────────────────────────────────────
+#  Galactic Audit (Cosmic Connections)
+# ─────────────────────────────────────────────
+@main.route("/galactic")
+def galactic_audit():
+    chart, chart_obj = _load_active_chart()
+    if not chart_obj:
+        flash("Generate a Kundli first to view your Galactic Audit.", "info")
+        return redirect(url_for("main.index"))
+
+    try:
+        from .astrology.core.galactic import analyze_galactic_aspects
+        from .astrology.core.fixed_stars import analyze_fixed_star_conjunctions
+
+        galactic = analyze_galactic_aspects(chart_obj.planets)
+        stars = analyze_fixed_star_conjunctions(chart_obj.planets, chart_obj.ayanamsa)
+
+        return render_template("galactic.html", galactic=galactic, stars=stars, chart=chart)
+    except Exception as e:
+        traceback.print_exc()
+        return f"Error in galactic engine: {str(e)}", 500
+
+
+# ─────────────────────────────────────────────
+#  Chakra Alignment (Energy Centers)
+# ─────────────────────────────────────────────
+@main.route("/chakras")
+def chakra_alignment():
+    chart, chart_obj = _load_active_chart()
+    if not chart_obj:
+        flash("Generate a Kundli first to view your Chakra Alignment.", "info")
+        return redirect(url_for("main.index"))
+
+    try:
+        # Chakra to Planet Mapping
+        # Muladhara: Saturn
+        # Svadhisthana: Jupiter
+        # Manipura: Mars
+        # Anahata: Venus
+        # Vishuddha: Mercury
+        # Ajna: Moon (and Sun)
+        # Sahasrara: Guru (Higher Jupiter)
+
+        chakra_data = [
+            {"name": "Muladhara (Root)", "planet": "Saturn", "color": "#ef4444", "theme": "Survival & Stability"},
+            {"name": "Svadhisthana (Sacral)", "planet": "Jupiter", "color": "#f97316", "theme": "Creativity & Joy"},
+            {"name": "Manipura (Solar Plexus)", "planet": "Mars", "color": "#eab308", "theme": "Will & Power"},
+            {"name": "Anahata (Heart)", "planet": "Venus", "color": "#22c55e", "theme": "Love & Harmony"},
+            {"name": "Vishuddha (Throat)", "planet": "Mercury", "color": "#3b82f6", "theme": "Communication & Truth"},
+            {"name": "Ajna (Third Eye)", "planet": "Moon", "color": "#6366f1", "theme": "Intuition & Vision"},
+            {"name": "Sahasrara (Crown)", "planet": "Sun", "color": "#a855f7", "theme": "Higher Consciousness"}
+        ]
+
+        for c in chakra_data:
+            p_info = chart_obj.planets.get(c["planet"])
+            if p_info:
+                c["strength"] = p_info.shadbala_score or 50
+                c["dignity"] = p_info.dignity
+                c["house"] = p_info.house
+
+        return render_template("chakras.html", chakras=chakra_data, chart=chart)
+    except Exception as e:
+        traceback.print_exc()
+        return f"Error in chakra engine: {str(e)}", 500
+
+
+# ─────────────────────────────────────────────
+#  Eclipse Watch (Karmic Triggers)
+# ─────────────────────────────────────────────
+@main.route("/eclipses")
+def eclipse_watch():
+    chart, chart_obj = _load_active_chart()
+    if not chart_obj:
+        flash("Generate a Kundli first to view your Eclipse Watch.", "info")
+        return redirect(url_for("main.index"))
+
+    try:
+        eclipses = chart_obj.upcoming_eclipses
+        impacts = chart_obj.eclipse_impacts
+        return render_template("eclipses.html", eclipses=eclipses, impacts=impacts, chart=chart)
+    except Exception as e:
+        traceback.print_exc()
+        return f"Error in eclipse engine: {str(e)}", 500
+
+
+# ─────────────────────────────────────────────
+#  Friendship Matrix (Panchadha Maitri)
+# ─────────────────────────────────────────────
+@main.route("/friendship")
+def friendship_matrix():
+    chart, chart_obj = _load_active_chart()
+    if not chart_obj:
+        flash("Generate a Kundli first to view your Friendship Matrix.", "info")
+        return redirect(url_for("main.index"))
+
+    try:
+        from .astrology.strength.friendship import get_compound_friendship
+        planets = ["Sun", "Moon", "Mars", "Mercury", "Jupiter", "Venus", "Saturn"]
+
+        matrix = {}
+        for p1 in planets:
+            matrix[p1] = {}
+            for p2 in planets:
+                if p1 == p2:
+                    matrix[p1][p2] = "Self"
+                else:
+                    matrix[p1][p2] = get_compound_friendship(p1, p2, chart_obj.planets[p1].house, chart_obj.planets[p2].house)
+
+        return render_template("friendship.html", matrix=matrix, planets=planets, chart=chart)
+    except Exception as e:
+        traceback.print_exc()
+        return f"Error in friendship engine: {str(e)}", 500
+
+
+# ─────────────────────────────────────────────
+#  Life Calendar (Timing Synthesis)
+# ─────────────────────────────────────────────
+@main.route("/calendar")
+def life_calendar():
+    chart, chart_obj = _load_active_chart()
+    if not chart_obj:
+        flash("Generate a Kundli first to unlock your Life Calendar.", "info")
+        return redirect(url_for("main.index"))
+
+    try:
+        from .astrology.core.biorhythms import calculate_biorhythms
+        from .astrology.panchang import calculate_panchang
+
+        # Current month focus
+        today = datetime.now()
+        bio = calculate_biorhythms(chart_obj.birth_datetime, today)
+
+        # Weekly flow
+        week_flow = []
+        for i in range(7):
+            d = today + timedelta(days=i)
+            pan = calculate_panchang(d.date(), chart_obj.latitude, chart_obj.longitude, chart_obj.timezone, chart_obj.planets["Moon"].nakshatra.index)
+            # Simple day quality score
+            score = 50
+            if pan["tithi"]["nature"] == "Auspicious": score += 10
+            if pan["nakshatra"]["nature"] == "Auspicious": score += 10
+            if pan["yoga"]["nature"] == "Auspicious": score += 10
+
+            week_flow.append({
+                "date": d.strftime("%d %b"),
+                "day": d.strftime("%a"),
+                "score": score,
+                "tithi": pan["tithi"]["name"],
+                "nakshatra": pan["nakshatra"]["name"]
+            })
+
+        return render_template("calendar.html", bio=bio, week_flow=week_flow, chart=chart)
+    except Exception as e:
+        traceback.print_exc()
+        return f"Error building calendar: {str(e)}", 500
+
+
+# ─────────────────────────────────────────────
+#  Astro-Locality (Relocation)
+# ─────────────────────────────────────────────
+@main.route("/relocation")
+def relocation():
+    chart, chart_obj = _load_active_chart()
+    if not chart_obj:
+        flash("Generate a Kundli first to see your global power lines.", "info")
+        return redirect(url_for("main.index"))
+
+    try:
+        from .astrology.core.relocation import get_angular_points
+        from .astrology.core.datetime import datetime_to_jd
+
+        jd_ut = datetime_to_jd(chart_obj.birth_datetime, "UTC")
+        lines = get_angular_points(jd_ut)
+
+        # Add some major cities for comparison
+        from .astrology.core.cities import MAJOR_CITIES
+        city_scores = []
+
+        for city in MAJOR_CITIES[:20]:
+            # Simple score based on proximity to angular lines
+            # This is a placeholder for more complex logic
+            score = 50
+            for p, data in lines.items():
+                if abs(city["lon"] - data["MC_Longitude"]) < 5: score += 10
+                if abs(city["lon"] - data["IC_Longitude"]) < 5: score += 5
+
+            city_scores.append({
+                "name": city["name"],
+                "score": min(100, score),
+                "lat": city["lat"],
+                "lon": city["lon"]
+            })
+
+        city_scores.sort(key=lambda x: x["score"], reverse=True)
+
+        return render_template("relocation.html", lines=lines, city_scores=city_scores, chart=chart)
+    except Exception as e:
+        traceback.print_exc()
+        return f"Error in relocation engine: {str(e)}", 500
 
 
 # ─────────────────────────────────────────────
@@ -607,6 +1173,21 @@ def dasha():
                 m["end_str"] = m["end"].strftime("%d %b %Y")
 
             _enrich_chart_for_template(chart)
+
+            # 3. Enhanced Dasha Activation logic
+            from .astrology.core.houses import get_house_lord
+            current_maha = dasha_data.get("current_maha", {}).get("lord")
+            current_antar = dasha_data.get("current_antar", {}).get("lord")
+
+            # Find houses ruled by current lords
+            activated_houses = []
+            for h in range(1, 13):
+                lord = chart_obj.house_lords[h]
+                if lord in [current_maha, current_antar]:
+                    activated_houses.append({"house": h, "lord": lord, "theme": HOUSE_INTERPRETATIONS.get(h)})
+
+            dasha_data["activated_houses"] = activated_houses
+
         except Exception as e:
             error = str(e)
             traceback.print_exc()
@@ -623,6 +1204,23 @@ def dasha():
 def predictions():
     dob   = session.get("birth_dob")
     tob   = session.get("birth_tob")
+
+    # Auto-load latest if session is empty
+    if not (dob and tob):
+        latest = list_charts()
+        if latest:
+            c = latest[0]
+            session["birth_lat"]   = c.get("latitude", 28.6139)
+            session["birth_lon"]   = c.get("longitude_coord", 77.2090)
+            session["birth_tz"]    = c.get("timezone", "Asia/Kolkata")
+            session["birth_name"]  = c.get("name", "")
+            session["birth_place"] = c.get("place", "")
+            bd = c.get("birth_datetime", "")[:16]
+            if "T" in bd:
+                session["birth_dob"] = bd[:10]
+                session["birth_tob"] = bd[11:16]
+            dob, tob = session["birth_dob"], session["birth_tob"]
+
     lat   = session.get("birth_lat", 28.6139)
     lon   = session.get("birth_lon", 77.2090)
     tz    = session.get("birth_tz", "Asia/Kolkata")
@@ -687,7 +1285,11 @@ def predictions():
         # 4. Fill extras for template compatibility
         _enrich_predictions_with_extras(preds, natal_chart, panchang)
 
-        # 4b. AI Insight (optional)
+        # 4b. Lal Kitab Remedies
+        from .astrology.remedies.engine import get_lal_kitab_remedies
+        preds["lalkitab_remedies"] = get_lal_kitab_remedies(natal_chart)
+
+        # 4c. AI Insight (optional)
         if os.getenv("LLM_MODEL"):
              preds["ai_note"] = _llm_day_note(panchang, {"score": preds["score"], "label": preds["score_label"]}, selected_date.isoformat())
 
@@ -755,105 +1357,92 @@ def shani_report():
 # ─────────────────────────────────────────────
 #  Varshaphala (Yearly Chart)
 # ─────────────────────────────────────────────
+# ─────────────────────────────────────────────
+#  Varshaphala (Yearly Progress)
+# ─────────────────────────────────────────────
 @main.route("/varshaphala")
 def varshaphala():
-    dob = session.get("birth_dob")
-    tob = session.get("birth_tob")
-    lat = session.get("birth_lat", 28.6139)
-    lon = session.get("birth_lon", 77.2090)
-    tz  = session.get("birth_tz", "Asia/Kolkata")
-
-    if not (dob and tob):
+    chart, chart_obj = _load_active_chart()
+    if not chart_obj:
+        flash("Generate a Kundli first to view your Yearly Solar Return.", "info")
         return redirect(url_for("main.index"))
 
-    # Current/Next solar return year
-    target_year = date.today().year
+    try:
+        lat, lon, tz = chart_obj.latitude, chart_obj.longitude, chart_obj.timezone
 
-    from .astrology.core.varshaphala import get_solar_return_jd, get_varshaphala_data
-    from .astrology.core.datetime import datetime_to_jd
+        # Current/Next solar return year
+        target_year = date.today().year
 
-    birth_dt = datetime.strptime(f"{dob} {tob}", "%Y-%m-%d %H:%M")
-    natal_jd = datetime_to_jd(birth_dt, tz)
+        from .astrology.core.varshaphala import get_solar_return_jd, get_varshaphala_data
+        from .astrology.core.datetime import datetime_to_jd
 
-    # Use cached or direct calc
-    sr_jd = get_solar_return_jd(natal_jd, target_year)
+        natal_jd = datetime_to_jd(chart_obj.birth_datetime, tz)
+        sr_jd = get_solar_return_jd(natal_jd, target_year)
 
-    # Calculate chart for that exact moment
-    # We convert JD back to a datetime for calculate_chart_data
-    from .astrology.core.swe_proxy import swe as swe_mod
-    y, m, d, h = swe_mod.revjul(sr_jd)
-    # revjul h is decimal hour in UTC
-    sr_dt_utc = datetime(y, m, d, int(h), int((h%1)*60), int(((h%1)*60%1)*60))
+        # Calculate chart for that exact moment
+        from .astrology.core.swe_proxy import swe as swe_mod
+        y, m, d, h = swe_mod.revjul(sr_jd)
+        sr_dt_utc = datetime(y, m, d, int(h), int((h%1)*60))
 
-    # Create the yearly chart
-    from .astrology.core.chart import calculate_chart_data
-    yearly_chart = calculate_chart_data(sr_dt_utc, float(lat), float(lon), "UTC")
-    chart = yearly_chart.model_dump()
+        # Create the yearly chart
+        from .astrology.core.chart import calculate_chart_data
+        yearly_chart_obj = calculate_chart_data(sr_dt_utc, float(lat), float(lon), "UTC")
+        yearly_chart = yearly_chart_obj.model_dump()
 
-    # Natal lagna for Muntha
-    natal_chart = calculate_chart_data(birth_dt, float(lat), float(lon), tz)
-    extra = get_varshaphala_data(birth_dt, natal_chart.asc_rashi, target_year)
+        # Natal lagna for Muntha
+        extra = get_varshaphala_data(chart_obj.birth_datetime, chart_obj.asc_rashi, target_year)
 
-    chart["name"] = f"Yearly Chart ({target_year})"
-    chart["place"] = session.get("birth_place", "New Delhi")
-    chart["age"] = extra["age"]
-    chart["muntha_rashi"] = extra["muntha_rashi"]
-    chart["muntha_house"] = extra["muntha_house"]
+        yearly_chart["name"] = f"Solar Return {target_year}"
+        yearly_chart["age"] = extra["age"]
+        yearly_chart["muntha_rashi"] = extra["muntha_rashi"]
+        yearly_chart["muntha_house"] = extra["muntha_house"]
+        yearly_chart["varsheshwar"] = yearly_chart_obj.varsheshwar
 
-    # Year Lord
-    chart["varsheshwar"] = yearly_chart.varsheshwar
+        # Mudda Dasha
+        from .astrology.dasha.mudda import calculate_mudda_dasha
+        mudda = calculate_mudda_dasha(yearly_chart["planets"]["Moon"]["longitude"], sr_dt_utc)
 
-    # Mudda Dasha
-    from .astrology.dasha.mudda import calculate_mudda_dasha
-    chart["mudda_dasha"] = calculate_mudda_dasha(chart["planets"]["Moon"]["longitude"], sr_dt_utc)
+        _enrich_chart_for_template(yearly_chart)
 
-    _enrich_chart_for_template(chart)
+        return render_template("varshaphala.html", yearly=yearly_chart, mudda=mudda, chart=chart)
+    except Exception as e:
+        traceback.print_exc()
+        return f"Error in Varshaphala engine: {str(e)}", 500
 
-    return render_template("kundli.html", chart=chart, is_yearly=True)
 
 # ─────────────────────────────────────────────
 #  Prashna (Horary)
 # ─────────────────────────────────────────────
 @main.route("/prashna", methods=["GET", "POST"])
 def prashna():
-    lat    = session.get("birth_lat", 28.6139)
-    lon    = session.get("birth_lon", 77.2090)
-    tz_str = session.get("birth_tz", "Asia/Kolkata")
-    place  = session.get("birth_place", "New Delhi")
+    chart, chart_obj = _load_active_chart()
+    if not chart_obj:
+        # For Prashna, we only need the user's current location, which we get from session
+        lat = session.get("birth_lat", 28.6139)
+        lon = session.get("birth_lon", 77.2090)
+        tz  = session.get("birth_tz", "Asia/Kolkata")
+    else:
+        lat, lon, tz = chart_obj.latitude, chart_obj.longitude, chart_obj.timezone
 
-    now = datetime.now(pytz.timezone(tz_str))
+    now = datetime.now(pytz.timezone(tz))
+    result = None
+    prashna_chart = None
 
-    # Optional question processing
-    question_type = request.form.get("question_type", "Career")
+    if request.method == "POST":
+        q_type = request.form.get("question_type", "Career")
 
-    chart_obj = calculate_chart_data(now, float(lat), float(lon), tz_str)
-    chart = chart_obj.model_dump()
+        from .astrology.prashna.engine import calculate_prashna_chart, analyze_prashna
+        from .astrology.panchang import calculate_panchang
 
-    # Get current panchang for Prashna micro-timing
-    from .astrology.panchang import calculate_panchang
-    # Assuming user's natal moon nak idx is not needed for prashna daily resonance, or using a proxy
-    prashna_panchang = calculate_panchang(now.date(), float(lat), float(lon), tz_str)
+        prashna_chart_obj = calculate_prashna_chart(now, float(lat), float(lon), tz)
+        panchang = calculate_panchang(now.date(), float(lat), float(lon), tz)
 
-    from .astrology.prashna.engine import analyze_prashna
-    prashna_result = analyze_prashna(chart_obj, question_type, panchang=prashna_panchang)
+        result = analyze_prashna(prashna_chart_obj, q_type, panchang=panchang)
+        prashna_chart = prashna_chart_obj.model_dump()
+        _enrich_chart_for_template(prashna_chart)
 
-    # Enrichment
-    chart["name"] = f"Prashna: {question_type}"
-    chart["place"] = f"Calculated for: {place}"
-    chart["birth_dob"] = now.strftime("%Y-%m-%d")
-    chart["birth_tob"] = now.strftime("%H:%M")
-    chart["latitude"] = float(lat)
-    chart["longitude_coord"] = float(lon)
-    chart["timezone"] = tz_str
-    chart["birth_datetime"] = now.isoformat()
+    return render_template("prashna.html", result=result, chart=prashna_chart, now=now)
 
-    _enrich_chart_for_template(chart)
-
-    moon_lon = chart["planets"]["Moon"]["longitude"]
-    dasha    = calculate_vimshottari(moon_lon, now)
-
-    return render_template("kundli.html", chart=chart, dasha=dasha,
-                           prashna=prashna_result, is_prashna=True)
 
 # ─────────────────────────────────────────────
 #  Matchmaking (Guna Milan)

@@ -63,7 +63,11 @@ def get_spirituality_prediction(chart: CanonicalChart, domain_type: str = "Spiri
         if timing_data.get("total_timing_score", 0) > 0.6:
             factors.append(EvidenceEngine.create_factor("Awakening Period", "transit", "positive", 10, "Current planetary alignments are ideal for spiritual retreats, initiation, or deep practice."))
 
-    summary_template = "Spiritual inclination and growth potential: {score}%. Confidence: {confidence}."
+    summary_template = (
+        "Spiritual path alignment is {score}%. "
+        "With {confidence} confidence, your soul trajectory suggests "
+        + ("a deep innate capacity for higher knowledge and detachment." if ketu.house in [9, 12] or twelfth_lord.house in [9, 12] else "that spiritual growth will come through active service and balanced worldly engagement.")
+    )
 
     return analyze_domain(
         "Spirituality & Moksha",

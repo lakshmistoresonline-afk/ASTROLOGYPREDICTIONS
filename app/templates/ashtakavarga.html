@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+{% block title %}Ashtakavarga — The Energy Matrix{% endblock %}
+
+{% block head %}
+<style>
+.av-table {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    overflow: hidden;
+}
+
+.av-header-cell {
+    background: rgba(255,255,255,0.05);
+    color: var(--gold);
+    font-weight: 800;
+    text-transform: uppercase;
+    font-size: 0.7rem;
+    letter-spacing: 1px;
+}
+
+.av-cell {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.9rem;
+    text-align: center;
+    padding: 15px !important;
+}
+
+.av-cell.high { background: rgba(22, 163, 74, 0.1); color: #4ade80; }
+.av-cell.low { background: rgba(220, 38, 38, 0.1); color: #f87171; }
+.av-cell.sav { background: rgba(251, 191, 36, 0.05); color: var(--gold); font-weight: 800; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="mb-5">
+    <span class="text-gold xsmall fw-black tracking-widest mb-2 d-block">QUANTITATIVE STRENGTH</span>
+    <h1 class="display-5 fw-black text-white mb-2">Ashtakavarga <span class="text-gold">Matrix</span></h1>
+    <p class="text-dim">The sum of benefic points identifying the dynamic power of each Rashi for every planet.</p>
+</div>
+
+<div class="card-vedic p-0 overflow-hidden shadow-2xl">
+    <div class="table-responsive">
+        <table class="table table-vedic mb-0 align-middle">
+            <thead>
+                <tr>
+                    <th class="av-header-cell px-4 py-4">Planet</th>
+                    {% for r in ["AR", "TA", "GE", "CN", "LE", "VI", "LI", "SC", "SA", "CP", "AQ", "PI"] %}
+                    <th class="av-header-cell text-center">{{ r }}</th>
+                    {% endfor %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for p, points in av.items() %}
+                    {% if p != 'SAV' and p != 'ShodhyaPinda' %}
+                    <tr class="border-bottom border-white border-opacity-5">
+                        <td class="px-4 py-4 fw-bold text-white small">{{ p }}</td>
+                        {% for pt in points %}
+                        <td class="av-cell {{ 'high' if pt >= 5 else 'low' if pt <= 2 else '' }}">
+                            {{ pt }}
+                        </td>
+                        {% endfor %}
+                    </tr>
+                    {% endif %}
+                {% endfor %}
+                <tr class="bg-gold bg-opacity-5">
+                    <td class="px-4 py-4 fw-black text-gold small">SAV TOTAL</td>
+                    {% for pt in av.SAV %}
+                    <td class="av-cell sav">
+                        {{ pt }}
+                    </td>
+                    {% endfor %}
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="row g-4 mt-5">
+    <div class="col-md-6">
+        <div class="p-4 rounded-4 bg-white bg-opacity-5 border border-white border-opacity-5">
+            <h6 class="text-gold fw-black xsmall uppercase mb-3">Matrix Logic</h6>
+            <p class="small text-dim leading-relaxed mb-0">
+                Ashtakavarga translates to "Eight-fold Division." It calculates the benefic points (Bindus) contributed by the 7 planets and the Lagna. A score of 4 is neutral; anything above indicates a Rashi that will yield supportive results when a planet transits through it.
+            </p>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="p-4 rounded-4 bg-white bg-opacity-5 border border-white border-opacity-5">
+            <h6 class="text-gold fw-black xsmall uppercase mb-3">SAV Thresholds</h6>
+            <ul class="list-unstyled mb-0 d-flex flex-column gap-2">
+                <li class="xsmall text-dim d-flex gap-2"><i class="bi bi-circle-fill text-success" style="font-size: 0.4rem; margin-top: 0.3rem"></i> <strong>28+ Points</strong>: Strong Rashi, capable of yielding prosperity.</li>
+                <li class="xsmall text-dim d-flex gap-2"><i class="bi bi-circle-fill text-danger" style="font-size: 0.4rem; margin-top: 0.3rem"></i> <strong>20- Points</strong>: Challenging Rashi, requires caution during transits.</li>
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock %}

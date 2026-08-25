@@ -70,10 +70,20 @@ const PLANET_SYMBOLS = {
 };
 
 let currentChartStyle = localStorage.getItem("chartStyle") || "north";
+let showAspects = false;
 
 function toggleChartStyle() {
   currentChartStyle = currentChartStyle === "north" ? "south" : "north";
   localStorage.setItem("chartStyle", currentChartStyle);
+  window.dispatchEvent(new Event("resize"));
+}
+
+function toggleAspectLines() {
+  showAspects = !showAspects;
+  const btn = document.getElementById("btn-aspects");
+  if (btn) {
+    btn.classList.toggle("active", showAspects);
+  }
   window.dispatchEvent(new Event("resize"));
 }
 
@@ -82,6 +92,10 @@ function renderChart(canvasId, houseOccupants, lagnaRashi, planets) {
     renderNorthIndianChart(canvasId, houseOccupants, lagnaRashi, planets);
   } else {
     renderSouthIndianChart(canvasId, houseOccupants, lagnaRashi, planets);
+  }
+
+  if (showAspects && planets) {
+    renderAspectLines(canvasId, lagnaRashi, planets);
   }
 }
 

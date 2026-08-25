@@ -1,6 +1,7 @@
 from typing import List, Dict, Any, Optional
 from ..core.models import PredictionFactor, DomainPrediction, CanonicalChart
 from ..strength.aspects import get_graha_drishti
+from ..remedies.engine import REMEDIES_DATABASE
 
 def _get(obj, attr, default=None):
     if hasattr(obj, attr):
@@ -277,6 +278,26 @@ def analyze_domain(
 
     evidence_strings = [f"{'✓' if f.direction == 'positive' else '⚠'} {f.explanation}" for f in factors]
 
+    # Generate Remedies if score is low
+    remedies = []
+    if score < 60:
+        # Identify negative planets
+        neg_planets = set()
+        for f in neg_factors:
+            if f.type in ["planet", "lord"]:
+                p_name = f.factor.split(' ')[0]
+                if p_name in REMEDIES_DATABASE:
+                    neg_planets.add(p_name)
+
+        for p in neg_planets:
+            db_rem = REMEDIES_DATABASE[p]
+            remedies.append({
+                "planet": p,
+                "mantra": db_rem.get("mantra"),
+                "charity": db_rem.get("charity"),
+                "lifestyle": db_rem.get("lifestyle")
+            })
+
     return DomainPrediction(
         domain=domain_name,
         score=score,
@@ -285,5 +306,6 @@ def analyze_domain(
         evidence=evidence_strings,
         positive_factors=pos_factors,
         negative_factors=neg_factors,
-        contradictions=contradictions
+        contradictions=contradictions,
+        remedies=remedies
     )

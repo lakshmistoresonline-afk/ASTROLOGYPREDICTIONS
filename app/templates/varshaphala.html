@@ -1,0 +1,128 @@
+{% extends "base.html" %}
+{% block title %}Varshaphala — The Yearly Forecast{% endblock %}
+
+{% block head %}
+<style>
+.muntha-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 24px;
+    padding: 40px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.muntha-card::after {
+    content: 'MUNTHA';
+    position: absolute;
+    bottom: -10px; right: -10px;
+    font-size: 4rem; font-weight: 900; opacity: 0.03; letter-spacing: -2px;
+}
+
+.varsheshwar-orb {
+    width: 100px; height: 100px;
+    border-radius: 50%;
+    background: var(--gold-glow);
+    border: 2px solid var(--gold);
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 20px;
+    box-shadow: 0 0 30px var(--gold-glow);
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="mb-5 d-flex justify-content-between align-items-end">
+    <div>
+        <span class="text-gold xsmall fw-black tracking-widest mb-2 d-block uppercase">SOLAR RETURN CYCLE</span>
+        <h1 class="display-5 fw-black text-white mb-0">Yearly <span class="text-gold">Progress</span></h1>
+    </div>
+    <div class="text-end">
+        <div class="h4 text-white mb-0 fw-black">Age {{ yearly.age }} Cycle</div>
+        <div class="xsmall text-dim font-mono uppercase tracking-widest">Year: {{ yearly.birth_datetime[:4] }}</div>
+    </div>
+</div>
+
+<div class="row g-5">
+    <!-- YEARLY METRICS -->
+    <div class="col-lg-4">
+        <div class="muntha-card mb-4">
+            <div class="xsmall text-gold fw-black tracking-widest uppercase mb-4">Year Lord (Varsheshwar)</div>
+            <div class="varsheshwar-orb">
+                <div class="h3 fw-black text-white mb-0">{{ yearly.varsheshwar[0] }}</div>
+            </div>
+            <h4 class="text-white fw-bold mb-1">{{ yearly.varsheshwar }}</h4>
+            <p class="xsmall text-dim italic">The primary energy governing this solar year.</p>
+        </div>
+
+        <div class="card-vedic p-4">
+            <h6 class="text-white fw-bold mb-4 opacity-50 uppercase tracking-widest">Yearly Pivot (Muntha)</h6>
+            <div class="d-flex justify-content-between border-bottom border-white border-opacity-5 pb-2 mb-3">
+                <span class="small text-dim">Muntha Sign</span>
+                <span class="small fw-bold text-white">{{ yearly.muntha_rashi }}</span>
+            </div>
+            <div class="d-flex justify-content-between">
+                <span class="small text-dim">Progressed House</span>
+                <span class="small fw-bold text-gold">House {{ yearly.muntha_house }}</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- YEARLY CHART -->
+    <div class="col-lg-8">
+        <div class="card-vedic p-0 overflow-hidden shadow-2xl">
+            <div class="p-4 bg-black bg-opacity-20 border-bottom border-white border-opacity-5">
+                <span class="xsmall fw-black text-white tracking-widest uppercase">Solar Return Chart</span>
+            </div>
+            <div class="p-5 text-center bg-black bg-opacity-40">
+                <canvas id="yearlyCanvas" width="400" height="400" class="kundli-canvas mw-100" data-chart="{{ yearly | tojson | e }}"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- MUDDA DASHA -->
+<div class="mt-5">
+    <h4 class="text-white fw-black mb-4 tracking-tighter uppercase">Mudda Dasha (Yearly Timeline)</h4>
+    <div class="card-vedic p-0 overflow-hidden">
+        <div class="table-responsive">
+            <table class="table table-vedic mb-0 align-middle">
+                <thead>
+                    <tr class="xsmall text-dim border-bottom border-white border-opacity-5">
+                        <th class="px-5 py-4">PERIOD LORD</th>
+                        <th>START DATE</th>
+                        <th>END DATE</th>
+                        <th class="px-5 text-end">DURATION</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for m in mudda %}
+                    <tr class="border-bottom border-white border-opacity-5">
+                        <td class="px-5 py-4">
+                            <div class="d-flex align-items-center gap-3">
+                                <div class="planet-dot" style="background: {{ chart.planets[m.lord].color if chart.planets[m.lord] else '#fff' }}"></div>
+                                <span class="fw-bold text-white">{{ m.lord }}</span>
+                            </div>
+                        </td>
+                        <td class="font-mono text-white small">{{ m.start.strftime('%d %b %Y') }}</td>
+                        <td class="font-mono text-white small">{{ m.end.strftime('%d %b %Y') }}</td>
+                        <td class="px-5 text-end">
+                            <span class="xsmall text-dim fw-bold uppercase">{{ m.days|round(1) }} Days</span>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/chart.js') }}"></script>
+<script>
+    const yearlyData = {{ yearly | tojson }};
+    renderNorthIndianChart("yearlyCanvas", yearlyData.house_occupants, yearlyData.lagna.rashi, yearlyData.planets);
+</script>
+{% endblock %}

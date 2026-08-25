@@ -1,161 +1,163 @@
 {% extends "base.html" %}
 {% block title %}Transit — The Celestial Shift{% endblock %}
 
+{% block head %}
+<style>
+.transit-matrix-card {
+    background: radial-gradient(circle at bottom left, rgba(167, 139, 250, 0.05) 0%, transparent 60%);
+}
+
+.hover-scale-sm {
+    transition: var(--transition);
+}
+
+.hover-scale-sm:hover {
+    background: rgba(255, 255, 255, 0.02) !important;
+}
+
+.bi-wheel-btn.active {
+    background: var(--gold);
+    color: #000 !important;
+}
+</style>
+{% endblock %}
+
 {% block content %}
 <div class="page-header mb-5 d-flex justify-content-between align-items-end flex-wrap gap-4">
-  <div>
-    <span class="text-accent small fw-bold text-uppercase tracking-widest mb-2 d-block">Dynamic Geometry</span>
-    <h1 class="display-5 fw-black text-white mb-0">The <span class="text-gold">Transit Shift</span></h1>
-  </div>
-  {% if transit %}
-  <div class="text-end d-flex align-items-center gap-4">
-    <div class="card-vedic p-2 bg-glass d-flex align-items-center gap-3">
-       <div class="d-flex gap-1">
-         <button class="btn btn-outline-gold btn-sm" onclick="offsetDate(-1)"><i class="bi bi-chevron-left"></i></button>
-         <input type="date" id="tm-date-picker" value="{{ selected_date }}"
-                class="form-control form-control-sm bg-transparent border-0 text-white font-mono"
-                style="width: 140px" onchange="window.location.href='?date='+this.value">
-         <button class="btn btn-outline-gold btn-sm" onclick="offsetDate(1)"><i class="bi bi-chevron-right"></i></button>
-       </div>
+    <div>
+        <span class="text-accent small fw-bold text-uppercase tracking-widest mb-2 d-block">Dynamic Geometry</span>
+        <h1 class="display-5 fw-black text-white mb-0 tracking-tight">Transit <span class="text-gold">Shift</span></h1>
     </div>
-    <a href="{{ url_for('main.predictions') }}" class="btn btn-vedic px-4 py-2">
-      <i class="bi bi-magic me-2"></i>Daily Insights
-    </a>
-  </div>
-  {% endif %}
+    <div class="text-end d-flex align-items-center gap-4">
+        <div class="card-vedic p-2 d-flex align-items-center gap-3">
+            <div class="mode-tabs p-1">
+                <button class="kmt-btn p-2" onclick="offsetDate(-1)"><i class="bi bi-chevron-left"></i></button>
+                <input type="date" id="tm-date-picker" value="{{ selected_date }}"
+                       class="form-control-sm bg-transparent border-0 text-white font-mono fw-bold px-3"
+                       style="width: 140px; font-size: 0.8rem; outline: none" onchange="window.location.href='?date='+this.value">
+                <button class="kmt-btn p-2" onclick="offsetDate(1)"><i class="bi bi-chevron-right"></i></button>
+            </div>
+        </div>
+        <a href="{{ url_for('main.predictions') }}" class="btn-vedic text-decoration-none py-2 px-4 fs-6">
+            DAILY INSIGHTS
+        </a>
+    </div>
 </div>
 
 {% if transit %}
-{# ── Summary Metrics ────────────────────────────────────────────── #}
-<div class="row g-4 mb-5">
-  <div class="col-md-3">
-    <div class="card-vedic p-4 text-center border-dashed">
-       <div class="xsmall text-muted text-uppercase tracking-widest mb-2">Transit State</div>
-       <div class="h4 text-white mb-0 fw-bold">{{ transit.transit_time.split(' ')[0] }}</div>
-       <div class="xsmall text-gold mt-1 font-mono">Ayanamsa: {{ transit.ayanamsa }}°</div>
-    </div>
-  </div>
-  <div class="col-md-9">
-    <div class="card-vedic p-4 h-100 d-flex align-items-center justify-content-around">
-       {% set danger_count  = nak_house_map | selectattr('warning_level','eq','danger')  | list | length if nak_house_map else 0 %}
-       {% set warning_count = nak_house_map | selectattr('warning_level','eq','warning') | list | length if nak_house_map else 0 %}
-       {% set positive_count= nak_house_map | selectattr('warning_level','eq','positive')| list | length if nak_house_map else 0 %}
-
-       <div class="text-center">
-         <div class="h2 text-danger mb-0 fw-black">{{ danger_count }}</div>
-         <div class="xsmall text-muted tracking-widest">DANGER</div>
-       </div>
-       <div class="vr opacity-25"></div>
-       <div class="text-center">
-         <div class="h2 text-warning mb-0 fw-black">{{ warning_count }}</div>
-         <div class="xsmall text-muted tracking-widest">WARNING</div>
-       </div>
-       <div class="vr opacity-25"></div>
-       <div class="text-center">
-         <div class="h2 text-success mb-0 fw-black">{{ positive_count }}</div>
-         <div class="xsmall text-muted tracking-widest">POSITIVE</div>
-       </div>
-       <div class="vr opacity-25 d-none d-md-block"></div>
-       <div class="d-none d-md-block text-muted xsmall font-mono">
-          MAP BASIS: {{ 'NATAL HOUSES' if natal else 'TRANSIT HOUSES' }}
-       </div>
-    </div>
-  </div>
-</div>
-
 <div class="row g-5">
-  {# ── Left: Spatial Visuals ─────────────────────────────────────── #}
-  <div class="col-xl-4">
-    <div class="card-vedic mb-4 overflow-hidden">
-      <div class="card-vedic-header d-flex justify-content-between align-items-center">
-         <span class="text-white"><i class="bi bi-grid-3x3 me-2 text-gold"></i>Sky Snapshot</span>
-         {% if natal %}
-         <div class="btn-group btn-group-xs">
-           <button class="btn btn-outline-gold active px-3" onclick="switchTransitView('normal')" id="btn-view-normal">Simple</button>
-           <button class="btn btn-outline-gold px-3" onclick="switchTransitView('biwheel')" id="btn-view-biwheel">Bi-Wheel</button>
-         </div>
-         {% endif %}
-      </div>
-      <div class="card-vedic-body bg-black bg-opacity-25 p-4 text-center">
-        <canvas id="transitCanvas" width="440" height="440" class="kundli-canvas mw-100"
-                data-chart="{{ transit | tojson | e }}"
-                data-natal="{{ natal | tojson | e if natal else '' }}"></canvas>
-      </div>
+    <!-- ── Left: Spatial Visuals ─────────────────────────────────────── -->
+    <div class="col-xl-4">
+        <div class="card-vedic mb-4 p-0 overflow-hidden shadow-2xl border-white border-opacity-5">
+            <div class="p-4 d-flex justify-content-between align-items-center border-bottom border-white border-opacity-5 bg-black bg-opacity-20">
+                <span class="xsmall fw-black text-white tracking-widest uppercase"><i class="bi bi-grid-3x3 me-2 text-gold"></i>Sky Snapshot</span>
+                {% if natal %}
+                <div class="mode-tabs p-1">
+                    <button class="kmt-btn active px-3 py-1 xsmall" onclick="switchTransitView('normal')" id="btn-view-normal">Simple</button>
+                    <button class="kmt-btn px-3 py-1 xsmall" onclick="switchTransitView('biwheel')" id="btn-view-biwheel">Bi-Wheel</button>
+                </div>
+                {% endif %}
+            </div>
+            <div class="p-5 text-center bg-black bg-opacity-40">
+                <canvas id="transitCanvas" width="440" height="440" class="kundli-canvas mw-100"
+                        data-chart="{{ transit | tojson | e }}"
+                        data-natal="{{ natal | tojson | e if natal else '' }}"></canvas>
+            </div>
+        </div>
+
+        {# 12-Month Heatmap #}
+        {% if natal %}
+        <div class="card-vedic p-5 shadow-lg border-white border-opacity-5">
+            <div class="d-flex align-items-center justify-content-between mb-5 px-1">
+                <h6 class="text-white fw-black tracking-widest uppercase opacity-50 mb-0">Cosmic Intensity</h6>
+                <span class="xsmall text-gold fw-bold font-mono">12M HORIZON</span>
+            </div>
+            <div class="row g-2" id="transit-heatmap-container">
+                <!-- JS Render -->
+            </div>
+        </div>
+        {% endif %}
     </div>
 
-    {# 12-Month Heatmap #}
-    {% if natal %}
-    <div class="card-vedic p-4">
-       <div class="d-flex align-items-center justify-content-between mb-4">
-          <h6 class="text-white mb-0 fw-bold"><i class="bi bi-calendar-range me-2 text-gold"></i>Cosmic Intensity</h6>
-          <span class="xsmall text-muted font-mono">12M HORIZON</span>
-       </div>
-       <div class="row g-2" id="transit-heatmap-container">
-          <!-- JS Render -->
-       </div>
-    </div>
-    {% endif %}
-  </div>
+    <!-- ── Right: Analytical Map ────────────────────────────────────── -->
+    <div class="col-xl-8">
+        <div class="card-vedic p-0 overflow-hidden shadow-2xl border-white border-opacity-5 transit-matrix-card">
+            <div class="p-4 border-bottom border-white border-opacity-5 bg-black bg-opacity-20 d-flex justify-content-between align-items-center">
+                <h5 class="mb-0 text-white fw-black tracking-tight"><i class="bi bi-map-fill me-2 text-gold"></i>Transit-Natal Synergy</h5>
+                <span class="badge bg-gold text-dark xsmall fw-black tracking-widest uppercase">Matrix Active</span>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-vedic mb-0 align-middle">
+                    <thead>
+                        <tr class="xsmall text-dim border-bottom border-white border-opacity-5">
+                            <th class="px-5 py-4">GRAHA</th>
+                            <th>POSITION</th>
+                            <th>NAKSHATRA</th>
+                            <th class="text-center">NATAL HOUSE</th>
+                            <th class="px-5 text-end">RESONANCE</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for row in nak_house_map %}
+                        <tr class="hover-scale-sm border-bottom border-white border-opacity-5">
+                            <td class="px-5 py-4">
+                                <div class="d-flex align-items-center gap-3">
+                                    <span class="planet-dot" style="background:{{ row.color }}; width: 10px; height: 10px"></span>
+                                    <span class="fw-black text-white uppercase tracking-tight">{{ row.planet }}</span>
+                                    {% if row.retrograde %}<span class="xsmall text-danger fw-black ms-1">℞</span>{% endif %}
+                                </div>
+                            </td>
+                            <td class="font-mono xsmall fw-bold text-dim">
+                                <div class="text-white">{{ row.dms }}</div>
+                                <div class="opacity-50" style="font-size: 0.6rem">{{ row.rashi | upper }}</div>
+                            </td>
+                            <td>
+                                <div class="badge bg-white bg-opacity-5 text-white border border-white border-opacity-10 xsmall px-2 py-1 mb-1 fw-bold">{{ row.nakshatra | upper }}</div>
+                                <div class="xsmall text-dim italic opacity-50" style="font-size: 0.65rem">{{ row.nak_lord }} ruled</div>
+                            </td>
+                            <td class="text-center">
+                                {% if row.natal_house %}
+                                <div class="h5 mb-0 fw-black text-{{ 'danger' if row.warning_level == 'danger' else 'warning' if row.warning_level == 'warning' else 'success' if row.warning_level == 'positive' else 'white' }}">
+                                    {{ row.natal_house }}
+                                </div>
+                                {% else %}
+                                <span class="text-dim opacity-20">—</span>
+                                {% endif %}
+                            </td>
+                            <td class="px-5 text-end">
+                                <span class="badge border border-white border-opacity-5
+                                      bg-{{ 'danger' if row.warning_level == 'danger' else 'warning' if row.warning_level == 'warning' else 'success' if row.warning_level == 'positive' else 'secondary' }} bg-opacity-10
+                                      text-{{ 'danger' if row.warning_level == 'danger' else 'warning' if row.warning_level == 'warning' else 'success' if row.warning_level == 'positive' else 'white' }} xsmall fw-black tracking-widest uppercase">
+                                    {{ row.warning_level }}
+                                </span>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
 
-  {# ── Right: Analytical Map ────────────────────────────────────── #}
-  <div class="col-xl-8">
-    <div class="card-vedic overflow-hidden">
-      <div class="card-vedic-header border-0 bg-transparent px-4 py-4">
-         <h5 class="mb-0 text-white fw-bold"><i class="bi bi-map-fill me-2 text-gold"></i>Transit-Natal Synergy Map</h5>
-      </div>
-      <div class="table-responsive">
-         <table class="table table-vedic mb-0 align-middle">
-           <thead>
-             <tr class="xsmall text-muted border-bottom border-secondary border-opacity-25">
-               <th class="border-0 px-4">GRAHA</th>
-               <th class="border-0">POSITION</th>
-               <th class="border-0">NAKSHATRA</th>
-               <th class="border-0 text-center">NATAL HOUSE</th>
-               <th class="border-0 px-4 text-end">RESONANCE</th>
-             </tr>
-           </thead>
-           <tbody>
-             {% for row in nak_house_map %}
-             <tr class="border-bottom border-secondary border-opacity-10
-                       bg-{{ 'danger' if row.warning_level == 'danger' else 'warning' if row.warning_level == 'warning' else 'success' if row.warning_level == 'positive' else '' }} bg-opacity-0">
-               <td class="border-0 px-4 py-3">
-                  <div class="d-flex align-items-center gap-3">
-                    <span class="planet-dot" style="background:{{ row.color }}"></span>
-                    <span class="fw-bold text-white">{{ row.planet }}</span>
-                    {% if row.retrograde %}<span class="xsmall text-danger">℞</span>{% endif %}
-                  </div>
-               </td>
-               <td class="border-0 font-mono small">
-                  <div class="text-white">{{ row.dms }}</div>
-                  <div class="xsmall text-muted">{{ row.rashi }}</div>
-               </td>
-               <td class="border-0">
-                  <div class="badge bg-secondary bg-opacity-25 text-white border border-secondary xsmall px-2 py-1 mb-1">{{ row.nakshatra }}</div>
-                  <div class="xsmall text-muted font-italic">{{ row.nak_lord }} ruled</div>
-               </td>
-               <td class="border-0 text-center">
-                  {% if row.natal_house %}
-                  <div class="h5 mb-0 fw-black text-{{ 'danger' if row.warning_level == 'danger' else 'warning' if row.warning_level == 'warning' else 'success' if row.warning_level == 'positive' else 'white' }}">
-                    {{ row.natal_house }}
-                  </div>
-                  {% else %}
-                  <span class="text-muted opacity-25">—</span>
-                  {% endif %}
-               </td>
-               <td class="border-0 px-4 text-end">
-                  <span class="badge border border-{{ 'danger' if row.warning_level == 'danger' else 'warning' if row.warning_level == 'warning' else 'success' if row.warning_level == 'positive' else 'secondary' }}
-                        bg-{{ 'danger' if row.warning_level == 'danger' else 'warning' if row.warning_level == 'warning' else 'success' if row.warning_level == 'positive' else 'secondary' }} bg-opacity-10
-                        text-{{ 'danger' if row.warning_level == 'danger' else 'warning' if row.warning_level == 'warning' else 'success' if row.warning_level == 'positive' else 'white' }} xsmall">
-                    {{ row.warning_level | upper }}
-                  </span>
-               </td>
-             </tr>
-             {% endfor %}
-           </tbody>
-         </table>
-      </div>
+        {# Vedha Alerts Section #}
+        {% if vedha_alerts %}
+        <div class="mt-5">
+            <h6 class="text-white fw-black tracking-widest uppercase opacity-50 mb-4 px-1">Structural Obstructions (Vedha)</h6>
+            <div class="row g-4">
+                {% for alert in vedha_alerts %}
+                <div class="col-md-6">
+                    <div class="p-4 rounded-4 bg-danger bg-opacity-5 border border-danger border-opacity-10 d-flex gap-4 align-items-center">
+                        <i class="bi bi-shield-x text-danger fs-3 opacity-50"></i>
+                        <div>
+                            <div class="small fw-bold text-white">{{ alert.planet }} is obstructed</div>
+                            <p class="xsmall text-dim mb-0">Blocked by {{ alert.obstructing_planet }} in H{{ alert.obstructing_house }}.</p>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
     </div>
-  </div>
 </div>
 {% endif %}
 {% endblock %}
@@ -197,9 +199,9 @@ function offsetDate(days) {
         const col = document.createElement("div");
         col.className = "col-4 col-md-3";
         col.innerHTML = `
-          <div class="p-2 rounded border border-secondary text-center" style="background:rgba(255,255,255,0.02); cursor:pointer" onclick="window.location.href='?date=${m.date}'">
-            <div class="xsmall text-muted mb-1">${m.month}</div>
-            <div class="fw-bold ${m.score >= 65 ? 'text-success' : m.score >= 45 ? 'text-warning' : 'text-danger'}">${m.score}%</div>
+          <div class="p-2 rounded-3 border border-white border-opacity-5 text-center transition-all hover-scale" style="background:rgba(255,255,255,0.02); cursor:pointer" onclick="window.location.href='?date=${m.date}'">
+            <div class="xsmall text-dim mb-1 fw-black uppercase opacity-50" style="font-size: 0.55rem">${m.month}</div>
+            <div class="fw-black xsmall ${m.score >= 65 ? 'text-success' : m.score >= 45 ? 'text-warning' : 'text-danger'}">${m.score}%</div>
           </div>
         `;
         container.appendChild(col);

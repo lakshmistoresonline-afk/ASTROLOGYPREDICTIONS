@@ -1,0 +1,345 @@
+{% extends "base.html" %}
+{% block title %}Celestial Command — Jyotish OS{% endblock %}
+
+{% block head %}
+<style>
+/* --- Best Possible Dashboard Stylings --- */
+.hero-pulse {
+    background: radial-gradient(circle at 50% 50%, rgba(251, 191, 36, 0.05) 0%, transparent 70%);
+    padding: 60px 0;
+    margin-bottom: 40px;
+    border-bottom: 1px solid var(--border);
+}
+
+.command-orb-container {
+    position: relative;
+    width: 280px;
+    height: 280px;
+    margin: 0 auto;
+}
+
+.orb-rings {
+    position: absolute;
+    inset: -20px;
+    border: 1px solid var(--gold-glow);
+    border-radius: 50%;
+    animation: rotate 20s linear infinite;
+}
+
+.orb-rings::after {
+    content: '';
+    position: absolute;
+    inset: 20px;
+    border: 1px dashed rgba(255,255,255,0.05);
+    border-radius: 50%;
+    animation: rotate 15s linear reverse infinite;
+}
+
+@keyframes rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+.main-resonance-orb {
+    width: 100%; height: 100%;
+    border-radius: 50%;
+    background: rgba(0,0,0,0.4);
+    backdrop-filter: blur(10px);
+    border: 2px solid var(--score-color);
+    box-shadow: 0 0 60px -10px var(--score-color);
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    position: relative; z-index: 5;
+}
+
+.orb-score { font-size: 5rem; font-weight: 900; color: #fff; line-height: 1; letter-spacing: -2px; }
+.orb-label { font-size: 0.8rem; font-weight: 800; color: var(--score-color); letter-spacing: 4px; margin-top: 10px; }
+
+.live-feed-pill {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid var(--border);
+    padding: 12px 24px;
+    border-radius: 100px;
+    display: inline-flex;
+    align-items: center; gap: 15px;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.bhava-card-mini {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 20px;
+    transition: var(--transition);
+    cursor: pointer;
+    height: 100%;
+}
+
+.bhava-card-mini:hover {
+    border-color: var(--gold);
+    transform: scale(1.02);
+    background: rgba(251, 191, 36, 0.02);
+}
+
+.bhava-card-mini .h-num {
+    width: 28px; height: 28px;
+    background: rgba(255,255,255,0.05);
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 900; font-size: 0.75rem; color: var(--gold);
+    margin-bottom: 15px;
+}
+
+.pulse-card {
+    background: linear-gradient(135deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0.01) 100%);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 30px;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- HERO: THE COSMIC PULSE -->
+<div class="hero-pulse text-center">
+    <div class="mb-4">
+        <span class="live-feed-pill">
+            <i class="bi bi-broadcast text-danger pulse"></i>
+            LIVE ENVIRONMENT: {{ preds.panchang.sun_rashi.name }} SUN · {{ preds.panchang.moon_rashi.name }} MOON
+        </span>
+    </div>
+
+    <div class="command-orb-container mb-5">
+        <div class="orb-rings"></div>
+        <div class="main-resonance-orb" style="--score-color: {{ preds.score_color }}">
+            <span class="orb-score">{{ preds.score }}</span>
+            <span class="orb-label">{{ preds.score_label.upper() }}</span>
+        </div>
+    </div>
+
+    <div class="max-width-800 mx-auto px-4">
+        <h2 class="fw-black text-white mb-2 tracking-tighter">Namaste, {{ session.get('birth_name', 'Native') }}</h2>
+        <p class="text-dim leading-relaxed">The celestial grid shows a <strong>{{ preds.score_label.lower() }}</strong> resonance today. Focus on {{ preds.panchang.vara.lord }}'s frequency for optimal alignment.</p>
+    </div>
+</div>
+
+<div class="container-fluid px-0">
+    <div class="row g-4 mb-5">
+        <!-- LEFT COLUMN: MAIN INTEL -->
+        <div class="col-xl-8">
+            <div class="pulse-card h-100">
+                <div class="d-flex justify-content-between align-items-center mb-5">
+                    <h5 class="text-white fw-bold mb-0 opacity-50 tracking-widest uppercase">Live Sky Intelligence</h5>
+                    <span class="xsmall text-gold fw-bold font-mono">{{ preds.panchang.date }}</span>
+                </div>
+
+                <div class="row g-4">
+                    <div class="col-6 col-md-3">
+                        <div class="text-center p-3 rounded-4 bg-white bg-opacity-5 border border-white border-opacity-5">
+                            <i class="bi bi-sunrise text-gold fs-3 mb-2 d-block"></i>
+                            <div class="xsmall text-dim uppercase">Sunrise</div>
+                            <div class="small fw-bold text-white">{{ preds.sky.sunrise }}</div>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <div class="text-center p-3 rounded-4 bg-white bg-opacity-5 border border-white border-opacity-5">
+                            <i class="bi bi-sunset text-accent fs-3 mb-2 d-block"></i>
+                            <div class="xsmall text-dim uppercase">Sunset</div>
+                            <div class="small fw-bold text-white">{{ preds.sky.sunset }}</div>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <div class="text-center p-3 rounded-4 bg-white bg-opacity-5 border border-white border-opacity-5">
+                            <i class="bi bi-moon-stars text-white-50 fs-3 mb-2 d-block"></i>
+                            <div class="xsmall text-dim uppercase">Tithi</div>
+                            <div class="small fw-bold text-white">{{ preds.panchang.tithi.name }}</div>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <div class="text-center p-3 rounded-4 bg-white bg-opacity-5 border border-white border-opacity-5">
+                            <i class="bi bi-clock text-warning fs-3 mb-2 d-block"></i>
+                            <div class="xsmall text-dim uppercase">Hora</div>
+                            <div class="small fw-bold text-white">{{ preds.panchang.current_hora }}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-5 p-4 rounded-4 bg-danger bg-opacity-10 border border-danger border-opacity-20 d-flex justify-content-between align-items-center">
+                    <div>
+                        <div class="xsmall text-danger fw-black tracking-widest uppercase mb-1">Critical Window: Rahu Kaal</div>
+                        <div class="h5 fw-black text-white mb-0 font-mono">{{ preds.sky.rahu_kaal }}</div>
+                    </div>
+                    <i class="bi bi-exclamation-octagon fs-2 text-danger opacity-50"></i>
+                </div>
+
+                <div class="mt-4 row g-4">
+                    <div class="col-md-6">
+                        <div class="p-4 rounded-4 bg-success bg-opacity-10 border border-success border-opacity-20 h-100">
+                            <h6 class="text-white fw-bold mb-4 opacity-50 tracking-widest uppercase">Muhurta Advisory</h6>
+                            <div class="d-flex flex-column gap-3">
+                                {% for m in preds.muhurta_highlights %}
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div class="small fw-bold text-white">{{ m.name }}</div>
+                                    <span class="badge bg-success text-dark xxsmall fw-black">{{ m.status }}</span>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="p-4 rounded-4 bg-info bg-opacity-10 border border-info border-opacity-20 h-100">
+                             <h6 class="text-white fw-bold mb-4 opacity-50 tracking-widest uppercase">Activity Phase</h6>
+                             <div class="d-flex align-items-center gap-3">
+                                 <div class="fs-2">🦅</div>
+                                 <div>
+                                     <div class="small fw-black text-white uppercase">{{ preds.panchapakshi.bird }}</div>
+                                     <div class="xxsmall text-info fw-bold">{{ preds.panchapakshi.activity.upper() }}</div>
+                                 </div>
+                             </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- RIGHT COLUMN: AI & SYNTHESIS -->
+        <div class="col-xl-4">
+            <div class="card-vedic bg-gold-gradient text-dark border-0 p-5 d-flex flex-column justify-content-between mb-4">
+                <div>
+                    <h6 class="fw-black tracking-widest uppercase mb-4 opacity-50">AI Oracle Insight</h6>
+                    <p class="h5 fw-bold leading-relaxed mb-0 italic">"{{ preds.ai_note or 'The cosmic tides suggest a period of focused action.' }}"</p>
+                </div>
+                <div class="mt-5 pt-4 border-top border-dark border-opacity-10 d-flex justify-content-between align-items-center">
+                    <span class="xsmall fw-black font-mono">LOCAL LLM ACTIVE</span>
+                    <i class="bi bi-fingerprint fs-4"></i>
+                </div>
+            </div>
+
+            <div class="pulse-card border-gold border-opacity-20 mb-4" style="background: rgba(251, 191, 36, 0.02)">
+                <h6 class="text-white fw-bold mb-4 opacity-50 uppercase tracking-widest">Karmic Quests</h6>
+                <div class="d-flex flex-column gap-3">
+                    {% for q in preds.active_quests %}
+                    <div class="p-3 rounded-4 bg-white bg-opacity-5 border border-white border-opacity-5">
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="badge bg-gold text-dark xxsmall fw-black">{{ q.planet|upper }}</span>
+                            <i class="bi bi-trophy text-gold opacity-50 xsmall"></i>
+                        </div>
+                        <p class="xxsmall text-white fw-bold mb-1">{{ q.quest.split(':')[0] }}</p>
+                        <p class="xxsmall text-dim mb-0">{{ q.quest.split(':')[1]|truncate(80) }}</p>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- NEW: KARMIC ALERTS (RETROGRADE) -->
+            {% if preds.karmic_alerts %}
+            <div class="pulse-card border-danger border-opacity-20 mb-4" style="background: rgba(220, 38, 38, 0.02)">
+                <h6 class="text-white fw-bold mb-4 opacity-50 uppercase tracking-widest">Karmic Alerts</h6>
+                <div class="d-flex flex-column gap-3">
+                    {% for alert in preds.karmic_alerts %}
+                    <div class="d-flex gap-3 align-items-center">
+                        <div class="xsmall fw-black text-danger">℞</div>
+                        <p class="xxsmall text-dim mb-0 leading-relaxed">{{ alert.interpretation }}</p>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+
+            <div class="pulse-card bg-accent bg-opacity-5 border-accent border-opacity-20">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h6 class="text-white fw-bold mb-0 opacity-50 uppercase tracking-widest">Cosmic DNA</h6>
+                    <a href="{{ url_for('main.cosmic_dna') }}" class="btn btn-link text-accent p-0 xsmall fw-bold text-decoration-none">DECODE <i class="bi bi-dna"></i></a>
+                </div>
+                <div class="d-flex flex-column gap-2">
+                    <div class="d-flex justify-content-between">
+                        <span class="xsmall text-dim">Day Master</span>
+                        <span class="xsmall fw-bold text-white">{{ preds.advanced_metrics.bazi_pillars.day_master }}</span>
+                    </div>
+                    <div class="d-flex justify-content-between">
+                        <span class="xsmall text-dim">HD Type</span>
+                        <span class="xsmall fw-bold text-white">{{ preds.advanced_metrics.human_design.type }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- BHAVA INTELLIGENCE GRID -->
+    <div class="mb-5">
+        <h4 class="text-white fw-black mb-4 tracking-tighter">BHAVA INTELLIGENCE</h4>
+        <div class="row g-3">
+            {% for h in preds.bhava_analysis %}
+            <div class="col-6 col-md-4 col-lg-3 col-xl-2">
+                <div class="bhava-card-mini" onclick="window.location.href='{{ url_for('main.kundli') }}#bhava{{ h.house }}'">
+                    <div class="h-num">{{ h.house }}</div>
+                    <div class="small fw-black text-white text-truncate">{{ h.domain.split(',')[0] }}</div>
+                    <div class="xsmall text-dim mb-3">{{ h.sign_name }}</div>
+
+                    <div class="d-flex justify-content-between align-items-end">
+                        <div class="xsmall text-gold fw-bold">{{ h.strength_score }}%</div>
+                        <div class="progress bg-white bg-opacity-5 rounded-1 w-25" style="height: 4px !important;">
+                            <div class="progress-bar bg-gold" style="width: {{ h.strength_score }}%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- TEMPORAL PROGRESSION -->
+    <div class="mb-5">
+        <div class="d-flex justify-content-between align-items-end mb-4">
+            <h4 class="text-white fw-black mb-0 tracking-tighter">TEMPORAL PROGRESSION</h4>
+            <a href="{{ url_for('main.dasha') }}" class="btn btn-link text-gold xsmall fw-bold text-decoration-none">DETAILED DASHA <i class="bi bi-arrow-right"></i></a>
+        </div>
+        <div class="timeline-scroll-container">
+            <div class="d-flex gap-4">
+                {% for item in preds.timeline %}
+                <div class="timeline-card {{ 'active' if 'Current' in item.period else '' }}">
+                    <div class="xsmall text-gold opacity-50 mb-2">{{ item.start }} — {{ item.end }}</div>
+                    <h6 class="text-white fw-bold mb-3">{{ item.period }}</h6>
+                    <div class="theme-badge mb-3">{{ item.theme }}</div>
+                    <ul class="list-unstyled mb-0">
+                        {% for ev in item.events %}
+                        <li class="xsmall text-dim mb-1 d-flex gap-2">
+                            <i class="bi bi-star-fill text-gold opacity-30" style="font-size: 0.5rem; margin-top: 0.2rem"></i> {{ ev }}
+                        </li>
+                        {% endfor %}
+                    </ul>
+                    {% if 'Current' in item.period %}
+                    <div class="current-marker">ACTIVE</div>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <!-- PREDICTION VECTORS -->
+    <div class="row g-4">
+        {% for cat, domains in preds.categorized_domains.items() %}
+        <div class="col-md-6 col-xl-3">
+            <div class="card-vedic p-4 h-100 d-flex flex-column shadow-lg">
+                <div class="d-flex align-items-center gap-2 mb-4 opacity-50">
+                    <i class="bi bi-{{ 'stars' if cat == 'Essence' else 'bank' if cat == 'Material' else 'people' if cat == 'Social' else 'shield-pulse' }}"></i>
+                    <h6 class="text-white fw-bold mb-0 uppercase tracking-widest">{{ cat }}</h6>
+                </div>
+
+                <div class="flex-grow-1 d-flex flex-column gap-4">
+                    {% for d in domains[:3] %}
+                    <div class="cursor-pointer" onclick="window.location.href='{{ url_for('main.predictions') }}?category={{ cat }}'">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span class="small fw-bold text-white">{{ d.domain }}</span>
+                            <span class="xsmall text-gold fw-bold">{{ d.score|int }}%</span>
+                        </div>
+                        <div class="vector-bar"><div class="fill" style="width: {{ d.score }}%; background: {{ '#16a34a' if d.score >= 65 else '#d97706' if d.score >= 45 else '#dc2626' }}"></div></div>
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <a href="{{ url_for('main.predictions') }}?category={{ cat }}" class="btn btn-outline-secondary w-100 mt-5 py-2 xsmall fw-bold border-white border-opacity-5">EXPLORE {{ cat|upper }}</a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

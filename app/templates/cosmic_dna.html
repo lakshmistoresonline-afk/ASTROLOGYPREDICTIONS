@@ -1,0 +1,213 @@
+{% extends "base.html" %}
+{% block title %}Cosmic DNA — The Multiversal Signature{% endblock %}
+
+{% block head %}
+<style>
+.dna-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 25px;
+}
+
+.tradition-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 35px;
+    position: relative;
+    overflow: hidden;
+    transition: var(--transition);
+}
+
+.tradition-card:hover {
+    border-color: var(--gold-glow);
+    transform: translateY(-5px);
+    box-shadow: 0 15px 40px -10px rgba(0,0,0,0.6);
+}
+
+.tradition-card::before {
+    content: '';
+    position: absolute;
+    top: 0; right: 0;
+    width: 100px; height: 100px;
+    background: radial-gradient(circle at top right, var(--accent-glow), transparent 70%);
+    opacity: 0.1;
+}
+
+.tradition-icon {
+    font-size: 2.5rem;
+    margin-bottom: 25px;
+    display: block;
+}
+
+.tradition-title {
+    font-family: 'Cinzel', serif;
+    font-weight: 800;
+    letter-spacing: 2px;
+    color: var(--gold);
+    margin-bottom: 20px;
+    font-size: 1rem;
+    text-transform: uppercase;
+}
+
+.dna-stat {
+    display: flex;
+    justify-content: space-between;
+    padding-bottom: 12px;
+    margin-bottom: 12px;
+    border-bottom: 1px solid rgba(255,255,255,0.03);
+}
+
+.dna-label { font-size: 0.75rem; color: var(--text-dim); text-transform: uppercase; font-weight: 700; }
+.dna-value { font-size: 0.85rem; color: #fff; font-weight: 600; text-align: right; }
+
+.bazi-pill {
+    padding: 10px;
+    border-radius: 12px;
+    background: rgba(255,255,255,0.03);
+    text-align: center;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="mb-5">
+    <span class="text-gold xsmall fw-black tracking-widest mb-2 d-block">CROSS-TRADITION SYNTHESIS</span>
+    <h1 class="display-5 fw-black text-white mb-2">Cosmic <span class="text-gold">DNA</span></h1>
+    <p class="text-dim">A unified archetype decoded from the world's most powerful metaphysical systems.</p>
+</div>
+
+<div class="dna-grid">
+    <!-- VEDIC foundation -->
+    <div class="tradition-card">
+        <span class="tradition-icon">🕉️</span>
+        <h6 class="tradition-title">Vedic Foundation</h6>
+        <div class="dna-stat">
+            <span class="dna-label">Birth Lagna</span>
+            <span class="dna-value text-gold">{{ dna.vedic.lagna }}</span>
+        </div>
+        <div class="dna-stat">
+            <span class="dna-label">Moon Rashi</span>
+            <span class="dna-value">{{ dna.vedic.moon }}</span>
+        </div>
+        <div class="dna-stat">
+            <span class="dna-label">Atmakaraka</span>
+            <span class="dna-value">{{ dna.vedic.atmakaraka }}</span>
+        </div>
+        <div class="dna-stat border-0">
+            <span class="dna-label">Luck Planet</span>
+            <span class="dna-value text-success">{{ dna.vedic.yogi }}</span>
+        </div>
+    </div>
+
+    <!-- HUMAN DESIGN -->
+    <div class="tradition-card">
+        <span class="tradition-icon">🧬</span>
+        <h6 class="tradition-title">Human Design</h6>
+        <div class="dna-stat">
+            <span class="dna-label">Type</span>
+            <span class="dna-value text-accent">{{ dna.human_design.type }}</span>
+        </div>
+        <div class="dna-stat">
+            <span class="dna-label">Profile</span>
+            <span class="dna-value">{{ dna.human_design.profile }}</span>
+        </div>
+        <div class="dna-stat">
+            <span class="dna-label">Authority</span>
+            <span class="dna-value">{{ dna.human_design.authority }}</span>
+        </div>
+        <div class="dna-stat border-0">
+            <span class="dna-label">Incarnation Cross</span>
+            <span class="dna-value xsmall">{{ dna.human_design.incarnation_cross }}</span>
+        </div>
+    </div>
+
+    <!-- BAZI FOUR PILLARS -->
+    <div class="tradition-card">
+        <span class="tradition-icon">⛩️</span>
+        <h6 class="tradition-title">Bazi Signature</h6>
+        <div class="row g-2 mb-3">
+            <div class="col-6">
+                <div class="bazi-pill">
+                    <div class="dna-label mb-1">Day Master</div>
+                    <div class="dna-value text-center">{{ dna.bazi.day_master }}</div>
+                </div>
+            </div>
+            <div class="col-6">
+                <div class="bazi-pill">
+                    <div class="dna-label mb-1">Key Element</div>
+                    <div class="dna-value text-center">{{ dna.bazi.self_element }}</div>
+                </div>
+            </div>
+        </div>
+        <div class="dna-stat border-0">
+            <span class="dna-label">Structure</span>
+            <span class="dna-value">{{ dna.bazi.structure or 'Balanced Flow' }}</span>
+        </div>
+    </div>
+
+    <!-- MAYAN TZOLKIN -->
+    <div class="tradition-card">
+        <span class="tradition-icon">🎭</span>
+        <h6 class="tradition-title">Mayan Tzolkin</h6>
+        <div class="dna-stat">
+            <span class="dna-label">Solar Seal</span>
+            <span class="dna-value text-gold">{{ dna.maya.seal }}</span>
+        </div>
+        <div class="dna-stat">
+            <span class="dna-label">Lunar Tone</span>
+            <span class="dna-value">{{ dna.maya.tone }}</span>
+        </div>
+        <div class="dna-stat border-0">
+            <span class="dna-label">Galactic Signature</span>
+            <span class="dna-value xsmall">Kin {{ dna.maya.kin_number }}</span>
+        </div>
+    </div>
+
+    <!-- TIBETAN & CELTIC -->
+    <div class="tradition-card">
+        <span class="tradition-icon">🏔️</span>
+        <h6 class="tradition-title">Eastern & Celtic</h6>
+        <div class="dna-stat">
+            <span class="dna-label">Tibetan Mewa</span>
+            <span class="dna-value">{{ dna.tibetan.mewa }} ({{ dna.tibetan.parkha }})</span>
+        </div>
+        <div class="dna-stat">
+            <span class="dna-label">Celtic Tree</span>
+            <span class="dna-value">{{ dna.celtic.tree }}</span>
+        </div>
+        <div class="dna-stat border-0">
+            <span class="dna-label">Native Totem</span>
+            <span class="dna-value">{{ dna.native_american.totem }}</span>
+        </div>
+    </div>
+
+    <!-- ESOTERIC NUMEROLOGY -->
+    <div class="tradition-card">
+        <span class="tradition-icon">🔢</span>
+        <h6 class="tradition-title">Numerical Blueprint</h6>
+        <div class="dna-stat">
+            <span class="dna-label">Life Path</span>
+            <span class="dna-value text-gold fw-black">{{ dna.numerology.life_path }}</span>
+        </div>
+        <div class="dna-stat">
+            <span class="dna-label">Destiny Number</span>
+            <span class="dna-value">{{ dna.numerology.destiny }}</span>
+        </div>
+        <div class="dna-stat border-0">
+            <span class="dna-label">I-Ching Hexagram</span>
+            <span class="dna-value xsmall">Hexagram {{ dna.iching.number if dna.iching else '??' }}</span>
+        </div>
+    </div>
+</div>
+
+<div class="mt-5 text-center p-5 rounded-4 bg-white bg-opacity-5 border border-white border-opacity-5">
+    <h5 class="fw-black text-white mb-3">SYNTHESIZED ARCHETYPE</h5>
+    <p class="h3 fw-black text-gold mb-4 uppercase">The {{ dna.human_design.type }} of {{ dna.vedic.lagna }}</p>
+    <p class="text-dim max-width-800 mx-auto leading-relaxed">
+        Your Multiversal Signature combines the traditional authority of <strong>{{ dna.vedic.lagna }}</strong> with the energetic efficiency of a <strong>{{ dna.human_design.type }}</strong>.
+        Guided by the <strong>{{ dna.maya.seal }}</strong> solar energy and the wisdom of the <strong>{{ dna.celtic.tree }}</strong>, you are built for
+        <strong>{{ dna.human_design.profile }}</strong> life path expression.
+    </p>
+</div>
+{% endblock %}

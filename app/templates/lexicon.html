@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+{% block title %}Lexicon — Metaphysical Encyclopedia{% endblock %}
+
+{% block head %}
+<style>
+.lexicon-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 20px;
+}
+
+.term-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 25px;
+    transition: var(--transition);
+}
+
+.term-card:hover {
+    border-color: var(--gold-glow);
+    background: rgba(251, 191, 36, 0.02);
+}
+
+.term-name {
+    font-family: 'Inter', sans-serif;
+    font-weight: 800;
+    color: var(--gold);
+    margin-bottom: 10px;
+    font-size: 1.1rem;
+    letter-spacing: -0.5px;
+}
+
+.term-def {
+    font-size: 0.85rem;
+    color: var(--text-dim);
+    line-height: 1.6;
+}
+
+.search-container-lex {
+    max-width: 600px;
+    margin: 0 auto 50px;
+    position: relative;
+}
+
+.search-input-lex {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid var(--border);
+    border-radius: 100px;
+    padding: 15px 30px 15px 60px;
+    color: #fff;
+    width: 100%;
+    font-weight: 500;
+}
+
+.search-icon-lex {
+    position: absolute;
+    left: 25px; top: 50%;
+    transform: translateY(-50%);
+    color: var(--gold);
+    opacity: 0.5;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="text-center mb-5">
+    <span class="text-gold xsmall fw-black tracking-widest mb-2 d-block">KNOWLEDGE BASE</span>
+    <h1 class="display-5 fw-black text-white mb-2">Metaphysical <span class="text-gold">Lexicon</span></h1>
+    <p class="text-dim">Demystifying the complex terminology of the Jyotish and Occult sciences.</p>
+</div>
+
+<div class="search-container-lex">
+    <i class="bi bi-search search-icon-lex"></i>
+    <input type="text" id="lex-search" class="search-input-lex" placeholder="Search for a term (e.g. Atmakaraka, SAV...)" oninput="filterLexicon()">
+</div>
+
+<div class="lexicon-grid" id="lexicon-container">
+    {% for term, definition in terms.items() %}
+    <div class="term-card">
+        <div class="term-name">{{ term }}</div>
+        <div class="term-def">{{ definition }}</div>
+    </div>
+    {% endfor %}
+</div>
+
+<script>
+function filterLexicon() {
+    const q = document.getElementById('lex-search').value.toLowerCase();
+    const cards = document.querySelectorAll('.term-card');
+    cards.forEach(card => {
+        const name = card.querySelector('.term-name').innerText.toLowerCase();
+        const def = card.querySelector('.term-def').innerText.toLowerCase();
+        if (name.includes(q) || def.includes(q)) {
+            card.style.display = 'block';
+        } else {
+            card.style.display = 'none';
+        }
+    });
+}
+</script>
+{% endblock %}

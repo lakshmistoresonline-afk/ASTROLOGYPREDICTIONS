@@ -1,0 +1,121 @@
+{% extends "base.html" %}
+{% block title %}Life Calendar — Timing Synthesis{% endblock %}
+
+{% block head %}
+<style>
+.bio-bar-container {
+    height: 120px;
+    display: flex;
+    align-items: flex-end;
+    gap: 30px;
+    justify-content: center;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--border);
+}
+
+.bio-column {
+    width: 60px;
+    text-align: center;
+}
+
+.bio-fill {
+    width: 100%;
+    border-radius: 8px 8px 0 0;
+    transition: height 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.flow-card {
+    background: rgba(255,255,255,0.02);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 25px;
+    transition: var(--transition);
+}
+
+.flow-card.today {
+    border-color: var(--gold);
+    background: var(--gold-glow);
+}
+
+.flow-score-orb {
+    width: 45px; height: 45px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 900; font-size: 0.8rem;
+    border: 2px solid currentColor;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="mb-5">
+    <span class="text-gold xsmall fw-black tracking-widest mb-2 d-block">CHRONOBIOLOGY & CELESTIAL FLOW</span>
+    <h1 class="display-5 fw-black text-white mb-2">Life <span class="text-gold">Calendar</span></h1>
+    <p class="text-dim">Synchronizing your biological rhythms with the daily lunar mansion transitions.</p>
+</div>
+
+<div class="row g-5">
+    <!-- BIORHYTHMS -->
+    <div class="col-lg-5">
+        <div class="card-vedic p-5">
+            <h5 class="text-white fw-bold mb-5 opacity-50 uppercase tracking-widest text-center">Biorhythm Cycles</h5>
+
+            <div class="bio-bar-container mb-4">
+                <div class="bio-column">
+                    <div class="bio-fill bg-danger" style="height: {{ (bio.physical + 1) * 50 }}%"></div>
+                    <div class="mt-3 xsmall fw-bold">PHYS</div>
+                </div>
+                <div class="bio-column">
+                    <div class="bio-fill bg-accent" style="height: {{ (bio.emotional + 1) * 50 }}%"></div>
+                    <div class="mt-3 xsmall fw-bold">EMOT</div>
+                </div>
+                <div class="bio-column">
+                    <div class="bio-fill bg-info" style="height: {{ (bio.intellectual + 1) * 50 }}%"></div>
+                    <div class="mt-3 xsmall fw-bold">INTEL</div>
+                </div>
+            </div>
+
+            <div class="d-flex flex-column gap-3 mt-5">
+                <div class="d-flex justify-content-between">
+                    <span class="small text-dim">Total Vitality</span>
+                    <span class="small fw-black text-gold">{{ (bio.total_vitality * 100)|round|int }}%</span>
+                </div>
+                <p class="xsmall text-dim italic leading-relaxed mt-2">
+                    Biorhythms track the innate physical, emotional, and intellectual cycles from your moment of birth.
+                    Peaks represent high-output phases, while troughs suggest recovery periods.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- WEEKLY FLOW -->
+    <div class="col-lg-7">
+        <h5 class="text-white fw-bold mb-4 opacity-50 uppercase tracking-widest">7-Day Celestial Forecast</h5>
+        <div class="d-flex flex-column gap-3">
+            {% for day in week_flow %}
+            <div class="flow-card {{ 'today' if loop.index0 == 0 else '' }}">
+                <div class="row align-items-center">
+                    <div class="col-auto">
+                        <div class="text-center" style="width: 50px">
+                            <div class="fw-black text-white">{{ day.date.split(' ')[0] }}</div>
+                            <div class="xsmall text-dim uppercase">{{ day.day }}</div>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="badge bg-white bg-opacity-5 text-white-50 xsmall fw-bold px-2">{{ day.tithi|upper }}</div>
+                            <div class="badge bg-white bg-opacity-5 text-white-50 xsmall fw-bold px-2">{{ day.nakshatra|upper }}</div>
+                        </div>
+                    </div>
+                    <div class="col-auto text-end">
+                        <div class="flow-score-orb text-{{ 'success' if day.score >= 60 else 'warning' if day.score >= 50 else 'danger' }}">
+                            {{ day.score }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

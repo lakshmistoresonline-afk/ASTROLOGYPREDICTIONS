@@ -206,3 +206,4 @@ class DomainPrediction(BaseModel):
     contradictions: List[str] = []
     timing: List[Dict[str, Any]] = []
     recommendations: List[str] = []
+    remedies: List[Dict[str, str]] = []

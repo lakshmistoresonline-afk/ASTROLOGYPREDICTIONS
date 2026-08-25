@@ -18,3 +18,13 @@ def datetime_to_jd(dt: datetime, tz_str: str = "UTC") -> float:
     dt_utc = to_utc(dt, tz_str)
     hour_utc = dt_utc.hour + dt_utc.minute / 60.0 + dt_utc.second / 3600.0
     return get_julian_day(dt_utc.year, dt_utc.month, dt_utc.day, hour_utc)
+
+def jd_to_datetime(jd: float) -> datetime:
+    """Convert Julian Day to naive UTC datetime."""
+    from .swe_proxy import swe
+    y, m, d, h = swe.revjul(jd)
+    hh = int(h)
+    mm = int((h - hh) * 60)
+    ss = int(round(((h - hh) * 60 - mm) * 60))
+    if ss >= 60: ss = 59
+    return datetime(y, m, d, hh, mm, ss)

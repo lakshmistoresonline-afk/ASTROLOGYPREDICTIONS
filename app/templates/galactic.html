@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+{% block title %}Galactic Audit — Cosmic Connections{% endblock %}
+
+{% block head %}
+<style>
+.star-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 30px;
+    margin-bottom: 25px;
+    transition: var(--transition);
+}
+
+.star-card:hover {
+    border-color: var(--gold);
+    background: rgba(255,255,255,0.02);
+}
+
+.galactic-point-pill {
+    padding: 10px 20px;
+    background: var(--gold-glow);
+    border: 1px solid rgba(251, 191, 36, 0.2);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 15px;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="mb-5">
+    <span class="text-gold xsmall fw-black tracking-widest mb-2 d-block">THE GREATER COSMOS</span>
+    <h1 class="display-5 fw-black text-white mb-2">Galactic <span class="text-gold">Audit</span></h1>
+    <p class="text-dim">Mapping your planetary alignments with fixed stars and major galactic power points.</p>
+</div>
+
+<div class="row g-5">
+    <!-- GALACTIC POINTS -->
+    <div class="col-lg-5">
+        <h5 class="text-white fw-bold mb-4 opacity-50 uppercase tracking-widest">Galactic Alignments</h5>
+        <div class="d-flex flex-column gap-2">
+            {% for g in galactic %}
+            <div class="galactic-point-pill">
+                <i class="bi bi-stars text-gold fs-4"></i>
+                <div>
+                    <div class="small fw-black text-white">{{ g.planet }} / {{ g.point }}</div>
+                    <p class="xxsmall text-dim mb-0">{{ g.interpretation }}</p>
+                </div>
+            </div>
+            {% endfor %}
+            {% if not galactic %}
+            <div class="p-5 text-center opacity-30 border border-dashed rounded-4">
+                <i class="bi bi-moon-stars fs-1 mb-3 d-block"></i>
+                <span class="xsmall fw-bold">No direct galactic conjunctions detected.</span>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- FIXED STARS -->
+    <div class="col-lg-7">
+        <h5 class="text-white fw-bold mb-4 opacity-50 uppercase tracking-widest">Fixed Star Conjunctions</h5>
+        <div class="row g-4">
+            {% for star in stars %}
+            <div class="col-12">
+                <div class="star-card">
+                    <div class="d-flex justify-content-between align-items-start mb-4">
+                        <div>
+                            <div class="xsmall text-gold fw-black tracking-widest uppercase mb-1">{{ star.nature }} STAR</div>
+                            <h4 class="text-white fw-bold mb-0">{{ star.star_name }}</h4>
+                        </div>
+                        <div class="text-end">
+                            <div class="h4 fw-black text-white mb-0">{{ star.planet }}</div>
+                            <div class="xxsmall text-dim">ORB: {{ star.distance|round(2) }}°</div>
+                        </div>
+                    </div>
+                    <p class="small text-dim leading-relaxed mb-0">{{ star.interpretation }}</p>
+                </div>
+            </div>
+            {% endfor %}
+            {% if not stars %}
+            <div class="col-12 p-5 text-center opacity-30 border border-dashed rounded-4">
+                <i class="bi bi-star-fill fs-1 mb-3 d-block"></i>
+                <span class="xsmall fw-bold">No major fixed star conjunctions in your blueprint.</span>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<div class="mt-5 p-5 rounded-4 bg-white bg-opacity-5 border border-white border-opacity-5 text-center">
+    <h5 class="fw-black text-white mb-3">GALACTIC INFLUENCE</h5>
+    <p class="text-dim max-width-800 mx-auto leading-relaxed">
+        Beyond the local Rashi chart, the larger cosmos exerts a subtle but powerful high-frequency influence. Fixed stars and galactic points like the **Galactic Center** are thought to carry specific spiritual and collective karmic blueprints that override personal Rashi environmental factors.
+    </p>
+</div>
+{% endblock %}

@@ -36,12 +36,15 @@ def calculate_chara_dasha(asc_rashi: int, planets: Dict[str, Any], birth_dt: dat
         lord_name = RASHI_LORDS[rashi]
         # Lord's position
         lord_p = planets.get(lord_name)
-        if not lord_p:
+        if lord_p is None:
             dasha_list.append({"rashi": rashi, "years": 9}) # Default
             continue
 
-        lord_rashi = lord_p.get("rashi")
-        if lord_rashi is None: lord_rashi = 0
+        if isinstance(lord_p, dict):
+            lord_rashi = lord_p.get("rashi", 0)
+        else:
+            # Assume lord_p is the rashi index directly
+            lord_rashi = lord_p
 
         # Years = Distance from Sign to Lord's Sign
         # If Direct sign: count forward

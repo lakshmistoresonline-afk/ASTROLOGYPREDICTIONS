@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+{% block title %}Yoga Gallery — Celestial Combinations{% endblock %}
+
+{% block head %}
+<style>
+.yoga-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 30px;
+    transition: var(--transition);
+    position: relative;
+    overflow: hidden;
+}
+
+.yoga-card.present {
+    border-color: var(--gold);
+    background: var(--gold-glow);
+    box-shadow: 0 10px 30px -10px var(--gold-glow);
+}
+
+.present-badge {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: var(--gold);
+    color: #000;
+    font-size: 0.65rem;
+    font-weight: 900;
+    padding: 4px 10px;
+    border-radius: 4px;
+    letter-spacing: 1px;
+}
+
+.yoga-theme {
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 15px;
+    display: block;
+}
+
+.yoga-name {
+    font-family: 'Cinzel', serif;
+    font-weight: 800;
+    color: #fff;
+    font-size: 1.25rem;
+    margin-bottom: 15px;
+}
+
+.yoga-desc {
+    font-size: 0.85rem;
+    color: var(--text-dim);
+    line-height: 1.6;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="mb-5">
+    <span class="text-gold xsmall fw-black tracking-widest mb-2 d-block">RAJA & DHARMA COMBINATIONS</span>
+    <h1 class="display-5 fw-black text-white mb-2">Yoga <span class="text-gold">Gallery</span></h1>
+    <p class="text-dim">Discover the auspicious planetary configurations (Yogas) that define your karmic potential.</p>
+</div>
+
+<div class="row g-4">
+    {% for yoga in master_yogas %}
+    <div class="col-md-6 col-xl-4">
+        <div class="yoga-card {{ 'present' if yoga.is_present else '' }}">
+            {% if yoga.is_present %}
+            <span class="present-badge">DETECTED</span>
+            {% endif %}
+
+            <span class="yoga-theme">{{ yoga.theme }}</span>
+            <div class="yoga-name">{{ yoga.name }}</div>
+            <p class="yoga-desc mb-0">{{ yoga.desc }}</p>
+
+            {% if yoga.is_present %}
+            <div class="mt-4 pt-4 border-top border-white border-opacity-10">
+                {% for uy in user_yogas %}
+                    {% if uy.name in yoga.name or yoga.name in uy.name %}
+                    <p class="small text-white font-italic mb-0">"{{ uy.interpretation }}"</p>
+                    {% endif %}
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<div class="mt-5 p-5 rounded-4 bg-white bg-opacity-5 border border-white border-opacity-5 text-center">
+    <h5 class="fw-black text-white mb-3">YOGA PHILOSOPHY</h5>
+    <p class="text-dim max-width-800 mx-auto leading-relaxed">
+        In Vedic Astrology, a <strong>Yoga</strong> is a specific mathematical and spatial relationship between planets.
+        While some indicate wealth and power (Raja Yoga), others highlight spiritual depth (Sanyasa Yoga) or karmic tests (Dur Yoga).
+        The true strength of a Yoga is determined by the **Dignity** and **Shadbala** of its participating planets.
+    </p>
+</div>
+{% endblock %}

@@ -1,0 +1,115 @@
+{% extends "base.html" %}
+{% block title %}Numerology — The Lo Shu Grid{% endblock %}
+
+{% block head %}
+<style>
+.lo-shu-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 100px);
+    grid-template-rows: repeat(3, 100px);
+    gap: 15px;
+    margin: 0 auto;
+    width: fit-content;
+}
+
+.lo-shu-cell {
+    background: var(--bg-card);
+    border: 2px solid var(--border);
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    font-weight: 900;
+    color: var(--gold);
+    transition: var(--transition);
+}
+
+.lo-shu-cell.empty {
+    opacity: 0.1;
+    border-style: dashed;
+}
+
+.lo-shu-cell:not(.empty):hover {
+    transform: scale(1.1);
+    border-color: var(--gold);
+    box-shadow: 0 0 20px var(--gold-glow);
+}
+
+.number-card {
+    background: rgba(255,255,255,0.02);
+    border: 1px solid var(--border);
+    border-radius: 24px;
+    padding: 40px;
+    text-align: center;
+}
+
+.number-big {
+    font-size: 5rem;
+    font-weight: 900;
+    line-height: 1;
+    color: #fff;
+    margin-bottom: 10px;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="mb-5 text-center">
+    <span class="text-gold xsmall fw-black tracking-widest mb-2 d-block">VIBRATIONAL ARCHETYPE</span>
+    <h1 class="display-5 fw-black text-white mb-2">Numerical <span class="text-gold">Blueprint</span></h1>
+    <p class="text-dim">Decoding the frequencies of your birth date using the ancient Lo Shu Matrix.</p>
+</div>
+
+<div class="row g-5 align-items-center">
+    <!-- Main Numbers -->
+    <div class="col-lg-5">
+        <div class="row g-4">
+            <div class="col-12">
+                <div class="number-card">
+                    <div class="xsmall text-gold fw-black tracking-widest uppercase mb-3">Life Path Number</div>
+                    <div class="number-big">{{ num.life_path }}</div>
+                    <div class="h5 fw-bold text-white mb-3">The {{ num.primary_planet }} Archetype</div>
+                    <p class="small text-dim leading-relaxed mb-0">{{ num.interpretation }}</p>
+                </div>
+            </div>
+            <div class="col-12">
+                <div class="number-card p-4">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div class="text-start">
+                            <div class="xsmall text-dim uppercase">Psychic Number</div>
+                            <div class="h3 fw-black text-white mb-0">{{ num.psychic_number }}</div>
+                        </div>
+                        <i class="bi bi-cpu text-gold fs-2"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Lo Shu Grid -->
+    <div class="col-lg-7">
+        <div class="card-vedic p-5 text-center">
+            <h5 class="text-white fw-bold mb-5 opacity-50 uppercase tracking-widest">Lo Shu Magic Square</h5>
+
+            <div class="lo-shu-grid mb-5">
+                {% for row in grid %}
+                    {% for cell in row %}
+                        <div class="lo-shu-cell {{ 'empty' if not cell else '' }}">
+                            {{ cell if cell else '?' }}
+                        </div>
+                    {% endfor %}
+                {% endfor %}
+            </div>
+
+            <div class="text-start p-4 rounded-4 bg-white bg-opacity-5 border border-white border-opacity-5">
+                <h6 class="xsmall fw-black text-gold uppercase mb-3">Grid Analysis</h6>
+                <p class="small text-dim mb-0 leading-relaxed">
+                    The Lo Shu grid is a 3x3 magic square used in Feng Shui and Chinese Numerology. Each number represents an element and a specific life area.
+                    <strong>Missing numbers</strong> indicate "karmic lessons" or areas requiring conscious development, while <strong>repeating numbers</strong> show intensified traits.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

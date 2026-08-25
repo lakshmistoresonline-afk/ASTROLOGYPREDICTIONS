@@ -98,7 +98,25 @@ def get_marriage_prediction(chart: CanonicalChart, domain_type: str = "Marriage 
     # C. Natural Indicators
     # Passion (Venus-Mars)
     if are_associated("Venus", "Mars", planets):
-        factors.append(EvidenceEngine.create_factor("Relational Intensity", "yoga", "positive", 10, "A connection between Venus and Mars indicates a passionate approach to relationships."))
+        factors.append(EvidenceEngine.create_factor("Relational Intensity", "yoga", "positive", 10, "A connection between Venus and Mars indicates a passionate and energetic approach to relationships."))
+
+    # Relational Style
+    styles = {
+        "Sun": "Respect-driven and authoritative",
+        "Moon": "Nurturing and emotionally deep",
+        "Mars": "Action-oriented and protective",
+        "Mercury": "Communication-focused and intellectual",
+        "Jupiter": "Wisdom-based and growth-oriented",
+        "Venus": "Harmony-driven and aesthetic",
+        "Saturn": "Commitment-heavy and traditional",
+        "Rahu": "Unconventional and boundary-breaking",
+        "Ketu": "Spiritual and slightly detached"
+    }
+    main_style = seventh_lord_name
+    factors.append(EvidenceEngine.create_factor(
+        "Relational Style", "lord", "positive", 10,
+        f"Your approach to long-term bonds is {styles.get(main_style, 'Balanced')}, as influenced by {main_style}."
+    ))
 
     # Delay/Stability (Saturn on 7th)
     if seventh_lord_name == "Saturn" or planets["Saturn"].house == 7:
@@ -113,7 +131,11 @@ def get_marriage_prediction(chart: CanonicalChart, domain_type: str = "Marriage 
         if d_conf:
             factors.append(EvidenceEngine.create_factor("Relationship Activation", "dasha", "positive", 15, "Current dasha period is highly active for relationship manifestation or major developments."))
 
-    summary_template = "Relationship and marriage trajectory: {score}%. Confidence: {confidence}."
+    summary_template = (
+        "Relationship and marriage trajectory is {score}% synchronized. "
+        "With {confidence} confidence, the cosmic patterns indicate "
+        + ("a period of deepening bonds and potential for long-term commitment." if seventh_lord.house in [1, 4, 7, 10, 5, 9, 11] else "that relational matters require conscious communication and patience to navigate karmic tests.")
+    )
 
     return analyze_domain(
         domain_type,

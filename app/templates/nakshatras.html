@@ -1,0 +1,106 @@
+{% extends "base.html" %}
+{% block title %}Nakshatra Symphony — The 27 Lunar Mansions{% endblock %}
+
+{% block head %}
+<style>
+.nakshatra-wheel {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 20px;
+}
+
+.nak-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 25px;
+    position: relative;
+    transition: var(--transition);
+}
+
+.nak-card.active {
+    border-color: var(--gold);
+    background: var(--gold-glow);
+    box-shadow: 0 10px 30px -10px var(--gold-glow);
+}
+
+.nak-index {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--text-dim);
+    opacity: 0.3;
+}
+
+.nak-name {
+    font-family: 'Cinzel', serif;
+    font-weight: 800;
+    color: #fff;
+    font-size: 1.2rem;
+    margin-bottom: 5px;
+}
+
+.nak-deity {
+    font-size: 0.7rem;
+    color: var(--gold);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 15px;
+    display: block;
+}
+
+.planet-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 12px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 10px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #fff;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="mb-5">
+    <span class="text-gold xsmall fw-black tracking-widest mb-2 d-block">THE LUNAR MANSIONS</span>
+    <h1 class="display-5 fw-black text-white mb-2">Nakshatra <span class="text-gold">Symphony</span></h1>
+    <p class="text-dim">Mapping your planetary frequencies across the 27 celestial power zones.</p>
+</div>
+
+<div class="nakshatra-wheel">
+    {% for nak in nak_data %}
+    <div class="nak-card {{ 'active' if nak.planets else '' }}">
+        <span class="nak-index">#{{ nak.index }}</span>
+        <span class="nak-deity">{{ nak.deity }}</span>
+        <div class="nak-name">{{ nak.name }}</div>
+        <p class="xsmall text-dim mb-4">Symbol: {{ nak.symbol }}</p>
+
+        <div class="d-flex flex-wrap gap-2">
+            {% for p in nak.planets %}
+            <div class="planet-tag">
+                <div class="planet-dot" style="background: {{ chart.planets[p].color if chart.planets[p] else '#fff' }}; width: 8px; height: 8px"></div>
+                {{ p }}
+            </div>
+            {% endfor %}
+            {% if not nak.planets %}
+            <span class="xsmall text-dim opacity-30 italic">Silent Zone</span>
+            {% endif %}
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<div class="mt-5 p-5 rounded-4 bg-white bg-opacity-5 border border-white border-opacity-5 text-center">
+    <h5 class="fw-black text-white mb-3">SYMPHONIC RESONANCE</h5>
+    <p class="text-dim max-width-800 mx-auto leading-relaxed">
+        The Nakshatras represent the deepest subconscious level of the psyche. While the Rashi (Sign) shows the 'environment', the Nakshatra shows the 'inner motivation' and 'divine archetype' of each planet.
+        Active zones (highlighted) indicate where your life force is most concentrated.
+    </p>
+</div>
+{% endblock %}

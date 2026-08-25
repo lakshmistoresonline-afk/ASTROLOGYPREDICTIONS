@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+{% block title %}Friendship Matrix — Panchadha Maitri{% endblock %}
+
+{% block head %}
+<style>
+.friend-cell {
+    padding: 20px !important;
+    text-align: center;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.friend-cell.great-friend { color: #16a34a; background: rgba(22, 163, 74, 0.05); }
+.friend-cell.friend { color: #4ade80; }
+.friend-cell.neutral { color: var(--text-dim); }
+.friend-cell.enemy { color: #fbbf24; }
+.friend-cell.great-enemy { color: #ef4444; background: rgba(239, 68, 68, 0.05); }
+.friend-cell.self { color: #fff; background: rgba(255,255,255,0.03); }
+
+.planet-header {
+    background: rgba(255,255,255,0.05);
+    color: var(--gold);
+    font-weight: 800;
+    text-align: center;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="mb-5">
+    <span class="text-gold xsmall fw-black tracking-widest mb-2 d-block">COMPOUND PLANETARY DYNAMICS</span>
+    <h1 class="display-5 fw-black text-white mb-2">Friendship <span class="text-gold">Matrix</span></h1>
+    <p class="text-dim">Analyzing the permanent (Naisargika) and temporary (Tatkalika) relationships between planets.</p>
+</div>
+
+<div class="card-vedic p-0 overflow-hidden shadow-2xl">
+    <div class="table-responsive">
+        <table class="table table-vedic mb-0 align-middle">
+            <thead>
+                <tr>
+                    <th class="planet-header py-4">Planet</th>
+                    {% for p in planets %}
+                    <th class="planet-header">{{ p }}</th>
+                    {% endfor %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for p1 in planets %}
+                <tr class="border-bottom border-white border-opacity-5">
+                    <td class="px-4 py-4 fw-bold text-white small bg-white bg-opacity-5">{{ p1 }}</td>
+                    {% for p2 in planets %}
+                        {% set rel = matrix[p1][p2] %}
+                        <td class="friend-cell {{ rel|lower|replace(' ', '-') }}">
+                            {{ rel }}
+                        </td>
+                    {% endfor %}
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="mt-5 row g-4">
+    <div class="col-md-6">
+        <div class="p-4 rounded-4 bg-white bg-opacity-5 border border-white border-opacity-5">
+            <h6 class="text-gold fw-black xsmall uppercase mb-3">Panchadha Maitri Logic</h6>
+            <p class="small text-dim leading-relaxed mb-0">
+                Planets have inherent relationships, but their positions in your chart create **Temporary** friendships.
+                Panchadha Maitri is the synthesized "Compound" relationship. A planet in a friend's house yields its results with grace, while in an enemy's house, its expression is restricted.
+            </p>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="p-4 rounded-4 bg-white bg-opacity-5 border border-white border-opacity-5">
+            <h6 class="text-gold fw-black xsmall uppercase mb-3">Relationship Tiers</h6>
+            <div class="d-flex flex-wrap gap-2">
+                <span class="badge bg-success p-2 xsmall">GREAT FRIEND</span>
+                <span class="badge bg-success bg-opacity-50 p-2 xsmall">FRIEND</span>
+                <span class="badge bg-secondary p-2 xsmall">NEUTRAL</span>
+                <span class="badge bg-warning text-dark p-2 xsmall">ENEMY</span>
+                <span class="badge bg-danger p-2 xsmall">GREAT ENEMY</span>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
