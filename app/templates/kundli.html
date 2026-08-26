@@ -28,8 +28,7 @@
 
     <div class="max-width-600 mx-auto text-start">
         <div id="panel-new">
-            <!-- Reuse same automated form logic -->
-            <form action="{{ url_for('main.kundli') }}" method="POST" id="kundli-form-standalone">
+            <form action="{{ url_for('main.kundli') }}" method="POST" id="kundli-form-standalone" onsubmit="const btn = document.getElementById('submit-btn-k'); if(btn.disabled) return false; btn.disabled = true; btn.innerText = 'SYNCING COSMOS...'; return true;">
                 <div class="row g-4">
                     <div class="col-12">
                         <label class="form-label-vedic">Full Name</label>
@@ -52,6 +51,10 @@
                     <input type="hidden" name="lat" id="lat-input"/>
                     <input type="hidden" name="lon" id="lon-input"/>
                     <input type="hidden" name="timezone" id="tz-input" value="Asia/Kolkata"/>
+
+                    <div class="col-12 pt-4">
+                        <button type="submit" id="submit-btn-k" class="btn-vedic w-100 py-3 fs-6">GENERATE MY BLUEPRINT</button>
+                    </div>
                 </div>
             </form>
         </div>
@@ -62,7 +65,7 @@
 <div class="row g-5">
     <!-- Visual Chart -->
     <div class="col-xl-5">
-        <div class="card-vedic p-0 overflow-hidden mb-5">
+        <div class="card-vedic p-0 overflow-hidden mb-5 shadow-2xl">
             <div class="p-4 bg-black bg-opacity-20 d-flex justify-content-between align-items-center border-bottom border-white border-opacity-5">
                 <div class="dropdown">
                     <button class="btn btn-link text-white text-decoration-none xsmall fw-black tracking-widest uppercase p-0 dropdown-toggle" data-bs-toggle="dropdown" id="active-varga-label">
@@ -79,8 +82,8 @@
                     <button class="btn btn-outline-secondary btn-xs xsmall py-1 px-3" onclick="toggleChartStyle()">STYLE</button>
                 </div>
             </div>
-            <div class="p-4 p-md-5 text-center">
-                <canvas id="kundliCanvas" width="400" height="400" class="kundli-canvas mw-100" data-chart="{{ chart | tojson | e }}"></canvas>
+            <div class="p-4 p-md-5 text-center" style="min-height: 480px; background: #0a0a10">
+                <canvas id="kundliCanvas" width="440" height="440" class="kundli-canvas mw-100" data-chart="{{ chart | tojson | e }}"></canvas>
             </div>
         </div>
 
@@ -101,7 +104,7 @@
                 </div>
                 <div class="d-flex justify-content-between">
                     <span class="small text-dim">Atmakaraka</span>
-                    <span class="small fw-bold text-gold">{{ chart.jaimini_karakas['Atmakaraka (AK) - Self'] }}</span>
+                    <span class="small fw-bold text-gold">{{ chart.jaimini_karakas['Atmakaraka (AK) - Soul'] }}</span>
                 </div>
             </div>
         </div>
@@ -138,36 +141,15 @@
                             <td class="small text-dim font-mono">{{ p.dms }}</td>
                             <td class="small text-white fw-bold">{{ p.house }}</td>
                             <td>
-                                <span class="badge bg-{{ 'success' if 'Exalted' in p.dignity else 'danger' if 'Debilitated' in p.dignity else 'white' }} bg-opacity-5 text-{{ 'success' if 'Exalted' in p.dignity else 'danger' if 'Debilitated' in p.dignity else 'dim' }} border border-white border-opacity-5 xsmall fw-bold">
+                                <span class="badge bg-{{ 'success' if 'Exalted' in p.dignity else 'danger' if 'Debilitated' in p.dignity else 'white' }} bg-opacity-10 text-{{ 'success' if 'Exalted' in p.dignity else 'danger' if 'Debilitated' in p.dignity else 'dim' }} border border-white border-opacity-10 xsmall fw-bold px-2 py-1">
                                     {{ p.dignity.upper() }}
                                 </span>
                             </td>
-                            <td class="text-end px-4 fw-bold text-gold small">{{ p.shadbala_score }}</td>
+                            <td class="text-end px-4 fw-bold text-gold small">{{ p.shadbala_score|int }}</td>
                         </tr>
                         {% endfor %}
                     </tbody>
                 </table>
-            </div>
-        </div>
-
-        <div class="row g-4">
-            <div class="col-md-6">
-                <div class="card-vedic p-4">
-                    <h6 class="text-white fw-bold mb-3 opacity-50 xsmall tracking-widest">LUCK (YOGI)</h6>
-                    <div class="d-flex justify-content-between">
-                        <span class="small text-dim">Yogi</span>
-                        <span class="small fw-bold text-success">{{ chart.yogi_details.Yogi }}</span>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-6">
-                <div class="card-vedic p-4">
-                    <h6 class="text-white fw-bold mb-3 opacity-50 xsmall tracking-widest">OBSTACLE (AVAYOGI)</h6>
-                    <div class="d-flex justify-content-between">
-                        <span class="small text-dim">Avayogi</span>
-                        <span class="small fw-bold text-danger">{{ chart.yogi_details.Avayogi }}</span>
-                    </div>
-                </div>
             </div>
         </div>
     </div>
@@ -177,13 +159,27 @@
 {% endblock %}
 
 {% block scripts %}
-<script src="{{ url_for('static', filename='js/chart.js') }}"></script>
+<script src="{{ url_for('static', filename='js/chart.js') }}?v={{ range(1, 9999) | random }}"></script>
 <script>
-{% if chart %}
-const chartData = {{ chart | tojson }};
-renderNorthIndianChart("kundliCanvas", chartData.house_occupants, chartData.lagna.rashi, chartData.planets);
+const chartData = {% if chart %}{{ chart | tojson }}{% else %}null{% endif %};
+
+function triggerRender() {
+    console.log("CHART DATA AT CLIENT:", chartData);
+    if (chartData && typeof renderNorthIndianChart === "function") {
+        console.log("EXECUTING RENDER...");
+        renderNorthIndianChart("kundliCanvas", chartData.house_occupants, chartData.lagna.rashi, chartData.planets);
+    } else if (chartData) {
+        console.warn("RENDER ENGINE NOT READY, RETRYING...");
+        setTimeout(triggerRender, 200);
+    }
+}
+
+// Initial draw
+triggerRender();
+window.onload = triggerRender;
 
 function switchVarga(v) {
+    if (!chartData) return;
     const label = document.getElementById("active-varga-label");
     if (v === 'D1') {
         label.innerText = "Main Chart (D1)";
@@ -198,12 +194,13 @@ function switchVarga(v) {
             label.innerText = v + " Chart";
             renderNorthIndianChart("kundliCanvas", occ, lagna, chartData.planets);
         } else {
-            alert(v + " data not available for this profile.");
+            alert(v + " data not available.");
         }
     }
 }
 
 function saveChart() {
+    if (!chartData) return;
     fetch("/kundli/save", {
         method: "POST",
         headers: {"Content-Type": "application/json"},
@@ -212,22 +209,5 @@ function saveChart() {
         alert("Saved to vault.");
     });
 }
-{% else %}
-// Auto-field logic for standalone form
-document.querySelectorAll('.auto-field-k').forEach(el => {
-    el.addEventListener('change', checkAndAutoSubmitK);
-});
-
-function checkAndAutoSubmitK() {
-    const name = document.getElementById('in-name').value.trim();
-    const dob = document.getElementById('in-dob').value;
-    const tob = document.getElementById('in-tob').value;
-    const place = document.getElementById('place-input').value;
-
-    if (name && dob && tob && place) {
-        document.getElementById('kundli-form-standalone').submit();
-    }
-}
-{% endif %}
 </script>
 {% endblock %}

@@ -63,7 +63,7 @@
                     <h4 class="text-white fw-bold mb-0">New Birth Profile</h4>
                     <div id="auto-status" class="xsmall text-gold fw-black tracking-widest opacity-0">SYNCING...</div>
                 </div>
-                <form action="{{ url_for('main.kundli') }}" method="POST" id="kundli-form">
+                <form action="{{ url_for('main.kundli') }}" method="POST" id="kundli-form" onsubmit="return handleFormSubmit(event)">
                     <div class="row g-4">
                         <div class="col-12">
                             <label class="form-label-vedic">Full Name</label>
@@ -280,6 +280,22 @@ document.querySelectorAll('.auto-field').forEach(el => {
     if(el.id !== 'place-input') el.addEventListener('input', checkAndAutoSubmit);
 });
 
+function handleFormSubmit(e) {
+    const status = document.getElementById('auto-status');
+    const btn = document.getElementById('submit-btn');
+
+    if (status.classList.contains('syncing')) {
+        e.preventDefault();
+        return false;
+    }
+
+    status.classList.add('syncing');
+    status.style.opacity = '1';
+    btn.disabled = true;
+    btn.innerText = "SYNCING COSMOS...";
+    return true;
+}
+
 function autoGenerate() {
     const status = document.getElementById('auto-status');
     const btn = document.getElementById('submit-btn');
@@ -298,20 +314,20 @@ function autoGenerate() {
         body: formData,
         headers: { 'X-Requested-With': 'XMLHttpRequest' }
     })
-    .then(r => r.json())
+    .then(r => {
+        if (!r.ok) throw new Error("Server returned " + r.status);
+        return r.json();
+    })
     .then(data => {
         if (data.ok) {
-            window.location.href = data.redirect;
+            window.location.href = data.redirect || '/dashboard';
         } else {
-            alert("Sync failed: " + (data.error || "Unknown error"));
-            status.classList.remove('syncing');
-            status.style.opacity = '0';
-            btn.disabled = false;
-            btn.innerText = "CALCULATE MY CHART";
+            throw new Error(data.error || "Unknown error");
         }
     })
     .catch(err => {
-        console.error(err);
+        console.error("Sync Error:", err);
+        alert("Sync failed: " + err.message);
         status.classList.remove('syncing');
         status.style.opacity = '0';
         btn.disabled = false;

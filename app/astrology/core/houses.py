@@ -22,14 +22,21 @@ def get_houses(jd_ut: float, lat: float, lon: float, hsys: bytes = b'W') -> Dict
     }
 
 def get_house_from_cusps(longitude: float, cusps: list) -> int:
-    """Determine house number for a given longitude using specific cusps."""
-    for i in range(11):
-        if cusps[i] <= longitude < cusps[i+1]:
-            return i + 1
-        # Handle wraparound at 360
-        if cusps[i] > cusps[i+1]:
-            if longitude >= cusps[i] or longitude < cusps[i+1]:
-                return i + 1
+    """Determine house number for a given longitude using specific cusps (1-indexed)."""
+    # cusps[1] is start of House 1, cusps[12] is start of House 12
+    # Ensure we use 1-12
+    c = cusps
+    if len(c) < 13:
+        # Fallback if list is 0-indexed 12 elements
+        c = [0.0] + list(cusps)
+
+    for i in range(1, 12):
+        if c[i] <= longitude < c[i+1]:
+            return i
+        # Handle wraparound
+        if c[i] > c[i+1]:
+            if longitude >= c[i] or longitude < c[i+1]:
+                return i
     return 12
 
 def get_house_from_longitude(longitude: float, ascendant: float) -> int:
@@ -59,6 +66,11 @@ def get_house_lord(house_num: int, ascendant_rashi: int) -> str:
 
 def get_house_lord_kp(house_num: int, cusps: list) -> str:
     """Return the lord of the sign where a cusp longitude falls."""
-    longitude = cusps[house_num - 1]
+    # Handle both 0-indexed and 1-indexed lists
+    if len(cusps) >= 13:
+        longitude = cusps[house_num]
+    else:
+        longitude = cusps[house_num - 1]
+
     rashi = int(longitude // 30)
     return RASHI_LORDS[rashi]

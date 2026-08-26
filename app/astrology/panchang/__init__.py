@@ -265,6 +265,6 @@ def calculate_panchang(target_date: date, lat: float, lon: float, tz_str: str,
     # 9. Gowri Panchangam
     from .gowri import get_gowri_segments
     if sunrise_jd and sunset_jd:
-        res["gowri"] = get_gowri_segments(sunrise_jd, sunset_jd, vara["name"])
+        res["gowri"] = get_gowri_segments(sunrise_jd, sunset_jd, res["vara"]["name"])
 
     return res

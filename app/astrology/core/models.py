@@ -112,7 +112,7 @@ class CanonicalChart(BaseModel):
 
     # --- COSMIC REFINEMENT DATA ---
     tajika_yogas: List[Dict[str, Any]] = []
-    sahams: Dict[str, float] = []
+    sahams: Dict[str, float] = {}
     nadi_connections: Dict[str, List[str]] = {}
     sbc_vedha: List[Dict[str, Any]] = []
     rashi_drishti: Dict[int, List[int]] = {}

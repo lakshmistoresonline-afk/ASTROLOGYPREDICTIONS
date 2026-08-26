@@ -26,126 +26,65 @@ def _enrich_chart_for_template(chart: dict):
 
     from .astrology.core.planets import NAKSHATRA_NAMES, NAKSHATRA_LORDS, NAK_SPAN, PLANET_COLORS
 
-    # Ensure birth_datetime is string for templates
+    # 1. Dates
     if hasattr(chart, "birth_datetime") and isinstance(chart.birth_datetime, datetime):
         chart.birth_datetime = chart.birth_datetime.isoformat()
     elif isinstance(chart.get("birth_datetime"), datetime):
         chart["birth_datetime"] = chart["birth_datetime"].isoformat()
 
-    # House occupants (Whole Sign)
-    chart["house_occupants"] = {h: [] for h in range(1, 13)}
-    for p, data in chart["planets"].items():
-        chart["house_occupants"][data["house"]] = chart["house_occupants"].get(data["house"], [])
-        chart["house_occupants"][data["house"]].append(p)
+    # 2. Basic Metadata
+    R_NAMES = ["Mesha","Vrishabha","Mithuna","Karka","Simha","Kanya",
+               "Tula","Vrishchika","Dhanu","Makara","Kumbha","Meena"]
 
-    # Bhava Chalit Occupants
-    if "bhava_chalit" in chart:
-        # bhava_chalit is {house: [planets]}
-        chart["chalit_occupants"] = {int(h): list(p) for h, p in chart["bhava_chalit"].items()}
-    else:
-        chart["chalit_occupants"] = chart["house_occupants"]
-
-    # Lagna
-    rashi_names = ["Mesha","Vrishabha","Mithuna","Karka","Simha","Kanya",
-                   "Tula","Vrishchika","Dhanu","Makara","Kumbha","Meena"]
-
-    asc_rashi = chart.get("asc_rashi", 0)
     asc_lon = chart.get("ascendant", 0)
+    asc_rashi = int(asc_lon // 30)
     deg = asc_lon % 30
-    d = int(deg)
-    m = int((deg - d) * 60)
-
-    from .astrology.core.planets import NAKSHATRA_NAMES
-    nak_idx = int(asc_lon / (360/27))
-    nak_name = NAKSHATRA_NAMES[nak_idx]
-
     chart["lagna"] = {
         "rashi": asc_rashi,
-        "rashi_name": rashi_names[asc_rashi],
-        "rashi_english": ["Aries","Taurus","Gemini","Cancer","Leo","Virgo",
-                          "Libra","Scorpio","Sagittarius","Capricorn","Aquarius","Pisces"][asc_rashi],
-        "dms": f"{d}°{m}'",
-        "nakshatra": {"name": nak_name}
+        "rashi_name": R_NAMES[asc_rashi],
+        "dms": f"{int(deg)}°{int((deg%1)*60)}'",
+        "nakshatra": {"name": NAKSHATRA_NAMES[int(asc_lon / NAK_SPAN) % 27]}
     }
 
-    # Navamsa & Dashamsha
-    chart["navamsa"] = {}
-    chart["dashamsha"] = {}
+    # 3. Planet Sync & House Occupants
+    chart["house_occupants"] = {i: [] for i in range(1, 13)}
+
+    for p, data in chart["planets"].items():
+        # Ensure model compatibility
+        data["name"] = p
+        data["retrograde"] = data.get("is_retrograde", False)
+        data["color"] = PLANET_COLORS.get(p, "#fff")
+        data["rashi_name"] = R_NAMES[data["rashi"]]
+
+        # DMS
+        p_lon = data.get("longitude", 0)
+        p_deg = p_lon % 30
+        data["dms"] = f"{int(p_deg)}°{int((p_deg%1)*60)}'"
+
+        # House (Sync from engine or recalculate)
+        h = data.get("house")
+        if not h:
+            h = (data["rashi"] - asc_rashi + 12) % 12 + 1
+            data["house"] = h
+
+        chart["house_occupants"][h].append(p)
+
+    # 4. Divisional Occupants
     divs = chart.get("divisional_charts", {})
-    if "D9" in divs:
-        chart["navamsa"] = {k: {"rashi": v} for k, v in divs["D9"].items()}
-    if "D10" in divs:
-        chart["dashamsha"] = {k: {"rashi": v} for k, v in divs["D10"].items()}
-
-    # Houses (Whole Sign)
-    chart["houses"] = []
-    for i in range(1, 13):
-        r_idx = (asc_rashi + i - 1) % 12
-        chart["houses"].append({
-            "house": i,
-            "rashi": r_idx,
-            "rashi_name": rashi_names[r_idx]
-        })
-
-    # houses cleanup for legacy templates
-    chart["houses_list"] = []
-    for h in chart["houses"]:
-        chart["houses_list"].append(h)
-
-    from .astrology.core.planets import NAKSHATRA_NAMES, NAKSHATRA_LORDS, NAK_SPAN
-
-    # 0. Ensure upagrahas are enriched
-    rashi_names = ["Mesha","Vrishabha","Mithuna","Karka","Simha","Kanya",
-                   "Tula","Vrishchika","Dhanu","Makara","Kumbha","Meena"]
-
-    # 0.5 Build Divisional Occupants
     chart["varga_occupants"] = {}
     for v_name, v_data in divs.items():
         v_lagna = v_data.get("Lagna", 0)
-        v_occ = {h: [] for h in range(1, 13)}
-        for p, r in v_data.items():
-            if p == "Lagna": continue
-            h_v = (r - v_lagna + 12) % 12 + 1
-            v_occ[h_v].append(p)
-        chart["varga_occupants"][v_name] = v_occ
         chart["varga_occupants"][f"{v_name}_Lagna"] = v_lagna
+        v_occ = {i: [] for i in range(1, 13)}
+        for pname, rashi in v_data.items():
+            if pname == "Lagna": continue
+            hv = (rashi - v_lagna + 12) % 12 + 1
+            v_occ[hv].append(pname)
+        chart["varga_occupants"][v_name] = v_occ
 
-    for p in list(chart["planets"].keys()):
-        data = chart["planets"][p]
-        data["name"] = p
-        data["retrograde"] = data.get("is_retrograde", False)
-        if "color" not in data:
-            data["color"] = PLANET_COLORS.get(p, "#fff")
-        # Rashi name
-        if "rashi_name" not in data:
-            data["rashi_name"] = rashi_names[data["rashi"]]
-        # Nakshatra
-        if "nakshatra" not in data or isinstance(data["nakshatra"], str):
-             lon = data.get("longitude", 0)
-             nak_idx = int(lon / NAK_SPAN)
-             data["nakshatra"] = {"name": NAKSHATRA_NAMES[nak_idx]}
-        # Add color if missing
-        if "color" not in data:
-            data["color"] = PLANET_COLORS.get(p, "#fff")
-        # Add dms if missing
-        lon = data.get("longitude", 0)
-        if "dms" not in data:
-            p_deg = lon % 30
-            pd = int(p_deg)
-            pm = int((p_deg - pd) * 60)
-            data["dms"] = f"{pd}°{pm}'"
-        if "rashi_name" not in data:
-            data["rashi_name"] = rashi_names[data["rashi"]]
-
-        # Add nakshatra info
-        if "nakshatra" not in data:
-            nak_idx = int(lon / NAK_SPAN)
-            nak_deg = lon % NAK_SPAN
-            data["nakshatra"] = {
-                "name": NAKSHATRA_NAMES[nak_idx],
-                "pada": int(nak_deg / (NAK_SPAN / 4)) + 1,
-                "lord": NAKSHATRA_LORDS[nak_idx]
-            }
+    # 5. Additional fields
+    chart["chalit_occupants"] = chart.get("bhava_chalit", chart["house_occupants"])
+    chart["houses_list"] = [{"house": i, "rashi": (asc_rashi+i-1)%12, "rashi_name": R_NAMES[(asc_rashi+i-1)%12]} for i in range(1,13)]
 
 def _enrich_predictions_with_extras(preds: dict, natal_chart, panchang: dict):
     """Add all missing fields required by predictions.html."""
@@ -360,9 +299,8 @@ def favicon():
 @main.route("/")
 def index():
     try:
-        # If a chart is already in session, lead with the Dashboard for a "returning user" feel
-        if session.get("birth_dob") and session.get("birth_tob"):
-            return redirect(url_for("main.dashboard"))
+        # Stop the redirect loop. Let users see the Home page even if they have a session.
+        # They can click "Dashboard" in the sidebar if they want.
 
         ip_loc   = get_ip_location()
         saved    = list_charts()
@@ -374,52 +312,61 @@ def index():
 
 def _load_active_chart():
     """Helper to load chart from session or most recent in vault."""
-    dob = session.get("birth_dob")
-    tob = session.get("birth_tob")
+    try:
+        dob = session.get("birth_dob")
+        tob = session.get("birth_tob")
 
-    if dob and tob:
-        try:
+        if dob and tob:
             lat    = session.get("birth_lat", 28.6139)
             lon    = session.get("birth_lon", 77.2090)
             tz_str = session.get("birth_tz", "Asia/Kolkata")
-            name   = session.get("birth_name", "")
+            name   = session.get("birth_name", "Native")
             place  = session.get("birth_place", "")
 
-            birth_dt = datetime.strptime(f"{dob} {tob}", "%Y-%m-%d %H:%M")
-            chart_obj = calculate_chart_data(birth_dt, float(lat), float(lon), tz_str)
-            chart = chart_obj.model_dump()
-            chart.update({"name": name, "place": place, "birth_dob": dob, "birth_tob": tob,
-                          "latitude": float(lat), "longitude_coord": float(lon),
-                          "timezone": tz_str, "birth_datetime": birth_dt.isoformat()})
+            try:
+                birth_dt = datetime.strptime(f"{dob} {tob}", "%Y-%m-%d %H:%M")
+                chart_obj = calculate_chart_data(birth_dt, float(lat), float(lon), tz_str)
+                chart = chart_obj.model_dump()
+                chart.update({
+                    "name": name, "place": place, "birth_dob": dob, "birth_tob": tob,
+                    "latitude": float(lat), "longitude_coord": float(lon),
+                    "timezone": tz_str, "birth_datetime": birth_dt.isoformat()
+                })
+                _enrich_chart_for_template(chart)
+                return chart, chart_obj
+            except Exception as e:
+                print(f"ERROR: Failed to calculate chart from session: {e}")
+                # Don't return yet, try fallback
+
+        # Fallback to Vault (latest saved chart)
+        latest = list_charts()
+        if latest:
+            chart = latest[0]
             _enrich_chart_for_template(chart)
-            return chart, chart_obj
-        except Exception:
-            pass
 
-    # Fallback to Vault
-    latest = list_charts()
-    if latest:
-        chart = latest[0]
-        _enrich_chart_for_template(chart)
-        # Sync session for consistency
-        session["birth_lat"]   = chart.get("latitude", 28.6139)
-        session["birth_lon"]   = chart.get("longitude_coord", 77.2090)
-        session["birth_tz"]    = chart.get("timezone", "Asia/Kolkata")
-        session["birth_name"]  = chart.get("name", "")
-        session["birth_place"] = chart.get("place", "")
-        bd = chart.get("birth_datetime", "")[:16]
-        if "T" in bd:
-            session["birth_dob"] = bd[:10]
-            session["birth_tob"] = bd[11:16]
+            # Sync session so subsequent pages don't need to query vault
+            session["birth_lat"]   = chart.get("latitude", 28.6139)
+            session["birth_lon"]   = chart.get("longitude_coord", 77.2090)
+            session["birth_tz"]    = chart.get("timezone", "Asia/Kolkata")
+            session["birth_name"]  = chart.get("name", "")
+            session["birth_place"] = chart.get("place", "")
+            bd = chart.get("birth_datetime", "")[:16]
+            if "T" in bd:
+                session["birth_dob"] = bd[:10]
+                session["birth_tob"] = bd[11:16]
 
-        try:
-            birth_dt = datetime.fromisoformat(chart["birth_datetime"])
-            chart_obj = calculate_chart_data(birth_dt, float(session["birth_lat"]), float(session["birth_lon"]), session["birth_tz"])
-            return chart, chart_obj
-        except Exception:
-            pass
+            try:
+                birth_dt = datetime.fromisoformat(chart["birth_datetime"])
+                chart_obj = calculate_chart_data(birth_dt, float(session["birth_lat"]), float(session["birth_lon"]), session["birth_tz"])
+                return chart, chart_obj
+            except Exception as e:
+                print(f"ERROR: Failed to calculate chart from vault: {e}")
+
+    except Exception as e:
+        print(f"CRITICAL: _load_active_chart failed: {e}")
 
     return None, None
+
 
 # ─────────────────────────────────────────────
 #  Kundli (birth chart)
@@ -434,10 +381,12 @@ def kundli():
     if request.method == "GET":
         chart, chart_obj = _load_active_chart()
         if chart_obj:
-            remedies = get_remedies(chart_obj)
-            birth_dt = datetime.fromisoformat(chart["birth_datetime"])
-            moon_lon = chart["planets"]["Moon"]["longitude"]
-            dasha    = calculate_vimshottari(moon_lon, birth_dt)
+            try:
+                remedies = get_remedies(chart_obj)
+                birth_dt = datetime.fromisoformat(chart["birth_datetime"])
+                moon_lon = chart["planets"]["Moon"]["longitude"]
+                dasha    = calculate_vimshottari(moon_lon, birth_dt)
+            except Exception: pass
 
     if request.method == "POST":
         try:
@@ -457,7 +406,7 @@ def kundli():
                 lat, lon, tz_str = geo["lat"], geo["lon"], geo["timezone"]
                 place = geo.get("display_name", place)
 
-            # Session Sync
+            # Persist in session
             session["birth_lat"]   = float(lat)
             session["birth_lon"]   = float(lon)
             session["birth_tz"]    = tz_str
@@ -469,9 +418,11 @@ def kundli():
             birth_dt = datetime.strptime(f"{dob} {tob}", "%Y-%m-%d %H:%M")
             chart_obj = calculate_chart_data(birth_dt, float(lat), float(lon), tz_str)
             chart = chart_obj.model_dump()
-            chart.update({"name": name, "place": place, "birth_dob": dob, "birth_tob": tob,
-                          "latitude": float(lat), "longitude_coord": float(lon),
-                          "timezone": tz_str, "birth_datetime": birth_dt.isoformat()})
+            chart.update({
+                "name": name, "place": place, "birth_dob": dob, "birth_tob": tob,
+                "latitude": float(lat), "longitude_coord": float(lon),
+                "timezone": tz_str, "birth_datetime": birth_dt.isoformat()
+            })
 
             _enrich_chart_for_template(chart)
             save_chart(chart)
@@ -620,6 +571,7 @@ def dashboard():
         # Map fields for template compatibility
         preds["score"] = round(preds["overall_score"] / 10, 1)
         preds["score_label"] = preds["overall_label"]
+        preds["score_color"] = "#16a34a" if preds["overall_score"] >= 65 else "#fbbf24" if preds["overall_score"] >= 45 else "#dc2626"
         preds["score_color"] = (
             "#16a34a" if preds["overall_score"] >= 80 else
             "#65a30d" if preds["overall_score"] >= 65 else

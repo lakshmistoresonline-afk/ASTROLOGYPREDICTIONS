@@ -3,10 +3,8 @@ from .swe_proxy import swe
 from .ephemeris import get_planet_position
 
 # Segment order for Day/Night parts (0-7 segments)
-# Gulika is the lord of the segment of Saturn.
-# Mandi is the start of Gulika's segment (some treat them same, some distinct).
-# Sunday Day: Sat is 7th segment.
-# Monday Day: Sat is 6th segment...
+# Sunday=6, Monday=0, Tuesday=1, Wednesday=2, Thursday=3, Friday=4, Saturday=5 in Python weekday()
+# But let's map them to 0=Sunday for traditional logic
 DAY_SAT_SEGMENT = {
     0: 7, # Sun (Saturn is 7th)
     1: 6, # Mon
@@ -31,9 +29,10 @@ def calculate_upagrahas(jd_ut: float, sr_jd: float, ss_jd: float, next_sr_jd: fl
     """
     Calculate Gulika and Mandi longitudes.
     sr = sunrise, ss = sunset
+    weekday: 0=Sunday, 1=Monday...
     """
     # Handle missing ephemeris data (Mock Mode)
-    if sr_jd is None or ss_jd is None:
+    if sr_jd is None or ss_jd is None or next_sr_jd is None:
         return {"gulika_jd": jd_ut}
 
     is_day = sr_jd <= jd_ut <= ss_jd
@@ -41,25 +40,23 @@ def calculate_upagrahas(jd_ut: float, sr_jd: float, ss_jd: float, next_sr_jd: fl
     if is_day:
         duration = ss_jd - sr_jd
         start_jd = sr_jd
-        seg_num = DAY_SAT_SEGMENT[weekday]
+        seg_num = DAY_SAT_SEGMENT.get(weekday, 7)
     else:
         # Determine which night part
         if jd_ut < sr_jd: # Early morning before sunrise
-            # Use previous sunset
-            prev_ss = ss_jd - 1.0 # Rough
+            # Use previous sunset (approx)
+            prev_ss = sr_jd - (ss_jd - sr_jd) # Placeholder
             duration = sr_jd - prev_ss
             start_jd = prev_ss
         else:
             duration = next_sr_jd - ss_jd
             start_jd = ss_jd
-        seg_num = NIGHT_SAT_SEGMENT[weekday]
+        seg_num = NIGHT_SAT_SEGMENT.get(weekday, 3)
 
     seg_duration = duration / 8.0
     # Gulika is the degree of Lagna at the start of Saturn's segment
     gulika_jd = start_jd + (seg_num - 1) * seg_duration
 
-    # We need to calculate Lagna at this specific JD
-    # (Requires lat/lon, which aren't passed here. We'll need a better way.)
     return {"gulika_jd": gulika_jd}
 
 def get_upagraha_longitudes(jd_ut: float, sr_jd: float, ss_jd: float, next_sr_jd: float, weekday: int, lat: float, lon: float) -> Dict[str, float]:

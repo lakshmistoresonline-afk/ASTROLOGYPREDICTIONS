@@ -23,6 +23,8 @@ def jd_to_datetime(jd: float) -> datetime:
     """Convert Julian Day to naive UTC datetime."""
     from .swe_proxy import swe
     y, m, d, h = swe.revjul(jd)
+    # Ensure hour is within [0, 24)
+    h = h % 24
     hh = int(h)
     mm = int((h - hh) * 60)
     ss = int(round(((h - hh) * 60 - mm) * 60))

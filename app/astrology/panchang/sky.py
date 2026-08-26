@@ -11,14 +11,16 @@ def get_sky_event(jd_ut: float, lat: float, lon: float, planet_id: int, event_ty
     atpress = 1013.25
     attemp = 15.0
 
+    # 1. Try Swiss Ephemeris first
     try:
-        # 1. Try Swiss Ephemeris first
-        # pid matches: SUN=0, MOON=1
         res = swe.rise_trans(jd_ut, planet_id, lon, lat, 0, atpress, attemp, event_type)
-        if res and res[0] > 1000000: # Valid JD
-            return res[0]
-    except Exception:
-        pass
+        # res should be (status, [tret1, ...])
+        if res and isinstance(res, tuple) and len(res) > 1:
+            tret = res[1]
+            if tret and tret[0] > 1000000:
+                return tret[0]
+    except Exception as e:
+        print(f"DEBUG: SWE rise_trans failed: {e}")
 
     # 2. Fallback to Ephem library for basic sky events if SWE is missing/mocked
     try:

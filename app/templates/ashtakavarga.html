@@ -51,8 +51,7 @@
                 </tr>
             </thead>
             <tbody>
-                {% for p, points in av.items() %}
-                    {% if p != 'SAV' and p != 'ShodhyaPinda' %}
+                {% for p, points in av.BAV.items() %}
                     <tr class="border-bottom border-white border-opacity-5">
                         <td class="px-4 py-4 fw-bold text-white small">{{ p }}</td>
                         {% for pt in points %}
@@ -61,7 +60,6 @@
                         </td>
                         {% endfor %}
                     </tr>
-                    {% endif %}
                 {% endfor %}
                 <tr class="bg-gold bg-opacity-5">
                     <td class="px-4 py-4 fw-black text-gold small">SAV TOTAL</td>
