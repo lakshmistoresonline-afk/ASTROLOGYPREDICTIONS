@@ -82,6 +82,18 @@ def get_personality_prediction(chart: CanonicalChart, domain_type: str = "Person
                 "Lagna Gandanta: Born during a major elemental junction, indicating high intensity and significant karmic lessons."
             ))
 
+    # E. Nakshatra Persona (Gana & Yoni)
+    asc_nak = chart.asc_nakshatra
+    if asc_nak:
+        factors.append(EvidenceEngine.create_factor(
+            "Cosmic Temperament", "personality", "positive", 5,
+            f"Your cosmic Gana is {asc_nak.gana or 'Universal'}, indicating an inherent {asc_nak.gana.lower() if asc_nak.gana else 'balanced'} disposition."
+        ))
+        factors.append(EvidenceEngine.create_factor(
+            "Instinctive Drive", "personality", "positive", 5,
+            f"Your instinctive nature (Yoni) is characterized by the {asc_nak.yoni or 'Neutral'} archetype, defining your deep subconscious responses."
+        ))
+
     # 7. Timing Integration
     t_conf = False
     if timing_data:

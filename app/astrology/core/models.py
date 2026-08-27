@@ -207,3 +207,8 @@ class DomainPrediction(BaseModel):
     timing: List[Dict[str, Any]] = []
     recommendations: List[str] = []
     remedies: List[Dict[str, str]] = []
+
+    # --- NEW: High-Precision Details ---
+    divisional_confirmation: List[str] = []
+    advanced_details: List[str] = []
+    timing_explanation: Optional[str] = None

@@ -189,6 +189,58 @@ def cross_validate_with_specialized(chart: CanonicalChart, domain_name: str, bas
                 elif rel in ["Enemy", "Great Enemy"]:
                      refined.append(EvidenceEngine.create_factor("Planetary Relationship", "lord", "negative", 10, f"The lord of this domain ({d_lord_name}) is an {rel} of your Lagna Lord ({l1_name}), suggesting internal conflict in achieving results."))
 
+    # 10. Saham (Arabic Part) Cross-validation
+    saham_map = {"Career": "Karma Saham", "Finance": "Artha Saham", "Marriage": "Vivaha Saham", "Health": "Arogya Saham"}
+    s_name = saham_map.get(domain_name)
+    if s_name and s_name in chart.sahams:
+        s_lon = chart.sahams[s_name]
+        s_rashi = int(s_lon // 30)
+        # Check if domain house or lord is connected to the Saham sign
+        if h_num is not None:
+            target_rashi = (chart.asc_rashi + h_num - 1) % 12
+            if s_rashi == target_rashi:
+                refined.append(EvidenceEngine.create_factor("Saham Support", "yoga", "positive", 15, f"The {s_name} (special sensitive point) falls exactly in your {h_num}th house, reinforcing the promise of this domain."))
+
+    # 11. Ashtakavarga Bindu Confirmation
+    if h_num is not None and chart.ashtakavarga:
+        target_rashi = (chart.asc_rashi + h_num - 1) % 12
+        sav_points = chart.ashtakavarga.get("SAV", [28]*12)[target_rashi]
+        if sav_points >= 30:
+            refined.append(EvidenceEngine.create_factor("Ashtakavarga Strength", "ashtakavarga", "positive", 8, f"High SAV points ({sav_points}) in the {h_num}th house provide strong vital energy for this domain."))
+        elif sav_points < 25:
+            refined.append(EvidenceEngine.create_factor("Ashtakavarga Strength", "ashtakavarga", "negative", 5, f"Low SAV points ({sav_points}) in the {h_num}th house indicate a need for extra effort to get results."))
+
+    # 12. Planetary Avastha Details
+    # (Extracting from planets if they exist)
+    if h_num is not None:
+        d_lord_name = chart.house_lords.get(h_num)
+        p_info = chart.planets.get(d_lord_name)
+        if p_info:
+            if "Deept" in p_info.deeptadi_avastha:
+                refined.append(EvidenceEngine.create_factor("Luminous State", "planet", "positive", 10, f"The domain ruler {d_lord_name} is in a 'Deept' (Radiant) state, suggesting peak performance."))
+            elif "Kopita" in p_info.deeptadi_avastha:
+                refined.append(EvidenceEngine.create_factor("Afflicted State", "planet", "negative", 10, f"The domain ruler {d_lord_name} is in a 'Kopita' (Angry) state, suggesting friction or impulsiveness."))
+
+    # 13. Functional Malefic Obstruction
+    # Check if the domain's primary house is occupied by a strong functional malefic
+    for p_name, p_data in chart.planets.items():
+        if p_data.house == h_num and p_data.functional_status == "Malefic":
+            refined.append(EvidenceEngine.create_factor("Functional Obstruction", "planet", "negative", 8, f"{p_name} acts as a functional malefic in this house, potentially causing recurring hurdles."))
+
+    # 14. Planetary War (Graha Yuddha) Impact
+    for p_name, p_data in chart.planets.items():
+        if p_data.is_in_planetary_war and (p_data.house == h_num or p_name == d_lord_name):
+             direction = "negative" # Usually negative for the loser/troubled planet
+             refined.append(EvidenceEngine.create_factor("Planetary War", "planet", direction, 12, f"{p_name} is in Graha Yuddha (Planetary War). This intense struggle between energies can cause volatile or unpredictable results in this domain."))
+
+    # 15. Special Nakshatra Triggers (Pushya, Moola, etc.)
+    if h_num is not None:
+        # Check if 10th house falls in Pushya Nakshatra (Auspicious for Career)
+        target_rashi = (chart.asc_rashi + h_num - 1) % 12
+        # (Approximate sign check)
+        if domain_name == "Career" and target_rashi == 3: # Cancer
+             refined.append(EvidenceEngine.create_factor("Nakshatra Aura", "house", "positive", 5, "Matters of career are favored by the nurturing and stabilizing energy of the cosmic archetypes in this sector."))
+
     return refined
 
 class ConfidenceEngine:
@@ -243,9 +295,24 @@ def analyze_domain(
 ) -> DomainPrediction:
     """Unified helper to build a DomainPrediction."""
 
+    # 1. New Details Containers
+    varga_conf = []
+    adv_details = []
+
     # Cross-validate with specialized systems if chart is provided
     if chart:
+        # Cross-validation can now return structured details
         factors = cross_validate_with_specialized(chart, domain_name, factors)
+
+        # Extract Divisional Details
+        v_pos = [f for f in factors if f.type == "varga" and f.direction == "positive"]
+        v_neg = [f for f in factors if f.type == "varga" and f.direction == "negative"]
+        for v in v_pos: varga_conf.append(f"✓ {v.explanation}")
+        for v in v_neg: varga_conf.append(f"⚠ {v.explanation}")
+
+        # Extract Advanced/Yoga Details
+        a_factors = [f for f in factors if f.type in ["yoga", "planet"] and "KP" not in f.factor and "BCP" not in f.factor]
+        for a in a_factors: adv_details.append(a.explanation)
 
     pos_factors = [f for f in factors if f.direction == "positive"]
     neg_factors = [f for f in factors if f.direction == "negative"]
@@ -256,7 +323,8 @@ def analyze_domain(
         # Refine weight based on Avastha if it's a planet/lord factor
         w = f.weight
         if chart and f.type in ["planet", "lord"]:
-            p_info = chart.planets.get(f.factor.split(' ')[0]) # Heuristic to get planet name
+            p_name = f.factor.split(' ')[0]
+            p_info = chart.planets.get(p_name)
             if p_info:
                 w *= p_info.avastha_weight
 
@@ -270,18 +338,17 @@ def analyze_domain(
     contradictions = ContradictionEngine.analyze(factors)
 
     # Check for confirmations
-    v_conf = varga_data.get("confirmed", False) if varga_data else False
+    v_conf_bool = varga_data.get("confirmed", False) if varga_data else bool(v_pos)
     d_conf = dasha_data.get("confirmed", False) if dasha_data else False
     t_conf = transit_data.get("confirmed", False) if transit_data else False
 
-    confidence = ConfidenceEngine.calculate(factors, v_conf, d_conf, t_conf)
+    confidence = ConfidenceEngine.calculate(factors, v_conf_bool, d_conf, t_conf)
 
-    evidence_strings = [f"{'✓' if f.direction == 'positive' else '⚠'} {f.explanation}" for f in factors]
+    evidence_strings = [f"{'✓' if f.direction == 'positive' else '⚠'} {f.explanation}" for f in factors if f.type not in ["varga"]]
 
     # Generate Remedies if score is low
     remedies = []
     if score < 60:
-        # Identify negative planets
         neg_planets = set()
         for f in neg_factors:
             if f.type in ["planet", "lord"]:
@@ -298,6 +365,10 @@ def analyze_domain(
                 "lifestyle": db_rem.get("lifestyle")
             })
 
+    # Timing Explanation
+    t_exp = "Synchronized cosmic support detected." if d_conf or t_conf else "Requires internal effort; external support is currently neutral."
+    if d_conf and t_conf: t_exp = "Peak temporal alignment: long-term and immediate triggers are active."
+
     return DomainPrediction(
         domain=domain_name,
         score=score,
@@ -307,5 +378,8 @@ def analyze_domain(
         positive_factors=pos_factors,
         negative_factors=neg_factors,
         contradictions=contradictions,
-        remedies=remedies
+        remedies=remedies,
+        divisional_confirmation=varga_conf,
+        advanced_details=adv_details,
+        timing_explanation=t_exp
     )

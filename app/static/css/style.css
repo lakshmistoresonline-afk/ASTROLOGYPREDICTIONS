@@ -178,6 +178,87 @@ body {
     transition: var(--transition);
 }
 
+/* --- Dashboard Redesign 2026: Aura Bento --- */
+.bento-grid {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    grid-auto-rows: minmax(100px, auto);
+    gap: 24px;
+}
+
+.glass-card {
+    background: rgba(18, 18, 26, 0.6);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: var(--radius);
+    padding: 32px;
+    position: relative;
+    overflow: hidden;
+    transition: var(--transition);
+}
+
+.glass-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(251, 191, 36, 0.2), transparent);
+}
+
+.glass-card:hover {
+    border-color: rgba(251, 191, 36, 0.3);
+    background: rgba(18, 18, 26, 0.8);
+    transform: translateY(-4px);
+}
+
+.aura-glow {
+    position: absolute;
+    width: 200px; height: 200px;
+    filter: blur(80px);
+    z-index: -1;
+    opacity: 0.15;
+    border-radius: 50%;
+}
+
+.aura-benefic { background: #16a34a; }
+.aura-warning { background: #d97706; }
+.aura-critical { background: #dc2626; }
+.aura-cosmic { background: var(--accent); }
+
+.bento-hero { grid-column: span 8; grid-row: span 4; }
+.bento-oracle { grid-column: span 4; grid-row: span 4; }
+.bento-clock { grid-column: span 5; grid-row: span 3; }
+.bento-quests { grid-column: span 4; grid-row: span 3; }
+.bento-dna { grid-column: span 3; grid-row: span 3; }
+.bento-wide { grid-column: span 12; }
+
+@media (max-width: 1200px) {
+    .bento-hero, .bento-oracle, .bento-clock, .bento-quests, .bento-dna {
+        grid-column: span 12;
+    }
+}
+
+.zenith-orb-wrap {
+    background: radial-gradient(circle at center, rgba(251, 191, 36, 0.08) 0%, transparent 70%);
+    border-radius: 50%;
+    padding: 20px;
+}
+
+.karmic-tile {
+    background: rgba(255,255,255,0.02);
+    border-radius: 18px;
+    padding: 16px;
+    border: 1px solid transparent;
+    transition: var(--transition);
+}
+
+.karmic-tile:hover {
+    background: rgba(255,255,255,0.05);
+    border-color: var(--border);
+}
+
+.stat-value { font-family: 'JetBrains Mono', monospace; font-weight: 700; letter-spacing: -1px; }
+
 .btn-vedic:hover {
     background: #fff;
     transform: scale(1.02);

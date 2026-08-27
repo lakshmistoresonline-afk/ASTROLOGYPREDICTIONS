@@ -91,48 +91,89 @@
                                 </div>
                             </div>
 
-                            <p class="small text-white-50 leading-relaxed mb-0">{{ domain.summary }}</p>
-                        </div>
+                            <p class="small text-white-50 leading-relaxed mb-4">{{ domain.summary }}</p>
 
-                        <div class="row g-0">
-                            <div class="col-md-6 border-end border-white border-opacity-5">
-                                <div class="p-4 p-md-5">
-                                    <div class="xsmall text-dim fw-bold mb-3 opacity-40 uppercase tracking-widest">Observations</div>
-                                    <div class="d-flex flex-column gap-3">
-                                        {% for item in domain.evidence[:3] %}
-                                        <div class="d-flex gap-3 align-items-start mb-1">
-                                            <div class="mt-1">
-                                                {% if '✓' in item %}<i class="bi bi-patch-check-fill text-success small"></i>
-                                                {% elif '⚠' in item %}<i class="bi bi-exclamation-octagon-fill text-warning small"></i>
-                                                {% else %}<i class="bi bi-circle-fill text-dim xsmall"></i>{% endif %}
+                            <!-- NEW: Domain Intelligence Tabs -->
+                            <div class="domain-intel-tabs mb-4">
+                                <ul class="nav nav-pills gap-2" id="pills-tab-{{ loop.index }}" role="tablist">
+                                    <li class="nav-item" role="presentation">
+                                        <button class="nav-link active xsmall fw-bold px-3 py-1" data-bs-toggle="pill" data-bs-target="#obs-{{ loop.index }}" type="button">OBSERVATIONS</button>
+                                    </li>
+                                    {% if domain.divisional_confirmation %}
+                                    <li class="nav-item" role="presentation">
+                                        <button class="nav-link xsmall fw-bold px-3 py-1" data-bs-toggle="pill" data-bs-target="#varga-{{ loop.index }}" type="button">DIVISIONS</button>
+                                    </li>
+                                    {% endif %}
+                                    {% if domain.timing_explanation %}
+                                    <li class="nav-item" role="presentation">
+                                        <button class="nav-link xsmall fw-bold px-3 py-1" data-bs-toggle="pill" data-bs-target="#timing-{{ loop.index }}" type="button">TIMING</button>
+                                    </li>
+                                    {% endif %}
+                                    {% if domain.advanced_details %}
+                                    <li class="nav-item" role="presentation">
+                                        <button class="nav-link xsmall fw-bold px-3 py-1" data-bs-toggle="pill" data-bs-target="#adv-{{ loop.index }}" type="button">ADVANCED</button>
+                                    </li>
+                                    {% endif %}
+                                </ul>
+                                <div class="tab-content mt-3 p-3 rounded-4 bg-black bg-opacity-20 border border-white border-opacity-5" id="pills-tabContent-{{ loop.index }}">
+                                    <div class="tab-pane fade show active" id="obs-{{ loop.index }}" role="tabpanel">
+                                        <div class="d-flex flex-column gap-2">
+                                            {% for item in domain.evidence %}
+                                            <div class="d-flex gap-2 align-items-start {{ 'd-none' if loop.index > 5 else '' }} evidence-item-{{ loop.index }}">
+                                                <div class="mt-1">
+                                                    {% if '✓' in item %}<i class="bi bi-check-circle text-success xxsmall"></i>
+                                                    {% elif '⚠' in item %}<i class="bi bi-exclamation-circle text-warning xxsmall"></i>
+                                                    {% else %}<i class="bi bi-dot text-dim"></i>{% endif %}
+                                                </div>
+                                                <div class="xxsmall text-dim">{{ item.replace('✓ ', '').replace('⚠ ', '') }}</div>
                                             </div>
-                                            <div class="xsmall text-dim">{{ item.replace('✓ ', '').replace('⚠ ', '') }}</div>
+                                            {% endfor %}
+                                            {% if domain.evidence|length > 5 %}
+                                            <button class="btn btn-link text-gold p-0 xxsmall fw-bold text-decoration-none mt-2" onclick="toggleEvidence(this)">
+                                                + SHOW {{ domain.evidence|length - 5 }} MORE OBSERVATIONS
+                                            </button>
+                                            {% endif %}
                                         </div>
-                                        {% endfor %}
+                                    </div>
+                                    <div class="tab-pane fade" id="varga-{{ loop.index }}" role="tabpanel">
+                                        <div class="d-flex flex-column gap-2">
+                                            {% for v in domain.divisional_confirmation %}
+                                            <div class="xxsmall text-dim d-flex gap-2">
+                                                <i class="bi bi-diagram-2 text-accent opacity-50"></i> {{ v }}
+                                            </div>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                    <div class="tab-pane fade" id="timing-{{ loop.index }}" role="tabpanel">
+                                        <p class="xxsmall text-accent mb-0 font-mono">{{ domain.timing_explanation }}</p>
+                                    </div>
+                                    <div class="tab-pane fade" id="adv-{{ loop.index }}" role="tabpanel">
+                                        <div class="d-flex flex-column gap-2">
+                                            {% for adv in domain.advanced_details %}
+                                            <div class="xxsmall text-dim d-flex gap-2">
+                                                <i class="bi bi-cpu text-warning opacity-50"></i> {{ adv }}
+                                            </div>
+                                            {% endfor %}
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-6">
-                                <div class="p-4 p-md-5 bg-black bg-opacity-20 h-100">
-                                    <div class="xsmall text-gold fw-bold mb-3 opacity-70 uppercase tracking-widest">Betterment</div>
-                                    {% if domain.remedies %}
-                                    <div class="d-flex flex-column gap-3">
-                                        {% for rem in domain.remedies[:1] %}
-                                        <div class="remedy-box-mini p-2 rounded-3 bg-white bg-opacity-5 border border-white border-opacity-5">
-                                            <div class="xsmall fw-bold text-white-50 mb-1">{{ rem.planet|upper }} PROTOCOL</div>
-                                            <p class="xxsmall text-dim mb-0 text-truncate"><i class="bi bi-megaphone me-1"></i>{{ rem.mantra }}</p>
-                                        </div>
-                                        {% endfor %}
-                                        <button class="btn btn-link text-gold p-0 xsmall fw-bold text-decoration-none text-start" onclick="showCategory('remedies')">
-                                            + {{ domain.remedies|length }} ACTIONS <i class="bi bi-arrow-right ms-1"></i>
-                                        </button>
+                        </div>
+
+                        <div class="row g-0 bg-black bg-opacity-10 border-top border-white border-opacity-5">
+                            <div class="col-12 p-4">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div class="d-flex align-items-center gap-3">
+                                        <div class="xsmall text-gold fw-bold uppercase tracking-widest opacity-50">Correction:</div>
+                                        {% if domain.remedies %}
+                                            <div class="xsmall text-dim font-serif italic">{{ domain.remedies[0].mantra|truncate(60) }}</div>
+                                        {% else %}
+                                            <div class="xsmall text-success fw-bold">NO MITIGATION REQUIRED</div>
+                                        {% endif %}
                                     </div>
-                                    {% else %}
-                                    <div class="d-flex align-items-center gap-2 opacity-30 mt-2">
-                                        <i class="bi bi-shield-check"></i>
-                                        <span class="xsmall fw-bold">BALANCED</span>
-                                    </div>
-                                    {% endif %}
+                                    <button class="btn btn-link text-gold p-0 xsmall fw-bold text-decoration-none" onclick="showCategory('remedies')">
+                                        DETAILS <i class="bi bi-arrow-right ms-1"></i>
+                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -254,6 +295,21 @@
 }
 .resonance-orb-mini span { position: relative; z-index: 2; font-size: 1.2rem; }
 
+.domain-intel-tabs .nav-pills .nav-link {
+    border-radius: 8px;
+    color: var(--text-dim) !important;
+    background: rgba(255,255,255,0.02);
+    border: 1px solid var(--border);
+    opacity: 0.7;
+}
+
+.domain-intel-tabs .nav-pills .nav-link.active {
+    background: var(--gold-glow);
+    border-color: var(--gold);
+    color: var(--gold) !important;
+    opacity: 1;
+}
+
 .cat-content-block { animation: fadeIn 0.4s ease-out; }
 @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
@@ -265,6 +321,12 @@
 </style>
 
 <script>
+function toggleEvidence(btn) {
+    const parent = btn.parentElement;
+    parent.querySelectorAll('.d-none').forEach(item => item.classList.remove('d-none'));
+    btn.style.display = 'none';
+}
+
 function gotoDate(date) {
     window.location.href = "{{ url_for('main.predictions') }}?date=" + date;
 }
