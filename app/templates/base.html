@@ -33,87 +33,23 @@
         </div>
 
         <nav class="nav-list">
-            <div class="xsmall text-gold opacity-30 fw-black tracking-widest mb-3 px-3">CORE NAVIGATION</div>
-            <a href="{{ url_for('main.index') }}" class="nav-link {% if request.endpoint == 'main.index' %}active{% endif %}">
-                <i class="bi bi-house-door"></i> <span>Home</span>
-            </a>
+            <div class="xsmall text-gold opacity-30 fw-black tracking-widest mb-3 px-3">GUIDANCE HUB</div>
             <a href="{{ url_for('main.dashboard') }}" class="nav-link {% if request.endpoint == 'main.dashboard' %}active{% endif %}">
-                <i class="bi bi-grid-1x2"></i> <span>Dashboard</span>
+                <i class="bi bi-grid-1x2"></i> <span>Main Command</span>
             </a>
+            <a href="{{ url_for('main.predictions') }}" class="nav-link {% if request.endpoint == 'main.predictions' %}active{% endif %}">
+                <i class="bi bi-stars"></i> <span>Life Predictions</span>
+            </a>
+            <a href="{{ url_for('main.prashna') }}" class="nav-link {% if request.endpoint == 'main.prashna' %}active{% endif %}">
+                <i class="bi bi-question-circle"></i> <span>Ask the Oracle</span>
+            </a>
+
+            <div class="xsmall text-gold opacity-30 fw-black tracking-widest mb-3 mt-4 px-3">MY BLUEPRINT</div>
             <a href="{{ url_for('main.kundli') }}" class="nav-link {% if request.endpoint == 'main.kundli' %}active{% endif %}">
                 <i class="bi bi-compass"></i> <span>Birth Chart</span>
             </a>
-            <a href="{{ url_for('main.predictions') }}" class="nav-link {% if request.endpoint == 'main.predictions' %}active{% endif %}">
-                <i class="bi bi-stars"></i> <span>Insights</span>
-            </a>
-
-            <div class="xsmall text-gold opacity-30 fw-black tracking-widest mb-3 mt-4 px-3">ANALYSIS & SYNTHESIS</div>
-            <a href="{{ url_for('main.cosmic_dna') }}" class="nav-link {% if request.endpoint == 'main.cosmic_dna' %}active{% endif %}">
-                <i class="bi bi-dna"></i> <span>Cosmic DNA</span>
-            </a>
-            <a href="{{ url_for('main.varshaphala') }}" class="nav-link {% if request.endpoint == 'main.varshaphala' %}active{% endif %}">
-                <i class="bi bi-calendar-event"></i> <span>Yearly Progress</span>
-            </a>
-            <a href="{{ url_for('main.friendship_matrix') }}" class="nav-link {% if request.endpoint == 'main.friendship_matrix' %}active{% endif %}">
-                <i class="bi bi-diagram-2"></i> <span>Friendship Matrix</span>
-            </a>
-            <a href="{{ url_for('main.chakra_alignment') }}" class="nav-link {% if request.endpoint == 'main.chakra_alignment' %}active{% endif %}">
-                <i class="bi bi-person-bounding-box"></i> <span>Chakras</span>
-            </a>
-            <a href="{{ url_for('main.galactic_audit') }}" class="nav-link {% if request.endpoint == 'main.galactic_audit' %}active{% endif %}">
-                <i class="bi bi-stars"></i> <span>Galactic Audit</span>
-            </a>
-            <a href="{{ url_for('main.eclipse_watch') }}" class="nav-link {% if request.endpoint == 'main.eclipse_watch' %}active{% endif %}">
-                <i class="bi bi-moon-stars"></i> <span>Eclipse Watch</span>
-            </a>
-            <a href="{{ url_for('main.nakshatra_symphony') }}" class="nav-link {% if request.endpoint == 'main.nakshatra_symphony' %}active{% endif %}">
-                <i class="bi bi-stars"></i> <span>Nakshatras</span>
-            </a>
-            <a href="{{ url_for('main.ashtakavarga') }}" class="nav-link {% if request.endpoint == 'main.ashtakavarga' %}active{% endif %}">
-                <i class="bi bi-grid-3x3-gap"></i> <span>Ashtakavarga</span>
-            </a>
-            <a href="{{ url_for('main.yoga_gallery') }}" class="nav-link {% if request.endpoint == 'main.yoga_gallery' %}active{% endif %}">
-                <i class="bi bi-gem"></i> <span>Yoga Gallery</span>
-            </a>
-            <a href="{{ url_for('main.esoteric_audit') }}" class="nav-link {% if request.endpoint == 'main.esoteric_audit' %}active{% endif %}">
-                <i class="bi bi-vault"></i> <span>Esoteric Vault</span>
-            </a>
-            <a href="{{ url_for('main.numerology') }}" class="nav-link {% if request.endpoint == 'main.numerology' %}active{% endif %}">
-                <i class="bi bi-hash"></i> <span>Lo Shu Grid</span>
-            </a>
-            <a href="{{ url_for('main.life_calendar') }}" class="nav-link {% if request.endpoint == 'main.life_calendar' %}active{% endif %}">
-                <i class="bi bi-calendar-check"></i> <span>Life Calendar</span>
-            </a>
-            <a href="{{ url_for('main.shani_report') }}" class="nav-link {% if request.endpoint == 'main.shani_report' %}active{% endif %}">
-                <i class="bi bi-shield-fill-check"></i> <span>Shani Engine</span>
-            </a>
-
-            <div class="xsmall text-gold opacity-30 fw-black tracking-widest mb-3 mt-4 px-3">GLOBAL SYSTEMS</div>
-            <a href="{{ url_for('main.cosmic_markets') }}" class="nav-link {% if request.endpoint == 'main.cosmic_markets' %}active{% endif %}">
-                <i class="bi bi-currency-exchange"></i> <span>Cosmic Markets</span>
-            </a>
-            <a href="{{ url_for('main.relocation') }}" class="nav-link {% if request.endpoint == 'main.relocation' %}active{% endif %}">
-                <i class="bi bi-globe-americas"></i> <span>Destiny Map</span>
-            </a>
-            <a href="{{ url_for('main.cosmic_weather') }}" class="nav-link {% if request.endpoint == 'main.cosmic_weather' %}active{% endif %}">
-                <i class="bi bi-cloud-sun"></i> <span>Cosmic Weather</span>
-            </a>
-
-            <div class="xsmall text-gold opacity-30 fw-black tracking-widest mb-3 mt-4 px-3">TRADITIONAL TOOLS</div>
             <a href="{{ url_for('main.transit') }}" class="nav-link {% if request.endpoint == 'main.transit' %}active{% endif %}">
-                <i class="bi bi-clock-history"></i> <span>Transits</span>
-            </a>
-            <a href="{{ url_for('main.panchang') }}" class="nav-link {% if request.endpoint == 'main.panchang' %}active{% endif %}">
-                <i class="bi bi-calendar3"></i> <span>Almanac</span>
-            </a>
-            <a href="{{ url_for('main.prashna') }}" class="nav-link {% if request.endpoint == 'main.prashna' %}active{% endif %}">
-                <i class="bi bi-question-circle"></i> <span>Prashna Oracle</span>
-            </a>
-            <a href="{{ url_for('main.matchmaking') }}" class="nav-link {% if request.endpoint == 'main.matchmaking' %}active{% endif %}">
-                <i class="bi bi-heart-pulse"></i> <span>Matchmaking</span>
-            </a>
-            <a href="{{ url_for('main.lexicon') }}" class="nav-link {% if request.endpoint == 'main.lexicon' %}active{% endif %}">
-                <i class="bi bi-journal-text"></i> <span>Lexicon</span>
+                <i class="bi bi-clock-history"></i> <span>Current Flow</span>
             </a>
         </nav>
 

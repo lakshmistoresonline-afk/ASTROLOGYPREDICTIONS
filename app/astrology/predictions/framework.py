@@ -99,147 +99,112 @@ def cross_validate_with_specialized(chart: CanonicalChart, domain_name: str, bas
     refined = list(base_factors)
 
     # 1. Nadi Cross-validation (Planet-to-Planet connections)
-    # Example: If Career is being checked (Sun/Saturn), check their Nadi links
     if domain_name == "Career":
         sat_nadi = chart.nadi_connections.get("Saturn", [])
         sun_nadi = chart.nadi_connections.get("Sun", [])
         if "Jupiter" in sat_nadi or "Jupiter" in sun_nadi:
-            refined.append(EvidenceEngine.create_factor("Nadi Link (Career-Jup)", "yoga", "positive", 15, "Jupiter's Nadi link to career planets indicates significant expansion and professional ethics."))
+            refined.append(EvidenceEngine.create_factor("Life Expansion", "yoga", "positive", 15, "A special planetary link suggests ethical growth and significant expansion in your professional sphere."))
 
     # 2. Tajika Ithasala (Applying aspects)
-    # Powerful for 'Immediate' results or current year potential
     for ty in chart.tajika_yogas:
         if ty["status"] == "Applying" and ty["strength"] == "STRONG":
-            # Check if participating planets are relevant to domain
-            # (Simplified for now: any strong Ithasala is a general boost)
             if domain_name in ["Career", "Finance", "Marriage"]:
-                refined.append(EvidenceEngine.create_factor("Tajika Ithasala", "yoga", "positive", 10, f"Positive applying aspect ({ty['name']}) facilitates swift manifestation of results."))
+                refined.append(EvidenceEngine.create_factor("Upcoming Opportunity", "yoga", "positive", 10, "A strong celestial alignment is currently forming, facilitating a swift manifestation of results."))
 
     # 3. Rashi Drishti (Jaimini)
-    # Check if any benefic rashi aspects the primary house
     benefics = ["Jupiter", "Venus", "Moon", "Mercury"]
-    # Map domain to house
     house_map = {"Career": 10, "Finance": 2, "Marriage": 7, "Health": 1}
     h_idx = house_map.get(domain_name)
     if h_idx is not None and chart.asc_rashi is not None:
         target_rashi = (chart.asc_rashi + h_idx - 1) % 12
         for r_idx, aspecting in chart.rashi_drishti.items():
             if target_rashi in aspecting:
-                # Sign at r_idx aspects target house. Is there a benefic there?
                 for p_name, p_info in chart.planets.items():
                     if p_info.rashi == r_idx and p_name in benefics:
-                        refined.append(EvidenceEngine.create_factor("Rashi Drishti", "yoga", "positive", 8, f"Target house receives supportive Jaimini aspect from {p_name} in rashi {r_idx}."))
+                        refined.append(EvidenceEngine.create_factor("Benefic Support", "yoga", "positive", 8, f"This sector receives supportive energy from {p_name}, easing the path to success."))
 
     # 4. Sudarshana Chakra Resonance
-    # If the house is strong from all 3 points (Lagna, Moon, Sun)
     s_h_idx = house_map.get(domain_name)
     if s_h_idx:
         s_chakra = chart.sudarshana_chakra.get(s_h_idx)
         if s_chakra and s_chakra["resonance"] == "HIGH":
-            refined.append(EvidenceEngine.create_factor("Sudarshana Resonance", "house", "positive", 20, "This domain is strong from the perspective of the Body, Mind, and Soul (Sudarshana), indicating a definitive karmic promise."))
+            refined.append(EvidenceEngine.create_factor("Unified Alignment", "house", "positive", 20, "This life area is strongly supported across multiple layers of your blueprint, indicating a definitive promise of fulfillment."))
 
-    # 5. Sensitive Points (Bhrigu Bindu / Khara)
+    # 5. Sensitive Points (Bhrigu Bindu)
     bb_lon = chart.sensitive_points.get("Bhrigu Bindu")
     if bb_lon is not None:
         bb_rashi = int(bb_lon // 30)
-        # Check if any planet aspects Bhrigu Bindu (simplified)
         for p_name, p_info in chart.planets.items():
             if p_info.rashi == bb_rashi:
-                refined.append(EvidenceEngine.create_factor("Destiny Trigger", "planet", "positive", 12, f"Planet {p_name} sits on your Bhrigu Bindu (Destiny Point), acting as a major karmic catalyst."))
+                refined.append(EvidenceEngine.create_factor("Destiny Trigger", "planet", "positive", 12, "A key planet is activating a sensitive destiny point in your chart, acting as a major catalyst for change."))
 
     # 6. KP Significators
-    # Level A & B are strongest
     h_num = house_map.get(domain_name)
     if h_num is not None:
         sigs = chart.kp_significators.get(h_num, {})
         strong_sigs = sigs.get("A", []) + sigs.get("B", [])
         for s in strong_sigs:
-            # Check if this significator is also a domain planet
             if s in ["Jupiter", "Venus", "Mercury"]:
-                refined.append(EvidenceEngine.create_factor("KP Support", "planet", "positive", 15, f"KP System confirms {s} as a primary significator for {domain_name}."))
+                refined.append(EvidenceEngine.create_factor("Technical Confirmation", "planet", "positive", 15, f"Deep-layered analysis confirms strong planetary support for achieving goals in this area."))
 
     # 7. Bhrigu Chakra Paddhati (BCP) Activation
     bcp = chart.bcp_activation
     if bcp and h_num is not None and bcp.get("active_house") == h_num:
-        refined.append(EvidenceEngine.create_factor("BCP Activation", "house", "positive", 25, f"Bhrigu Chakra Paddhati (BCP) confirms this house is currently ACTIVE for your {bcp['age']}th year, bringing matters of {domain_name} to the forefront."))
+        refined.append(EvidenceEngine.create_factor("Temporal Focus", "house", "positive", 25, f"Your current age cycle is precisely activating this sector, bringing these specific life matters to the forefront."))
 
     # 8. Karakamsha / Swamsha Support
     ks = chart.karakamsha_swamsha
     if ks and h_num is not None and chart.asc_rashi is not None:
-        # Check if domain house relative to Karakamsha is strong
         k_rashi = ks.get("Karakamsha")
         if k_rashi is not None:
             target_rashi = (chart.asc_rashi + h_num - 1) % 12
             rel_h = (target_rashi - k_rashi + 12) % 12 + 1
             if rel_h in [1, 4, 7, 10, 5, 9]:
-                refined.append(EvidenceEngine.create_factor("Soul Strength (Karakamsha)", "yoga", "positive", 12, f"This life area is auspiciously placed (H{rel_h}) from your Atmakaraka's Navamsha seat, ensuring soul-level fulfillment."))
+                refined.append(EvidenceEngine.create_factor("Soul-Level Fulfillment", "yoga", "positive", 12, "This life area aligns with your deeper soul-path, ensuring lasting personal satisfaction."))
 
     # 9. Panchadha Maitri (Planetary Relationships)
-    # Check relationship between domain lord and Lagna Lord
     l1_name = chart.house_lords.get(1)
     if h_num is not None:
         d_lord_name = chart.house_lords.get(h_num)
         if l1_name and d_lord_name and l1_name != d_lord_name:
             from ..strength.friendship import get_compound_friendship
-            # Ensure planets exist
             if l1_name in chart.planets and d_lord_name in chart.planets:
                 rel = get_compound_friendship(l1_name, d_lord_name, chart.planets[l1_name].house, chart.planets[d_lord_name].house)
                 if rel in ["Great Friend", "Friend"]:
-                     refined.append(EvidenceEngine.create_factor("Planetary Relationship", "lord", "positive", 10, f"The lord of this domain ({d_lord_name}) is a {rel} of your Lagna Lord ({l1_name}), indicating ease of manifestation."))
+                     refined.append(EvidenceEngine.create_factor("Natural Flow", "lord", "positive", 10, "The energy governing this domain is in harmony with your core identity, allowing for an easier manifestation of results."))
                 elif rel in ["Enemy", "Great Enemy"]:
-                     refined.append(EvidenceEngine.create_factor("Planetary Relationship", "lord", "negative", 10, f"The lord of this domain ({d_lord_name}) is an {rel} of your Lagna Lord ({l1_name}), suggesting internal conflict in achieving results."))
+                     refined.append(EvidenceEngine.create_factor("Internal Friction", "lord", "negative", 10, "There is a slight mismatch between your desires and the energy of this sector, suggesting initial effort is needed."))
 
-    # 10. Saham (Arabic Part) Cross-validation
-    saham_map = {"Career": "Karma Saham", "Finance": "Artha Saham", "Marriage": "Vivaha Saham", "Health": "Arogya Saham"}
-    s_name = saham_map.get(domain_name)
-    if s_name and s_name in chart.sahams:
-        s_lon = chart.sahams[s_name]
-        s_rashi = int(s_lon // 30)
-        # Check if domain house or lord is connected to the Saham sign
-        if h_num is not None:
-            target_rashi = (chart.asc_rashi + h_num - 1) % 12
-            if s_rashi == target_rashi:
-                refined.append(EvidenceEngine.create_factor("Saham Support", "yoga", "positive", 15, f"The {s_name} (special sensitive point) falls exactly in your {h_num}th house, reinforcing the promise of this domain."))
-
-    # 11. Ashtakavarga Bindu Confirmation
+    # 11. Ashtakavarga Strength
     if h_num is not None and chart.ashtakavarga:
         target_rashi = (chart.asc_rashi + h_num - 1) % 12
         sav_points = chart.ashtakavarga.get("SAV", [28]*12)[target_rashi]
         if sav_points >= 30:
-            refined.append(EvidenceEngine.create_factor("Ashtakavarga Strength", "ashtakavarga", "positive", 8, f"High SAV points ({sav_points}) in the {h_num}th house provide strong vital energy for this domain."))
+            refined.append(EvidenceEngine.create_factor("Vitality Boost", "ashtakavarga", "positive", 8, "This sector possesses high vital energy, providing a strong foundation for your efforts."))
         elif sav_points < 25:
-            refined.append(EvidenceEngine.create_factor("Ashtakavarga Strength", "ashtakavarga", "negative", 5, f"Low SAV points ({sav_points}) in the {h_num}th house indicate a need for extra effort to get results."))
+            refined.append(EvidenceEngine.create_factor("Energy Maintenance", "ashtakavarga", "negative", 5, "This area may require more conscious energy management to achieve consistent results."))
 
     # 12. Planetary Avastha Details
-    # (Extracting from planets if they exist)
     if h_num is not None:
         d_lord_name = chart.house_lords.get(h_num)
         p_info = chart.planets.get(d_lord_name)
         if p_info:
             if "Deept" in p_info.deeptadi_avastha:
-                refined.append(EvidenceEngine.create_factor("Luminous State", "planet", "positive", 10, f"The domain ruler {d_lord_name} is in a 'Deept' (Radiant) state, suggesting peak performance."))
+                refined.append(EvidenceEngine.create_factor("Radiant Expression", "planet", "positive", 10, "The planetary ruler of this area is in a peak state of radiance, ensuring powerful results."))
             elif "Kopita" in p_info.deeptadi_avastha:
-                refined.append(EvidenceEngine.create_factor("Afflicted State", "planet", "negative", 10, f"The domain ruler {d_lord_name} is in a 'Kopita' (Angry) state, suggesting friction or impulsiveness."))
+                refined.append(EvidenceEngine.create_factor("Pressure State", "planet", "negative", 10, "The ruler of this domain is currently under pressure, which may lead to impulsive or reactive outcomes."))
 
-    # 13. Functional Malefic Obstruction
-    # Check if the domain's primary house is occupied by a strong functional malefic
+    # 13. Functional Obstruction
     for p_name, p_data in chart.planets.items():
         if p_data.house == h_num and p_data.functional_status == "Malefic":
-            refined.append(EvidenceEngine.create_factor("Functional Obstruction", "planet", "negative", 8, f"{p_name} acts as a functional malefic in this house, potentially causing recurring hurdles."))
+            refined.append(EvidenceEngine.create_factor("Structural Hurdle", "planet", "negative", 8, "A challenging influence in this sector may cause recurring but manageable hurdles."))
 
-    # 14. Planetary War (Graha Yuddha) Impact
+    # 14. Planetary War
     for p_name, p_data in chart.planets.items():
         if p_data.is_in_planetary_war and (p_data.house == h_num or p_name == d_lord_name):
-             direction = "negative" # Usually negative for the loser/troubled planet
-             refined.append(EvidenceEngine.create_factor("Planetary War", "planet", direction, 12, f"{p_name} is in Graha Yuddha (Planetary War). This intense struggle between energies can cause volatile or unpredictable results in this domain."))
+             refined.append(EvidenceEngine.create_factor("Energy Struggle", "planet", "negative", 12, "An intense struggle between planetary energies in this sector can cause volatile or unpredictable phases."))
 
-    # 15. Special Nakshatra Triggers (Pushya, Moola, etc.)
-    if h_num is not None:
-        # Check if 10th house falls in Pushya Nakshatra (Auspicious for Career)
-        target_rashi = (chart.asc_rashi + h_num - 1) % 12
-        # (Approximate sign check)
-        if domain_name == "Career" and target_rashi == 3: # Cancer
-             refined.append(EvidenceEngine.create_factor("Nakshatra Aura", "house", "positive", 5, "Matters of career are favored by the nurturing and stabilizing energy of the cosmic archetypes in this sector."))
+    return refined
 
     return refined
 
