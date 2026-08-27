@@ -13,14 +13,20 @@ def get_solar_return_jd(natal_jd: float, target_year: int) -> float:
     # 2. Approximate return time
     # Convert natal_jd to y/m/d to find birthday
     y, m, d, h = swe.revjul(natal_jd)
-    # Search around the target birthday
-    search_start = get_julian_day(target_year, m, d, h) - 2.0
-    search_end = search_start + 4.0
+    # Search around the target birthday.
+    # Use a wider window (7 days) to handle drifts over decades.
+    search_start = get_julian_day(target_year, m, d, h) - 3.5
+    search_end = search_start + 7.0
 
     def sun_lon_func(jd):
         return get_planet_position(jd, swe.SUN)["longitude"]
 
-    return find_event(search_start, search_end, sun_lon_func, target_lon)
+    jd_res = find_event(search_start, search_end, sun_lon_func, target_lon)
+    if jd_res < 0:
+        # Fallback to the approximate birthday if crossing not found
+        return get_julian_day(target_year, m, d, h)
+
+    return jd_res
 
 def calculate_muntha(natal_asc_rashi: int, age_years: int) -> int:
     """Calculate the Muntha (Yearly point) rashi."""

@@ -46,12 +46,13 @@ if not swe:
             # Standard reference: 1970-01-01 is JD 2440587.5
             from datetime import datetime
             try:
+                # Clamp year for safety
+                y = max(1, min(9999, y))
                 dt = datetime(y, m, d)
                 diff = dt - datetime(1970, 1, 1)
                 return 2440587.5 + diff.days + (h / 24.0)
             except Exception:
-                # Fallback to simple math for edge cases (e.g. Feb 29 on non-leap)
-                return 2451545.0 # J2000
+                return 2451545.0 # J2000 fallback
 
         def calc_ut(self, jd, pid, flags=0):
             # Planet Speeds (Approx Deg per Day)
@@ -74,11 +75,15 @@ if not swe:
 
         def revjul(self, jd):
             from datetime import datetime, timedelta
-            # 2440587.5 is 1970-01-01
-            dt = datetime(1970, 1, 1) + timedelta(days=jd - 2440587.5)
-            # Standard return: (year, month, day, decimal_hour)
-            decimal_hour = dt.hour + dt.minute / 60.0 + dt.second / 3600.0
-            return (dt.year, dt.month, dt.day, decimal_hour)
+            try:
+                # Clamp JD to safe range for datetime (Year 1 to 9999)
+                jd = max(1721425.5, min(5373484.5, jd))
+                dt = datetime(1970, 1, 1) + timedelta(days=jd - 2440587.5)
+                # Standard return: (year, month, day, decimal_hour)
+                decimal_hour = dt.hour + dt.minute / 60.0 + dt.second / 3600.0
+                return (dt.year, dt.month, dt.day, decimal_hour)
+            except Exception:
+                return (2000, 1, 1, 12.0)
 
         def sol_eclipse_when_next(self, jd, flags): return (0, [jd+30.0, 0, 0, 0, 0, 0, 0, 0, 0, 0])
         def lun_eclipse_when_next(self, jd, flags): return (0, [jd+15.0, 0, 0, 0, 0, 0, 0, 0, 0, 0])
