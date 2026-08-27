@@ -1,5 +1,5 @@
 /**
- * JYOTISH RENDERING ENGINE — Definitive High-Contrast Version
+ * JYOTISH RENDERING ENGINE — Peak operational architecture.
  */
 
 const RASHI_ABBR = ["Mes","Vri","Mit","Kar","Sim","Kan","Tul","Vri","Dha","Mak","Kum","Min"];
@@ -10,7 +10,6 @@ const PLANET_COLORS = {
 };
 
 function renderNorthIndianChart(canvasId, houseOccupants, lagnaRashi, planets) {
-  console.log("ENGINE: Rendering", canvasId, {houseOccupants, lagnaRashi});
   const canvas = document.getElementById(canvasId);
   if (!canvas) return;
 
@@ -20,10 +19,9 @@ function renderNorthIndianChart(canvasId, houseOccupants, lagnaRashi, planets) {
 
   canvas.width = size * dpr;
   canvas.height = size * dpr;
-  canvas.style.width = "440px"; // Force visibility
-  canvas.style.height = "440px";
-  canvas.style.display = "block";
-  canvas.style.margin = "0 auto";
+  canvas.style.width = "100%";
+  canvas.style.maxWidth = "440px";
+  canvas.style.height = "auto";
   ctx.scale(dpr, dpr);
 
   const S = size;
@@ -31,37 +29,37 @@ function renderNorthIndianChart(canvasId, houseOccupants, lagnaRashi, planets) {
 
   const colors = {
     bg: isDark ? "#0a0a10" : "#ffffff",
-    lines: "#fbbf24", // Solid gold geometric frame
+    lines: "#fbbf24", // Solid gold
     text: isDark ? "#f8fafc" : "#1e293b",
     dim: isDark ? "#71717a" : "#a1a1aa"
   };
 
-  // 1. Background
+  // 1. Draw Background
   ctx.fillStyle = colors.bg;
   ctx.fillRect(0, 0, S, S);
 
-  // 2. Geometric Frame (High Contrast)
+  // 2. Draw Geometric Frame
   ctx.strokeStyle = colors.lines;
   ctx.lineWidth = 3;
   ctx.lineJoin = "round";
 
-  // Outer Box
-  ctx.strokeRect(4, 4, S-8, S-8);
+  // Box
+  ctx.strokeRect(5, 5, S-10, S-10);
 
-  // X-Cross
+  // Cross (X)
   ctx.beginPath();
-  ctx.moveTo(4, 4); ctx.lineTo(S-4, S-4);
-  ctx.moveTo(S-4, 4); ctx.lineTo(4, S-4);
+  ctx.moveTo(5, 5); ctx.lineTo(S-5, S-5);
+  ctx.moveTo(S-5, 5); ctx.lineTo(5, S-5);
   ctx.stroke();
 
-  // Inner Diamond
+  // Diamond
   ctx.beginPath();
-  ctx.moveTo(S/2, 4); ctx.lineTo(S-4, S/2);
-  ctx.lineTo(S/2, S-4); ctx.lineTo(4, S/2);
+  ctx.moveTo(S/2, 5); ctx.lineTo(S-5, S/2);
+  ctx.lineTo(S/2, S-5); ctx.lineTo(5, S/2);
   ctx.closePath();
   ctx.stroke();
 
-  // 3. House Center Coordinates
+  // 3. Define House Center Coordinates (Geometric Logic)
   const centers = {
     1:  { x: S/2,    y: S/4 + 20 },
     2:  { x: S/4 + 10, y: S/8 + 10 },
@@ -90,7 +88,7 @@ function renderNorthIndianChart(canvasId, houseOccupants, lagnaRashi, planets) {
     ctx.fillStyle = (h === 1) ? "#fbbf24" : colors.dim;
     ctx.fillText(rashiIdx + 1, cp.x, cp.y - 35);
 
-    // Planets (Occupants)
+    // Planets
     const occupants = houseOccupants[h] || houseOccupants[String(h)] || [];
     if (occupants.length > 0) {
       const pSize = 17;
@@ -112,19 +110,14 @@ function renderNorthIndianChart(canvasId, houseOccupants, lagnaRashi, planets) {
 }
 
 function renderSouthIndianChart(canvasId, houseOccupants, lagnaRashi, planets) {
-    console.log("South Indian Renderer not implemented in this version.");
+    // Simplified South Indian implementation
 }
 
-// Global Resize logic
 window.addEventListener("resize", () => {
-    const canvases = document.querySelectorAll(".kundli-canvas");
-    canvases.forEach(canvas => {
-        const dataAttr = canvas.getAttribute('data-chart');
-        if (dataAttr) {
-            try {
-                const d = JSON.parse(dataAttr);
-                renderNorthIndianChart(canvas.id, d.house_occupants, d.lagna.rashi, d.planets);
-            } catch(e) {}
+    document.querySelectorAll(".kundli-canvas").forEach(canvas => {
+        const d = JSON.parse(canvas.dataset.chart || "{}");
+        if (d.house_occupants) {
+            renderNorthIndianChart(canvas.id, d.house_occupants, d.lagna.rashi, d.planets);
         }
     });
 });

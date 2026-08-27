@@ -13,7 +13,7 @@
                 </button>
                 {% for cat in preds.categorized_domains.keys() %}
                 <button class="nav-link" onclick="showCategory('{{ cat|lower }}', this)">
-                    <i class="bi bi-{{ 'stars' if cat == 'Essence' else 'bank' if cat == 'Material' else 'people' if cat == 'Social' else 'shield-pulse' }}"></i>
+                    <i class="bi bi-{{ 'stars' if cat == 'Essence' else 'bank' if cat == 'Material' else 'people' if cat == 'Social' else 'shield-pulse' if cat == 'Survival' else 'compass' }}"></i>
                     <span>{{ cat }}</span>
                 </button>
                 {% endfor %}
@@ -237,7 +237,7 @@
             <div class="row g-4">
                 {% for lk in preds.lalkitab_remedies %}
                 <div class="col-md-6">
-                    <div class="p-4 rounded-4 bg-white bg-opacity-5 border border-white border-opacity-5 d-flex gap-4 align-items-start">
+                    <div class="p-4 rounded-4 bg-glass-subtle d-flex gap-4 align-items-start">
                         <div class="bhava-number" style="min-width: 40px; height: 40px; border-radius: 50%; background: var(--gold-glow); display: flex; align-items: center; justify-content: center; font-weight: 900; color: var(--gold)">{{ lk.house }}</div>
                         <div>
                             <h6 class="text-white fw-bold mb-1">{{ lk.planet }} in House {{ lk.house }}</h6>

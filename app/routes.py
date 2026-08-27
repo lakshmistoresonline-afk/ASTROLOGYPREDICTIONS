@@ -20,18 +20,6 @@ from .translations import translate
 from .astrology.store import save_chart, list_charts, get_chart, delete_chart
 from .api.external import geocode_place, get_ip_location
 
-def _enrich_chart_for_template(chart: dict):
-    """Add legacy keys to chart dict for template compatibility."""
-    if not chart: return
-
-    from .astrology.core.planets import NAKSHATRA_NAMES, NAKSHATRA_LORDS, NAK_SPAN, PLANET_COLORS
-
-    # 1. Dates
-    if hasattr(chart, "birth_datetime") and isinstance(chart.birth_datetime, datetime):
-        chart.birth_datetime = chart.birth_datetime.isoformat()
-    elif isinstance(chart.get("birth_datetime"), datetime):
-        chart["birth_datetime"] = chart["birth_datetime"].isoformat()
-
     # 2. Basic Metadata
     R_NAMES = ["Mesha","Vrishabha","Mithuna","Karka","Simha","Kanya",
                "Tula","Vrishchika","Dhanu","Makara","Kumbha","Meena"]
@@ -81,6 +69,16 @@ def _enrich_chart_for_template(chart: dict):
             hv = (rashi - v_lagna + 12) % 12 + 1
             v_occ[hv].append(pname)
         chart["varga_occupants"][v_name] = v_occ
+
+    # Jaimini Keys normalization
+    jk = chart.get("jaimini_karakas", {})
+    chart["jaimini_karakas"] = { k.split(' ')[0]: v for k,v in jk.items() }
+
+    # Ensure Atmakaraka key specifically
+    if "Atmakaraka" not in chart["jaimini_karakas"]:
+        for k, v in jk.items():
+            if "Atmakaraka" in k:
+                chart["jaimini_karakas"]["Atmakaraka"] = v
 
     # 5. Additional fields
     chart["chalit_occupants"] = chart.get("bhava_chalit", chart["house_occupants"])
@@ -602,12 +600,20 @@ def cosmic_dna():
             "vedic": {
                 "lagna": chart["lagna"]["rashi_name"],
                 "moon": chart["planets"]["Moon"]["rashi_name"],
-                "atmakaraka": chart["jaimini_karakas"].get('Atmakaraka (AK) - Self'),
+                "atmakaraka": chart["jaimini_karakas"].get('Atmakaraka (AK) - Soul'),
                 "yogi": chart["yogi_details"].get('Yogi'),
             },
-            "bazi": chart_obj.bazi_pillars,
+            "bazi": {
+                "day_master": chart_obj.bazi_pillars.get("DayMaster"),
+                "self_element": chart_obj.bazi_pillars.get("Element"),
+                "structure": chart_obj.bazi_pillars.get("Structure")
+            },
             "human_design": chart_obj.human_design,
-            "maya": chart_obj.maya_tzolkin,
+            "maya": {
+                "seal": chart_obj.maya_tzolkin.get("name"),
+                "tone": chart_obj.maya_tzolkin.get("number"),
+                "kin_number": (chart_obj.maya_tzolkin.get("number", 1) - 1) * 20 + 1 # Placeholder Kin
+            },
             "tibetan": {"mewa": chart_obj.tibetan_data.get('mewa'), "parkha": chart_obj.tibetan_data.get('parkha')},
             "celtic": chart_obj.celtic_tree,
             "native_american": chart_obj.native_american,

@@ -51,69 +51,25 @@ body {
 #sidebar {
     background: var(--bg-surface);
     border-right: 1px solid var(--border);
-    position: fixed; /* Changed from sticky for better scroll control */
+    position: fixed;
     left: 0; top: 0; bottom: 0;
     width: var(--sidebar-w);
     height: 100vh;
     display: flex;
     flex-direction: column;
-    overflow-y: auto;
     z-index: 1000;
-}
-
-#sidebar::-webkit-scrollbar { width: 4px; }
-#sidebar::-webkit-scrollbar-thumb { background: var(--gold-glow); border-radius: 10px; }
-
-#main-content {
-    margin-left: var(--sidebar-w); /* Compensate for fixed sidebar */
-    display: flex;
-    flex-direction: column;
-    overflow-x: hidden;
-    width: calc(100% - var(--sidebar-w));
-}
-
-.bg-glass-subtle {
-    background: rgba(255, 255, 255, 0.04) !important;
-    border: 1px solid rgba(255, 255, 255, 0.05);
-}
-
-.master-header {
-    height: var(--header-h);
-    padding: 0 40px;
-    background: var(--bg-glass);
-    backdrop-filter: blur(16px);
-    border-bottom: 1px solid var(--border);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    z-index: 100;
-}
-
-.viewport-content {
-    padding: 40px;
-    max-width: 1400px;
-    margin: 0 auto;
-    width: 100%;
-}
-
-/* --- Navigation --- */
-.sidebar-header {
-    padding: 32px 24px;
-    border-bottom: 1px solid var(--border);
-}
-
-.app-brand {
-    font-family: 'Cinzel', serif;
-    font-weight: 800;
-    letter-spacing: 1px;
-    color: #fff;
 }
 
 .nav-list {
     padding: 24px 12px;
     list-style: none;
     margin: 0;
+    flex-grow: 1;
+    overflow-y: auto; /* Scroll only the nav items */
+    scrollbar-width: none;
 }
+
+.nav-list::-webkit-scrollbar { display: none; }
 
 .nav-link {
     display: flex;
@@ -434,5 +390,11 @@ body {
 .btn-xs { padding: 4px 8px; font-size: 0.65rem; }
 .remedy-box { transition: var(--transition); }
 .remedy-box:hover { background: rgba(255,255,255,0.08) !important; border-color: var(--gold-glow) !important; }
+
+.bg-glass-subtle {
+    background: rgba(255, 255, 255, 0.08) !important;
+    backdrop-filter: blur(15px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
 
 .leading-relaxed { line-height: 1.7; }
