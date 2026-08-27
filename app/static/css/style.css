@@ -51,21 +51,30 @@ body {
 #sidebar {
     background: var(--bg-surface);
     border-right: 1px solid var(--border);
-    position: sticky;
-    top: 0;
+    position: fixed; /* Changed from sticky for better scroll control */
+    left: 0; top: 0; bottom: 0;
+    width: var(--sidebar-w);
     height: 100vh;
     display: flex;
     flex-direction: column;
-    overflow-y: auto; /* Enable scrolling for long menus */
-    scrollbar-width: none; /* Hide scrollbar for clean look */
+    overflow-y: auto;
+    z-index: 1000;
 }
 
-#sidebar::-webkit-scrollbar { display: none; }
+#sidebar::-webkit-scrollbar { width: 4px; }
+#sidebar::-webkit-scrollbar-thumb { background: var(--gold-glow); border-radius: 10px; }
 
 #main-content {
+    margin-left: var(--sidebar-w); /* Compensate for fixed sidebar */
     display: flex;
     flex-direction: column;
     overflow-x: hidden;
+    width: calc(100% - var(--sidebar-w));
+}
+
+.bg-glass-subtle {
+    background: rgba(255, 255, 255, 0.04) !important;
+    border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 .master-header {

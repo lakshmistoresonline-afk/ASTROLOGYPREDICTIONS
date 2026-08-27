@@ -802,9 +802,13 @@ def esoteric_audit():
         vaisheshika = {}
         for p_name, p_info in chart_obj.planets.items():
             if p_info.vaisheshikamsha and p_info.vaisheshikamsha != "None":
+                v_count = 0
+                if p_info.shadbala_details:
+                    v_count = getattr(p_info.shadbala_details, "naisargika_bala", 0)
+
                 vaisheshika[p_name] = {
                     "level": p_info.vaisheshikamsha,
-                    "count": p_info.shadbala_details.naisargika_bala # Placeholder for count if not stored
+                    "count": v_count
                 }
 
         metrics = {
@@ -1354,7 +1358,11 @@ def varshaphala():
 
         # Mudda Dasha
         from .astrology.dasha.mudda import calculate_mudda_dasha
-        mudda = calculate_mudda_dasha(yearly_chart["planets"]["Moon"]["longitude"], sr_dt_utc)
+        try:
+            mudda = calculate_mudda_dasha(yearly_chart["planets"]["Moon"]["longitude"], sr_dt_utc)
+        except Exception as me:
+            print(f"ERROR: Mudda calculation failed: {me}")
+            mudda = {"mahadashas": []}
 
         _enrich_chart_for_template(yearly_chart)
 

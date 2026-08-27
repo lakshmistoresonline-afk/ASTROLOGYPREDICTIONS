@@ -48,7 +48,7 @@
             <tbody>
                 {% for p1 in planets %}
                 <tr class="border-bottom border-white border-opacity-5">
-                    <td class="px-4 py-4 fw-bold text-white small bg-white bg-opacity-5">{{ p1 }}</td>
+                    <td class="px-4 py-4 fw-bold text-white small bg-black bg-opacity-40">{{ p1 }}</td>
                     {% for p2 in planets %}
                         {% set rel = matrix[p1][p2] %}
                         <td class="friend-cell {{ rel|lower|replace(' ', '-') }}">
