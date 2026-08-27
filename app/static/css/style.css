@@ -56,7 +56,11 @@ body {
     height: 100vh;
     display: flex;
     flex-direction: column;
+    overflow-y: auto; /* Enable scrolling for long menus */
+    scrollbar-width: none; /* Hide scrollbar for clean look */
 }
+
+#sidebar::-webkit-scrollbar { display: none; }
 
 #main-content {
     display: flex;
@@ -187,7 +191,8 @@ body {
 }
 
 .glass-card {
-    background: rgba(18, 18, 26, 0.6);
+    background: #0f0f15; /* Fallback for browsers without glass support */
+    background: rgba(15, 15, 21, 0.7);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
     border: 1px solid rgba(255, 255, 255, 0.08);
@@ -196,6 +201,12 @@ body {
     position: relative;
     overflow: hidden;
     transition: var(--transition);
+}
+
+.card-intel {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 20px;
 }
 
 .glass-card::before {

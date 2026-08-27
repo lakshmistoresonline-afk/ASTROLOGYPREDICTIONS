@@ -97,7 +97,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    {% for m in mudda %}
+                    {% for m in mudda.mahadashas %}
                     <tr class="border-bottom border-white border-opacity-5">
                         <td class="px-5 py-4">
                             <div class="d-flex align-items-center gap-3">
@@ -108,7 +108,7 @@
                         <td class="font-mono text-white small">{{ m.start.strftime('%d %b %Y') }}</td>
                         <td class="font-mono text-white small">{{ m.end.strftime('%d %b %Y') }}</td>
                         <td class="px-5 text-end">
-                            <span class="xsmall text-dim fw-bold uppercase">{{ m.days|round(1) }} Days</span>
+                            <span class="xsmall text-dim fw-bold uppercase">{{ ((m.end - m.start).total_seconds() / 86400)|round(1) }} Days</span>
                         </td>
                     </tr>
                     {% endfor %}
