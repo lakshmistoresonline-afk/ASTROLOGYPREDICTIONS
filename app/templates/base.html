@@ -33,9 +33,9 @@
         </div>
 
         <nav class="nav-list">
-            <div class="xsmall text-gold opacity-30 fw-black tracking-widest mb-3 px-3">GUIDANCE HUB</div>
+            <div class="xsmall text-gold opacity-30 fw-black tracking-widest mb-3 px-3">PREDICTIONS HUB</div>
             <a href="{{ url_for('main.dashboard') }}" class="nav-link {% if request.endpoint == 'main.dashboard' %}active{% endif %}">
-                <i class="bi bi-grid-1x2"></i> <span>Main Command</span>
+                <i class="bi bi-grid-1x2"></i> <span>Daily Command</span>
             </a>
             <a href="{{ url_for('main.predictions') }}" class="nav-link {% if request.endpoint == 'main.predictions' %}active{% endif %}">
                 <i class="bi bi-stars"></i> <span>Life Predictions</span>
@@ -44,12 +44,15 @@
                 <i class="bi bi-question-circle"></i> <span>Ask the Oracle</span>
             </a>
 
-            <div class="xsmall text-gold opacity-30 fw-black tracking-widest mb-3 mt-4 px-3">MY BLUEPRINT</div>
+            <div class="xsmall text-gold opacity-30 fw-black tracking-widest mb-3 mt-4 px-3">PERSONAL ASSETS</div>
             <a href="{{ url_for('main.kundli') }}" class="nav-link {% if request.endpoint == 'main.kundli' %}active{% endif %}">
-                <i class="bi bi-compass"></i> <span>Birth Chart</span>
+                <i class="bi bi-compass"></i> <span>My Birth Chart</span>
+            </a>
+            <a href="{{ url_for('main.varshaphala') }}" class="nav-link {% if request.endpoint == 'main.varshaphala' %}active{% endif %}">
+                <i class="bi bi-calendar-event"></i> <span>Yearly Outlook</span>
             </a>
             <a href="{{ url_for('main.transit') }}" class="nav-link {% if request.endpoint == 'main.transit' %}active{% endif %}">
-                <i class="bi bi-clock-history"></i> <span>Current Flow</span>
+                <i class="bi bi-clock-history"></i> <span>Transit Live</span>
             </a>
         </nav>
 

@@ -32,7 +32,8 @@ def calculate_mudda_dasha(moon_lon: float, sr_dt: datetime) -> Dict[str, Any]:
         mahadashas.append({
             "lord": lord,
             "start": current_start,
-            "end": current_end
+            "end": current_end,
+            "days": round(duration_days, 1)
         })
         current_start = current_end
 

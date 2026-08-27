@@ -19,6 +19,8 @@ OFFLINE_CITIES = [
     # [A full database would contain 150,000 cities, this is the core hub subset]
 ]
 
+MAJOR_CITIES = OFFLINE_CITIES
+
 def search_offline_city(query: str):
     query = query.lower()
     results = []

@@ -57,11 +57,13 @@ if not swe:
             return jd
 
         def calc_ut(self, jd, pid, flags=0):
-            # Return distinct positions based on PID to ensure non-empty charts
-            # SUN=0, MOON=1, MERCURY=2, VENUS=3, MARS=4, JUPITER=5, SATURN=6
-            # We use (pid+1)*40 to spread them out across the zodiac
-            mock_lon = ((pid + 1) * 40.5 + (jd % 30)) % 360
-            return ([mock_lon, 0.0, 1.0, 1.0, 0.0, 0.0], 0)
+            # Planet Speeds (Approx Deg per Day)
+            speeds = {0: 1.0, 1: 13.0, 2: 1.5, 3: 1.2, 4: 0.5, 5: 0.08, 6: 0.03, 7: 0.01, 8: 0.005, 9: 0.004, 10: -0.05, 11: -0.05}
+            v = speeds.get(pid, 1.0)
+            # Offset by JD 2451545.0 (J2000)
+            diff = jd - 2451545.0
+            mock_lon = ((pid + 1) * 40.5 + (diff * v)) % 360
+            return ([mock_lon, 0.0, 1.0, v, 0.0, 0.0], 0)
 
         def get_ayanamsa_ut(self, jd): return 24.0 # Lahiri approx
         def sidtime(self, jd): return 0.0
@@ -98,15 +100,5 @@ if not swe:
 
         def sol_eclipse_when_next(self, jd, flags): return (0, [jd+30.0, 0, 0, 0, 0, 0, 0, 0, 0, 0])
         def lun_eclipse_when_next(self, jd, flags): return (0, [jd+15.0, 0, 0, 0, 0, 0, 0, 0, 0, 0])
-        def rise_trans(self, jd, pid, lon, lat, alt, press, temp, event_type):
-            # TRETS: [jd_rise/set, jd_transit, ...]
-            tret = [0.0] * 10
-            # Normalize to start of current day UTC
-            base_jd = int(jd + 0.5) - 0.5
-            if event_type == 1 or event_type == 3: # Rise
-                tret[0] = base_jd + 0.25 # 06:00 AM UTC
-            else: # Set
-                tret[0] = base_jd + 0.75 # 06:00 PM UTC
-            return (0, tret)
 
     swe = MockSWE()

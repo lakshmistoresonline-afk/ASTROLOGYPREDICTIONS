@@ -3,22 +3,28 @@
 
 {% block content %}
 <div class="row g-5">
-    <!-- Left Navigation: Categories -->
+    <!-- Left Navigation: Accurate Focus -->
     <div class="col-lg-3 col-xl-2">
         <div class="sticky-top" style="top: 100px; z-index: 10">
-            <h6 class="text-gold xsmall fw-black tracking-widest mb-4 opacity-50">DIMENSIONS</h6>
+            <h6 class="text-gold xsmall fw-black tracking-widest mb-4 opacity-50">AUDIT SECTORS</h6>
             <nav class="nav flex-column gap-2 prediction-nav">
                 <button class="nav-link active" onclick="showCategory('all', this)">
-                    <i class="bi bi-grid-fill"></i> <span>Overall Audit</span>
+                    <i class="bi bi-grid-fill"></i> <span>Complete Audit</span>
                 </button>
-                {% for cat in preds.categorized_domains.keys() %}
-                <button class="nav-link" onclick="showCategory('{{ cat|lower }}', this)">
-                    <i class="bi bi-{{ 'stars' if cat == 'Essence' else 'bank' if cat == 'Material' else 'people' if cat == 'Social' else 'shield-pulse' if cat == 'Survival' else 'compass' }}"></i>
-                    <span>{{ cat }}</span>
+                <button class="nav-link" onclick="showCategory('essence', this)">
+                    <i class="bi bi-stars"></i> <span>Personality & Mind</span>
                 </button>
-                {% endfor %}
-                <button class="nav-link text-warning" onclick="showCategory('remedies', this)">
-                    <i class="bi bi-magic"></i> <span>Remedy Sanctuary</span>
+                <button class="nav-link" onclick="showCategory('material', this)">
+                    <i class="bi bi-bank"></i> <span>Wealth & Career</span>
+                </button>
+                <button class="nav-link" onclick="showCategory('social', this)">
+                    <i class="bi bi-people"></i> <span>Relationships</span>
+                </button>
+                <button class="nav-link" onclick="showCategory('survival', this)">
+                    <i class="bi bi-shield-pulse"></i> <span>Health & Travel</span>
+                </button>
+                <button class="nav-link text-warning mt-4" onclick="showCategory('remedies', this)">
+                    <i class="bi bi-magic"></i> <span>Correction Suite</span>
                 </button>
             </nav>
 
@@ -93,59 +99,30 @@
 
                             <p class="small text-white-50 leading-relaxed mb-4">{{ domain.summary }}</p>
 
-                            <!-- Refined: Domain Intelligence Tabs (Helpful Only) -->
-                            <div class="domain-intel-tabs mb-4">
-                                <ul class="nav nav-pills gap-2" id="pills-tab-{{ loop.index }}" role="tablist">
-                                    <li class="nav-item" role="presentation">
-                                        <button class="nav-link active xsmall fw-bold px-3 py-1" data-bs-toggle="pill" data-bs-target="#obs-{{ loop.index }}" type="button">WHY THIS SCORE?</button>
-                                    </li>
-                                    {% if domain.timing_explanation %}
-                                    <li class="nav-item" role="presentation">
-                                        <button class="nav-link xsmall fw-bold px-3 py-1" data-bs-toggle="pill" data-bs-target="#timing-{{ loop.index }}" type="button">WHEN WILL IT ACT?</button>
-                                    </li>
-                                    {% endif %}
-                                </ul>
-                                <div class="tab-content mt-3 p-3 rounded-4 bg-black bg-opacity-20 border border-white border-opacity-5" id="pills-tabContent-{{ loop.index }}">
-                                    <div class="tab-pane fade show active" id="obs-{{ loop.index }}" role="tabpanel">
-                                        <div class="d-flex flex-column gap-2">
-                                            {% for item in domain.evidence %}
-                                            <div class="d-flex gap-2 align-items-start {{ 'd-none' if loop.index > 5 else '' }} evidence-item-{{ loop.index }}">
-                                                <div class="mt-1">
-                                                    {% if '✓' in item %}<i class="bi bi-check-circle text-success xxsmall"></i>
-                                                    {% elif '⚠' in item %}<i class="bi bi-exclamation-circle text-warning xxsmall"></i>
-                                                    {% else %}<i class="bi bi-dot text-dim"></i>{% endif %}
-                                                </div>
-                                                <div class="xxsmall text-dim">{{ item.replace('✓ ', '').replace('⚠ ', '') }}</div>
-                                            </div>
-                                            {% endfor %}
-                                            {% if domain.evidence|length > 5 %}
-                                            <button class="btn btn-link text-gold p-0 xxsmall fw-bold text-decoration-none mt-2" onclick="toggleEvidence(this)">
-                                                + SHOW {{ domain.evidence|length - 5 }} MORE REASONS
-                                            </button>
-                                            {% endif %}
-                                        </div>
-                                    </div>
-                                    <div class="tab-pane fade" id="timing-{{ loop.index }}" role="tabpanel">
-                                        <p class="xxsmall text-accent mb-0 leading-relaxed">{{ domain.timing_explanation }}</p>
-                                    </div>
+                            <!-- Streamlined: Prediction Outcome -->
+                            <div class="p-4 rounded-4 bg-glass-subtle border border-white border-opacity-5">
+                                <div class="d-flex align-items-center gap-3 mb-3">
+                                    <div class="h5 fw-black mb-0 text-gold">{{ domain.score|round|int }}% Match</div>
+                                    <div class="flex-grow-1 border-bottom border-white border-opacity-5"></div>
                                 </div>
+                                <p class="small text-white leading-relaxed mb-0">
+                                    {{ domain.summary }}
+                                </p>
                             </div>
                         </div>
 
-                        <div class="row g-0 bg-black bg-opacity-10 border-top border-white border-opacity-5">
+                        <div class="row g-0 bg-black bg-opacity-20 border-top border-white border-opacity-5">
                             <div class="col-12 p-4">
                                 <div class="d-flex justify-content-between align-items-center">
-                                    <div class="d-flex align-items-center gap-3">
-                                        <div class="xsmall text-gold fw-bold uppercase tracking-widest opacity-50">Correction:</div>
-                                        {% if domain.remedies %}
-                                            <div class="xsmall text-dim font-serif italic">{{ domain.remedies[0].mantra|truncate(60) }}</div>
-                                        {% else %}
-                                            <div class="xsmall text-success fw-bold">NO MITIGATION REQUIRED</div>
-                                        {% endif %}
+                                    <div>
+                                        <span class="xsmall text-dim uppercase fw-bold tracking-widest me-2">Dasha Influence:</span>
+                                        <span class="xsmall text-accent fw-bold">{{ domain.timing_explanation }}</span>
                                     </div>
+                                    {% if domain.remedies %}
                                     <button class="btn btn-link text-gold p-0 xsmall fw-bold text-decoration-none" onclick="showCategory('remedies')">
-                                        DETAILS <i class="bi bi-arrow-right ms-1"></i>
+                                        ACTION REQUIRED <i class="bi bi-magic ms-1"></i>
                                     </button>
+                                    {% endif %}
                                 </div>
                             </div>
                         </div>

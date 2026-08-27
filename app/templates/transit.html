@@ -191,7 +191,7 @@ function offsetDate(days) {
 
 {% if natal %}
 (function loadHeatmap() {
-  const lat = {{ transit.latitude }}, lon = {{ transit.longitude_coord }}, tz  = "{{ tz_str }}";
+  const lat = {{ transit.latitude }}, lon = {{ transit.longitude }}, tz  = "{{ tz_str }}";
   fetch(`/api/transit/heatmap?lat=${lat}&lon=${lon}&tz=${encodeURIComponent(tz)}`)
     .then(r => r.json()).then(data => {
       const container = document.getElementById("transit-heatmap-container");

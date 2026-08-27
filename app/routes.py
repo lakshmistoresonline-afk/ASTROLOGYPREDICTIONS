@@ -495,11 +495,12 @@ def load_kundli(cid):
     # Default: render full kundli chart
     dasha = None
     try:
-        moon_lon = chart["planets"]["Moon"]["longitude"]
-        birth_dt = datetime.fromisoformat(chart["birth_datetime"])
-        dasha = calculate_vimshottari(moon_lon, birth_dt)
-    except Exception:
-        pass
+        if "planets" in chart and "Moon" in chart["planets"]:
+            moon_lon = chart["planets"]["Moon"]["longitude"]
+            birth_dt = datetime.fromisoformat(chart["birth_datetime"])
+            dasha = calculate_vimshottari(moon_lon, birth_dt)
+    except Exception as de:
+        print(f"ERROR: Dasha calculation failed: {de}")
 
     return render_template("kundli.html", chart=chart, dasha=dasha, error=None)
 
@@ -1019,7 +1020,15 @@ def relocation():
         lines = get_angular_points(jd_ut)
 
         # Add some major cities for comparison
-        from .astrology.core.cities import MAJOR_CITIES
+        try:
+            from .astrology.core.cities import MAJOR_CITIES
+        except ImportError:
+            MAJOR_CITIES = [
+                {"name": "New Delhi", "lat": 28.6, "lon": 77.2},
+                {"name": "London", "lat": 51.5, "lon": -0.1},
+                {"name": "New York", "lat": 40.7, "lon": -74.0}
+            ]
+
         city_scores = []
 
         for city in MAJOR_CITIES[:20]:
@@ -1082,15 +1091,17 @@ def transit():
             pass
 
     # Build nakshatra-in-house mapping for transit
-    nak_house_map = _build_nak_house_map(transit_data, natal_chart)
+    nak_house_map = []
+    if transit_data and "planets" in transit_data:
+        nak_house_map = _build_nak_house_map(transit_data, natal_chart)
 
     # 3. Vedha Analysis
     vedha_alerts = []
-    if natal_chart:
+    if natal_chart and "planets" in natal_chart and "Moon" in natal_chart["planets"]:
         from .astrology.transit.vedha import check_vedha
-        # We need house occupants relative to natal moon
-        # For simplicity, we'll use the natal moon rashi to determine houses
         n_moon_rashi = natal_chart["planets"]["Moon"]["rashi"]
+
+        # ... (rest of vedha logic)
 
         # Prepare transit data relative to moon
         t_for_vedha = {}
@@ -1456,12 +1467,16 @@ def matchmaking():
 
             # Process Boy
             b_geo = geocode_place(b_place)
+            if "error" in b_geo: raise ValueError(f"Boy's location: {b_geo['error']}")
+
             b_dt = datetime.strptime(f"{b_dob} {b_tob}", "%Y-%m-%d %H:%M")
             b_chart = calculate_chart_data(b_dt, b_geo["lat"], b_geo["lon"], b_geo["timezone"])
             b_moon = b_chart.planets["Moon"]
 
             # Process Girl
             g_geo = geocode_place(g_place)
+            if "error" in g_geo: raise ValueError(f"Girl's location: {g_geo['error']}")
+
             g_dt = datetime.strptime(f"{g_dob} {g_tob}", "%Y-%m-%d %H:%M")
             g_chart = calculate_chart_data(g_dt, g_geo["lat"], g_geo["lon"], g_geo["timezone"])
             g_moon = g_chart.planets["Moon"]
@@ -2359,7 +2374,17 @@ def _build_nak_house_map(transit_data: dict, natal_chart: dict | None) -> list:
     if not natal_chart:
         return []
 
-    lagna_house_map = {h["rashi"]: h["house"] for h in natal_chart["houses"]}
+    # Map rashi to natal house index
+    asc_rashi = natal_chart.get("asc_rashi")
+    if asc_rashi is None:
+        # Fallback to calculating from ascendant longitude
+        asc_rashi = int(natal_chart.get("ascendant", 0) // 30)
+
+    lagna_house_map = {}
+    for i in range(12):
+        rashi = (asc_rashi + i) % 12
+        lagna_house_map[rashi] = i + 1
+
     result = []
 
     for p_name, p_data in transit_data["planets"].items():
@@ -2374,7 +2399,9 @@ def _build_nak_house_map(transit_data: dict, natal_chart: dict | None) -> list:
         # Natal planet in same house?
         natal_house_occupants = []
         if natal_house:
-            natal_house_occupants = natal_chart["house_occupants"].get(natal_house, [])
+            # JSON keys are strings, but natal_house is int
+            occ = natal_chart.get("house_occupants", {})
+            natal_house_occupants = occ.get(str(natal_house)) or occ.get(natal_house) or []
 
         result.append({
             "planet":      p_name,

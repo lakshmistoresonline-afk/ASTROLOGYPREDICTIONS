@@ -107,29 +107,13 @@
                             </div>
                         </td>
                         <td class="font-mono text-white small">
-                            {% if m.start is string %}
-                                {{ m.start }}
-                            {% elif m.start.strftime is defined %}
-                                {{ m.start.strftime('%d %b %Y') }}
-                            {% else %}
-                                {{ m.start }}
-                            {% endif %}
+                            {{ m.start.strftime('%d %b %Y') if m.start.strftime is defined else m.start }}
                         </td>
                         <td class="font-mono text-white small">
-                            {% if m.end is string %}
-                                {{ m.end }}
-                            {% elif m.end.strftime is defined %}
-                                {{ m.end.strftime('%d %b %Y') }}
-                            {% else %}
-                                {{ m.end }}
-                            {% endif %}
+                            {{ m.end.strftime('%d %b %Y') if m.end.strftime is defined else m.end }}
                         </td>
                         <td class="px-5 text-end">
-                            {% if m.start is string or m.end is string or m.start.total_seconds is not defined %}
-                                <span class="xsmall text-dim fw-bold uppercase">-- Days</span>
-                            {% else %}
-                                <span class="xsmall text-dim fw-bold uppercase">{{ ((m.end - m.start).total_seconds() / 86400)|round(1) }} Days</span>
-                            {% endif %}
+                            <span class="xsmall text-dim fw-bold uppercase">{{ m.days }} Days</span>
                         </td>
                     </tr>
                     {% endif %}

@@ -43,25 +43,26 @@ body {
 
 /* --- Layout --- */
 #layout-wrapper {
-    display: block;
+    display: flex;
     min-height: 100vh;
 }
 
 #sidebar {
     background: var(--bg-surface);
     border-right: 1px solid var(--border);
-    position: fixed;
-    left: 0; top: 0; bottom: 0;
     width: var(--sidebar-w);
+    min-width: var(--sidebar-w);
     height: 100vh;
+    position: sticky;
+    top: 0;
     display: flex;
     flex-direction: column;
     z-index: 1000;
 }
 
 #main-content {
-    margin-left: var(--sidebar-w);
-    min-height: 100vh;
+    flex-grow: 1;
+    min-width: 0;
     display: flex;
     flex-direction: column;
     overflow-x: hidden;
@@ -136,13 +137,21 @@ body {
 }
 
 .form-control-vedic {
-    background: rgba(255, 255, 255, 0.04);
+    background: #111118; /* Solid dark background */
     border: 1px solid var(--border);
     border-radius: 16px;
     color: #fff;
     padding: 14px 20px;
     width: 100%;
     transition: var(--transition);
+}
+
+select.form-control-vedic {
+    cursor: pointer;
+}
+select.form-control-vedic option {
+    background: #111118;
+    color: #fff;
 }
 
 .form-control-vedic:focus {
@@ -422,6 +431,11 @@ body {
 }
 .table-vedic td {
     border-color: var(--border) !important;
+}
+
+.bg-glass {
+    background: var(--bg-glass) !important;
+    backdrop-filter: blur(16px);
 }
 
 .leading-relaxed { line-height: 1.7; }
