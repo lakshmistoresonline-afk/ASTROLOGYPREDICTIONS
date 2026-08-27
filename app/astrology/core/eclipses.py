@@ -7,26 +7,25 @@ def get_upcoming_eclipses(jd_start: float, count: int = 5) -> List[Dict[str, Any
     results = []
     curr_jd = jd_start
 
+    from .datetime import jd_to_datetime
     for _ in range(count):
         # 1. Solar Eclipse
         res = swe.sol_eclipse_when_next(curr_jd, swe.FLG_SWIEPH)
         jd_solar = res[1][0]
-        y, m, d, h = swe.revjul(jd_solar)
         results.append({
             "type": "Solar Eclipse",
             "jd": jd_solar,
-            "date": datetime(y, m, d, int(h), int((h % 1) * 60)).isoformat(),
+            "date": jd_to_datetime(jd_solar).isoformat(),
             "longitude": swe.calc_ut(jd_solar, swe.SUN)[0][0]
         })
 
         # 2. Lunar Eclipse
         res_l = swe.lun_eclipse_when_next(curr_jd, swe.FLG_SWIEPH)
         jd_lunar = res_l[1][0]
-        yl, ml, dl, hl = swe.revjul(jd_lunar)
         results.append({
             "type": "Lunar Eclipse",
             "jd": jd_lunar,
-            "date": datetime(yl, ml, dl, int(hl), int((hl % 1) * 60)).isoformat(),
+            "date": jd_to_datetime(jd_lunar).isoformat(),
             "longitude": swe.calc_ut(jd_lunar, swe.MOON)[0][0]
         })
 

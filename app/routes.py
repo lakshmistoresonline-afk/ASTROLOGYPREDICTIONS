@@ -235,11 +235,9 @@ def get_sunrise_sunset_moonrise(target_date: date, lat: float, lon: float, tz_st
 
     def jd_to_str(jd):
         if not jd or jd < 0: return "—"
-        y, m, d, h = swe.revjul(jd)
-        hh = int(h)
-        mm = int((h - hh) * 60)
-        dt_utc = datetime(y, m, d, hh, mm, second=0, tzinfo=pytz.utc)
-        return dt_utc.astimezone(tz).strftime("%I:%M %p")
+        from .astrology.core.datetime import jd_to_datetime
+        dt_utc = jd_to_datetime(jd)
+        return pytz.utc.localize(dt_utc).astimezone(tz).strftime("%I:%M %p")
 
     # Convert Python weekday (0=Mon, 6=Sun) to Vedic index (0=Sun, 1=Mon...)
     v_weekday = (target_date.weekday() + 1) % 7
@@ -1381,9 +1379,8 @@ def varshaphala():
         sr_jd = get_solar_return_jd(natal_jd, target_year)
 
         # Calculate chart for that exact moment
-        from .astrology.core.swe_proxy import swe as swe_mod
-        y, m, d, h = swe_mod.revjul(sr_jd)
-        sr_dt_utc = datetime(y, m, d, int(h), int((h%1)*60))
+        from .astrology.core.datetime import jd_to_datetime
+        sr_dt_utc = jd_to_datetime(sr_jd)
 
         # Create the yearly chart
         from .astrology.core.chart import calculate_chart_data

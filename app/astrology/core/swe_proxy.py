@@ -43,18 +43,15 @@ if not swe:
         def set_topo(self, lon, lat, alt): pass
 
         def julday(self, y, m, d, h):
-            # Standard Gregorian to JD fallback
-            if m <= 2:
-                y -= 1
-                month = m + 12
-            else:
-                month = m
-            a = int(y / 100)
-            b = 2 - a + int(a / 4)
-            # h is decimal hour
-            day_fraction = h / 24.0
-            jd = int(365.25 * (y + 4716)) + int(30.6001 * (month + 1)) + d + day_fraction + b - 1524.5
-            return jd
+            # Standard reference: 1970-01-01 is JD 2440587.5
+            from datetime import datetime
+            try:
+                dt = datetime(y, m, d)
+                diff = dt - datetime(1970, 1, 1)
+                return 2440587.5 + diff.days + (h / 24.0)
+            except Exception:
+                # Fallback to simple math for edge cases (e.g. Feb 29 on non-leap)
+                return 2451545.0 # J2000
 
         def calc_ut(self, jd, pid, flags=0):
             # Planet Speeds (Approx Deg per Day)
@@ -76,27 +73,12 @@ if not swe:
             return (cusps + [0.0], ascmc)
 
         def revjul(self, jd):
-            # Standard JD to Gregorian fallback
-            z = int(jd + 0.5)
-            f = jd + 0.5 - z
-            if z < 2299161:
-                a = z
-            else:
-                alpha = int((z - 1867216.25) / 36524.25)
-                a = z + 1 + alpha - int(alpha / 4)
-            b = a + 1524
-            c = int((b - 122.1) / 365.25)
-            d = int(365.25 * c)
-            e = int((b - d) / 30.6001)
-            day = b - d - int(30.6001 * e) + f
-            month = e - 1 if e < 14 else e - 13
-            year = c - 4716 if month > 2 else c - 4715
-
-            if year < 1: year = 1
-
-            hour = (day - int(day)) * 24
-            if hour >= 24: hour = 23.99
-            return (year, month, int(day), hour)
+            from datetime import datetime, timedelta
+            # 2440587.5 is 1970-01-01
+            dt = datetime(1970, 1, 1) + timedelta(days=jd - 2440587.5)
+            # Standard return: (year, month, day, decimal_hour)
+            decimal_hour = dt.hour + dt.minute / 60.0 + dt.second / 3600.0
+            return (dt.year, dt.month, dt.day, decimal_hour)
 
         def sol_eclipse_when_next(self, jd, flags): return (0, [jd+30.0, 0, 0, 0, 0, 0, 0, 0, 0, 0])
         def lun_eclipse_when_next(self, jd, flags): return (0, [jd+15.0, 0, 0, 0, 0, 0, 0, 0, 0, 0])

@@ -126,13 +126,9 @@ def get_kaal_window(part: int, sunrise_jd: float, sunset_jd: float, tz_str: str 
 
     def jd_to_local_str(jd):
         try:
-            from ..core.swe_proxy import swe
-            y, m, d, h = swe.revjul(jd)
-            hh = int(h)
-            mm = int((h - hh) * 60)
-            ss = int((((h-hh)*60)%1)*60)
-            dt_utc = datetime(y, m, d, hh, mm, ss, tzinfo=pytz.utc)
-            return dt_utc.astimezone(tz).strftime("%H:%M")
+            from ..core.datetime import jd_to_datetime
+            dt_utc = jd_to_datetime(jd)
+            return pytz.utc.localize(dt_utc).astimezone(tz).strftime("%H:%M")
         except Exception:
             return "—"
 

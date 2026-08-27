@@ -63,13 +63,9 @@ def calculate_panchang_2_0(target_date: date, lat: float, lon: float, tz_str: st
     def jd_to_local_str(jd):
         if jd is None or jd < 0: return "—"
         try:
-            y, m, d, h = swe.revjul(jd)
-            h = h % 24
-            hh = int(h)
-            mm = int((h - hh) * 60)
-            ss = int((((h - hh) * 60) % 1) * 60)
-            dt_utc = datetime(y, m, d, hh, mm, ss, tzinfo=pytz.utc)
-            return dt_utc.astimezone(tz).strftime("%I:%M %p")
+            from ..core.datetime import jd_to_datetime
+            dt_utc = jd_to_datetime(jd)
+            return pytz.utc.localize(dt_utc).astimezone(tz).strftime("%I:%M %p")
         except Exception:
             return "—"
 
@@ -124,14 +120,9 @@ def calculate_panchang(target_date: date, lat: float, lon: float, tz_str: str,
     def jd_to_local_str(jd):
         if jd is None or jd < 0: return "—"
         try:
-            y, m, d, h = swe.revjul(jd)
-            # Ensure hour is normalized
-            h = h % 24
-            hh = int(h)
-            mm = int((h - hh) * 60)
-            ss = int((((h - hh) * 60) % 1) * 60)
-            dt_utc = datetime(y, m, d, hh, mm, ss, tzinfo=pytz.utc)
-            return dt_utc.astimezone(tz).strftime("%I:%M %p")
+            from ..core.datetime import jd_to_datetime
+            dt_utc = jd_to_datetime(jd)
+            return pytz.utc.localize(dt_utc).astimezone(tz).strftime("%I:%M %p")
         except Exception:
             return "—"
 
