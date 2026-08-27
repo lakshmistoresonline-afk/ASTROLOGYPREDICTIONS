@@ -35,7 +35,8 @@ if not swe:
             # Return 0 for any other flags or IDs
             if name.startswith('FLG_') or name.startswith('SIDM_') or name.isupper():
                 return 0
-            return None
+            # Return a dummy function for missing methods
+            return lambda *args, **kwargs: None
 
         def set_ephe_path(self, path): pass
         def set_sid_mode(self, mode): pass

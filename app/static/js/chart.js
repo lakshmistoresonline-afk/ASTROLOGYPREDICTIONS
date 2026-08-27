@@ -10,7 +10,7 @@ const PLANET_COLORS = {
 };
 
 function renderNorthIndianChart(canvasId, houseOccupants, lagnaRashi, planets) {
-  console.log("ENGINE: Rendering North Indian Chart on", canvasId);
+  console.log("ENGINE: Rendering", canvasId, {houseOccupants, lagnaRashi});
   const canvas = document.getElementById(canvasId);
   if (!canvas) return;
 
@@ -20,9 +20,10 @@ function renderNorthIndianChart(canvasId, houseOccupants, lagnaRashi, planets) {
 
   canvas.width = size * dpr;
   canvas.height = size * dpr;
-  canvas.style.width = "100%";
-  canvas.style.maxWidth = "440px";
-  canvas.style.height = "auto";
+  canvas.style.width = "440px"; // Force visibility
+  canvas.style.height = "440px";
+  canvas.style.display = "block";
+  canvas.style.margin = "0 auto";
   ctx.scale(dpr, dpr);
 
   const S = size;

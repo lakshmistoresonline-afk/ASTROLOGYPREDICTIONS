@@ -13,12 +13,14 @@ def get_sky_event(jd_ut: float, lat: float, lon: float, planet_id: int, event_ty
 
     # 1. Try Swiss Ephemeris first
     try:
-        res = swe.rise_trans(jd_ut, planet_id, lon, lat, 0, atpress, attemp, event_type)
-        # res should be (status, [tret1, ...])
-        if res and isinstance(res, tuple) and len(res) > 1:
-            tret = res[1]
-            if tret and tret[0] > 1000000:
-                return tret[0]
+        # Check if rise_trans is actually functional
+        if hasattr(swe, 'rise_trans'):
+            res = swe.rise_trans(jd_ut, planet_id, lon, lat, 0, atpress, attemp, event_type)
+            # res should be (status, [tret1, ...])
+            if res and isinstance(res, (list, tuple)) and len(res) > 1:
+                tret = res[1]
+                if tret and tret[0] > 1000000:
+                    return tret[0]
     except Exception as e:
         print(f"DEBUG: SWE rise_trans failed: {e}")
 
@@ -84,10 +86,15 @@ def get_sky_event(jd_ut: float, lat: float, lon: float, planet_id: int, event_ty
         else: # Set
             event_utc_hour = (solar_noon + h / 15.0) % 24
 
-        from ..core.datetime import datetime_to_jd
-        target_dt = datetime(dt.year, dt.month, dt.day, int(event_utc_hour), int((event_utc_hour % 1) * 60))
+        event_utc_hour = event_utc_hour % 24
+
+        from ..core.datetime import jd_to_datetime
+        # Use timedelta to avoid invalid hour errors
+        from datetime import date, timedelta
+        target_dt = datetime.combine(dt.date(), datetime.min.time()) + timedelta(hours=event_utc_hour)
         return datetime_to_jd(target_dt, "UTC")
-    except Exception:
+    except Exception as e:
+        print(f"DEBUG: Math fallback failed: {e}")
         return None
 
 def get_sunrise(jd_ut: float, lat: float, lon: float) -> Optional[float]:
