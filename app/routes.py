@@ -20,6 +20,18 @@ from .translations import translate
 from .astrology.store import save_chart, list_charts, get_chart, delete_chart
 from .api.external import geocode_place, get_ip_location
 
+def _enrich_chart_for_template(chart: dict):
+    """Add legacy keys to chart dict for template compatibility."""
+    if not chart: return
+
+    from .astrology.core.planets import NAKSHATRA_NAMES, NAKSHATRA_LORDS, NAK_SPAN, PLANET_COLORS
+
+    # 1. Dates
+    if hasattr(chart, "birth_datetime") and isinstance(chart.birth_datetime, datetime):
+        chart.birth_datetime = chart.birth_datetime.isoformat()
+    elif isinstance(chart.get("birth_datetime"), datetime):
+        chart["birth_datetime"] = chart["birth_datetime"].isoformat()
+
     # 2. Basic Metadata
     R_NAMES = ["Mesha","Vrishabha","Mithuna","Karka","Simha","Kanya",
                "Tula","Vrishchika","Dhanu","Makara","Kumbha","Meena"]

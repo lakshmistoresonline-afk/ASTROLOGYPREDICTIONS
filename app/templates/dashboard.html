@@ -48,7 +48,7 @@
         <p class="text-dim small mb-0">Unified Synthesis for {{ session.get('birth_name', 'Native') }}</p>
     </div>
     <div class="text-end d-none d-md-block">
-        <span class="badge bg-white bg-opacity-5 border border-white border-opacity-10 py-2 px-3 rounded-pill text-dim xsmall fw-bold">
+        <span class="badge bg-glass-subtle py-2 px-3 rounded-pill text-dim xsmall fw-bold">
             <i class="bi bi-clock-history me-2 text-gold"></i> August 2026
         </span>
     </div>
@@ -128,7 +128,7 @@
             </div>
         </div>
 
-        <div class="mt-4 p-3 rounded-4 bg-white bg-opacity-5 d-flex align-items-center gap-3">
+        <div class="mt-4 p-3 rounded-4 bg-glass-subtle d-flex align-items-center gap-3">
             <i class="bi bi-moon-stars text-accent"></i>
             <div class="small text-white-50">
                 Tithi: <span class="text-white fw-bold">{{ preds.panchang.tithi.name }}</span>
@@ -141,7 +141,7 @@
         <h6 class="text-white fw-black tracking-widest uppercase xsmall mb-4">Active Quests</h6>
         <div class="d-flex flex-column gap-3">
             {% for q in preds.active_quests %}
-            <div class="p-3 rounded-4 bg-white bg-opacity-5 border border-white border-opacity-5 position-relative overflow-hidden">
+            <div class="p-3 rounded-4 bg-glass-subtle position-relative overflow-hidden">
                 <div class="d-flex justify-content-between mb-2">
                     <span class="badge bg-gold text-dark xxsmall fw-black">{{ q.planet|upper }}</span>
                     <i class="bi bi-arrow-right-short text-gold"></i>

@@ -96,8 +96,9 @@ def calculate_panchang(target_date: date, lat: float, lon: float, tz_str: str,
                         birth_nak_idx: int = None) -> dict:
     """Legacy compatibility wrapper for high-precision Panchang."""
     tz = pytz.timezone(tz_str)
-    noon_dt = datetime.combine(target_date, datetime.min.time()).replace(hour=12)
-    jd_ut = datetime_to_jd(noon_dt, tz_str)
+    # Use midnight local time as base, then convert to UTC for search
+    local_base = tz.localize(datetime.combine(target_date, datetime.min.time()))
+    jd_ut = datetime_to_jd(local_base, "UTC")
 
     tithi = get_tithi_info(jd_ut)
     nak = get_nakshatra_info(jd_ut)

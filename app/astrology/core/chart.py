@@ -137,16 +137,23 @@ def calculate_chart_data(birth_dt: datetime, lat: float, lon: float, tz_str: str
         # Ketu logic
         planets_lon["Ketu"] = (planets_lon["Rahu"] + 180) % 360
 
-        # 2b. Upagrahas
+        # Upagrahas
         from .upagrahas import get_upagraha_longitudes
         from ..panchang.sky import get_sunrise, get_sunset
         sr_jd = get_sunrise(jd_ut, lat, lon) or jd_ut - 0.25
         ss_jd = get_sunset(jd_ut, lat, lon) or jd_ut + 0.25
         next_sr = get_sunrise(jd_ut + 1.0, lat, lon) or jd_ut + 0.75
-        v_weekday = (birth_dt.weekday() + 1) % 7
 
-        upagrahas_lon = get_upagraha_longitudes(jd_ut, sr_jd, ss_jd, next_sr, v_weekday, lat, lon)
-        planets_lon.update(upagrahas_lon)
+        # Correctly determine Vedic Weekday (Day starts at Sunrise)
+        # 0=Mon, 1=Tue... 6=Sun
+        python_weekday = birth_dt.weekday()
+        if jd_ut < sr_jd:
+            # If born before sunrise, technically still previous day in Vedic tradition
+            python_weekday = (python_weekday - 1 + 7) % 7
+
+        v_weekday = (python_weekday + 1) % 7 # 0=Sun, 1=Mon...
+
+        planets_lon.update(get_upagraha_longitudes(jd_ut, sr_jd, ss_jd, next_sr, v_weekday, lat, lon))
 
         # 3. Divisional Charts
         divisions = [1, 9, 10] # Min needed for UI

@@ -48,7 +48,7 @@
             <tbody>
                 {% for p1 in planets %}
                 <tr class="border-bottom border-white border-opacity-5">
-                    <td class="px-4 py-4 fw-bold text-white small bg-black bg-opacity-40">{{ p1 }}</td>
+                    <td class="px-4 py-4 fw-bold text-white small" style="background: rgba(0,0,0,0.5) !important; border-right: 1px solid var(--border)">{{ p1 }}</td>
                     {% for p2 in planets %}
                         {% set rel = matrix[p1][p2] %}
                         <td class="friend-cell {{ rel|lower|replace(' ', '-') }}">
@@ -64,7 +64,7 @@
 
 <div class="mt-5 row g-4">
     <div class="col-md-6">
-        <div class="p-4 rounded-4 bg-white bg-opacity-5 border border-white border-opacity-5">
+        <div class="p-4 rounded-4 bg-glass-subtle">
             <h6 class="text-gold fw-black xsmall uppercase mb-3">Panchadha Maitri Logic</h6>
             <p class="small text-dim leading-relaxed mb-0">
                 Planets have inherent relationships, but their positions in your chart create **Temporary** friendships.
@@ -73,7 +73,7 @@
         </div>
     </div>
     <div class="col-md-6">
-        <div class="p-4 rounded-4 bg-white bg-opacity-5 border border-white border-opacity-5">
+        <div class="p-4 rounded-4 bg-glass-subtle">
             <h6 class="text-gold fw-black xsmall uppercase mb-3">Relationship Tiers</h6>
             <div class="d-flex flex-wrap gap-2">
                 <span class="badge bg-success p-2 xsmall">GREAT FRIEND</span>

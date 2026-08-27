@@ -20,13 +20,13 @@ def calculate_charakarakas(planets: Dict[str, float]) -> Dict[str, str]:
     sorted_planets = sorted(planet_degrees, key=lambda x: x[1], reverse=True)
 
     names = [
-        "Atmakaraka (AK) - Soul",
-        "Amatyakaraka (AmK) - Career/Mind",
-        "Bhratrukaraka (BK) - Siblings",
-        "Matrukaraka (MK) - Mother",
-        "Putrakaraka (PK) - Children",
-        "Gnatikaraka (GK) - Challenges",
-        "Darakaraka (DK) - Spouse"
+        "Atmakaraka",
+        "Amatyakaraka",
+        "Bhratrukaraka",
+        "Matrukaraka",
+        "Putrakaraka",
+        "Gnatikaraka",
+        "Darakaraka"
     ]
 
     result = {}

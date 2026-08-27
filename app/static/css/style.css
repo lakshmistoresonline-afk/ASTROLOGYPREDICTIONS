@@ -58,6 +58,7 @@ body {
     display: flex;
     flex-direction: column;
     z-index: 1000;
+    overflow: hidden; /* Ensure nav-list can scroll within */
 }
 
 .nav-list {
@@ -65,8 +66,10 @@ body {
     list-style: none;
     margin: 0;
     flex-grow: 1;
+    min-height: 0; /* Important for flexbox scroll */
     overflow-y: auto; /* Scroll only the nav items */
-    scrollbar-width: none;
+    scrollbar-width: thin;
+    scrollbar-color: var(--gold-glow) transparent;
 }
 
 .nav-list::-webkit-scrollbar { display: none; }
@@ -392,9 +395,21 @@ body {
 .remedy-box:hover { background: rgba(255,255,255,0.08) !important; border-color: var(--gold-glow) !important; }
 
 .bg-glass-subtle {
-    background: rgba(255, 255, 255, 0.08) !important;
+    background: rgba(255, 255, 255, 0.03) !important; /* Reduced from 0.08 for better dark theme integration */
     backdrop-filter: blur(15px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.table-vedic {
+    color: var(--text-main) !important;
+}
+.table-vedic th {
+    background: rgba(0,0,0,0.2) !important;
+    border-color: var(--border) !important;
+    color: var(--gold) !important;
+}
+.table-vedic td {
+    border-color: var(--border) !important;
 }
 
 .leading-relaxed { line-height: 1.7; }
