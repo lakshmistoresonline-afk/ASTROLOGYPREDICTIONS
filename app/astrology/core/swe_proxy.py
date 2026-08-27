@@ -98,9 +98,14 @@ if not swe:
         def sol_eclipse_when_next(self, jd, flags): return (0, [jd+30.0, 0, 0, 0, 0, 0, 0, 0, 0, 0])
         def lun_eclipse_when_next(self, jd, flags): return (0, [jd+15.0, 0, 0, 0, 0, 0, 0, 0, 0, 0])
         def rise_trans(self, jd, pid, lon, lat, alt, press, temp, event_type):
+            # TRETS: [jd_rise/set, jd_transit, ...]
             tret = [0.0] * 10
-            if event_type == 1 or event_type == 3: tret[0] = jd + 0.25
-            else: tret[0] = jd + 0.75
+            # Ensure we are working with the floor of JD (start of day)
+            base_jd = int(jd + 0.5) - 0.5
+            if event_type == 1 or event_type == 3: # Rise
+                tret[0] = base_jd + 0.25 # 06:00 AM UTC
+            else: # Set
+                tret[0] = base_jd + 0.75 # 06:00 PM UTC
             return (0, tret)
 
     swe = MockSWE()

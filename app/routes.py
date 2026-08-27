@@ -214,11 +214,12 @@ def get_sunrise_sunset_moonrise(target_date: date, lat: float, lon: float, tz_st
     from .astrology.core.swe_proxy import swe
 
     tz = pytz.timezone(tz_str)
-    noon_dt = datetime.combine(target_date, datetime.min.time()).replace(hour=12)
-    jd_ut = datetime_to_jd(noon_dt, tz_str)
+    # Use midnight UTC for the given date as a stable base for sky events
+    base_dt = datetime.combine(target_date, datetime.min.time())
+    jd_ut = datetime_to_jd(base_dt, "UTC")
 
-    sr_jd = get_sunrise(jd_ut, lat, lon) or 0
-    ss_jd = get_sunset(jd_ut, lat, lon) or 0
+    sr_jd = get_sunrise(jd_ut, lat, lon)
+    ss_jd = get_sunset(jd_ut, lat, lon)
     mr_jd = get_moonrise(jd_ut, lat, lon)
     ms_jd = get_moonset(jd_ut, lat, lon)
 
@@ -230,16 +231,17 @@ def get_sunrise_sunset_moonrise(target_date: date, lat: float, lon: float, tz_st
         dt_utc = datetime(y, m, d, hh, mm, second=0, tzinfo=pytz.utc)
         return dt_utc.astimezone(tz).strftime("%I:%M %p")
 
-    weekday = target_date.weekday()
+    # Convert Python weekday (0=Mon, 6=Sun) to Vedic index (0=Sun, 1=Mon...)
+    v_weekday = (target_date.weekday() + 1) % 7
 
     return {
         "sunrise": jd_to_str(sr_jd),
         "sunset": jd_to_str(ss_jd),
         "moonrise": jd_to_str(mr_jd),
         "moonset": jd_to_str(ms_jd),
-        "rahu_kaal": get_rahu_kaal(weekday, sr_jd, ss_jd),
-        "gulika_kaal": get_gulika_kaal(weekday, sr_jd, ss_jd),
-        "yamaghanta": get_yamaghanta(weekday, sr_jd, ss_jd)
+        "rahu_kaal": get_rahu_kaal(v_weekday, sr_jd, ss_jd, tz_str),
+        "gulika_kaal": get_gulika_kaal(v_weekday, sr_jd, ss_jd, tz_str),
+        "yamaghanta": get_yamaghanta(v_weekday, sr_jd, ss_jd, tz_str)
     }
 
 main = Blueprint("main", __name__)

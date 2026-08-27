@@ -183,10 +183,19 @@ function searchVault() {
 
 const parseTime = (t) => {
     if(!t || typeof t !== 'string' || t.includes('-') || t.includes('S')) return null;
-    const parts = t.split(':');
+    const isPM = t.toLowerCase().includes('pm');
+    const isAM = t.toLowerCase().includes('am');
+
+    const timePart = t.split(' ')[0];
+    const parts = timePart.split(':');
     if (parts.length < 2) return null;
-    const h = parseInt(parts[0], 10), m = parseInt(parts[1], 10);
+
+    let h = parseInt(parts[0], 10), m = parseInt(parts[1], 10);
     if (isNaN(h) || isNaN(m)) return null;
+
+    if (isPM && h < 12) h += 12;
+    if (isAM && h === 12) h = 0;
+
     const d = new Date(); d.setHours(h, m, 0, 0); return d;
 };
 

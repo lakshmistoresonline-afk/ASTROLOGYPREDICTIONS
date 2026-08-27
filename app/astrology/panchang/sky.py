@@ -102,7 +102,7 @@ def get_moonrise(jd_ut: float, lat: float, lon: float) -> Optional[float]:
 def get_moonset(jd_ut: float, lat: float, lon: float) -> Optional[float]:
     return get_sky_event(jd_ut, lat, lon, 1, 2) # 1=MOON, 2=SET
 
-def get_kaal_window(part: int, sunrise_jd: float, sunset_jd: float) -> str:
+def get_kaal_window(part: int, sunrise_jd: float, sunset_jd: float, tz_str: str = "UTC") -> str:
     """Calculate a specific day-segment time window string."""
     if not sunrise_jd or not sunset_jd or sunrise_jd <= 0 or sunset_jd <= 0:
         return "—"
@@ -114,26 +114,34 @@ def get_kaal_window(part: int, sunrise_jd: float, sunset_jd: float) -> str:
     start_jd = sunrise_jd + (part - 1) * segment
     end_jd = sunrise_jd + part * segment
 
-    def jd_to_str(jd):
+    import pytz
+    tz = pytz.timezone(tz_str)
+
+    def jd_to_local_str(jd):
         try:
             from ..core.swe_proxy import swe
             y, m, d, h = swe.revjul(jd)
             hh = int(h)
             mm = int((h - hh) * 60)
-            return f"{hh:02d}:{mm:02d}"
+            ss = int((((h-hh)*60)%1)*60)
+            dt_utc = datetime(y, m, d, hh, mm, ss, tzinfo=pytz.utc)
+            return dt_utc.astimezone(tz).strftime("%H:%M")
         except Exception:
             return "—"
 
-    return f"{jd_to_str(start_jd)} – {jd_to_str(end_jd)}"
+    return f"{jd_to_local_str(start_jd)} – {jd_to_local_str(end_jd)}"
 
-def get_rahu_kaal(weekday: int, sunrise_jd: float, sunset_jd: float) -> str:
-    order = {0: 2, 1: 7, 2: 5, 3: 6, 4: 4, 5: 3, 6: 8}
-    return get_kaal_window(order.get(weekday, 1), sunrise_jd, sunset_jd)
+def get_rahu_kaal(weekday: int, sunrise_jd: float, sunset_jd: float, tz_str: str = "UTC") -> str:
+    # 0=Sun, 1=Mon, 2=Tue, 3=Wed, 4=Thu, 5=Fri, 6=Sat
+    order = {1: 2, 2: 7, 3: 5, 4: 6, 5: 4, 6: 3, 0: 8}
+    return get_kaal_window(order.get(weekday, 1), sunrise_jd, sunset_jd, tz_str)
 
-def get_gulika_kaal(weekday: int, sunrise_jd: float, sunset_jd: float) -> str:
-    order = {0: 5, 1: 4, 2: 3, 3: 2, 4: 1, 5: 7, 6: 6}
-    return get_kaal_window(order.get(weekday, 1), sunrise_jd, sunset_jd)
+def get_gulika_kaal(weekday: int, sunrise_jd: float, sunset_jd: float, tz_str: str = "UTC") -> str:
+    # Mon: 6, Tue: 5, Wed: 4, Thu: 3, Fri: 2, Sat: 1, Sun: 7
+    order = {1: 6, 2: 5, 3: 4, 4: 3, 5: 2, 6: 1, 0: 7}
+    return get_kaal_window(order.get(weekday, 1), sunrise_jd, sunset_jd, tz_str)
 
-def get_yamaghanta(weekday: int, sunrise_jd: float, sunset_jd: float) -> str:
-    order = {0: 4, 1: 3, 2: 2, 3: 1, 4: 7, 5: 6, 6: 5}
-    return get_kaal_window(order.get(weekday, 1), sunrise_jd, sunset_jd)
+def get_yamaghanta(weekday: int, sunrise_jd: float, sunset_jd: float, tz_str: str = "UTC") -> str:
+    # Mon: 4, Tue: 3, Wed: 2, Thu: 1, Fri: 7, Sat: 6, Sun: 5
+    order = {1: 4, 2: 3, 3: 2, 4: 1, 5: 7, 6: 6, 0: 5}
+    return get_kaal_window(order.get(weekday, 1), sunrise_jd, sunset_jd, tz_str)

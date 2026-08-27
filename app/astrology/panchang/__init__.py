@@ -61,13 +61,17 @@ def calculate_panchang_2_0(target_date: date, lat: float, lon: float, tz_str: st
     nak_end_jd = get_nakshatra_end_time(jd_ut)
 
     def jd_to_local_str(jd):
-        if jd < 0: return "—"
-        y, m, d, h = swe.revjul(jd)
-        hh = int(h)
-        mm = int((h - hh) * 60)
-        ss = int(((h - hh) * 60 - mm) * 60)
-        dt_utc = datetime(y, m, d, hh, mm, ss, tzinfo=pytz.utc)
-        return dt_utc.astimezone(tz).strftime("%I:%M %p")
+        if jd is None or jd < 0: return "—"
+        try:
+            y, m, d, h = swe.revjul(jd)
+            h = h % 24
+            hh = int(h)
+            mm = int((h - hh) * 60)
+            ss = int((((h - hh) * 60) % 1) * 60)
+            dt_utc = datetime(y, m, d, hh, mm, ss, tzinfo=pytz.utc)
+            return dt_utc.astimezone(tz).strftime("%I:%M %p")
+        except Exception:
+            return "—"
 
     return {
         "tithi": {
@@ -107,19 +111,28 @@ def calculate_panchang(target_date: date, lat: float, lon: float, tz_str: str,
     weekday_idx = target_date.weekday()
     indian_day_idx = (weekday_idx + 1) % 7
 
-    # 2. Sky
-    sunrise_jd = get_sunrise(jd_ut, lat, lon)
-    sunset_jd = get_sunset(jd_ut, lat, lon)
-    moonrise_jd = get_moonrise(jd_ut, lat, lon)
-    moonset_jd = get_moonset(jd_ut, lat, lon)
+    # 2. Sky - Use midnight UTC as stable search base for the day's events
+    base_dt = datetime.combine(target_date, datetime.min.time())
+    base_jd = datetime_to_jd(base_dt, "UTC")
+
+    sunrise_jd = get_sunrise(base_jd, lat, lon)
+    sunset_jd = get_sunset(base_jd, lat, lon)
+    moonrise_jd = get_moonrise(base_jd, lat, lon)
+    moonset_jd = get_moonset(base_jd, lat, lon)
 
     def jd_to_local_str(jd):
         if jd is None or jd < 0: return "—"
-        y, m, d, h = swe.revjul(jd)
-        hh = int(h)
-        mm = int((h - hh) * 60)
-        dt_utc = datetime(y, m, d, hh, mm, tzinfo=pytz.utc)
-        return dt_utc.astimezone(tz).strftime("%I:%M %p")
+        try:
+            y, m, d, h = swe.revjul(jd)
+            # Ensure hour is normalized
+            h = h % 24
+            hh = int(h)
+            mm = int((h - hh) * 60)
+            ss = int((((h - hh) * 60) % 1) * 60)
+            dt_utc = datetime(y, m, d, hh, mm, ss, tzinfo=pytz.utc)
+            return dt_utc.astimezone(tz).strftime("%I:%M %p")
+        except Exception:
+            return "—"
 
     def jd_to_diff_hours(jd_target):
         if jd_target is None or jd_target < 0: return 0.0
@@ -186,9 +199,9 @@ def calculate_panchang(target_date: date, lat: float, lon: float, tz_str: str,
             "day_length": "—", # To be implemented
             "moon_phase_name": "—", # To be implemented
             "moon_phase_pct": 0,
-            "rahu_kaal": get_rahu_kaal(weekday_idx, sunrise_jd or 0, sunset_jd or 0),
-            "gulika_kaal": get_gulika_kaal(weekday_idx, sunrise_jd or 0, sunset_jd or 0),
-            "yamaghanta": get_yamaghanta(weekday_idx, sunrise_jd or 0, sunset_jd or 0),
+            "rahu_kaal": get_rahu_kaal(indian_day_idx, sunrise_jd or 0, sunset_jd or 0, tz_str),
+            "gulika_kaal": get_gulika_kaal(indian_day_idx, sunrise_jd or 0, sunset_jd or 0, tz_str),
+            "yamaghanta": get_yamaghanta(indian_day_idx, sunrise_jd or 0, sunset_jd or 0, tz_str),
         },
         "is_auspicious": tithi_nature == "Auspicious" and yoga_nature == "Auspicious",
         "choghadiya": [],
