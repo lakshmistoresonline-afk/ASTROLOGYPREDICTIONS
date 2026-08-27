@@ -517,6 +517,9 @@ def delete_kundli(cid):
 # ─────────────────────────────────────────────
 #  User Dashboard (Redesigned)
 # ─────────────────────────────────────────────
+# Simple Global Cache for Dashboard Performance
+DASHBOARD_CACHE = {}
+
 @main.route("/dashboard")
 def dashboard():
     chart, chart_obj = _load_active_chart()
@@ -525,7 +528,15 @@ def dashboard():
         flash("Please generate a Kundli first to view your dashboard.", "warning")
         return redirect(url_for("main.index"))
 
+    # 1. Check Cache (valid for 15 minutes)
+    cache_key = f"{session.get('active_chart_id')}_{datetime.now().strftime('%Y%m%d%H%M')[:11]}" # 10m resolution
+    if cache_key in DASHBOARD_CACHE:
+        age = (datetime.now() - DASHBOARD_CACHE[cache_key]['ts']).total_seconds()
+        if age < 900: # 15 minutes
+             return render_template("dashboard.html", **DASHBOARD_CACHE[cache_key]['data'])
+
     try:
+        # ... (rest of implementation)
         name = session.get("birth_name", "Native")
         lat = session.get("birth_lat")
         lon = session.get("birth_lon")
@@ -592,7 +603,10 @@ def dashboard():
             "#dc2626"
         )
 
-        return render_template("dashboard.html", preds=preds, chart=chart)
+        template_data = {"preds": preds, "chart": chart}
+        DASHBOARD_CACHE[cache_key] = {"ts": datetime.now(), "data": template_data}
+
+        return render_template("dashboard.html", **template_data)
     except Exception as e:
         traceback.print_exc()
         return f"Error loading dashboard: {str(e)}", 500

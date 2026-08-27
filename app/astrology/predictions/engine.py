@@ -33,11 +33,16 @@ from .speculation import get_speculation_prediction
 from .scoring import get_label_from_score
 from ..timing.engine import get_timing_score
 
+from concurrent.futures import ThreadPoolExecutor
+from functools import lru_cache
+
 def generate_evidence_based_predictions(chart: CanonicalChart, selected_date: datetime = None) -> Dict[str, Any]:
-    """Aggregate all domain predictions with evidence, scoring, and timing context."""
+    """Aggregate all domain predictions with high-performance parallel execution."""
 
     if selected_date is None:
-        selected_date = datetime.now()
+        # Floor to nearest 15 minutes to maximize cache hits
+        now = datetime.now()
+        selected_date = now.replace(minute=(now.minute // 15) * 15, second=0, microsecond=0)
 
     # Define which planets/houses are relevant for each domain for timing
     domain_configs = {
@@ -96,11 +101,12 @@ def generate_evidence_based_predictions(chart: CanonicalChart, selected_date: da
 
     categorized_results = {cat: [] for cat in CATEGORIES}
 
-    for domain_name, (engine_func, planets, houses) in domain_configs.items():
-        # 1. Calculate Timing First
+    def process_domain(item):
+        domain_name, (engine_func, planets, houses) = item
+        # 1. Calculate Timing
         timing_ctx = get_timing_score(chart, planets, houses, selected_date)
 
-        # 2. Call Engine with Timing Context if supported
+        # 2. Call Engine with Timing Context
         import inspect
         sig = inspect.signature(engine_func)
         kwargs = {}
@@ -111,14 +117,19 @@ def generate_evidence_based_predictions(chart: CanonicalChart, selected_date: da
 
         domain_res = engine_func(chart, **kwargs)
 
-        # 3. Finalize Timing display
+        # 3. Finalize
         domain_res.timing = [
             {"period": "Current Support", "impact": timing_ctx["label"], "score": timing_ctx["total_timing_score"]}
         ]
+        return domain_name, domain_res.model_dump()
 
-        res_dict = domain_res.model_dump()
+    # Parallelize the 40+ domain calculations
+    with ThreadPoolExecutor(max_workers=8) as executor:
+        execution_results = list(executor.map(process_domain, domain_configs.items()))
+
+    for domain_name, res_dict in execution_results:
         results.append(res_dict)
-        total_score += domain_res.score
+        total_score += res_dict["score"]
 
         # Categorize
         found_cat = False

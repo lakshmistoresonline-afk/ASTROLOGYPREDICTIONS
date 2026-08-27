@@ -1,5 +1,6 @@
 from typing import Dict, Any, List, Optional
 from datetime import datetime, timedelta
+from functools import lru_cache
 from ..core.models import CanonicalChart
 from ..dasha.vimshottari import calculate_dasha_balance, DASHA_SEQUENCE
 
@@ -42,6 +43,8 @@ class TimingEngine:
         from ..transit.moorti import calculate_moorti
 
         t_chart = calculate_transit(target_date, chart.latitude, chart.longitude, chart.timezone)
+
+        # ... rest of logic ...
         sav = chart.ashtakavarga.get("SAV", [28] * 12)
         bav_all = chart.ashtakavarga.get("BAV", {})
 
