@@ -45,4 +45,10 @@ class EducationPredictionEngine:
             "Timing alignment is {strength} with a {score}% match based on hierarchical factors."
         )
 
-        return CorroborationEngine.synthesize("Education & Knowledge", promise_level, evidence, summary_template, timing_window=window)
+        res = CorroborationEngine.synthesize("Education & Knowledge", promise_level, evidence, summary_template, timing_window=window)
+        res.practical_guidance = [
+            "Maintain disciplined study habits during energetic peaks.",
+            "Jupiter-based wisdom practices support deep acquisition of knowledge.",
+            "Verify academic deadlines and requirements during transition phases."
+        ]
+        return res

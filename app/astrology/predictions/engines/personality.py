@@ -45,4 +45,10 @@ class PersonalityPredictionEngine:
             "Hierarchical synthesis results in a {score}% match for character strength."
         )
 
-        return CorroborationEngine.synthesize("Personality & Essence", promise_level, evidence, summary_template)
+        res = CorroborationEngine.synthesize("Personality & Essence", promise_level, evidence, summary_template)
+        res.practical_guidance = [
+            "Observe the activation of the Lagna Lord for self-growth.",
+            "Maintain emotional hygiene through meditation and mindfulness.",
+            "Traditional Vedic alignment practices for the Moon are supported."
+        ]
+        return res

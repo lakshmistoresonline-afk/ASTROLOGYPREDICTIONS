@@ -165,6 +165,5 @@ def calculate_chart_data(birth_dt: datetime, lat: float, lon: float, tz_str: str
         return final_chart
 
     except Exception as e:
-        print(f"CRITICAL ENGINE ERROR: {e}")
-        traceback.print_exc()
+        # Critical failures are raised to be caught by the route handler
         raise

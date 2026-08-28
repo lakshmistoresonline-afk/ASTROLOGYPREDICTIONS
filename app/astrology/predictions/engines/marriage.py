@@ -54,4 +54,10 @@ class MarriagePredictionEngine:
             "Hierarchical factors contribute to an overall {score}% match."
         )
 
-        return CorroborationEngine.synthesize("Marriage & Relationships", promise_level, evidence, summary_template, timing_window=window)
+        res = CorroborationEngine.synthesize("Marriage & Relationships", promise_level, evidence, summary_template, timing_window=window)
+        res.practical_guidance = [
+            "Foster mutual respect and open communication in partnerships.",
+            "Traditional alliance-matching protocols are recommended for new unions.",
+            "Observe Venus-related alignment practices for relational harmony."
+        ]
+        return res

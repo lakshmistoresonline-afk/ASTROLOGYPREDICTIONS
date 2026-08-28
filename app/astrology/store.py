@@ -53,8 +53,7 @@ else:
                 data["birth_datetime"] = data.get("birth_datetime", "")
                 results.append(data)
             return results
-        except Exception as e:
-            print(f"Error listing charts: {e}")
+        except Exception:
             return []
 
     def get_chart(cid: str) -> dict | None:
@@ -74,8 +73,19 @@ else:
         return False
 
     def save_prediction_snapshot(chart_id: str, domain_pred: dict):
-        """Auto-generate immutable snapshot for tracking."""
-        from ..database.models import PredictionOutcome
+        """Auto-generate immutable snapshot for tracking. Prevents duplicates within 24h."""
+        from ..database.models import PredictionOutcome, db
+        from datetime import datetime, timedelta
+
+        # Duplicate check
+        existing = PredictionOutcome.query.filter_by(
+            chart_id=chart_id,
+            domain=domain_pred.get("domain"),
+            prediction_text=domain_pred.get("summary")
+        ).filter(PredictionOutcome.created_at > datetime.utcnow() - timedelta(days=1)).first()
+
+        if existing: return existing.id
+
         snapshot = PredictionOutcome(
             chart_id=chart_id,
             calculation_version="CALC-SWE-2.10.3",

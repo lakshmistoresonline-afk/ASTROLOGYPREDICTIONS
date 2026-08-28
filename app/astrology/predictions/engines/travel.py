@@ -45,4 +45,10 @@ class TravelPredictionEngine:
             "Timing alignment is {strength} with a {score}% hierarchical match."
         )
 
-        return CorroborationEngine.synthesize("Travel & Horizons", promise_level, evidence, summary_template, timing_window=window)
+        res = CorroborationEngine.synthesize("Travel & Horizons", promise_level, evidence, summary_template, timing_window=window)
+        res.practical_guidance = [
+            "Verify travel documents and insurance before departure.",
+            "Traditional journey-blessing practices are recommended.",
+            "Maintain flexibility during planetary transition periods."
+        ]
+        return res

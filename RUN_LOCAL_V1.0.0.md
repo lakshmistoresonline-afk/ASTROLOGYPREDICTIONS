@@ -64,5 +64,20 @@ Start the primary intelligence and data layer:
    pytest tests/test_jyotish_os.py
    ```
 
+## 5. REPOSITORY CLEANUP (Public Release Only)
+If you intend to make this repository public, you must purge the history of a previously exposed credential:
+```bash
+# Requires git-filter-repo
+git filter-repo --invert-paths --path scripts/deploy.sh
+```
+*Note: Credential rotation has already been performed in the current worktree.*
+
+## 6. SHUTDOWN
+```bash
+# Stop calculation service
+docker-compose stop jyotish-calc-service
+# Or stop local runners (Ctrl+C)
+```
+
 ---
 **Lead Architect**: [Jyotish AI OS]

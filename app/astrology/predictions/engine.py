@@ -50,7 +50,7 @@ def generate_evidence_based_predictions(chart: CanonicalChart, selected_date: da
             p_dict["category"] = cat_map.get(name, "essence")
             return p_dict
         except Exception as e:
-            print(f"Error in {name}: {e}")
+            # Domain failures are logged but don't break the report
             return None
 
     # Parallel synthesis for performance

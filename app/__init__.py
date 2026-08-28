@@ -29,7 +29,7 @@ def create_app():
         try:
             db.create_all()
         except Exception as e:
-            print(f"Warning: Could not initialize SQLite: {e}")
+            app.logger.error(f"Could not initialize SQLite: {e}")
 
     app.config["TEMPLATES_AUTO_RELOAD"] = True
     CORS(app)

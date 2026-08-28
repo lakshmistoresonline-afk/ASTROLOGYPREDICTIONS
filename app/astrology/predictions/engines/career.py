@@ -50,4 +50,10 @@ class CareerPredictionEngine:
             "Timing confidence is {score}% corroborated by hierarchical signals."
         )
 
-        return CorroborationEngine.synthesize("Career & Authority", promise_level, evidence, summary_template, timing_window=window)
+        res = CorroborationEngine.synthesize("Career & Authority", promise_level, evidence, summary_template, timing_window=window)
+        res.practical_guidance = [
+            "Leverage professional energetic peaks for authority expansion.",
+            "Traditional Saturn/Sun alignment practices support status stability.",
+            "Verify career deadlines and bureaucratic steps during transition windows."
+        ]
+        return res

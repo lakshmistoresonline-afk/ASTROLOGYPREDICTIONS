@@ -47,4 +47,10 @@ class PropertyPredictionEngine:
             "Current alignment is {strength} for acquisition with a {score}% evidence score."
         )
 
-        return CorroborationEngine.synthesize("Property & Assets", promise_level, evidence, summary_template, timing_window=window)
+        res = CorroborationEngine.synthesize("Property & Assets", promise_level, evidence, summary_template, timing_window=window)
+        res.practical_guidance = [
+            "Verify all legal documentation before major asset acquisition.",
+            "Traditional house-warming (Vastu) practices are recommended upon entry.",
+            "Maintain insurance and structural safety for existing assets."
+        ]
+        return res

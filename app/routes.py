@@ -1,5 +1,5 @@
 from flask import (Blueprint, render_template, request, jsonify, session,
-                   redirect, url_for, flash, Response, send_from_directory)
+                   redirect, url_for, flash, Response, send_from_directory, current_app)
 from datetime import datetime, date, timedelta
 import calendar as cal_mod
 import zipfile
@@ -140,7 +140,7 @@ def dashboard():
             try:
                 save_prediction_snapshot(chart["id"], p)
             except Exception as e:
-                print(f"Snapshot failed: {e}")
+                current_app.logger.error(f"Snapshot failed: {e}")
 
         return render_template("dashboard.html",
                                preds=preds,
@@ -163,6 +163,15 @@ def predictions():
 
     preds = generate_evidence_based_predictions(chart_obj)
     remedies = get_personalized_remedies(chart_obj)
+
+    # Auto-Snapshotting for Calibration (Phase 8 P0)
+    from .astrology.store import save_prediction_snapshot
+    for p in preds.get("predictions", []):
+        try:
+            save_prediction_snapshot(chart["id"], p)
+        except Exception as e:
+            print(f"Snapshot failed: {e}")
+
     yearly = timeline_predict_engine.get_year_ahead(chart_obj, date.today().year)
 
     return render_template("predictions.html",
