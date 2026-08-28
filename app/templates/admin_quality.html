@@ -1,0 +1,120 @@
+{% extends "base.html" %}
+{% block title %}Admin Quality Dashboard — Jyotish OS{% endblock %}
+
+{% block content %}
+<div class="mb-5">
+    <h2 class="fw-black text-white mb-1">Internal <span class="text-danger">Calibration</span> Dashboard</h2>
+    <p class="text-dim small mb-0">Measuring engine performance against real-world outcomes. (Admin Only)</p>
+</div>
+
+<div class="row g-4">
+    <!-- CALIBRATION STATUS -->
+    <div class="col-12">
+        <div class="card-vedic p-0 overflow-hidden">
+            <div class="table-responsive">
+                <table class="table table-vedic mb-0">
+                    <thead>
+                        <tr>
+                            <th class="xsmall fw-black tracking-widest text-dim uppercase">Domain</th>
+                            <th class="xsmall fw-black tracking-widest text-dim uppercase">Cases</th>
+                            <th class="xsmall fw-black tracking-widest text-dim uppercase">Detection</th>
+                            <th class="xsmall fw-black tracking-widest text-dim uppercase">±15d</th>
+                            <th class="xsmall fw-black tracking-widest text-dim uppercase">±30d</th>
+                            <th class="xsmall fw-black tracking-widest text-dim uppercase">±90d</th>
+                            <th class="xsmall fw-black tracking-widest text-dim uppercase">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="quality-table-body">
+                        <!-- Loaded via JS -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- ENGINE SNAPSHOTS -->
+    <div class="col-lg-8">
+        <h6 class="text-white fw-black tracking-widest xsmall mb-4 uppercase">RECENT OUTCOME REPORTS</h6>
+        <div id="outcome-history" class="d-flex flex-column gap-3">
+            <!-- Loaded via JS -->
+        </div>
+    </div>
+
+    <!-- VERSION REGISTRY -->
+    <div class="col-lg-4">
+        <h6 class="text-white fw-black tracking-widest xsmall mb-4 uppercase">FROZEN REGISTRY (V1.0.0)</h6>
+        <div class="card-vedic p-4">
+            <div class="d-flex flex-column gap-3">
+                <div class="p-3 rounded-4 bg-glass-subtle border border-white border-opacity-5">
+                    <div class="xxsmall text-dim uppercase fw-black mb-1">Calculation</div>
+                    <div class="small text-white font-mono">CALC-SWE-2.10.3</div>
+                </div>
+                <div class="p-3 rounded-4 bg-glass-subtle border border-white border-opacity-5">
+                    <div class="xxsmall text-dim uppercase fw-black mb-1">Dasha</div>
+                    <div class="small text-white font-mono">DASHA-VIM-365.2425</div>
+                </div>
+                <div class="p-3 rounded-4 bg-glass-subtle border border-white border-opacity-5">
+                    <div class="xxsmall text-dim uppercase fw-black mb-1">Transit</div>
+                    <div class="small text-white font-mono">TRANSIT-PEAK-ORB1.0</div>
+                </div>
+                <div class="p-3 rounded-4 bg-glass-subtle border border-white border-opacity-5">
+                    <div class="xxsmall text-dim uppercase fw-black mb-1">Evidence</div>
+                    <div class="small text-white font-mono">EVIDENCE-HIERARCHY-7L</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.table-vedic { width: 100%; border-collapse: separate; border-spacing: 0; }
+.table-vedic th { padding: 20px 24px; background: rgba(255,255,255,0.02); border-bottom: 1px solid var(--border); }
+.table-vedic td { padding: 20px 24px; color: var(--text-dim); border-bottom: 1px solid var(--border); font-size: 0.85rem; vertical-align: middle; }
+.table-vedic tr:hover td { background: rgba(255,255,255,0.01); color: #fff; }
+</style>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    fetch("/api/v1/calibration/dashboard")
+        .then(r => r.json())
+        .then(data => {
+            const body = document.getElementById('quality-table-body');
+            data.forEach(row => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td class="fw-bold text-white">${row.domain}</td>
+                    <td>${row.total}</td>
+                    <td class="fw-black text-success">${row.occurred}/${row.total}</td>
+                    <td>${row.timing_15 || 0}</td>
+                    <td>${row.timing_30 || 0}</td>
+                    <td>${row.timing_90 || 0}</td>
+                    <td><span class="badge bg-glass-subtle text-dim xxsmall">${row.match_rate > 0 ? 'PRELIMINARY' : 'NOT TESTED'}</span></td>
+                `;
+                body.appendChild(tr);
+            });
+        });
+
+    fetch("/api/tracking/history")
+        .then(r => r.json())
+        .then(data => {
+            const container = document.getElementById('outcome-history');
+            data.history.forEach(o => {
+                const div = document.createElement('div');
+                div.className = "card-vedic p-4";
+                div.innerHTML = `
+                    <div class="d-flex justify-content-between align-items-start mb-3">
+                        <h6 class="text-white fw-bold mb-0">${o.category}</h6>
+                        <span class="badge ${o.status === 'OCCURRED' ? 'bg-success' : 'bg-danger'} xxsmall">${o.status}</span>
+                    </div>
+                    <p class="small text-dim mb-3 italic">"${o.prediction}"</p>
+                    <div class="d-flex justify-content-between xsmall">
+                        <span class="text-dim">Timing: ${o.timing_quality || 'N/A'}</span>
+                        <span class="text-gold fw-bold">CALIB V1.0.0</span>
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+        });
+});
+</script>
+{% endblock %}

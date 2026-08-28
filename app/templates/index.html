@@ -77,6 +77,15 @@
                             <label class="form-label-vedic">Birth Time</label>
                             <input type="time" name="tob" id="in-tob" class="form-control-vedic auto-field" required step="60"/>
                         </div>
+                        <div class="col-md-6">
+                            <label class="form-label-vedic">Time Confidence</label>
+                            <select name="confidence" class="form-control-vedic auto-field">
+                                <option value="HIGH">High (Exact Record)</option>
+                                <option value="MEDIUM">Medium (Approximate)</option>
+                                <option value="LOW">Low (Vague Memory)</option>
+                                <option value="UNKNOWN">Unknown (Rectification Required)</option>
+                            </select>
+                        </div>
                         <div class="col-12">
                             <label class="form-label-vedic">Birth Location</label>
                             <div class="position-relative">

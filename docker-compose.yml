@@ -12,18 +12,24 @@ services:
       - SE_EPHE_PATH=/app/ephe
       - FLASK_ENV=production
       - PORT=5000
+      - CALC_SERVICE_URL=http://calculation-service:8000
     volumes:
-      # Persist ephemeris data between rebuilds
       - ephe_data:/app/ephe
-      # Persist user charts and database
       - app_data:/app/data
     restart: unless-stopped
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:5000/"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 15s
+    depends_on:
+      - calculation-service
+
+  calculation-service:
+    build: ./calculation_service
+    container_name: jyotish-calc-service
+    ports:
+      - "8000:8000"
+    environment:
+      - SE_EPHE_PATH=/app/ephe
+    volumes:
+      - ephe_data:/app/ephe
+    restart: unless-stopped
 
 volumes:
   ephe_data:

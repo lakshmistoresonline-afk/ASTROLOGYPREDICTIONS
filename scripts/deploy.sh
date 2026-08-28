@@ -8,7 +8,12 @@
 PROJECT_ID="astropredictions-ff47c"
 ACCOUNT="srinathrajkiran007@gmail.com"
 REGION="us-central1"
-SECRET_KEY="a7f03eedd2a10e739cd43152ee574b7d821b412f2f37b1202af8a7035305f9bc"
+
+# Blocker 11 Fix: Removed hardcoded SECRET_KEY. Ensure FLASK_SECRET_KEY is set in your environment.
+if [ -z "$FLASK_SECRET_KEY" ]; then
+    echo "ERROR: FLASK_SECRET_KEY is not set. Aborting deployment."
+    exit 1
+fi
 
 echo -e "\n[1/3] Authenticating with Google Cloud..."
 gcloud auth login $ACCOUNT

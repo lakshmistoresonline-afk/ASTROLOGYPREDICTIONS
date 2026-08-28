@@ -1,7 +1,6 @@
 from typing import Dict, List, Set
 
 # Natural Friendships (Naisargika Maitri)
-# Format: {Planet: (Friends, Neutral, Enemies)}
 NATURAL_FRIENDSHIP = {
     "Sun":     ({"Moon", "Mars", "Jupiter"}, {"Mercury"}, {"Venus", "Saturn"}),
     "Moon":    ({"Sun", "Mercury"}, {"Mars", "Jupiter", "Venus", "Saturn"}, set()),
@@ -15,12 +14,10 @@ NATURAL_FRIENDSHIP = {
 def get_temporal_friendship(p1_house: int, p2_house: int) -> int:
     """
     Calculate Temporal Friendship (Tatkalika Maitri).
-    Planets in 2nd, 3rd, 4th, 10th, 11th, 12th houses from a planet are friends.
     Returns: 1 for Friend, -1 for Enemy.
     """
-    # Handle missing house data (Mock Mode)
     if p1_house is None or p2_house is None:
-        return 1 # Default to Friend for mock
+        return -1 # Default to Enemy if data missing (Safety first)
 
     diff = (p2_house - p1_house + 12) % 12
     # Houses: 2, 3, 4, 10, 11, 12 (0-indexed: 1, 2, 3, 9, 10, 11)
@@ -37,13 +34,11 @@ def get_compound_friendship(p1: str, p2: str, p1_house: int, p2_house: int) -> s
         return "Neutral"
 
     friends, neutral, enemies = NATURAL_FRIENDSHIP[p1]
-
     natural_score = 0
     if p2 in friends: natural_score = 1
     elif p2 in enemies: natural_score = -1
 
     temporal_score = get_temporal_friendship(p1_house, p2_house)
-
     total = natural_score + temporal_score
 
     if total == 2: return "Great Friend"

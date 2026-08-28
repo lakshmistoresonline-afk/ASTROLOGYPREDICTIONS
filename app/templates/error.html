@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}System Error — Jyotish OS{% endblock %}
+
+{% block content %}
+<div class="d-flex align-items-center justify-content-center" style="min-height: 70vh">
+    <div class="card-vedic p-5 text-center" style="max-width: 500px">
+        <div class="vc-avatar bg-danger text-white mx-auto mb-4" style="width: 80px; height: 80px; font-size: 2rem">
+            <i class="bi bi-exclamation-triangle"></i>
+        </div>
+        <h3 class="text-white fw-black mb-3">{{ code }}</h3>
+        <p class="text-dim mb-5 leading-relaxed">{{ message }}</p>
+
+        <div class="d-grid gap-3">
+            <a href="{{ url_for('main.index') }}" class="btn btn-vedic py-3 fw-bold">RETURN TO SAFETY</a>
+            <button class="btn btn-outline-secondary py-3 xsmall fw-bold" onclick="location.reload()">RETRY CONNECTION</button>
+        </div>
+
+        <div class="mt-5 pt-4 border-top border-white border-opacity-5">
+            <p class="xxsmall text-dim uppercase tracking-widest mb-0">Engine Mode: DETERMINISTIC (V1.0.0)</p>
+        </div>
+    </div>
+</div>
+{% endblock %}

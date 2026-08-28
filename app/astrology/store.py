@@ -72,3 +72,25 @@ else:
             db.session.commit()
             return True
         return False
+
+    def save_prediction_snapshot(chart_id: str, domain_pred: dict):
+        """Auto-generate immutable snapshot for tracking."""
+        from ..database.models import PredictionOutcome
+        snapshot = PredictionOutcome(
+            chart_id=chart_id,
+            calculation_version="CALC-SWE-2.10.3",
+            dasha_version="DASHA-VIM-365.2425",
+            transit_version="TRANSIT-PEAK-ORB1.0",
+            evidence_version="EVIDENCE-HIERARCHY-7L",
+            remedy_version="REMEDY-CONTEXT-V2",
+            domain=domain_pred.get("domain"),
+            prediction_strength=domain_pred.get("prediction_strength"),
+            prediction_text=domain_pred.get("summary"),
+            start_date=domain_pred.get("timing_window", {}).get("build"),
+            peak_date=domain_pred.get("timing_window", {}).get("peak"),
+            end_date=domain_pred.get("timing_window", {}).get("end"),
+            status="PENDING"
+        )
+        db.session.add(snapshot)
+        db.session.commit()
+        return snapshot.id

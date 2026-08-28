@@ -54,6 +54,11 @@
             <a href="{{ url_for('main.transit') }}" class="nav-link {% if request.endpoint == 'main.transit' %}active{% endif %}">
                 <i class="bi bi-clock-history"></i> <span>Transit Live</span>
             </a>
+
+            <div class="xsmall text-danger opacity-30 fw-black tracking-widest mb-3 mt-4 px-3">ADMIN TOOLS</div>
+            <a href="{{ url_for('main.admin_quality') }}" class="nav-link">
+                <i class="bi bi-speedometer2"></i> <span>Calibration</span>
+            </a>
         </nav>
 
         <div class="p-4 mt-auto border-top border-white border-opacity-5">

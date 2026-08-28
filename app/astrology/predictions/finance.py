@@ -1,110 +1,68 @@
 from typing import Dict, Any, List, Optional
+from datetime import datetime
 from ..core.models import CanonicalChart, DomainPrediction
-from .framework import analyze_domain, EvidenceEngine
+from .framework import CorroborationEngine, SignalWeight
+from ..timing.precision import timing_engine
 
-def get_finance_prediction(chart: CanonicalChart, domain_type: str = "Finance & Wealth", timing_data: Optional[Dict[str, Any]] = None) -> DomainPrediction:
-    """Wealth Analysis: 2nd, 11th houses, Jupiter, and D2 (Hora)."""
-    factors = []
-
+def get_finance_prediction(chart: CanonicalChart, selected_date: datetime) -> DomainPrediction:
+    """
+    Corroborated Wealth Analysis with Weighted Hierarchy (Phase 10/17).
+    """
+    evidence = []
     planets = chart.planets
-    asc_rashi = chart.asc_rashi
     house_lords = chart.house_lords
-    sav = chart.ashtakavarga.get("SAV", [28] * 12)
 
-    # 1. 2nd HOUSE (ACCUMULATED WEALTH)
-    second_lord_name = house_lords[2]
-    second_lord = planets[second_lord_name]
+    # 1. PRIMARY: DASHA ACTIVATION
+    from ..dasha import calculate_vimshottari
+    moon_lon = chart.planets["Moon"].longitude
+    dasha = calculate_vimshottari(moon_lon, chart.birth_datetime)
+    antar_lord = dasha.get("current_antar", {}).get("lord")
 
-    factors.append(EvidenceEngine.create_factor(
-        "2nd Lord Placement", "lord", "positive" if second_lord.house not in [6, 8, 12] else "negative", 10,
-        f"2nd Lord {second_lord_name} in House {second_lord.house}: Defines your ability to save and accumulate wealth."
-    ))
+    is_wealth_antar = (antar_lord == house_lords[2] or
+                        antar_lord == house_lords[11] or
+                        antar_lord == "Jupiter")
 
-    # 2. 11th HOUSE (GAINS)
-    eleventh_lord_name = house_lords[11]
-    eleventh_lord = planets[eleventh_lord_name]
+    if is_wealth_antar:
+        evidence.append(CorroborationEngine.create_evidence(
+            "Dasha", f"Current period ({antar_lord}) activates financial sectors, supporting wealth accumulation.",
+            95.0, weight=SignalWeight.PRIMARY, planet=antar_lord
+        ))
 
-    factors.append(EvidenceEngine.create_factor(
-        "11th Lord Placement", "lord", "positive" if eleventh_lord.house not in [6, 8, 12] else "negative", 10,
-        f"11th Lord {eleventh_lord_name} in House {eleventh_lord.house}: Indicates your capacity for professional gains."
-    ))
+    # 2. SECONDARY: NATAL POTENTIAL (2nd House)
+    l2_name = house_lords[2]
+    l2 = planets[l2_name]
+    if l2.house in [1, 4, 7, 10, 5, 9, 11]:
+        evidence.append(CorroborationEngine.create_evidence(
+            "D1", f"2nd Lord {l2_name} is well-placed in House {l2.house}, supporting savings.",
+            80.0, weight=SignalWeight.SECONDARY, planet=l2_name, house=2
+        ))
 
-    # 3. JUPITER (KARAKA FOR WEALTH)
+    # 3. SECONDARY: JUPITER (Karaka for Wealth)
     jupiter = planets["Jupiter"]
-    if "Exalted" in jupiter.dignity:
-        factors.append(EvidenceEngine.create_factor("Jupiter Dignity", "planet", "positive", 20, "Jupiter is Exalted: Natural abundance and financial wisdom."))
-
-    # 4. ASHTAKAVARGA
-    r2 = (asc_rashi + 1) % 12
-    r11 = (asc_rashi + 10) % 12
-    if sav[r2] >= 30:
-        factors.append(EvidenceEngine.create_factor("SAV 2nd House", "ashtakavarga", "positive", 5, f"High SAV in 2nd house ({sav[r2]}): Strong capacity to retain wealth."))
-
-    # 4a. VARGA (D2 - HORA)
-    varga_confirmed = False
-    d2 = chart.divisional_charts.get("D2", {})
-    if d2:
-        # Simple D2 logic: Benefics in Sun's Hora or Malefics in Moon's Hora
-        if "Jupiter" in d2 or "Venus" in d2:
-            varga_confirmed = True
-            factors.append(EvidenceEngine.create_factor("Varga Confirmation", "varga", "positive", 10, "Hora (D2) analysis confirms financial stability and wealth potential."))
-
-    # 4b. Advanced Wealth Layers
-    # A. KP House 2 & 11 Significators
-    h2_sigs = chart.kp_significators.get(2, {})
-    h11_sigs = chart.kp_significators.get(11, {})
-    if "A" in h2_sigs and "B" in h11_sigs:
-        top_sigs = h2_sigs["A"] + h11_sigs["B"]
-        if any(s in ["Jupiter", "Venus", "Mercury"] for s in top_sigs):
-            factors.append(EvidenceEngine.create_factor(
-                "KP Wealth Support", "planet", "positive", 12,
-                "KP analysis confirms powerful significators for accumulation and gains."
-            ))
-
-    # B. Punya Saham (Fortune Point)
-    p_saham = chart.sahams.get("Punya Saham")
-    if p_saham is not None:
-        ps_rashi = int(p_saham // 30)
-        from ..core.houses import RASHI_NAMES
-        factors.append(EvidenceEngine.create_factor(
-            "Fortune Point", "yoga", "positive", 10,
-            f"Punya Saham in {RASHI_NAMES[ps_rashi]} highlights a specific cosmic sensitive zone for wealth."
+    if "Exalted" in jupiter.dignity or jupiter.dignity == "Own Sign":
+        evidence.append(CorroborationEngine.create_evidence(
+            "Strength", "Jupiter is naturally strong, granting inherent financial wisdom.",
+            90.0, weight=SignalWeight.SECONDARY, planet="Jupiter"
         ))
 
-    # C. Indu Lagna (Prosperity Point)
-    il_lon = chart.special_lagnas.get("Indu Lagna")
-    if il_lon is not None:
-        il_rashi = int(il_lon // 30)
-        from ..core.houses import RASHI_NAMES
-        factors.append(EvidenceEngine.create_factor(
-            "Indu Lagna", "yoga", "positive", 12,
-            f"Indu Lagna (Wealth Seat) in {RASHI_NAMES[il_rashi]} confirms inherent financial prosperity."
+    # 4. SUPPORTING: ASHTAKAVARGA
+    # Check 11th house SAV (Gains)
+    asc_rashi = chart.asc_rashi
+    h11_rashi = (asc_rashi + 10) % 12
+    sav = chart.ashtakavarga.get("SAV", [28]*12)
+    if sav[h11_rashi] >= 30:
+        evidence.append(CorroborationEngine.create_evidence(
+            "Ashtakavarga", f"High SAV in 11th house ({sav[h11_rashi]}) boosts income potential.",
+            70.0, weight=SignalWeight.SUPPORTING
         ))
 
-        # Indu Lagna Lord status
-        from ..core.houses import RASHI_LORDS
-        il_lord = RASHI_LORDS[il_rashi]
-        if planets[il_lord].house in [1, 4, 7, 10, 5, 9, 11]:
-            factors.append(EvidenceEngine.create_factor("Wealth Lord Stability", "lord", "positive", 15, f"The lord of your wealth seat ({il_lord}) is well-placed, ensuring steady accumulation."))
-
-    # 5. Timing Integration
-    t_conf = False
-    if timing_data:
-        t_conf = timing_data.get("transit_confirmed", False)
-        if timing_data.get("total_timing_score", 0) > 0.7:
-            factors.append(EvidenceEngine.create_factor("Financial High", "transit", "positive", 12, "Current planetary cycles are exceptionally favorable for financial gains and investments."))
+    # 5. DETERMINISTIC TIMING
+    supporting = ["Jupiter", "Venus", l2_name]
+    window = timing_engine.calculate_window(chart, supporting, [2, 11, 5])
 
     summary_template = (
-        "Wealth and finance potential is {score}% aligned. "
-        "With {confidence} confidence, the cosmic treasury indicates "
-        + ("a significant capacity for wealth accumulation and resource security." if second_lord.house in [1, 4, 7, 10, 5, 9, 11] else "that financial matters require careful budgeting and realistic management to avoid drainage.")
+        "Your financial blueprint shows {strength} alignment for prosperity. "
+        "Overall wealth potential is rated at {score}% based on weighted corroborated signals."
     )
 
-    return analyze_domain(
-        "Finance & Wealth",
-        factors,
-        summary_template,
-        varga_data={"confirmed": varga_confirmed},
-        transit_data={"confirmed": t_conf},
-        chart=chart
-    )
+    return CorroborationEngine.synthesize("Finance & Wealth", evidence, summary_template, timing_window=window)

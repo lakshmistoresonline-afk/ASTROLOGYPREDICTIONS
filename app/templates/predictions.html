@@ -1,18 +1,18 @@
 {% extends "base.html" %}
-{% block title %}Insights Sanctuary — Jyotish Celestial OS{% endblock %}
+{% block title %}Life Predictions — Trademind Jyotish OS{% endblock %}
 
 {% block content %}
 <div class="row g-5">
-    <!-- Left Navigation: Accurate Focus -->
+    <!-- Audit Sectors Sidebar -->
     <div class="col-lg-3 col-xl-2">
         <div class="sticky-top" style="top: 100px; z-index: 10">
-            <h6 class="text-gold xsmall fw-black tracking-widest mb-4 opacity-50">AUDIT SECTORS</h6>
+            <h6 class="text-gold xsmall fw-black tracking-widest mb-4 opacity-50 uppercase">AUDIT SECTORS</h6>
             <nav class="nav flex-column gap-2 prediction-nav">
                 <button class="nav-link active" onclick="showCategory('all', this)">
                     <i class="bi bi-grid-fill"></i> <span>Complete Audit</span>
                 </button>
                 <button class="nav-link" onclick="showCategory('essence', this)">
-                    <i class="bi bi-stars"></i> <span>Personality & Mind</span>
+                    <i class="bi bi-stars"></i> <span>Personality</span>
                 </button>
                 <button class="nav-link" onclick="showCategory('material', this)">
                     <i class="bi bi-bank"></i> <span>Wealth & Career</span>
@@ -23,108 +23,115 @@
                 <button class="nav-link" onclick="showCategory('survival', this)">
                     <i class="bi bi-shield-pulse"></i> <span>Health & Travel</span>
                 </button>
-                <button class="nav-link text-warning mt-4" onclick="showCategory('remedies', this)">
-                    <i class="bi bi-magic"></i> <span>Correction Suite</span>
-                </button>
             </nav>
-
-            <div class="mt-5 p-4 card-intel">
-                <div class="xsmall text-dim mb-2 uppercase fw-black tracking-widest">Audit Date</div>
-                <input type="date" class="form-control-vedic py-2 px-3 small font-mono"
-                       value="{{ selected_date }}" max="{{ today }}" onchange="gotoDate(this.value)">
-            </div>
         </div>
     </div>
 
-    <!-- Main Content Area -->
+    <!-- Main Content -->
     <div class="col-lg-9 col-xl-10">
-        <!-- HEADER SUMMARY (Always Visible in 'all' mode) -->
-        <div id="section-all" class="cat-content-block">
-            <div class="card-vedic p-5 mb-5 bg-gold-gradient text-dark border-0 shadow-lg">
-                <div class="row align-items-center g-4">
-                    <div class="col-md">
-                        <h2 class="fw-black mb-1">Celestial Audit</h2>
-                        <p class="fw-medium mb-0 opacity-70">Synchronizing your natal promise with the {{ preds.panchang.vara.name }} frequency.</p>
-                    </div>
-                    <div class="col-md-auto text-end">
-                        <div class="d-flex align-items-center gap-3">
-                            <div class="text-end">
-                                <div class="xsmall fw-black tracking-widest opacity-50">SYNC STATUS</div>
-                                <div class="h3 fw-black mb-0">{{ preds.overall_label.upper() }}</div>
-                            </div>
-                            <div class="resonance-orb-mini" style="--score-pct: {{ preds.overall_score }}%">
-                                <span class="fw-black">{{ preds.score }}</span>
-                            </div>
+        <!-- GLOBAL STATUS BAR -->
+        <div class="card-vedic p-5 mb-5 bg-gold-gradient text-dark border-0">
+            <div class="row align-items-center">
+                <div class="col-md">
+                    <h2 class="fw-black mb-1">Celestial Life Audit</h2>
+                    <p class="mb-0 opacity-70">Hierarchical evidence synthesis for {{ session.get('birth_name', 'Native') }}</p>
+                </div>
+                <div class="col-md-auto text-end">
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="text-end">
+                            <div class="xxsmall fw-black tracking-widest opacity-50">CALCULATION CONFIDENCE</div>
+                            <div class="small fw-black mb-0">HIGH (Swiss Ephemeris)</div>
+                        </div>
+                        <div class="vc-avatar bg-dark text-gold" style="width: 48px; height: 48px">
+                            <i class="bi bi-shield-check"></i>
                         </div>
                     </div>
                 </div>
-            </div>
-
-            <!-- Quick Toggle Filters -->
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <div class="mode-tabs">
-                    <button class="kmt-btn active" onclick="filterBySync(this, 'all')">Everything</button>
-                    <button class="kmt-btn" onclick="filterBySync(this, 'high')">Peak Flow</button>
-                    <button class="kmt-btn" onclick="filterBySync(this, 'caution')">Vigilance Required</button>
-                </div>
-                <div class="xsmall text-dim fw-bold">TOTAL DOMAINS: {{ preds.domains|length }}</div>
             </div>
         </div>
 
-        <!-- CATEGORY SECTIONS -->
+        <!-- PREDICTION FEED -->
         {% for cat, domains in preds.categorized_domains.items() %}
         <div id="section-{{ cat|lower }}" class="cat-content-block mb-5">
-            <div class="d-flex align-items-center gap-3 mb-4">
-                <div class="h5 fw-black text-white mb-0">{{ cat.upper() }} INDICATORS</div>
-                <div class="flex-grow-1 border-bottom border-white border-opacity-5"></div>
-            </div>
-
+            <h6 class="text-white fw-black tracking-widest xsmall mb-4 uppercase">{{ cat }} INDICATORS</h6>
             <div class="row g-4">
                 {% for domain in domains %}
-                <div class="col-xl-6 domain-card-wrapper" data-score="{{ domain.score }}">
+                <div class="col-12">
                     <div class="card-vedic p-0 overflow-hidden">
-                        <div class="p-4 p-md-5 border-bottom border-white border-opacity-5">
-                            <div class="d-flex justify-content-between align-items-start mb-4">
-                                <div class="flex-grow-1 min-width-0">
-                                    <h4 class="text-white fw-bold mb-1 text-truncate">{{ domain.domain }}</h4>
-                                    <span class="xsmall fw-black tracking-widest text-{{ 'success' if domain.score >= 65 else 'warning' if domain.score >= 45 else 'danger' }}">
-                                        {{ 'OPTIMAL' if domain.score >= 65 else 'NEUTRAL' if domain.score >= 45 else 'CHALLENGED' }}
-                                    </span>
+                        <div class="row g-0">
+                            <!-- Left: Summary Info -->
+                            <div class="col-lg-8 p-4 p-md-5 border-end border-white border-opacity-5">
+                                <div class="d-flex justify-content-between align-items-start mb-4">
+                                    <div>
+                                        <h4 class="text-white fw-black mb-1">{{ domain.domain }}</h4>
+                                        <span class="xsmall fw-black text-gold tracking-widest">{{ domain.prediction_strength }}</span>
+                                        <span class="mx-2 text-dim">|</span>
+                                        <span class="xsmall text-dim">{{ domain.validation_status }}</span>
+                                    </div>
+                                    <div class="text-end">
+                                        <div class="h2 fw-black text-white mb-0">{{ domain.score|int }}%</div>
+                                        <div class="xxsmall text-dim fw-bold">EVIDENCE MATCH</div>
+                                    </div>
                                 </div>
-                                <div class="text-end ps-3">
-                                    <div class="h2 fw-black text-white mb-0">{{ domain.score|round|int }}%</div>
-                                    <div class="xsmall text-dim fw-bold">RESONANCE</div>
+
+                                <p class="small text-white leading-relaxed mb-5">{{ domain.summary }}</p>
+
+                                <div class="row g-4">
+                                    <div class="col-md-6">
+                                        <h6 class="xxsmall text-gold fw-black tracking-widest mb-3 uppercase">TIMING WINDOW</h6>
+                                        <div class="p-3 rounded-4 bg-glass-subtle border border-white border-opacity-5">
+                                            <div class="d-flex justify-content-between align-items-center mb-1">
+                                                <span class="xxsmall text-dim">PEAK START</span>
+                                                <span class="xxsmall text-white fw-bold">{{ domain.timing_window.peak }}</span>
+                                            </div>
+                                            <div class="xxsmall text-dim italic mb-2">"{{ domain.timing_window.description }}"</div>
+                                            <div class="d-flex justify-content-between align-items-center pt-2 border-top border-white border-opacity-5">
+                                                <span class="xxsmall text-dim uppercase">Confidence:</span>
+                                                <span class="xxsmall text-white fw-bold">{{ domain.timing_window.timing_confidence }}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <h6 class="xxsmall text-gold fw-black tracking-widest mb-3 uppercase">PRACTICAL GUIDANCE (WHAT TO DO)</h6>
+                                        <ul class="ps-3 mb-0">
+                                            {% for guide in domain.practical_guidance %}
+                                            <li class="xxsmall text-dim mb-1">{{ guide }}</li>
+                                            {% endfor %}
+                                        </ul>
+                                    </div>
                                 </div>
                             </div>
 
-                            <p class="small text-white-50 leading-relaxed mb-4">{{ domain.summary }}</p>
-
-                            <!-- Streamlined: Prediction Outcome -->
-                            <div class="p-4 rounded-4 bg-glass-subtle border border-white border-opacity-5">
-                                <div class="d-flex align-items-center gap-3 mb-3">
-                                    <div class="h5 fw-black mb-0 text-gold">{{ domain.score|round|int }}% Match</div>
-                                    <div class="flex-grow-1 border-bottom border-white border-opacity-5"></div>
+                            <!-- Right: Hierarchical Evidence (WHY THIS PREDICTION?) -->
+                            <div class="col-lg-4 p-4 p-md-5 bg-black bg-opacity-20">
+                                <h6 class="text-white fw-black tracking-widest xsmall mb-4 uppercase">EVIDENCE CHAIN</h6>
+                                <div class="d-flex flex-column gap-3">
+                                    {% for ev in domain.evidence_chain %}
+                                    <div class="p-3 rounded-4 border border-white border-opacity-5 bg-glass-subtle">
+                                        <div class="d-flex justify-content-between xsmall mb-2">
+                                            <span class="fw-black text-white opacity-50">{{ ev.source|replace('_', ' ') }}</span>
+                                            <span class="text-{{ 'success' if ev.strength_score > 0 else 'danger' }} fw-bold">{{ '+' if ev.strength_score > 0 }}{{ (ev.strength_score * 100)|round|int }}</span>
+                                        </div>
+                                        <p class="xxsmall text-dim mb-0">{{ ev.description }}</p>
+                                    </div>
+                                    {% endfor %}
                                 </div>
-                                <p class="small text-white leading-relaxed mb-0">
-                                    {{ domain.summary }}
-                                </p>
+
+                                {% if domain.conflicting_signals %}
+                                <div class="mt-4 p-3 rounded-4 border border-danger border-opacity-20 bg-danger bg-opacity-5">
+                                    <h6 class="xxsmall text-danger fw-black mb-2 uppercase">CONFLICTS DETECTED</h6>
+                                    {% for conflict in domain.conflicting_signals %}
+                                    <p class="xxsmall text-white-50 mb-1">• {{ conflict }}</p>
+                                    {% endfor %}
+                                </div>
+                                {% endif %}
                             </div>
                         </div>
 
-                        <div class="row g-0 bg-black bg-opacity-20 border-top border-white border-opacity-5">
-                            <div class="col-12 p-4">
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <div>
-                                        <span class="xsmall text-dim uppercase fw-bold tracking-widest me-2">Dasha Influence:</span>
-                                        <span class="xsmall text-accent fw-bold">{{ domain.timing_explanation }}</span>
-                                    </div>
-                                    {% if domain.remedies %}
-                                    <button class="btn btn-link text-gold p-0 xsmall fw-bold text-decoration-none" onclick="showCategory('remedies')">
-                                        ACTION REQUIRED <i class="bi bi-magic ms-1"></i>
-                                    </button>
-                                    {% endif %}
-                                </div>
-                            </div>
+                        <!-- Footer: Remedy Shortcut -->
+                        <div class="p-4 bg-glass-subtle border-top border-white border-opacity-5 d-flex justify-content-between align-items-center">
+                            <span class="xsmall text-dim">Domain Logic: DETERMINISTIC (V1.0.0)</span>
+                            <button class="btn btn-sm btn-vedic py-2 px-4 xsmall fw-black">CORRECTION SUITE <i class="bi bi-magic ms-2"></i></button>
                         </div>
                     </div>
                 </div>
@@ -132,201 +139,32 @@
             </div>
         </div>
         {% endfor %}
-
-        <!-- REMEDY SANCTUARY VIEW -->
-        <div id="section-remedies" class="cat-content-block mb-5" style="display: none">
-            <div class="card-vedic p-5 mb-5 bg-dark border-gold border-opacity-20">
-                <h2 class="fw-black text-white mb-2">Remedy Sanctuary</h2>
-                <p class="text-dim mb-0">Practical actions to harmonize challenging planetary frequencies detected in your audit.</p>
-            </div>
-
-            <div class="row g-4 mb-5">
-                {% set all_rems = [] %}
-                {% for domain in preds.domains %}
-                    {% for rem in domain.remedies %}
-                        {% set rem_key = rem.planet + rem.mantra %}
-                        {% if rem_key not in all_rems %}
-                            <div class="col-md-6 col-xl-4">
-                                <div class="card-vedic p-4 border-gold border-opacity-10 h-100">
-                                    <div class="d-flex align-items-center gap-3 mb-4">
-                                        <div class="vc-avatar bg-gold text-dark" style="width: 40px; height: 40px">{{ rem.planet[0] }}</div>
-                                        <div>
-                                            <h6 class="text-white fw-bold mb-0">{{ rem.planet|upper }}</h6>
-                                            <div class="xsmall text-dim">Active Mitigation</div>
-                                        </div>
-                                    </div>
-
-                                    <div class="mb-4">
-                                        <label class="xsmall text-gold fw-black tracking-widest mb-2 d-block opacity-50">VIBRATION (MANTRA)</label>
-                                        <p class="small text-white font-serif italic mb-0">{{ rem.mantra }}</p>
-                                    </div>
-
-                                    <div class="mb-4">
-                                        <label class="xsmall text-gold fw-black tracking-widest mb-2 d-block opacity-50">CHARITY (DANA)</label>
-                                        <p class="xsmall text-dim mb-0">{{ rem.charity }}</p>
-                                    </div>
-
-                                    <div>
-                                        <label class="xsmall text-gold fw-black tracking-widest mb-2 d-block opacity-50">LIFESTYLE (YAMA)</label>
-                                        <p class="xsmall text-dim mb-0">{{ rem.lifestyle }}</p>
-                                    </div>
-                                </div>
-                            </div>
-                            {% set _ = all_rems.append(rem_key) %}
-                        {% endif %}
-                    {% endfor %}
-                {% endfor %}
-            </div>
-
-            <!-- LAL KITAB SECTION -->
-            {% if preds.lalkitab_remedies %}
-            <div class="mb-4">
-                <h5 class="text-white fw-bold opacity-50 uppercase tracking-widest">Lal Kitab Special Precautions</h5>
-            </div>
-            <div class="row g-4">
-                {% for lk in preds.lalkitab_remedies %}
-                <div class="col-md-6">
-                    <div class="p-4 rounded-4 bg-glass-subtle d-flex gap-4 align-items-start">
-                        <div class="bhava-number" style="min-width: 40px; height: 40px; border-radius: 50%; background: var(--gold-glow); display: flex; align-items: center; justify-content: center; font-weight: 900; color: var(--gold)">{{ lk.house }}</div>
-                        <div>
-                            <h6 class="text-white fw-bold mb-1">{{ lk.planet }} in House {{ lk.house }}</h6>
-                            <p class="small text-dim mb-0">{{ lk.remedy }}</p>
-                        </div>
-                    </div>
-                </div>
-                {% endfor %}
-            </div>
-            {% endif %}
-
-            {% if all_rems|length == 0 and not preds.lalkitab_remedies %}
-            <div class="col-12 text-center py-5 opacity-30">
-                <i class="bi bi-shield-check fs-1 mb-3 d-block"></i>
-                <h5 class="fw-bold">YOUR COSMIC SHIELD IS STRONG</h5>
-                <p class="small">No active remedies required for the current period.</p>
-            </div>
-            {% endif %}
-        </div>
     </div>
 </div>
 
 <style>
-.prediction-nav .nav-link {
-    background: transparent;
-    border: 1px solid transparent;
-    color: var(--text-dim) !important;
-    text-align: left;
-    padding: 14px 20px;
-    border-radius: 16px;
-    font-size: 0.85rem;
-    font-weight: 600;
-    transition: var(--transition);
-    display: flex;
-    align-items: center;
-    gap: 12px;
-}
-.prediction-nav .nav-link:hover { background: rgba(255,255,255,0.03); }
 .prediction-nav .nav-link.active {
     background: var(--bg-card);
     border-color: var(--border);
     color: var(--gold) !important;
-    box-shadow: 0 4px 20px -5px rgba(0,0,0,0.5);
 }
-.prediction-nav .nav-link i { font-size: 1.1rem; }
-
-.resonance-orb-mini {
-    width: 64px; height: 64px;
-    border-radius: 50%;
-    background: rgba(0,0,0,0.2);
-    border: 3px solid rgba(0,0,0,0.1);
-    position: relative;
-    display: flex; align-items: center; justify-content: center;
-    overflow: hidden;
-}
-.resonance-orb-mini span { position: relative; z-index: 2; font-size: 1.2rem; }
-
-.domain-intel-tabs .nav-pills .nav-link {
-    border-radius: 8px;
-    color: var(--text-dim) !important;
-    background: rgba(255,255,255,0.02);
-    border: 1px solid var(--border);
-    opacity: 0.7;
-}
-
-.domain-intel-tabs .nav-pills .nav-link.active {
-    background: var(--gold-glow);
-    border-color: var(--gold);
-    color: var(--gold) !important;
-    opacity: 1;
-}
-
-.cat-content-block { animation: fadeIn 0.4s ease-out; }
-@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
-.xxsmall { font-size: 0.6rem; }
-.remedy-box-mini { transition: var(--transition); }
-.remedy-box-mini:hover { background: rgba(255,255,255,0.08) !important; }
-
-.font-serif { font-family: 'Cinzel', serif; }
+.xxsmall { font-size: 0.65rem; }
+.bg-gold-gradient { background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%); }
 </style>
 
 <script>
-function toggleEvidence(btn) {
-    const parent = btn.parentElement;
-    parent.querySelectorAll('.d-none').forEach(item => item.classList.remove('d-none'));
-    btn.style.display = 'none';
-}
-
-function gotoDate(date) {
-    window.location.href = "{{ url_for('main.predictions') }}?date=" + date;
-}
-
 function showCategory(cat, btn) {
-    // Update Nav
     if (btn) {
         document.querySelectorAll('.prediction-nav .nav-link').forEach(l => l.classList.remove('active'));
         btn.classList.add('active');
-    } else {
-        document.querySelectorAll('.prediction-nav .nav-link').forEach(l => {
-            const label = l.querySelector('span').innerText.toLowerCase();
-            if (label.includes(cat.toLowerCase()) || (cat === 'all' && label.includes('audit'))) {
-                 document.querySelectorAll('.prediction-nav .nav-link').forEach(l2 => l2.classList.remove('active'));
-                 l.classList.add('active');
-            }
-        });
     }
-
-    // Show Content
     document.querySelectorAll('.cat-content-block').forEach(b => b.style.display = 'none');
-
     if (cat === 'all') {
-        document.querySelectorAll('.cat-content-block').forEach(b => {
-             if (b.id !== 'section-remedies') b.style.display = 'block';
-        });
+        document.querySelectorAll('.cat-content-block').forEach(b => b.style.display = 'block');
     } else {
-        const target = document.getElementById('section-' + cat);
-        if (target) target.style.display = 'block';
+        document.getElementById('section-' + cat).style.display = 'block';
     }
     window.scrollTo({ top: 0, behavior: 'smooth' });
 }
-
-function filterBySync(btn, type) {
-    const cards = document.querySelectorAll('.domain-card-wrapper');
-    document.querySelectorAll('.kmt-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-
-    cards.forEach(card => {
-        const score = parseFloat(card.dataset.score);
-        if (type === 'all') card.style.display = 'block';
-        else if (type === 'high') card.style.display = score >= 60 ? 'block' : 'none';
-        else if (type === 'caution') card.style.display = score < 50 ? 'block' : 'none';
-    });
-}
-
-// Initial state
-document.addEventListener("DOMContentLoaded", () => {
-    const urlParams = new URLSearchParams(window.location.search);
-    const cat = urlParams.get('category');
-    if (cat) showCategory(cat.toLowerCase());
-});
 </script>
 {% endblock %}

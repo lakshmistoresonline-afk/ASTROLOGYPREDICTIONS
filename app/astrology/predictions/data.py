@@ -2,6 +2,16 @@
 
 NAK_SPAN = 360 / 27
 
+# PRODUCTION VALIDATION STATUS (Phase 5)
+DOMAIN_STATUS = {
+    "Career & Authority": "PRELIMINARY VALIDATED",
+    "Finance & Wealth": "PRELIMINARY VALIDATED",
+    "Marriage & Relationships": "PRELIMINARY VALIDATED",
+    "Health & Vitality": "INSUFFICIENT DATA",
+    "Travel & Journeys": "PRELIMINARY VALIDATED",
+    "Foreign Travel": "NOT TESTED"
+}
+
 HOUSE_INTERPRETATIONS = {
     1: "Focused on self, identity, and physical vitality.",
     2: "Associated with family, speech, and accumulated wealth.",

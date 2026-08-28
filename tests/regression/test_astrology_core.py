@@ -58,8 +58,8 @@ def test_varga_integrity():
     # D27 Saptavimshamsha: Fire Sign (Aries), 1° -> Aries (0)
     # Span is 1° 6' 40" (1.111°)
     assert calculate_varga_rashi(0.5, 27) == 0
-    # Earth Sign (Taurus), 1° -> Capricorn (9)
-    assert calculate_varga_rashi(31.0, 27) == 9
+    # Earth Sign (Taurus), 1° -> Cancer (3) per Parashari Fire-Earth-Air-Water rule
+    assert calculate_varga_rashi(31.0, 27) == 3
 
 def test_shadbala_calculation():
     """Verify Shadbala exists and has reasonable values."""

@@ -1,72 +1,37 @@
-# 🔮 ASTROLOGYPREDICTIONS — Unified Global Intelligence Engine
+# Trademind Astrology AI (Jyotish OS)
 
-An evidence-based, professional-grade prediction platform synthesizing Vedic, Western, Chinese, and Esoteric traditions into a single deterministic inference chain.
+A professional-grade Vedic Astrology Prediction & Remedy system built on deterministic astronomical calculations.
 
 ---
 
-## ✨ Features
+## 🏛️ Core Philosophy
 
-| Tradition | Key Systems & Metrics |
+1.  **Deterministic Calculations**: We never ask AI to calculate planetary positions. Every degree is computed using the Swiss Ephemeris.
+2.  **Multi-Factor Corroboration**: No major prediction is made from a single factor. We corroborate D1, Varga, Dasha, and Transits.
+3.  **Explainability**: Every insight includes the "Why", "When", and "How Strong".
+4.  **Personalized Remedies**: Prioritized traditional remedies linked to specific chart issues.
+5.  **Prediction Tracking**: Feedback loop for continuous accuracy improvement.
+
+## ✨ High-Precision Vedic Features
+
+| Feature | Description |
 |---|---|
-| **Vedic (Jyotish)** | Shadbala · 16 Vargas · Vimshottari (5 levels) · Jaimini · KP 4-Step · Nadi D-150 · Lal Kitab |
-| **Western** | Secondary Progressions · Solar Arcs · 31 Harmonics · Natal Aspects · Asteroids · Fixed Stars |
-| **East Asian** | Bazi (Four Pillars) · Zi Wei Dou Shu (Purple Star) · Mahabote (Burmese) · Tibetan Mewa |
-| **Sacred/Esoteric** | Human Design (Gates/Channels) · Gene Keys · Maya Tzolkin · Celtic Tree · Kabbalah · Geomancy |
-| **Modern Science** | Biorhythms · Financial/Crypto Market Indicators · Astrometeorology · AstroCartoGraphy |
-| **Inference Framework** | **Unified Evidence Engine** · Contradiction Analysis · Multi-Tradition Confidence Scoring |
+| **Deterministic Engine** | Real planetary longitudes, retrograde status, and combustion. |
+| **Vimshottari Dasha** | Multi-level period calculation for precise timing. |
+| **16 Divisional Charts** | D1 to D60 support for specialized domain analysis (Career, Marriage, etc.). |
+| **Yoga Detection** | 100+ rule-based classical combinations (Raja, Dhana, Nabhasa). |
+| **Evidence Synthesis** | Corroboration of natal potential with current dasha and transits. |
 
----
+## 🛠️ Requirements
 
-## 🏗️ Architecture: The Universal Inference Chain
+-   **Python 3.10+**
+-   **Swiss Ephemeris (pyswisseph)**: Mandatory for core calculations. 
+    -   *Windows*: Requires Visual C++ Build Tools.
+    -   *Linux*: `apt-get install libswe-dev`
+-   **Local AI (Optional)**: Support for Ollama/Llama3 for natural language explanations.
 
-This platform transcends traditional boundaries by cross-validating life themes across multiple world-systems:
+## 🚀 Getting Started
 
-`CALCULATION → DATA SYNTHESIS → TRADITION ANALYSIS → CROSS-SYSTEM VERIFICATION → CONTRADICTION DETECTION → INTEGRATED PREDICTION`
-
-Every insight is backed by high-math calculations. For example, a "Career" prediction is cross-verified using Vedic D10, Chinese Bazi Day Master, Western Harmonics, and Hellenistic Zodiacal Releasing.
-
----
-
-## 🚀 Key Modules
-
-- **[engine.py](file:///D:/ASTROLOGYPREDICTIONS/app/astrology/predictions/engine.py)**: The central synthesis hub that aggregates 38+ domain predictions.
-- **[chart.py](file:///D:/ASTROLOGYPREDICTIONS/app/astrology/core/chart.py)**: A master data-miner that calculates 500+ astrological facts in milliseconds.
-- **[human_design.py](file:///D:/ASTROLOGYPREDICTIONS/app/astrology/core/human_design.py)**: Precision evolutionary mechanics for soul-level analysis.
-- **[relocation.py](file:///D:/ASTROLOGYPREDICTIONS/app/astrology/core/relocation.py)**: Advanced ACG lines for identifying global power locations.
-
----
-
-## 🤖 AI Explainer (Optional)
-
-The system includes an optional **AI Consultation** layer. The AI *never* replaces deterministic logic; instead, it receives structured astrological facts and "Cosmic Evidence" to provide natural language explanations, acting as a bridge between high-math Jyotish and the user.
-
----
-
-## 🛠️ Setup & Deployment
-
-### Local Run
-```bash
-bash install.sh
-./start.sh
-```
-
-### Docker
-```bash
-docker-compose up -d
-```
-
-### Cloud (Firebase + Cloud Run)
-```powershell
-.\scripts\deploy.ps1
-```
-
----
-
-## 🛡️ Security & Privacy
-
-All calculations are performed **locally** or within your private cloud instance. Sensitive birth data is stored in encrypted local vaults. The application enforces `FLASK_SECRET_KEY` and utilizes secure production headers (HSTS, CSP) to ensure your cosmic data remains private.
-
----
-
-## 📜 License
-MIT — Professional Jyotish for everyone.
+1.  Install dependencies: `pip install -r requirements.txt`
+2.  Ensure `swisseph` is properly installed. If you encounter build errors, ensure your C++ compiler is configured.
+3.  Run the server: `python run.py`

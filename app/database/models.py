@@ -16,22 +16,85 @@ class Chart(db.Model):
     id = db.Column(db.String(36), primary_key=True)
     profile_id = db.Column(db.Integer, db.ForeignKey('profiles.id'), nullable=True)
     name = db.Column(db.String(100))
-    dob = db.Column(db.String(20)) # YYYY-MM-DD
-    tob = db.Column(db.String(10)) # HH:MM
+    dob = db.Column(db.String(20))
+    tob = db.Column(db.String(10))
     place = db.Column(db.String(200))
     lat = db.Column(db.Float)
     lon = db.Column(db.Float)
     tz = db.Column(db.String(50))
-
-    # Store raw calculation data as JSON
     raw_data = db.Column(db.Text)
-
     saved_at = db.Column(db.DateTime, default=datetime.utcnow)
 
     def set_data(self, data: dict):
         self.raw_data = json.dumps(data, default=str)
 
     def get_data(self) -> dict:
-        if self.raw_data:
-            return json.loads(self.raw_data)
-        return {}
+        return json.loads(self.raw_data) if self.raw_data else {}
+
+class PredictionOutcome(db.Model):
+    """
+    Immutable Prediction Snapshot & Outcome Tracking (V1.0.0).
+    Stores engine versions to ensure reproducibility.
+    """
+    __tablename__ = 'prediction_outcomes'
+    id = db.Column(db.Integer, primary_key=True)
+    chart_id = db.Column(db.String(36), db.ForeignKey('charts.id'), nullable=False)
+
+    # Engine Versions
+    calculation_version = db.Column(db.String(50))
+    dasha_version = db.Column(db.String(50))
+    transit_version = db.Column(db.String(50))
+    evidence_version = db.Column(db.String(50))
+    remedy_version = db.Column(db.String(50))
+
+    domain = db.Column(db.String(50), nullable=False)
+    prediction_strength = db.Column(db.String(20))
+    prediction_text = db.Column(db.Text, nullable=False)
+
+    # Timing Snapshot
+    start_date = db.Column(db.String(20))
+    peak_date = db.Column(db.String(20))
+    end_date = db.Column(db.String(20))
+
+    # User Reported Outcome
+    # OCCURRED, PARTIALLY_OCCURRED, DID_NOT_OCCUR, UNKNOWN
+    status = db.Column(db.String(30), default="PENDING")
+    actual_event_date = db.Column(db.String(20))
+    event_description = db.Column(db.Text)
+
+    # Timing Match Categorization (Calculated post-report)
+    # TIMING_MATCH_15, TIMING_MATCH_30, TIMING_MATCH_90, BROAD_MATCH, NO_MATCH
+    timing_quality = db.Column(db.String(30))
+
+    user_reported_confidence = db.Column(db.Integer) # 1-5
+    user_notes = db.Column(db.Text)
+
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    reported_at = db.Column(db.DateTime)
+
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "domain": self.domain,
+            "strength": self.prediction_strength,
+            "status": self.status,
+            "timing_quality": self.timing_quality,
+            "versions": {
+                "calc": self.calculation_version,
+                "dasha": self.dasha_version
+            }
+        }
+
+class RemedyTask(db.Model):
+    __tablename__ = 'remedy_tasks'
+    id = db.Column(db.Integer, primary_key=True)
+    chart_id = db.Column(db.String(36), db.ForeignKey('charts.id'), nullable=False)
+    planet = db.Column(db.String(20))
+    action = db.Column(db.String(200), nullable=False)
+    approach = db.Column(db.String(50))
+    remedy_version = db.Column(db.String(50))
+
+    is_active = db.Column(db.Boolean, default=True)
+    completion_count = db.Column(db.Integer, default=0)
+    last_completed_at = db.Column(db.DateTime)
+    user_outcome_notes = db.Column(db.Text)

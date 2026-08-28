@@ -1,137 +1,246 @@
 {% extends "base.html" %}
-{% block title %}Celestial Command — Jyotish OS{% endblock %}
-
-{% block head %}
-<style>
-/* --- Dashboard Micro-animations --- */
-@keyframes orb-float {
-    0%, 100% { transform: translateY(0) scale(1); }
-    50% { transform: translateY(-10px) scale(1.02); }
-}
-
-.resonance-hub-orb {
-    width: 220px; height: 220px;
-    margin: 0 auto;
-    border-radius: 50%;
-    background: rgba(0,0,0,0.4);
-    border: 2px solid var(--score-color);
-    box-shadow: 0 0 50px -10px var(--score-color);
-    display: flex; flex-direction: column; align-items: center; justify-content: center;
-    animation: orb-float 6s ease-in-out infinite;
-    position: relative;
-}
-
-.resonance-hub-orb::before {
-    content: ''; position: absolute; inset: -15px;
-    border: 1px solid rgba(255,255,255,0.03); border-radius: 50%;
-}
-</style>
-{% endblock %}
+{% block title %}Dashboard — Trademind Jyotish OS{% endblock %}
 
 {% block content %}
-<div class="mb-5 d-flex justify-content-between align-items-end">
-    <div>
-        <h2 class="fw-black text-white mb-1">Celestial <span class="text-gold">Command</span></h2>
-        <p class="text-dim small mb-0">High-Accuracy Predictions for {{ session.get('birth_name', 'Native') }}</p>
+<div class="mb-5">
+    <h2 class="fw-black text-white mb-1">Namaste, {{ session.get('birth_name', 'Native') }}</h2>
+    <p class="text-dim small mb-0">Deterministic Vedic Guidance for the current planetary flow.</p>
+</div>
+
+<!-- TOP PRIORITY BAR -->
+<div class="row g-4 mb-5">
+    <!-- CURRENT DASHA -->
+    <div class="col-md-4">
+        <div class="card-vedic p-4 h-100 bg-gold-gradient text-dark border-0 shadow-lg">
+            <h6 class="fw-black tracking-widest xsmall opacity-70 mb-3">CURRENT LIFE PERIOD</h6>
+            <div class="h3 fw-black mb-1">{{ daily.current_dasha }}</div>
+            <p class="small fw-bold mb-0">Activation: {{ daily.strongest_theme }}</p>
+        </div>
     </div>
-    <div class="text-end d-none d-md-block">
-        <span class="badge bg-glass-subtle py-2 px-3 rounded-pill text-dim xsmall fw-bold">
-            <i class="bi bi-clock-history me-2 text-gold"></i> Live Environment Sync
-        </span>
+
+    <!-- TOP PREDICTION -->
+    <div class="col-md-4">
+        {% set top_pred = preds.predictions[0] if preds.predictions else None %}
+        <div class="card-vedic p-4 h-100 border-gold border-opacity-20">
+            <h6 class="text-gold fw-black tracking-widest xsmall mb-3">TOP PREDICTION</h6>
+            {% if top_pred %}
+                <div class="d-flex justify-content-between align-items-start mb-2">
+                    <div class="h4 fw-black text-white mb-0">{{ top_pred.domain }}</div>
+                    <span class="badge bg-success text-white xsmall">{{ top_pred.prediction_strength }}</span>
+                </div>
+                <p class="xsmall text-dim text-truncate mb-0">{{ top_pred.summary }}</p>
+            {% else %}
+                <p class="text-dim small italic">Scanning cosmos...</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- TOP REMEDY -->
+    <div class="col-md-4">
+        {% set top_rem = remedies[0] if remedies else None %}
+        <div class="card-vedic p-4 h-100 border-accent border-opacity-20">
+            <h6 class="text-accent fw-black tracking-widest xsmall mb-3">PRIORITY REMEDY</h6>
+            {% if top_rem %}
+                <div class="h5 fw-bold text-white mb-1">{{ top_rem.planet }} {{ top_rem.approach }}</div>
+                <p class="xsmall text-dim mb-0">{{ top_rem.action }}</p>
+            {% else %}
+                <p class="text-dim small italic">No active corrective triggers.</p>
+            {% endif %}
+        </div>
     </div>
 </div>
 
-<div class="bento-grid">
-    <!-- HERO: CORE RESONANCE HUB -->
-    <div class="glass-card bento-hero d-flex flex-column justify-content-center text-center">
-        <div class="aura-glow aura-cosmic top-0 start-0"></div>
-        <div class="mb-4">
-            <span class="xsmall fw-black tracking-widest text-gold opacity-50 uppercase">DAILY PREDICTION STATUS</span>
-        </div>
-
-        <div class="zenith-orb-wrap mb-4">
-            <div class="resonance-hub-orb" style="--score-color: {{ preds.score_color }}">
-                <div class="h1 fw-black text-white mb-0" style="font-size: 4rem">{{ preds.score }}</div>
-                <div class="xsmall fw-black tracking-widest uppercase opacity-70">{{ preds.score_label }}</div>
-            </div>
-        </div>
-
-        <div class="max-width-600 mx-auto">
-            <h4 class="text-white fw-bold mb-2">Today's Directive</h4>
-            <p class="h5 text-gold-glow leading-relaxed mb-0 italic">
-                "{{ preds.ai_note or 'Stability is favored. Align your actions with the current planetary lord for optimal results.' }}"
-            </p>
-        </div>
-    </div>
-
-    <!-- PREDICTION VECTORS: THE BOTTOM LINE -->
-    <div class="glass-card bento-oracle d-flex flex-column">
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <h6 class="text-white fw-black tracking-widest uppercase xsmall">Domain Forecasts</h6>
-            <i class="bi bi-graph-up-arrow text-gold opacity-30"></i>
-        </div>
-        <div class="d-flex flex-column gap-3 flex-grow-1 justify-content-center">
-            {% for cat, domains in preds.categorized_domains.items() %}
-                {% set cat_score = (domains|map(attribute='score')|list|sum / domains|length)|round|int if domains else 50 %}
-                <div class="p-3 rounded-4 bg-glass-subtle">
-                    <div class="d-flex justify-content-between align-items-center mb-2">
-                        <span class="xsmall text-dim uppercase">{{ cat }} Success</span>
-                        <span class="small fw-bold text-white">{{ cat_score }}%</span>
+<!-- INSIGHT GRID -->
+<div class="row g-4">
+    <!-- Main Prediction Feed -->
+    <div class="col-lg-8">
+        <h6 class="text-white fw-black tracking-widest xsmall mb-4 uppercase">ACTIVE PREDICTION WINDOWS</h6>
+        <div class="d-flex flex-column gap-4">
+            {% for pred in preds.predictions[:3] %}
+            <div class="card-vedic p-4">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <div>
+                        <h4 class="text-white fw-black mb-1">{{ pred.domain }}</h4>
+                        <div class="xsmall">
+                            <span class="text-gold fw-bold">EVIDENCE: {{ pred.prediction_strength }}</span>
+                            <span class="mx-2 text-dim">|</span>
+                            <span class="text-dim">Status: {{ pred.validation_status }}</span>
+                        </div>
                     </div>
-                    <div class="progress" style="height: 6px !important; background: rgba(255,255,255,0.05)">
-                        <div class="progress-bar {{ 'bg-success' if cat_score >= 65 else 'bg-warning' if cat_score >= 45 else 'bg-danger' }}" style="width: {{ cat_score }}%"></div>
+                    <div class="text-end">
+                        <div class="h2 fw-black text-white mb-0">{{ pred.score|int }}%</div>
+                        <div class="xxsmall text-dim fw-bold tracking-widest">MATCH RATE</div>
                     </div>
                 </div>
-            {% endfor %}
-        </div>
-        <a href="{{ url_for('main.predictions') }}" class="btn btn-vedic w-100 mt-4 py-2 xsmall fw-bold">ALL 40+ LIFE INSIGHTS</a>
-    </div>
 
-    <!-- CRITICAL TIMING -->
-    <div class="glass-card bento-wide">
-        <div class="row g-4 align-items-center">
-            <div class="col-md-5 border-end border-white border-opacity-5">
-                <h6 class="text-white fw-black tracking-widest uppercase xsmall mb-4">Immediate Timing Window</h6>
-                <div class="p-4 rounded-4 bg-danger bg-opacity-10 border border-danger border-opacity-20 text-center">
-                    <div class="xsmall text-danger fw-black uppercase mb-1">Rahu Kaal (Wait & Observe)</div>
-                    <div class="h2 stat-value text-white mb-0">{{ preds.sky.rahu_kaal }}</div>
-                </div>
-            </div>
-            <div class="col-md-7">
-                <h6 class="text-white fw-black tracking-widest uppercase xsmall mb-4">Current Life Theme</h6>
-                {% for item in preds.timeline %}
-                    {% if 'Current' in item.period %}
-                    <div class="p-4 rounded-4 bg-glass-subtle">
-                        <div class="row align-items-center">
-                            <div class="col-sm-6">
-                                <div class="xxsmall text-gold opacity-50 mb-1 font-mono uppercase">Current Cycle</div>
-                                <h3 class="text-white fw-black mb-1">{{ item.period }}</h3>
-                                <span class="badge bg-gold text-dark xsmall fw-black mt-2">{{ item.theme }}</span>
+                <div class="p-3 rounded-4 bg-glass-subtle mb-4 border border-white border-opacity-5">
+                    <div class="xsmall text-gold fw-black mb-2 uppercase">TIMING WINDOW</div>
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="flex-grow-1">
+                            <div class="progress" style="height: 4px">
+                                <div class="progress-bar bg-gold" style="width: 60%"></div>
                             </div>
-                            <div class="col-sm-6">
-                                <p class="xxsmall text-dim mb-0 leading-relaxed italic">"Focus on {{ item.events[0] }} and {{ item.events[1] }} for maximum alignment during this phase."</p>
+                            <div class="d-flex justify-content-between mt-2 xxsmall text-dim font-mono">
+                                <span>BUILD: {{ pred.timing_window.build }}</span>
+                                <span class="text-white fw-bold">PEAK: {{ pred.timing_window.peak }}</span>
+                                <span>EXIT: {{ pred.timing_window.end }}</span>
                             </div>
                         </div>
                     </div>
-                    {% endif %}
+                </div>
+
+                <div class="row g-3">
+                    <div class="col-md-7">
+                        <p class="small text-white-50 leading-relaxed mb-0">{{ pred.summary }}</p>
+                    </div>
+                    <div class="col-md-5 text-end">
+                        <button class="btn btn-sm btn-outline-secondary py-2 px-4 xsmall fw-bold" onclick="trackOutcome({{ loop.index }}, '{{ pred.domain }}', '{{ pred.summary }}')">REPORT OUTCOME</button>
+                        <a href="{{ url_for('main.predictions') }}?domain={{ pred.domain }}" class="btn btn-sm btn-vedic py-2 px-4 xsmall fw-bold ms-2">WHY?</a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        <div class="mt-4 text-center">
+            <a href="{{ url_for('main.predictions') }}" class="text-gold small fw-bold text-decoration-none">VIEW ALL LIFE PREDICTIONS <i class="bi bi-arrow-right ms-2"></i></a>
+        </div>
+    </div>
+
+    <!-- Sidebar Highlights -->
+    <div class="col-lg-4">
+        <!-- REMEDY TRACKER -->
+        <h6 class="text-white fw-black tracking-widest xsmall mb-4 uppercase">REMEDY TRACKER</h6>
+        <div class="card-vedic p-4 mb-4">
+            <div id="active-remedies-list">
+                {% for rem in remedies %}
+                <div class="remedy-track-item p-3 rounded-4 bg-glass-subtle mb-3 border border-white border-opacity-5">
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                        <h6 class="text-white fw-bold mb-0 small">{{ rem.planet }} {{ rem.approach }}</h6>
+                        <span class="badge bg-gold text-dark xxsmall">{{ rem.priority }}</span>
+                    </div>
+                    <p class="xxsmall text-dim mb-3">{{ rem.action }}</p>
+                    <div class="d-flex gap-2">
+                        <button class="btn btn-vedic btn-sm flex-grow-1 xxsmall py-1" onclick="completeRemedy(this)">COMPLETE</button>
+                        <button class="btn btn-outline-secondary btn-sm xxsmall py-1" onclick="skipRemedy(this)">SKIP</button>
+                    </div>
+                </div>
                 {% endfor %}
             </div>
+            <a href="#" class="btn btn-link text-dim w-100 xsmall text-decoration-none">REMEDY HISTORY <i class="bi bi-clock-history ms-1"></i></a>
+        </div>
+
+        <!-- 7-DAY OUTLOOK -->
+        <h6 class="text-white fw-black tracking-widest xsmall mb-4 uppercase">7-DAY OUTLOOK</h6>
+        <div class="card-vedic p-0 overflow-hidden mb-4">
+            <div class="p-4 bg-glass-subtle d-flex align-items-center justify-content-between border-bottom border-white border-opacity-5">
+                <span class="small text-white fw-bold">WEEKLY FLOW</span>
+                <span class="xsmall text-dim">Peak: Wednesday</span>
+            </div>
+            <div class="p-3">
+                <div class="d-flex justify-content-between align-items-end" style="height: 60px">
+                    {% for i in range(7) %}
+                    <div class="bg-gold opacity-{{ [20, 40, 80, 100, 60, 30, 20][i] }} rounded-top" style="width: 12%; height: {{ [30, 50, 80, 100, 70, 40, 20][i] }}%"></div>
+                    {% endfor %}
+                </div>
+                <div class="d-flex justify-content-between mt-2 xxsmall text-dim font-mono">
+                    <span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span><span>S</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 30-DAY OUTLOOK -->
+        <h6 class="text-white fw-black tracking-widest xsmall mb-4 uppercase">30-DAY OUTLOOK</h6>
+        <div class="card-vedic p-4 mb-4">
+            <div class="d-flex align-items-center gap-3 mb-3">
+                <div class="vc-avatar bg-success text-white" style="width: 32px; height: 32px; font-size: 0.7rem">✓</div>
+                <div>
+                    <h6 class="text-white fw-bold mb-0 small">{{ month_summary.month }} Focus</h6>
+                    <div class="xxsmall text-dim">Deterministic Logic</div>
+                </div>
+            </div>
+            <p class="xxsmall text-dim mb-0 italic">"{{ month_summary.primary_focus }} Recommend: {{ month_summary.recommended_remedy }}"</p>
+        </div>
+
+        <!-- 12-MONTH OUTLOOK -->
+        <h6 class="text-white fw-black tracking-widest xsmall mb-4 uppercase">12-MONTH OUTLOOK</h6>
+        <div class="card-vedic p-4">
+            <div class="d-flex align-items-center gap-3 mb-3">
+                <div class="vc-avatar bg-gold text-dark" style="width: 32px; height: 32px; font-size: 0.7rem">⚡</div>
+                <div>
+                    <h6 class="text-white fw-bold mb-0 small">YEAR {{ year_ahead[0].month[-4:] }} AHEAD</h6>
+                    <div class="xxsmall text-dim">Peak Windows Active</div>
+                </div>
+            </div>
+            <p class="xxsmall text-dim mb-0 italic">"Full scan indicates major activity in professional and financial sectors. Review prediction details for exact peaks."</p>
         </div>
     </div>
 </div>
 
-<!-- RETROGRADE WARNINGS (FLOATING OVERLAY) -->
-{% if preds.karmic_alerts %}
-<div class="position-fixed bottom-0 start-0 p-4" style="z-index: 1000; max-width: 400px;">
-    {% for alert in preds.karmic_alerts[:1] %}
-    <div class="glass-card p-4 border-danger border-opacity-20 shadow-2xl" style="background: rgba(220, 38, 38, 0.05)">
-        <div class="d-flex align-items-center gap-3 mb-3">
-            <div class="stat-value text-danger fs-3">℞</div>
-            <h6 class="text-white fw-bold mb-0 xsmall uppercase tracking-widest">Karmic Review Active</h6>
+<!-- OUTCOME MODAL -->
+<div class="modal fade" id="outcomeModal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content card-vedic p-4 border-gold border-opacity-20">
+      <div class="modal-header border-0 p-0 mb-4">
+        <h5 class="modal-title text-white fw-black">Track Prediction Outcome</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body p-0">
+        <p class="small text-dim mb-4" id="modal-pred-text"></p>
+        <div class="d-flex flex-column gap-3 mb-4">
+            <button class="btn btn-outline-success py-3 text-start small fw-bold" onclick="submitOutcome('OCCURRED')">
+                <i class="bi bi-check-circle-fill me-3"></i> IT OCCURRED
+            </button>
+            <button class="btn btn-outline-warning py-3 text-start small fw-bold" onclick="submitOutcome('PARTIALLY_OCCURRED')">
+                <i class="bi bi-dash-circle-fill me-3"></i> PARTIALLY OCCURRED
+            </button>
+            <button class="btn btn-outline-danger py-3 text-start small fw-bold" onclick="submitOutcome('DID_NOT_OCCUR')">
+                <i class="bi bi-x-circle-fill me-3"></i> DID NOT OCCUR
+            </button>
         </div>
-        <p class="xxsmall text-white-50 leading-relaxed mb-0">{{ alert.interpretation }}</p>
+        <div class="mb-4">
+            <label class="xsmall text-gold fw-black tracking-widest mb-2 d-block">EVENT DATE (OPTIONAL)</label>
+            <input type="date" id="outcome-date" class="form-control-vedic">
+        </div>
+        <textarea id="outcome-notes" class="form-control-vedic mb-4" placeholder="Additional notes..."></textarea>
+        <button class="btn btn-vedic w-100 py-3 fw-black" onclick="finalSubmit()">CONFIRM REPORT</button>
+      </div>
     </div>
-    {% endfor %}
+  </div>
 </div>
-{% endif %}
+
+<script>
+let currentSnapshotId = null;
+
+function trackOutcome(id, domain, text) {
+    document.getElementById('modal-pred-text').innerText = domain + ": " + text;
+    // In a real app, we'd fetch or create a snapshot ID here via API
+    const modal = new bootstrap.Modal(document.getElementById('outcomeModal'));
+    modal.show();
+}
+
+function submitOutcome(status) {
+    window.selectedStatus = status;
+    document.querySelectorAll('#outcomeModal .btn-outline-success, #outcomeModal .btn-outline-warning, #outcomeModal .btn-outline-danger').forEach(b => b.classList.remove('active'));
+    event.currentTarget.classList.add('active');
+}
+
+function finalSubmit() {
+    const data = {
+        status: window.selectedStatus,
+        event_date: document.getElementById('outcome-date').value,
+        notes: document.getElementById('outcome-notes').value
+    };
+    console.log("Reporting outcome:", data);
+    alert("Outcome reported for calibration. Thank you for your feedback.");
+    bootstrap.Modal.getInstance(document.getElementById('outcomeModal')).hide();
+}
+
+function completeRemedy(btn) {
+    const item = btn.closest('.remedy-track-item');
+    item.classList.add('opacity-30');
+    btn.innerText = "COMPLETED";
+    btn.disabled = true;
+    // Log via API
+}
+</script>
 {% endblock %}
