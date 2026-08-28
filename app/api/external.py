@@ -7,6 +7,7 @@ Strict deterministic handling of birth coordinates and timezones.
 """
 import os
 import requests
+from typing import Optional
 from timezonefinder import TimezoneFinder
 from geopy.geocoders import Nominatim, OpenCage
 from geopy.exc import GeocoderTimedOut, GeocoderServiceError

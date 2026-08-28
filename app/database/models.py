@@ -46,9 +46,11 @@ class PredictionOutcome(db.Model):
     transit_version = db.Column(db.String(50))
     evidence_version = db.Column(db.String(50))
     remedy_version = db.Column(db.String(50))
+    prompt_version = db.Column(db.String(50))
 
     domain = db.Column(db.String(50), nullable=False)
     prediction_strength = db.Column(db.String(20))
+    engine_confidence = db.Column(db.String(20))
     prediction_text = db.Column(db.Text, nullable=False)
 
     # Timing Snapshot

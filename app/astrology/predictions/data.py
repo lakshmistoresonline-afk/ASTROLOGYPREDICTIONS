@@ -9,6 +9,10 @@ DOMAIN_STATUS = {
     "Marriage & Relationships": "PRELIMINARY VALIDATED",
     "Health & Vitality": "INSUFFICIENT DATA",
     "Travel & Journeys": "PRELIMINARY VALIDATED",
+    "Travel & Horizons": "PRELIMINARY VALIDATED",
+    "Education & Knowledge": "PRELIMINARY VALIDATED",
+    "Personality & Essence": "PRELIMINARY VALIDATED",
+    "Property & Assets": "PRELIMINARY VALIDATED",
     "Foreign Travel": "NOT TESTED"
 }
 

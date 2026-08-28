@@ -15,8 +15,13 @@ def get_daily_forecast(chart: CanonicalChart, target_date: datetime) -> Dict[str
     antar_lord = dasha.get("current_antar", {}).get("lord", "Unknown")
 
     # 2. Transit Moon Position (Fact-based)
-    # We would ideally call the Calculation Service for the target_date
-    # For now, we use a logic placeholder to show the engine structure
+    from ..core.calc_client import calc_client
+    transit_facts = calc_client.get_natal_chart(
+        target_date.year, target_date.month, target_date.day,
+        target_date.hour + target_date.minute/60.0,
+        chart.latitude, chart.longitude
+    )
+    moon_transit_rashi = int(transit_facts["planets"]["Moon"]["longitude"] // 30)
 
     # 3. Personal Theme
     # Theme is driven by the Antardasha Lord's House ownership and placement

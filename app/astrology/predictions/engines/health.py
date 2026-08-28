@@ -57,4 +57,9 @@ class HealthPredictionEngine:
         # IMPORTANT: Health remains INSUFFICIENT DATA for medical claims (Req 47)
         res = CorroborationEngine.synthesize("Health & Vitality", promise_level, evidence, summary_template, timing_window=window)
         res.validation_status = "INSUFFICIENT DATA"
+        res.practical_guidance = [
+            "This is not a medical diagnosis. Consult a doctor for any health concerns.",
+            "Maintain consistent physical routine and hygiene.",
+            "Observe standard safety protocols for daily activity."
+        ]
         return res

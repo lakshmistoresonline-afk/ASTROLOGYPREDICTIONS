@@ -26,12 +26,12 @@
 | :--- | :--- | :--- | :--- |
 | **Career** | `engines/career.py` | **IMPLEMENTED AND VERIFIED** | Modern hierarchical logic. |
 | **Finance** | `engines/finance.py` | **IMPLEMENTED AND VERIFIED** | Modern hierarchical logic. |
-| **Marriage** | `predictions/marriage.py` | **PARTIALLY IMPLEMENTED** | Incorrect `synthesize` signature. |
-| **Health** | `predictions/health.py` | **PARTIALLY IMPLEMENTED** | Incorrect `synthesize` signature. |
-| **Personality** | `predictions/personality.py` | **PARTIALLY IMPLEMENTED** | Incorrect `synthesize` signature. |
-| **Travel** | `predictions/travel.py` | **PARTIALLY IMPLEMENTED** | Incorrect `synthesize` signature. |
-| **Property** | `predictions/property.py` | **PARTIALLY IMPLEMENTED** | Incorrect `synthesize` signature. |
-| **Education** | `predictions/education.py` | **PARTIALLY IMPLEMENTED** | Incorrect `synthesize` signature. |
+| **Marriage** | `engines/marriage.py` | **IMPLEMENTED AND VERIFIED** | Refactored in Phase 9 turn. |
+| **Health** | `engines/health.py` | **IMPLEMENTED AND VERIFIED** | Refactored in Phase 9 turn. |
+| **Travel** | `engines/travel.py` | **IMPLEMENTED AND VERIFIED** | Refactored in Phase 9 turn. |
+| **Personality** | `predictions/personality.py` | **PARTIALLY IMPLEMENTED** | Legacy logic remains isolated. |
+| **Property** | `predictions/property.py` | **PARTIALLY IMPLEMENTED** | Legacy logic remains isolated. |
+| **Education** | `predictions/education.py` | **PARTIALLY IMPLEMENTED** | Legacy logic remains isolated. |
 
 ## 4. REMEDY SYSTEM
 

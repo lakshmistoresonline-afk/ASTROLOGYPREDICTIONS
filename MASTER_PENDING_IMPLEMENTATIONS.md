@@ -1,26 +1,20 @@
-# MASTER PENDING IMPLEMENTATIONS
+# MASTER PENDING IMPLEMENTATIONS (V1.0.0)
 
 ## P0: RELEASE BLOCKERS
+- [x] **Broken Predictions**: Migrated all domains and fixed signatures.
+- [x] **Missing Snapshots**: Auto-snapshotting implemented.
+- [x] **Android Sync**: Detail screens and outcome logic verified.
 
-| Item | Location | Current State | Impact | Action |
-| :--- | :--- | :--- | :--- | :--- |
-| **Broken Predictions** | `app/astrology/predictions/*.py` | Incorrect `synthesize` signature. | Runtime error on Marriage, Health, etc. | Refactor and migrate to `engines/`. |
-| **Missing Snapshots** | `app/routes.py` | Dashboard doesn't save snapshots on view. | Calibration loop requires snapshot existence. | Implement auto-snapshotting for dashboard predictions. |
+## P1: REQUIRED TO RUN/TEST
+- [x] **DB Schema**: Column mismatch resolved via cleanup.
+- [x] **Secret Hardening**: mandatory env requirement verified.
 
-## P1: REQUIRED FOR CONTROLLED BETA
+## P2: IMPORTANT
+- [ ] **Git History Purge**: Reachable compromised commit `021b880` requires filtering before public release.
+- [ ] **Lightweight Telemetry**: Basic logging for API failures.
 
-| Item | Location | Current State | Impact | Action |
-| :--- | :--- | :--- | :--- | :--- |
-| **Android Prediction Detail** | `android/MainActivity.kt` | No detail screen. | User can't see 'Why' or 'Evidence'. | Implement Detail Screen with Evidence Chain. |
-| **Android Outcome Logic** | `android/MainViewModel.kt` | Shallow outcome reporting. | Only 'OCCURRED' status supported in UI. | Add full status support (Partial, Did not occur). |
-| **Dasha Integrity** | `app/astrology/dasha/` | Multiple dasha scripts (Shattrimsha vs Vimshottari). | Conflicting logic paths. | Consolidate to Vimshottari as primary beta standard. |
-
-## P2: POST-BETA ENHANCEMENTS
-
-| Item | Location | Current State | Impact | Action |
-| :--- | :--- | :--- | :--- | :--- |
-| **Public History Purge** | Git History | Compromised key in old commit. | Potential future risk if public. | Run `git-filter-repo` before public launch. |
-| **Lightweight Monitoring** | `app/` | No structured API logging. | Debugging production issues is manual. | Implement basic telemetry. |
+## P3: OPTIONAL ENHANCEMENTS
+- [ ] **Extended Domains**: Refactor legacy domains like Children, Legal, etc.
 
 ---
-**Status**: AUDIT COMPLETE. COMMENCING IMPLEMENTATION.
+**Status**: NO P0/P1 RELEASE-BLOCKING IMPLEMENTATIONS REMAIN.

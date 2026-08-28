@@ -36,7 +36,15 @@ def create_app():
 
     # Lightweight Monitoring (Part 33)
     import logging
-    logging.basicConfig(level=logging.INFO)
+    from logging.handlers import RotatingFileHandler
+    if not os.path.exists('logs'):
+        os.mkdir('logs')
+    file_handler = RotatingFileHandler('logs/app.log', maxBytes=10240, backupCount=10)
+    file_handler.setFormatter(logging.Formatter(
+        '%(asctime)s %(levelname)s: %(message)s [in %(pathname)s:%(lineno)d]'))
+    file_handler.setLevel(logging.INFO)
+    app.logger.addHandler(file_handler)
+    app.logger.setLevel(logging.INFO)
     app.logger.info("Jyotish OS V1.0.0 starting...")
 
     from .routes import main

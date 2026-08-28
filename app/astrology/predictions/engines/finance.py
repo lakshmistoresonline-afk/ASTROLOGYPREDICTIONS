@@ -47,4 +47,10 @@ class FinancePredictionEngine:
             "Hierarchical confidence is rated at {score}%."
         )
 
-        return CorroborationEngine.synthesize("Finance & Wealth", promise_level, evidence, summary_template, timing_window=window)
+        res = CorroborationEngine.synthesize("Finance & Wealth", promise_level, evidence, summary_template, timing_window=window)
+        res.practical_guidance = [
+            "This is trend analysis, not investment advice. Consult a financial professional.",
+            "Focus on long-term resource stability and disciplined saving.",
+            "Avoid speculative risks in sectors where corroboration is weak."
+        ]
+        return res

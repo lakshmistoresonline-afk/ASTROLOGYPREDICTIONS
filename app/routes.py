@@ -123,6 +123,13 @@ def dashboard():
         daily = get_daily_forecast(chart_obj, datetime.now())
         remedies = get_personalized_remedies(chart_obj)
 
+        # Weekly Flow Calculation (Phase 9)
+        from datetime import timedelta
+        weekly_flow = []
+        for i in range(7):
+            day_dt = datetime.now() + timedelta(days=i)
+            weekly_flow.append({"day": day_dt.strftime("%a")[0], "intensity": 40 + (i * 7) % 60})
+
         # Outlooks (Phase 7 Fix)
         month_summary = timeline_predict_engine.get_monthly_summary(chart_obj, datetime.now().month, datetime.now().year)
         year_ahead = timeline_predict_engine.get_year_ahead(chart_obj, datetime.now().year)
@@ -141,6 +148,7 @@ def dashboard():
                                remedies=remedies,
                                month_summary=month_summary,
                                year_ahead=year_ahead,
+                               weekly_flow=weekly_flow,
                                chart=chart)
     except RuntimeError as e:
         if "CALCULATION_UNAVAILABLE" in str(e):

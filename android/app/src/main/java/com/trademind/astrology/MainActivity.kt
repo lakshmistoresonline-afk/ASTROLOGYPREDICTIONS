@@ -209,8 +209,23 @@ fun PredictionCard(pred: DomainPrediction, onReport: (String) -> Unit, onWhy: ()
                 TextButton(onClick = onWhy) {
                     Text("WHY?", fontSize = 12.sp, color = Color(0xFFFBBF24), fontWeight = FontWeight.Black)
                 }
-                TextButton(onClick = { onReport("OCCURRED") }) {
-                    Text("REPORT", fontSize = 10.sp, color = Color.Gray)
+                
+                var showOutcomeMenu by remember { mutableStateOf(false) }
+                Box {
+                    TextButton(onClick = { showOutcomeMenu = true }) {
+                        Text("REPORT", fontSize = 10.sp, color = Color.Gray)
+                    }
+                    DropdownMenu(expanded = showOutcomeMenu, onDismissRequest = { showOutcomeMenu = false }) {
+                        listOf("OCCURRED", "PARTIAL", "DID NOT OCCUR").forEach { status ->
+                            DropdownMenuItem(
+                                text = { Text(status) },
+                                onClick = {
+                                    onReport(status)
+                                    showOutcomeMenu = false
+                                }
+                            )
+                        }
+                    }
                 }
             }
         }

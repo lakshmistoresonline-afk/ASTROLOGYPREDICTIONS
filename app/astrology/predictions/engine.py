@@ -6,6 +6,9 @@ from .engines.finance import FinancePredictionEngine
 from .engines.marriage import MarriagePredictionEngine
 from .engines.health import HealthPredictionEngine
 from .engines.travel import TravelPredictionEngine
+from .engines.education import EducationPredictionEngine
+from .engines.personality import PersonalityPredictionEngine
+from .engines.property import PropertyPredictionEngine
 
 from concurrent.futures import ThreadPoolExecutor
 
@@ -21,7 +24,10 @@ def generate_evidence_based_predictions(chart: CanonicalChart, selected_date: da
         "Finance": FinancePredictionEngine.get_prediction,
         "Marriage": MarriagePredictionEngine.get_prediction,
         "Health": HealthPredictionEngine.get_prediction,
-        "Travel": TravelPredictionEngine.get_prediction
+        "Travel": TravelPredictionEngine.get_prediction,
+        "Education": EducationPredictionEngine.get_prediction,
+        "Personality": PersonalityPredictionEngine.get_prediction,
+        "Property": PropertyPredictionEngine.get_prediction
     }
 
     results = []
@@ -35,7 +41,10 @@ def generate_evidence_based_predictions(chart: CanonicalChart, selected_date: da
                 "Finance": "material",
                 "Marriage": "social",
                 "Health": "survival",
-                "Travel": "survival"
+                "Travel": "survival",
+                "Education": "essence",
+                "Personality": "essence",
+                "Property": "material"
             }
             p_dict = prediction.model_dump()
             p_dict["category"] = cat_map.get(name, "essence")
