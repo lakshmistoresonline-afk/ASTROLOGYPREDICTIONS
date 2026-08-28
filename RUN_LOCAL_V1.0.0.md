@@ -24,10 +24,21 @@ Follow these steps to run the complete Trademind Jyotish AI locally.
     ```
 
 ## 3. START SERVICES
-### A. Calculation Service (Docker)
-The deterministic core must run in isolation:
+### A. Calculation Service
+**Option 1: Docker (Preferred)**
 ```bash
 docker-compose up -d jyotish-calc-service
+```
+
+**Option 2: Local (if Docker is missing)**
+```bash
+# Install consolidated requirements
+pip install -r consolidated_requirements.txt
+# Run service
+./scripts/start_calc_service.ps1  # Windows
+# Or manually:
+# export PYTHONPATH=calculation_service
+# uvicorn app.main:app --port 8000
 ```
 
 ### B. Backend (Python/Flask)
