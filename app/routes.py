@@ -188,6 +188,67 @@ def predictions():
                            yearly=yearly,
                            chart=chart)
 
+@main.route("/kundli/load/<cid>")
+def load_kundli(cid):
+    chart_data = get_chart(cid)
+    if not chart_data:
+        flash("Chart not found.", "danger")
+        return redirect(url_for("main.index"))
+
+    session.update({
+        "active_chart_id": cid,
+        "birth_name": chart_data.get("name"),
+        "birth_dob": chart_data.get("birth_dob"),
+        "birth_tob": chart_data.get("birth_tob"),
+        "birth_lat": chart_data.get("latitude"),
+        "birth_lon": chart_data.get("longitude_coord"),
+        "birth_tz": chart_data.get("timezone"),
+        "birth_time_conf": chart_data.get("birth_time_confidence", "HIGH")
+    })
+
+    next_page = request.args.get("next")
+    if next_page == "predictions":
+        return redirect(url_for("main.predictions"))
+    return redirect(url_for("main.kundli"))
+
+@main.route("/kundli/delete/<cid>", methods=["POST"])
+def delete_kundli(cid):
+    if delete_chart(cid):
+        return jsonify({"ok": True})
+    return jsonify({"ok": False, "error": "Could not delete"}), 400
+
+@main.route("/api/sky")
+def api_sky():
+    lat = float(request.args.get("lat", 28.6))
+    lon = float(request.args.get("lon", 77.2))
+    tz_str = request.args.get("tz", "Asia/Kolkata")
+
+    from .astrology.core.datetime import datetime_to_jd
+    jd = datetime_to_jd(datetime.now(), "UTC")
+
+    from .astrology.panchang.sky import get_sunrise, get_sunset, get_rahu_kaal
+    sr = get_sunrise(jd, lat, lon)
+    ss = get_sunset(jd, lat, lon)
+
+    import pytz
+    tz = pytz.timezone(tz_str)
+
+    def format_jd(j):
+        if not j: return "--:--"
+        from .astrology.core.datetime import jd_to_datetime
+        return pytz.utc.localize(jd_to_datetime(j)).astimezone(tz).strftime("%H:%M")
+
+    return jsonify({
+        "sunrise": format_jd(sr),
+        "sunset": format_jd(ss),
+        "rahu_kaal": get_rahu_kaal(datetime.now().weekday(), sr, ss, tz_str)
+    })
+
+@main.route("/api/geocode")
+def api_geocode():
+    q = request.args.get("q", "")
+    return jsonify(geocode_place(q))
+
 @main.route("/api/v1/predict/explain/<domain>")
 def api_explain_prediction(domain):
     """

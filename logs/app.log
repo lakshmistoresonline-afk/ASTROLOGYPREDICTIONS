@@ -719,3 +719,54 @@ Traceback (most recent call last):
 RuntimeError: ASTROLOGY_CALCULATION_UNAVAILABLE
 2026-08-29 12:29:47,013 INFO: Jyotish OS V1.0.0 starting...
 2026-08-29 12:31:06,006 INFO: Jyotish OS V1.0.0 starting...
+2026-08-29 13:25:03,211 ERROR: Exception on / [GET] [in D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\app.py:838]
+Traceback (most recent call last):
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\app.py", line 1473, in wsgi_app
+    response = self.full_dispatch_request()
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\app.py", line 882, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask_cors\extension.py", line 178, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+                                                ~^^^^^^^^^^^^^^^^^
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\app.py", line 880, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\app.py", line 865, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "D:\ASTROLOGYPREDICTIONS\app\routes.py", line 71, in index
+    def index():
+               ^
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\templating.py", line 150, in render_template
+    return _render(app, template, context)
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\templating.py", line 131, in _render
+    rv = template.render(context)
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\jinja2\environment.py", line 1295, in render
+    self.environment.handle_exception()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\jinja2\environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "D:\ASTROLOGYPREDICTIONS\app\templates\index.html", line 1, in top-level template code
+    {% extends "base.html" %}
+  File "D:\ASTROLOGYPREDICTIONS\app\templates\base.html", line 43, in top-level template code
+    <a href="{{ url_for('main.prashna') }}" class="nav-link {% if request.endpoint == 'main.prashna' %}active{% endif %}">
+    ^^^^^^^^^^^^^
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\app.py", line 1084, in url_for
+    return self.handle_url_build_error(error, endpoint, values)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\app.py", line 1073, in url_for
+    rv = url_adapter.build(  # type: ignore[union-attr]
+        endpoint,
+    ...<3 lines>...
+        force_external=_external,
+    )
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\werkzeug\routing\map.py", line 901, in build
+    raise BuildError(endpoint, values, method, self)
+werkzeug.routing.exceptions.BuildError: Could not build url for endpoint 'main.prashna'. Did you mean 'main.dashboard' instead?
+2026-08-29 20:59:24,003 INFO: Jyotish OS V1.0.0 starting...
+2026-08-29 21:09:32,974 INFO: Jyotish OS V1.0.0 starting...
+2026-08-29 21:09:36,589 INFO: Jyotish OS V1.0.0 starting...
+2026-08-29 21:09:58,276 INFO: [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5001
+ * Running on http://192.168.1.11:5001
+2026-08-29 21:09:58,276 INFO: [33mPress CTRL+C to quit[0m
