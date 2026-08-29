@@ -1,0 +1,6 @@
+
+  Auto-shutdown: server will stop after 30 min of no browser activity.
+  Override:  IDLE_TIMEOUT=3600 ./start.sh  (seconds)
+
+ * Serving Flask app 'app'
+ * Debug mode: off

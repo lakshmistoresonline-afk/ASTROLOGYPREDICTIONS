@@ -1,0 +1,721 @@
+2026-08-28 20:58:13,160 INFO: Jyotish OS V1.0.0 starting... [in D:\ASTROLOGYPREDICTIONS\app\__init__.py:48]
+2026-08-28 23:14:14,448 INFO: Jyotish OS V1.0.0 starting... [in D:\ASTROLOGYPREDICTIONS\app\__init__.py:48]
+2026-08-29 08:19:26,121 INFO: Jyotish OS V1.0.0 starting... [in D:\ASTROLOGYPREDICTIONS\app\__init__.py:48]
+2026-08-29 10:11:21,062 INFO: Jyotish OS V1.0.0 starting... [in D:\ASTROLOGYPREDICTIONS\app\__init__.py:48]
+2026-08-29 10:12:11,896 ERROR: Exception on / [GET] [in D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\app.py:838]
+Traceback (most recent call last):
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\app.py", line 1473, in wsgi_app
+    response = self.full_dispatch_request()
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\app.py", line 882, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask_cors\extension.py", line 178, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+                                                ~^^^^^^^^^^^^^^^^^
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\app.py", line 880, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\app.py", line 865, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "D:\ASTROLOGYPREDICTIONS\app\routes.py", line 71, in index
+    return render_template("index.html", ip_loc=ip_loc, saved_charts=saved)
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\templating.py", line 150, in render_template
+    return _render(app, template, context)
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\templating.py", line 131, in _render
+    rv = template.render(context)
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\jinja2\environment.py", line 1295, in render
+    self.environment.handle_exception()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\jinja2\environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "D:\ASTROLOGYPREDICTIONS\app\templates\index.html", line 1, in top-level template code
+    {% extends "base.html" %}
+  File "D:\ASTROLOGYPREDICTIONS\app\templates\base.html", line 43, in top-level template code
+    <a href="{{ url_for('main.prashna') }}" class="nav-link {% if request.endpoint == 'main.prashna' %}active{% endif %}">
+    ^^^^^^^^^^^^^
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\app.py", line 1084, in url_for
+    return self.handle_url_build_error(error, endpoint, values)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\app.py", line 1073, in url_for
+    rv = url_adapter.build(  # type: ignore[union-attr]
+        endpoint,
+    ...<3 lines>...
+        force_external=_external,
+    )
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\werkzeug\routing\map.py", line 901, in build
+    raise BuildError(endpoint, values, method, self)
+werkzeug.routing.exceptions.BuildError: Could not build url for endpoint 'main.prashna'. Did you mean 'main.dashboard' instead?
+2026-08-29 11:21:08,997 INFO: Jyotish OS V1.0.0 starting... [in D:\ASTROLOGYPREDICTIONS\app\__init__.py:48]
+2026-08-29 11:22:09,503 ERROR: Snapshot failed: 'id' [in D:\ASTROLOGYPREDICTIONS\app\routes.py:143]
+2026-08-29 11:22:09,510 ERROR: Snapshot failed: 'id' [in D:\ASTROLOGYPREDICTIONS\app\routes.py:143]
+2026-08-29 11:22:09,511 ERROR: Snapshot failed: 'id' [in D:\ASTROLOGYPREDICTIONS\app\routes.py:143]
+2026-08-29 11:22:09,516 ERROR: Snapshot failed: 'id' [in D:\ASTROLOGYPREDICTIONS\app\routes.py:143]
+2026-08-29 11:22:09,518 ERROR: Snapshot failed: 'id' [in D:\ASTROLOGYPREDICTIONS\app\routes.py:143]
+2026-08-29 11:22:09,520 ERROR: Snapshot failed: 'id' [in D:\ASTROLOGYPREDICTIONS\app\routes.py:143]
+2026-08-29 11:22:09,528 ERROR: Snapshot failed: 'id' [in D:\ASTROLOGYPREDICTIONS\app\routes.py:143]
+2026-08-29 11:22:09,540 ERROR: Snapshot failed: 'id' [in D:\ASTROLOGYPREDICTIONS\app\routes.py:143]
+2026-08-29 11:22:09,704 ERROR: Exception on /dashboard [GET] [in D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\app.py:838]
+Traceback (most recent call last):
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\app.py", line 1473, in wsgi_app
+    response = self.full_dispatch_request()
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\app.py", line 882, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask_cors\extension.py", line 178, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+                                                ~^^^^^^^^^^^^^^^^^
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\app.py", line 880, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\app.py", line 865, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "D:\ASTROLOGYPREDICTIONS\app\routes.py", line 145, in dashboard
+    return render_template("dashboard.html",
+                           preds=preds,
+    ...<4 lines>...
+                           weekly_flow=weekly_flow,
+                           chart=chart)
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\templating.py", line 150, in render_template
+    return _render(app, template, context)
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\templating.py", line 131, in _render
+    rv = template.render(context)
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\jinja2\environment.py", line 1295, in render
+    self.environment.handle_exception()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\jinja2\environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "D:\ASTROLOGYPREDICTIONS\app\templates\dashboard.html", line 1, in top-level template code
+    {% extends "base.html" %}
+  File "D:\ASTROLOGYPREDICTIONS\app\templates\base.html", line 43, in top-level template code
+    <a href="{{ url_for('main.prashna') }}" class="nav-link {% if request.endpoint == 'main.prashna' %}active{% endif %}">
+    ^^^^^^^^^^^^^
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\app.py", line 1084, in url_for
+    return self.handle_url_build_error(error, endpoint, values)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\app.py", line 1073, in url_for
+    rv = url_adapter.build(  # type: ignore[union-attr]
+        endpoint,
+    ...<3 lines>...
+        force_external=_external,
+    )
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\werkzeug\routing\map.py", line 901, in build
+    raise BuildError(endpoint, values, method, self)
+werkzeug.routing.exceptions.BuildError: Could not build url for endpoint 'main.prashna'. Did you mean 'main.dashboard' instead?
+2026-08-29 11:29:17,461 INFO: Jyotish OS V1.0.0 starting... [in D:\ASTROLOGYPREDICTIONS\app\__init__.py:48]
+2026-08-29 11:32:25,005 INFO: Jyotish OS V1.0.0 starting...
+2026-08-29 11:34:51,753 INFO: Jyotish OS V1.0.0 starting...
+2026-08-29 11:39:51,747 INFO: Jyotish OS V1.0.0 starting...
+2026-08-29 11:43:34,932 INFO: Jyotish OS V1.0.0 starting...
+2026-08-29 11:45:47,445 INFO: Jyotish OS V1.0.0 starting...
+2026-08-29 11:54:45,125 INFO: Jyotish OS V1.0.0 starting...
+2026-08-29 11:57:17,531 INFO: Jyotish OS V1.0.0 starting...
+2026-08-29 11:57:36,154 ERROR: Exception on /dashboard [GET]
+Traceback (most recent call last):
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\urllib3\connection.py", line 204, in _new_conn
+    sock = connection.create_connection(
+        (self._dns_host, self.port),
+    ...<2 lines>...
+        socket_options=self.socket_options,
+    )
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\urllib3\util\connection.py", line 85, in create_connection
+    raise err
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\urllib3\util\connection.py", line 73, in create_connection
+    sock.connect(sa)
+    ~~~~~~~~~~~~^^^^
+ConnectionRefusedError: [WinError 10061] No connection could be made because the target machine actively refused it
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\urllib3\connectionpool.py", line 788, in urlopen
+    response = self._make_request(
+        conn,
+    ...<10 lines>...
+        **response_kw,
+    )
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\urllib3\connectionpool.py", line 493, in _make_request
+    conn.request(
+    ~~~~~~~~~~~~^
+        method,
+        ^^^^^^^
+    ...<6 lines>...
+        enforce_content_length=enforce_content_length,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\urllib3\connection.py", line 500, in request
+    self.endheaders()
+    ~~~~~~~~~~~~~~~^^
+  File "C:\Users\User\AppData\Local\Programs\Python\Python313\Lib\http\client.py", line 1331, in endheaders
+    self._send_output(message_body, encode_chunked=encode_chunked)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\User\AppData\Local\Programs\Python\Python313\Lib\http\client.py", line 1091, in _send_output
+    self.send(msg)
+    ~~~~~~~~~^^^^^
+  File "C:\Users\User\AppData\Local\Programs\Python\Python313\Lib\http\client.py", line 1035, in send
+    self.connect()
+    ~~~~~~~~~~~~^^
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\urllib3\connection.py", line 331, in connect
+    self.sock = self._new_conn()
+                ~~~~~~~~~~~~~~^^
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\urllib3\connection.py", line 219, in _new_conn
+    raise NewConnectionError(
+        self, f"Failed to establish a new connection: {e}"
+    ) from e
+urllib3.exceptions.NewConnectionError: HTTPConnection(host='localhost', port=8000): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\requests\adapters.py", line 667, in send
+    resp = conn.urlopen(
+        method=request.method,
+    ...<9 lines>...
+        chunked=chunked,
+    )
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\urllib3\connectionpool.py", line 842, in urlopen
+    retries = retries.increment(
+        method, url, error=new_e, _pool=self, _stacktrace=sys.exc_info()[2]
+    )
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\urllib3\util\retry.py", line 543, in increment
+    raise MaxRetryError(_pool, url, reason) from reason  # type: ignore[arg-type]
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+urllib3.exceptions.MaxRetryError: HTTPConnectionPool(host='localhost', port=8000): Max retries exceeded with url: /v1/natal-chart (Caused by NewConnectionError("HTTPConnection(host='localhost', port=8000): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it"))
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\ASTROLOGYPREDICTIONS\app\astrology\core\calc_client.py", line 14, in get_natal_chart
+    resp = requests.post(url, json=payload, timeout=self.timeout)
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\requests\api.py", line 115, in post
+    return request("post", url, data=data, json=json, **kwargs)
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\requests\api.py", line 59, in request
+    return session.request(method=method, url=url, **kwargs)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\requests\sessions.py", line 589, in request
+    resp = self.send(prep, **send_kwargs)
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\requests\sessions.py", line 703, in send
+    r = adapter.send(request, **kwargs)
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\requests\adapters.py", line 700, in send
+    raise ConnectionError(e, request=request)
+requests.exceptions.ConnectionError: HTTPConnectionPool(host='localhost', port=8000): Max retries exceeded with url: /v1/natal-chart (Caused by NewConnectionError("HTTPConnection(host='localhost', port=8000): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it"))
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\app.py", line 1473, in wsgi_app
+    response = self.full_dispatch_request()
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\app.py", line 882, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask_cors\extension.py", line 178, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+                                                ~^^^^^^^^^^^^^^^^^
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\app.py", line 880, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\app.py", line 865, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "D:\ASTROLOGYPREDICTIONS\app\routes.py", line 124, in dashboard
+    chart, chart_obj = _load_active_chart()
+                       ~~~~~~~~~~~~~~~~~~^^
+  File "D:\ASTROLOGYPREDICTIONS\app\routes.py", line 64, in _load_active_chart
+    raise e
+  File "D:\ASTROLOGYPREDICTIONS\app\routes.py", line 57, in _load_active_chart
+    chart_obj = calculate_chart_data(birth_dt, float(lat), float(lon), tz_str, birth_time_conf=conf)
+  File "D:\ASTROLOGYPREDICTIONS\app\astrology\core\chart.py", line 71, in calculate_chart_data
+    facts = calc_client.get_natal_chart(
+        dt_utc.year, dt_utc.month, dt_utc.day, h_utc, lat, lon
+    )
+  File "D:\ASTROLOGYPREDICTIONS\app\astrology\core\calc_client.py", line 17, in get_natal_chart
+    except Exception: raise RuntimeError("ASTROLOGY_CALCULATION_UNAVAILABLE")
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: ASTROLOGY_CALCULATION_UNAVAILABLE
+2026-08-29 11:58:26,943 INFO: Jyotish OS V1.0.0 starting...
+2026-08-29 11:58:45,855 ERROR: Exception on /dashboard [GET]
+Traceback (most recent call last):
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\urllib3\connection.py", line 204, in _new_conn
+    sock = connection.create_connection(
+        (self._dns_host, self.port),
+    ...<2 lines>...
+        socket_options=self.socket_options,
+    )
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\urllib3\util\connection.py", line 85, in create_connection
+    raise err
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\urllib3\util\connection.py", line 73, in create_connection
+    sock.connect(sa)
+    ~~~~~~~~~~~~^^^^
+ConnectionRefusedError: [WinError 10061] No connection could be made because the target machine actively refused it
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\urllib3\connectionpool.py", line 788, in urlopen
+    response = self._make_request(
+        conn,
+    ...<10 lines>...
+        **response_kw,
+    )
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\urllib3\connectionpool.py", line 493, in _make_request
+    conn.request(
+    ~~~~~~~~~~~~^
+        method,
+        ^^^^^^^
+    ...<6 lines>...
+        enforce_content_length=enforce_content_length,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\urllib3\connection.py", line 500, in request
+    self.endheaders()
+    ~~~~~~~~~~~~~~~^^
+  File "C:\Users\User\AppData\Local\Programs\Python\Python313\Lib\http\client.py", line 1331, in endheaders
+    self._send_output(message_body, encode_chunked=encode_chunked)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\User\AppData\Local\Programs\Python\Python313\Lib\http\client.py", line 1091, in _send_output
+    self.send(msg)
+    ~~~~~~~~~^^^^^
+  File "C:\Users\User\AppData\Local\Programs\Python\Python313\Lib\http\client.py", line 1035, in send
+    self.connect()
+    ~~~~~~~~~~~~^^
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\urllib3\connection.py", line 331, in connect
+    self.sock = self._new_conn()
+                ~~~~~~~~~~~~~~^^
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\urllib3\connection.py", line 219, in _new_conn
+    raise NewConnectionError(
+        self, f"Failed to establish a new connection: {e}"
+    ) from e
+urllib3.exceptions.NewConnectionError: HTTPConnection(host='localhost', port=8000): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\requests\adapters.py", line 667, in send
+    resp = conn.urlopen(
+        method=request.method,
+    ...<9 lines>...
+        chunked=chunked,
+    )
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\urllib3\connectionpool.py", line 842, in urlopen
+    retries = retries.increment(
+        method, url, error=new_e, _pool=self, _stacktrace=sys.exc_info()[2]
+    )
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\urllib3\util\retry.py", line 543, in increment
+    raise MaxRetryError(_pool, url, reason) from reason  # type: ignore[arg-type]
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+urllib3.exceptions.MaxRetryError: HTTPConnectionPool(host='localhost', port=8000): Max retries exceeded with url: /v1/natal-chart (Caused by NewConnectionError("HTTPConnection(host='localhost', port=8000): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it"))
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\ASTROLOGYPREDICTIONS\app\astrology\core\calc_client.py", line 14, in get_natal_chart
+    resp = requests.post(url, json=payload, timeout=self.timeout)
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\requests\api.py", line 115, in post
+    return request("post", url, data=data, json=json, **kwargs)
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\requests\api.py", line 59, in request
+    return session.request(method=method, url=url, **kwargs)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\requests\sessions.py", line 589, in request
+    resp = self.send(prep, **send_kwargs)
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\requests\sessions.py", line 703, in send
+    r = adapter.send(request, **kwargs)
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\requests\adapters.py", line 700, in send
+    raise ConnectionError(e, request=request)
+requests.exceptions.ConnectionError: HTTPConnectionPool(host='localhost', port=8000): Max retries exceeded with url: /v1/natal-chart (Caused by NewConnectionError("HTTPConnection(host='localhost', port=8000): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it"))
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\app.py", line 1473, in wsgi_app
+    response = self.full_dispatch_request()
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\app.py", line 882, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask_cors\extension.py", line 178, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+                                                ~^^^^^^^^^^^^^^^^^
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\app.py", line 880, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\app.py", line 865, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "D:\ASTROLOGYPREDICTIONS\app\routes.py", line 124, in dashboard
+    chart, chart_obj = _load_active_chart()
+                       ~~~~~~~~~~~~~~~~~~^^
+  File "D:\ASTROLOGYPREDICTIONS\app\routes.py", line 64, in _load_active_chart
+    raise e
+  File "D:\ASTROLOGYPREDICTIONS\app\routes.py", line 57, in _load_active_chart
+    chart_obj = calculate_chart_data(birth_dt, float(lat), float(lon), tz_str, birth_time_conf=conf)
+  File "D:\ASTROLOGYPREDICTIONS\app\astrology\core\chart.py", line 71, in calculate_chart_data
+    facts = calc_client.get_natal_chart(
+        dt_utc.year, dt_utc.month, dt_utc.day, h_utc, lat, lon
+    )
+  File "D:\ASTROLOGYPREDICTIONS\app\astrology\core\calc_client.py", line 17, in get_natal_chart
+    except Exception: raise RuntimeError("ASTROLOGY_CALCULATION_UNAVAILABLE")
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: ASTROLOGY_CALCULATION_UNAVAILABLE
+2026-08-29 12:02:09,549 INFO: Jyotish OS V1.0.0 starting...
+2026-08-29 12:03:34,643 INFO: Jyotish OS V1.0.0 starting...
+2026-08-29 12:03:55,567 ERROR: Exception on /dashboard [GET]
+Traceback (most recent call last):
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\urllib3\connection.py", line 204, in _new_conn
+    sock = connection.create_connection(
+        (self._dns_host, self.port),
+    ...<2 lines>...
+        socket_options=self.socket_options,
+    )
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\urllib3\util\connection.py", line 85, in create_connection
+    raise err
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\urllib3\util\connection.py", line 73, in create_connection
+    sock.connect(sa)
+    ~~~~~~~~~~~~^^^^
+ConnectionRefusedError: [WinError 10061] No connection could be made because the target machine actively refused it
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\urllib3\connectionpool.py", line 788, in urlopen
+    response = self._make_request(
+        conn,
+    ...<10 lines>...
+        **response_kw,
+    )
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\urllib3\connectionpool.py", line 493, in _make_request
+    conn.request(
+    ~~~~~~~~~~~~^
+        method,
+        ^^^^^^^
+    ...<6 lines>...
+        enforce_content_length=enforce_content_length,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\urllib3\connection.py", line 500, in request
+    self.endheaders()
+    ~~~~~~~~~~~~~~~^^
+  File "C:\Users\User\AppData\Local\Programs\Python\Python313\Lib\http\client.py", line 1331, in endheaders
+    self._send_output(message_body, encode_chunked=encode_chunked)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\User\AppData\Local\Programs\Python\Python313\Lib\http\client.py", line 1091, in _send_output
+    self.send(msg)
+    ~~~~~~~~~^^^^^
+  File "C:\Users\User\AppData\Local\Programs\Python\Python313\Lib\http\client.py", line 1035, in send
+    self.connect()
+    ~~~~~~~~~~~~^^
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\urllib3\connection.py", line 331, in connect
+    self.sock = self._new_conn()
+                ~~~~~~~~~~~~~~^^
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\urllib3\connection.py", line 219, in _new_conn
+    raise NewConnectionError(
+        self, f"Failed to establish a new connection: {e}"
+    ) from e
+urllib3.exceptions.NewConnectionError: HTTPConnection(host='localhost', port=8000): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\requests\adapters.py", line 667, in send
+    resp = conn.urlopen(
+        method=request.method,
+    ...<9 lines>...
+        chunked=chunked,
+    )
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\urllib3\connectionpool.py", line 842, in urlopen
+    retries = retries.increment(
+        method, url, error=new_e, _pool=self, _stacktrace=sys.exc_info()[2]
+    )
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\urllib3\util\retry.py", line 543, in increment
+    raise MaxRetryError(_pool, url, reason) from reason  # type: ignore[arg-type]
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+urllib3.exceptions.MaxRetryError: HTTPConnectionPool(host='localhost', port=8000): Max retries exceeded with url: /v1/natal-chart (Caused by NewConnectionError("HTTPConnection(host='localhost', port=8000): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it"))
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\ASTROLOGYPREDICTIONS\app\astrology\core\calc_client.py", line 14, in get_natal_chart
+    resp = requests.post(url, json=payload, timeout=self.timeout)
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\requests\api.py", line 115, in post
+    return request("post", url, data=data, json=json, **kwargs)
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\requests\api.py", line 59, in request
+    return session.request(method=method, url=url, **kwargs)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\requests\sessions.py", line 589, in request
+    resp = self.send(prep, **send_kwargs)
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\requests\sessions.py", line 703, in send
+    r = adapter.send(request, **kwargs)
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\requests\adapters.py", line 700, in send
+    raise ConnectionError(e, request=request)
+requests.exceptions.ConnectionError: HTTPConnectionPool(host='localhost', port=8000): Max retries exceeded with url: /v1/natal-chart (Caused by NewConnectionError("HTTPConnection(host='localhost', port=8000): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it"))
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\app.py", line 1473, in wsgi_app
+    response = self.full_dispatch_request()
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\app.py", line 882, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask_cors\extension.py", line 178, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+                                                ~^^^^^^^^^^^^^^^^^
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\app.py", line 880, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\app.py", line 865, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "D:\ASTROLOGYPREDICTIONS\app\routes.py", line 124, in dashboard
+    chart, chart_obj = _load_active_chart()
+                       ~~~~~~~~~~~~~~~~~~^^
+  File "D:\ASTROLOGYPREDICTIONS\app\routes.py", line 64, in _load_active_chart
+    raise e
+  File "D:\ASTROLOGYPREDICTIONS\app\routes.py", line 57, in _load_active_chart
+    chart_obj = calculate_chart_data(birth_dt, float(lat), float(lon), tz_str, birth_time_conf=conf)
+  File "D:\ASTROLOGYPREDICTIONS\app\astrology\core\chart.py", line 71, in calculate_chart_data
+    facts = calc_client.get_natal_chart(
+        dt_utc.year, dt_utc.month, dt_utc.day, h_utc, lat, lon
+    )
+  File "D:\ASTROLOGYPREDICTIONS\app\astrology\core\calc_client.py", line 17, in get_natal_chart
+    except Exception: raise RuntimeError("ASTROLOGY_CALCULATION_UNAVAILABLE")
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: ASTROLOGY_CALCULATION_UNAVAILABLE
+2026-08-29 12:16:16,485 INFO: Jyotish OS V1.0.0 starting...
+2026-08-29 12:16:36,562 ERROR: Exception on /dashboard [GET]
+Traceback (most recent call last):
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\urllib3\connection.py", line 204, in _new_conn
+    sock = connection.create_connection(
+        (self._dns_host, self.port),
+    ...<2 lines>...
+        socket_options=self.socket_options,
+    )
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\urllib3\util\connection.py", line 85, in create_connection
+    raise err
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\urllib3\util\connection.py", line 73, in create_connection
+    sock.connect(sa)
+    ~~~~~~~~~~~~^^^^
+ConnectionRefusedError: [WinError 10061] No connection could be made because the target machine actively refused it
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\urllib3\connectionpool.py", line 788, in urlopen
+    response = self._make_request(
+        conn,
+    ...<10 lines>...
+        **response_kw,
+    )
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\urllib3\connectionpool.py", line 493, in _make_request
+    conn.request(
+    ~~~~~~~~~~~~^
+        method,
+        ^^^^^^^
+    ...<6 lines>...
+        enforce_content_length=enforce_content_length,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\urllib3\connection.py", line 500, in request
+    self.endheaders()
+    ~~~~~~~~~~~~~~~^^
+  File "C:\Users\User\AppData\Local\Programs\Python\Python313\Lib\http\client.py", line 1331, in endheaders
+    self._send_output(message_body, encode_chunked=encode_chunked)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\User\AppData\Local\Programs\Python\Python313\Lib\http\client.py", line 1091, in _send_output
+    self.send(msg)
+    ~~~~~~~~~^^^^^
+  File "C:\Users\User\AppData\Local\Programs\Python\Python313\Lib\http\client.py", line 1035, in send
+    self.connect()
+    ~~~~~~~~~~~~^^
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\urllib3\connection.py", line 331, in connect
+    self.sock = self._new_conn()
+                ~~~~~~~~~~~~~~^^
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\urllib3\connection.py", line 219, in _new_conn
+    raise NewConnectionError(
+        self, f"Failed to establish a new connection: {e}"
+    ) from e
+urllib3.exceptions.NewConnectionError: HTTPConnection(host='localhost', port=8000): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\requests\adapters.py", line 667, in send
+    resp = conn.urlopen(
+        method=request.method,
+    ...<9 lines>...
+        chunked=chunked,
+    )
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\urllib3\connectionpool.py", line 842, in urlopen
+    retries = retries.increment(
+        method, url, error=new_e, _pool=self, _stacktrace=sys.exc_info()[2]
+    )
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\urllib3\util\retry.py", line 543, in increment
+    raise MaxRetryError(_pool, url, reason) from reason  # type: ignore[arg-type]
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+urllib3.exceptions.MaxRetryError: HTTPConnectionPool(host='localhost', port=8000): Max retries exceeded with url: /v1/natal-chart (Caused by NewConnectionError("HTTPConnection(host='localhost', port=8000): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it"))
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\ASTROLOGYPREDICTIONS\app\astrology\core\calc_client.py", line 14, in get_natal_chart
+    resp = requests.post(url, json=payload, timeout=self.timeout)
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\requests\api.py", line 115, in post
+    return request("post", url, data=data, json=json, **kwargs)
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\requests\api.py", line 59, in request
+    return session.request(method=method, url=url, **kwargs)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\requests\sessions.py", line 589, in request
+    resp = self.send(prep, **send_kwargs)
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\requests\sessions.py", line 703, in send
+    r = adapter.send(request, **kwargs)
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\requests\adapters.py", line 700, in send
+    raise ConnectionError(e, request=request)
+requests.exceptions.ConnectionError: HTTPConnectionPool(host='localhost', port=8000): Max retries exceeded with url: /v1/natal-chart (Caused by NewConnectionError("HTTPConnection(host='localhost', port=8000): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it"))
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\app.py", line 1473, in wsgi_app
+    response = self.full_dispatch_request()
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\app.py", line 882, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask_cors\extension.py", line 178, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+                                                ~^^^^^^^^^^^^^^^^^
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\app.py", line 880, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\app.py", line 865, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "D:\ASTROLOGYPREDICTIONS\app\routes.py", line 124, in dashboard
+    chart, chart_obj = _load_active_chart()
+                       ~~~~~~~~~~~~~~~~~~^^
+  File "D:\ASTROLOGYPREDICTIONS\app\routes.py", line 64, in _load_active_chart
+    raise e
+  File "D:\ASTROLOGYPREDICTIONS\app\routes.py", line 57, in _load_active_chart
+    chart_obj = calculate_chart_data(birth_dt, float(lat), float(lon), tz_str, birth_time_conf=conf)
+  File "D:\ASTROLOGYPREDICTIONS\app\astrology\core\chart.py", line 71, in calculate_chart_data
+    facts = calc_client.get_natal_chart(
+        dt_utc.year, dt_utc.month, dt_utc.day, h_utc, lat, lon
+    )
+  File "D:\ASTROLOGYPREDICTIONS\app\astrology\core\calc_client.py", line 17, in get_natal_chart
+    except Exception: raise RuntimeError("ASTROLOGY_CALCULATION_UNAVAILABLE")
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: ASTROLOGY_CALCULATION_UNAVAILABLE
+2026-08-29 12:23:44,082 INFO: Jyotish OS V1.0.0 starting...
+2026-08-29 12:24:04,482 ERROR: Exception on /dashboard [GET]
+Traceback (most recent call last):
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\urllib3\connection.py", line 204, in _new_conn
+    sock = connection.create_connection(
+        (self._dns_host, self.port),
+    ...<2 lines>...
+        socket_options=self.socket_options,
+    )
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\urllib3\util\connection.py", line 85, in create_connection
+    raise err
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\urllib3\util\connection.py", line 73, in create_connection
+    sock.connect(sa)
+    ~~~~~~~~~~~~^^^^
+ConnectionRefusedError: [WinError 10061] No connection could be made because the target machine actively refused it
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\urllib3\connectionpool.py", line 788, in urlopen
+    response = self._make_request(
+        conn,
+    ...<10 lines>...
+        **response_kw,
+    )
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\urllib3\connectionpool.py", line 493, in _make_request
+    conn.request(
+    ~~~~~~~~~~~~^
+        method,
+        ^^^^^^^
+    ...<6 lines>...
+        enforce_content_length=enforce_content_length,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\urllib3\connection.py", line 500, in request
+    self.endheaders()
+    ~~~~~~~~~~~~~~~^^
+  File "C:\Users\User\AppData\Local\Programs\Python\Python313\Lib\http\client.py", line 1331, in endheaders
+    self._send_output(message_body, encode_chunked=encode_chunked)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\User\AppData\Local\Programs\Python\Python313\Lib\http\client.py", line 1091, in _send_output
+    self.send(msg)
+    ~~~~~~~~~^^^^^
+  File "C:\Users\User\AppData\Local\Programs\Python\Python313\Lib\http\client.py", line 1035, in send
+    self.connect()
+    ~~~~~~~~~~~~^^
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\urllib3\connection.py", line 331, in connect
+    self.sock = self._new_conn()
+                ~~~~~~~~~~~~~~^^
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\urllib3\connection.py", line 219, in _new_conn
+    raise NewConnectionError(
+        self, f"Failed to establish a new connection: {e}"
+    ) from e
+urllib3.exceptions.NewConnectionError: HTTPConnection(host='localhost', port=8000): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\requests\adapters.py", line 667, in send
+    resp = conn.urlopen(
+        method=request.method,
+    ...<9 lines>...
+        chunked=chunked,
+    )
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\urllib3\connectionpool.py", line 842, in urlopen
+    retries = retries.increment(
+        method, url, error=new_e, _pool=self, _stacktrace=sys.exc_info()[2]
+    )
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\urllib3\util\retry.py", line 543, in increment
+    raise MaxRetryError(_pool, url, reason) from reason  # type: ignore[arg-type]
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+urllib3.exceptions.MaxRetryError: HTTPConnectionPool(host='localhost', port=8000): Max retries exceeded with url: /v1/natal-chart (Caused by NewConnectionError("HTTPConnection(host='localhost', port=8000): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it"))
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\ASTROLOGYPREDICTIONS\app\astrology\core\calc_client.py", line 14, in get_natal_chart
+    resp = requests.post(url, json=payload, timeout=self.timeout)
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\requests\api.py", line 115, in post
+    return request("post", url, data=data, json=json, **kwargs)
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\requests\api.py", line 59, in request
+    return session.request(method=method, url=url, **kwargs)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\requests\sessions.py", line 589, in request
+    resp = self.send(prep, **send_kwargs)
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\requests\sessions.py", line 703, in send
+    r = adapter.send(request, **kwargs)
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\requests\adapters.py", line 700, in send
+    raise ConnectionError(e, request=request)
+requests.exceptions.ConnectionError: HTTPConnectionPool(host='localhost', port=8000): Max retries exceeded with url: /v1/natal-chart (Caused by NewConnectionError("HTTPConnection(host='localhost', port=8000): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it"))
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\app.py", line 1473, in wsgi_app
+    response = self.full_dispatch_request()
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\app.py", line 882, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask_cors\extension.py", line 178, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+                                                ~^^^^^^^^^^^^^^^^^
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\app.py", line 880, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\app.py", line 865, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "D:\ASTROLOGYPREDICTIONS\app\routes.py", line 124, in dashboard
+    chart, chart_obj = _load_active_chart()
+                       ~~~~~~~~~~~~~~~~~~^^
+  File "D:\ASTROLOGYPREDICTIONS\app\routes.py", line 64, in _load_active_chart
+    raise e
+  File "D:\ASTROLOGYPREDICTIONS\app\routes.py", line 57, in _load_active_chart
+    chart_obj = calculate_chart_data(birth_dt, float(lat), float(lon), tz_str, birth_time_conf=conf)
+  File "D:\ASTROLOGYPREDICTIONS\app\astrology\core\chart.py", line 71, in calculate_chart_data
+    facts = calc_client.get_natal_chart(
+        dt_utc.year, dt_utc.month, dt_utc.day, h_utc, lat, lon
+    )
+  File "D:\ASTROLOGYPREDICTIONS\app\astrology\core\calc_client.py", line 17, in get_natal_chart
+    except Exception: raise RuntimeError("ASTROLOGY_CALCULATION_UNAVAILABLE")
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: ASTROLOGY_CALCULATION_UNAVAILABLE
+2026-08-29 12:29:47,013 INFO: Jyotish OS V1.0.0 starting...
+2026-08-29 12:31:06,006 INFO: Jyotish OS V1.0.0 starting...

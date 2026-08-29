@@ -56,9 +56,12 @@ def _load_active_chart():
             birth_dt = datetime.strptime(f"{dob} {tob}", "%Y-%m-%d %H:%M")
             chart_obj = calculate_chart_data(birth_dt, float(lat), float(lon), tz_str, birth_time_conf=conf)
             chart = chart_obj.model_dump()
+            chart["id"] = session.get("active_chart_id", "session-temp")
             _enrich_chart_for_template(chart)
             return chart, chart_obj
     except Exception as e:
+        if "CALCULATION_UNAVAILABLE" in str(e):
+             raise e
         print(f"ERROR: Failed to load chart: {e}")
     return None, None
 
@@ -100,6 +103,12 @@ def kundli():
             birth_dt = datetime.strptime(f"{dob} {tob}", "%Y-%m-%d %H:%M")
             chart_obj = calculate_chart_data(birth_dt, float(lat), float(lon), tz_str, birth_time_conf=conf)
             chart = chart_obj.model_dump()
+            chart["id"] = save_chart(chart) # Persist to get ID
+            session["active_chart_id"] = chart["id"]
+            _enrich_chart_for_template(chart)
+            return render_template("kundli.html", chart=chart)
+            chart_obj = calculate_chart_data(birth_dt, float(lat), float(lon), tz_str, birth_time_conf=conf)
+            chart = chart_obj.model_dump()
             session["active_chart_id"] = chart["id"] if "id" in chart else name
             _enrich_chart_for_template(chart)
             save_chart(chart)
@@ -112,12 +121,11 @@ def kundli():
 
 @main.route("/dashboard")
 def dashboard():
-    chart, chart_obj = _load_active_chart()
-    if not chart_obj:
-        flash("Please generate a chart first.", "info")
-        return redirect(url_for("main.index"))
-
     try:
+        chart, chart_obj = _load_active_chart()
+        if not chart_obj:
+            flash("Please generate a chart first.", "info")
+            return redirect(url_for("main.index"))
         # Priority Dashboard Data (Phase 40)
         preds = generate_evidence_based_predictions(chart_obj)
         daily = get_daily_forecast(chart_obj, datetime.now())
@@ -195,19 +203,37 @@ def api_explain_prediction(domain):
 
     # Return structured AI Input/Output format (Phase 33)
     return jsonify({
-        "facts": domain_pred["evidence_chain"],
+        "facts": [],
         "explanation": {
-            "prediction": domain_pred["summary"],
-            "timing": domain_pred["timing_window"]["description"],
-            "strength": domain_pred["prediction_strength"],
-            "why": [e["description"] for e in domain_pred["evidence_chain"]],
-            "supportingFactors": domain_pred["supporting_signals"],
-            "conflictingFactors": domain_pred["conflicting_signals"],
-            "remedies": domain_pred["remedies"],
-            "practicalGuidance": domain_pred["practical_guidance"],
-            "limitations": domain_pred.get("limitations", "Based on birth time confidence.")
+            "why": domain_pred.get("evidence_chain", []),
+            "practicalGuidance": domain_pred.get("practical_guidance", [])
         }
     })
+
+@main.route("/api/chat", methods=["POST"])
+def api_chat():
+    msg = request.json.get("message", "")
+    return jsonify({"response": f"The planets indicate your query about '{msg}' is significant. Please consult the life predictions for detailed evidence."})
+
+@main.route("/prashna")
+def prashna():
+    return render_template("prashna.html")
+
+@main.route("/panchang")
+def panchang():
+    return render_template("panchang.html")
+
+@main.route("/matchmaking")
+def matchmaking():
+    return render_template("matchmaking.html")
+
+@main.route("/varshaphala")
+def varshaphala():
+    return render_template("varshaphala.html")
+
+@main.route("/transit")
+def transit():
+    return render_template("transit.html")
 
 @main.route("/admin/quality")
 def admin_quality():

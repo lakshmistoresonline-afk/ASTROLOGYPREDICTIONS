@@ -15,9 +15,11 @@ def get_sky_event(jd_ut: float, lat: float, lon: float, planet_id: int, event_ty
     try:
         # Check if rise_trans is actually functional
         if hasattr(swe, 'rise_trans'):
-            res = swe.rise_trans(jd_ut, planet_id, lon, lat, 0, atpress, attemp, event_type)
-            # res should be (status, [tret1, ...])
-            if res and isinstance(res, (list, tuple)) and len(res) > 1:
+            # Corrected signature for pysweph/pyswisseph on Windows
+            # Args: tjdut, body, rsmi, geopos=(lon, lat, alt), atpress, attemp, flags
+            res = swe.rise_trans(jd_ut, planet_id, event_type, (lon, lat, 0.0), atpress, attemp, swe.FLG_SIDEREAL)
+            # res should be (status, tret)
+            if res and isinstance(res, (list, tuple)):
                 tret = res[1]
                 if tret and tret[0] > 1000000:
                     return tret[0]

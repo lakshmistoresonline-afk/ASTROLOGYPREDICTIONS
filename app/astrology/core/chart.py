@@ -51,6 +51,9 @@ def _get_nakshatra_info(longitude: float) -> NakshatraInfo:
 def calculate_chart_data(birth_dt: datetime, lat: float, lon: float, tz_str: str, birth_time_conf: str = "HIGH") -> CanonicalChart:
     """Master Engine: Returns a complete CanonicalChart using isolated Calculation Service."""
     try:
+        from .ephemeris import set_topocentric
+        set_topocentric(lat, lon)
+
         # 1. Fetch Astronomical Facts from Isolated Service
         # We pass decimal hour in UT for julday
         hour_utc = birth_dt.hour + birth_dt.minute/60.0 + birth_dt.second/3600.0
@@ -158,7 +161,7 @@ def calculate_chart_data(birth_dt: datetime, lat: float, lon: float, tz_str: str
             chara_dasha=calculate_chara_dasha(asc_rashi, {n: p.rashi for n, p in planets.items()}, birth_dt),
             kalachakra_dasha=calculate_kalachakra_dasha(planets_lon["Moon"], birth_dt),
             shattrimsha_dasha=calculate_shattrimsha_dasha(asc_nak.index, birth_dt),
-            pindayu=calculate_pindayu(planets, asc_rashi)
+            pindayu=calculate_pindayu(planets)
         )
 
         final_chart.yogas = detect_yogas(planets, final_chart.house_lords, chart=final_chart)

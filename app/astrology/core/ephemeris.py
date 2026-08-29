@@ -26,7 +26,8 @@ def set_topocentric(lat: float, lon: float, alt: float = 0.0):
 def get_planet_position(jd_ut: float, planet_id: int) -> Dict[str, Any]:
     # FLG_SIDEREAL | FLG_SPEED | FLG_TOPOCTR
     flags = swe.FLG_SIDEREAL | swe.FLG_SPEED | swe.FLG_TOPOCTR
-    res, ret_flag = swe.calc_ut(jd_ut, planet_id, flags)
+    res_data = swe.calc_ut(jd_ut, planet_id, flags)
+    res = res_data[0]
     return {
         "longitude": res[0], "latitude": res[1], "distance": res[2],
         "speed_long": res[3], "speed_lat": res[4], "speed_dist": res[5],

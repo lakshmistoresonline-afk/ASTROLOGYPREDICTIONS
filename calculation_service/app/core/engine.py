@@ -24,14 +24,17 @@ def calculate_natal_chart(year: int, month: int, day: int, hour: float, lat: flo
     swe.set_sid_mode(AYANAMSA_MAP.get(ayanamsa_name, swe.SIDM_LAHIRI))
     jd_ut = swe.julday(year, month, day, hour)
     swe.set_topo(lon, lat, 0.0)
-    cusps, ascmc = swe.houses_ex(jd_ut, lat, lon, b'P', swe.FLG_SIDEREAL)
+    # Handle potential 3rd return value (error message) in some swisseph forks
+    h_res = swe.houses_ex(jd_ut, lat, lon, b'P', swe.FLG_SIDEREAL)
+    cusps, ascmc = h_res[0], h_res[1]
     ascendant = ascmc[0]
 
     planets = {}
     flags = swe.FLG_SIDEREAL | swe.FLG_SPEED | swe.FLG_TOPOCTR
 
     for name, pid in PLANET_IDS.items():
-        res, ret_flag = swe.calc_ut(jd_ut, pid, flags)
+        c_res = swe.calc_ut(jd_ut, pid, flags)
+        res, ret_flag = c_res[0], c_res[1]
         planets[name] = {
             "longitude": res[0], "latitude": res[1],
             "speed": res[3], "is_retrograde": res[3] < 0
@@ -64,7 +67,8 @@ def calculate_transits_for_range(start_date: str, end_date: str, lat: float, lon
         jd = swe.julday(curr.year, curr.month, curr.day, 12.0) # Noon UT
         day_data = {"date": curr.strftime("%Y-%m-%d"), "planets": {}}
         for name, pid in PLANET_IDS.items():
-            res, _ = swe.calc_ut(jd, pid, flags)
+            c_res = swe.calc_ut(jd, pid, flags)
+            res = c_res[0]
             day_data["planets"][name] = {"lon": res[0], "is_retrograde": res[3] < 0}
         results.append(day_data)
         curr += timedelta(days=1)

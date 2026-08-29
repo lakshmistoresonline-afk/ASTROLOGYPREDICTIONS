@@ -1,0 +1,73 @@
+[2026-08-29 10:11:21,062] INFO in __init__: Jyotish OS V1.0.0 starting...
+WARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5001
+ * Running on http://192.168.1.11:5001
+Press CTRL+C to quit
+[2026-08-29 10:12:11,896] ERROR in app: Exception on / [GET]
+Traceback (most recent call last):
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\app.py", line 1473, in wsgi_app
+    response = self.full_dispatch_request()
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\app.py", line 882, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask_cors\extension.py", line 178, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+                                                ~^^^^^^^^^^^^^^^^^
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\app.py", line 880, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\app.py", line 865, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "D:\ASTROLOGYPREDICTIONS\app\routes.py", line 71, in index
+    return render_template("index.html", ip_loc=ip_loc, saved_charts=saved)
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\templating.py", line 150, in render_template
+    return _render(app, template, context)
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\templating.py", line 131, in _render
+    rv = template.render(context)
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\jinja2\environment.py", line 1295, in render
+    self.environment.handle_exception()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\jinja2\environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "D:\ASTROLOGYPREDICTIONS\app\templates\index.html", line 1, in top-level template code
+    {% extends "base.html" %}
+  File "D:\ASTROLOGYPREDICTIONS\app\templates\base.html", line 43, in top-level template code
+    <a href="{{ url_for('main.prashna') }}" class="nav-link {% if request.endpoint == 'main.prashna' %}active{% endif %}">
+    ^^^^^^^^^^^^^
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\app.py", line 1084, in url_for
+    return self.handle_url_build_error(error, endpoint, values)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\app.py", line 1073, in url_for
+    rv = url_adapter.build(  # type: ignore[union-attr]
+        endpoint,
+    ...<3 lines>...
+        force_external=_external,
+    )
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\werkzeug\routing\map.py", line 901, in build
+    raise BuildError(endpoint, values, method, self)
+werkzeug.routing.exceptions.BuildError: Could not build url for endpoint 'main.prashna'. Did you mean 'main.dashboard' instead?
+127.0.0.1 - - [29/Aug/2026 10:12:12] "GET / HTTP/1.1" 500 -
+Exception in thread Thread-1 (_idle_watcher):
+Traceback (most recent call last):
+  File "C:\Users\User\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 1041, in _bootstrap_inner
+    self.run()
+    ~~~~~~~~^^
+  File "C:\Users\User\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 992, in run
+    self._target(*self._args, **self._kwargs)
+    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\ASTROLOGYPREDICTIONS\run.py", line 62, in _idle_watcher
+    _notify(
+    ~~~~~~~^
+        "Jyotish Dashboard",
+        ^^^^^^^^^^^^^^^^^^^^
+        f"No activity for a while — will close in ~{remaining} min."
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "D:\ASTROLOGYPREDICTIONS\run.py", line 28, in _notify
+    print(f"\n  \u26a0  {title}: {message}", flush=True)
+    ~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\User\AppData\Local\Programs\Python\Python313\Lib\encodings\cp1252.py", line 19, in encode
+    return codecs.charmap_encode(input,self.errors,encoding_table)[0]
+           ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+UnicodeEncodeError: 'charmap' codec can't encode character '\u26a0' in position 4: character maps to <undefined>
