@@ -23,23 +23,14 @@ Follow these steps to run the complete Trademind Jyotish AI locally.
     pip install -r requirements.txt
     ```
 
-## 3. START SERVICES
-### A. Calculation Service
-**Option 1: Docker (Preferred)**
-```bash
-docker-compose up -d jyotish-calc-service
+## 3. START ALL SERVICES (Single Command)
+To start both the Calculation Service and the Dashboard together, run the unified launcher:
+```powershell
+./run_all.ps1
 ```
 
-**Option 2: Local (if Docker is missing)**
-```bash
-# Install consolidated requirements
-pip install -r consolidated_requirements.txt
-# Run service
-./scripts/start_calc_service.ps1  # Windows
-# Or manually:
-# export PYTHONPATH=calculation_service
-# uvicorn app.main:app --port 8000
-```
+### A. Manual Startup (Optional)
+If you prefer to run services in separate windows:
 
 ### B. Backend (Python/Flask)
 Start the primary intelligence and data layer:
