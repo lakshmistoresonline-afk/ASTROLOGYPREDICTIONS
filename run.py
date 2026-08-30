@@ -83,11 +83,12 @@ if __name__ == "__main__":
     )
 
     # Start idle watcher as a background daemon (only in non-production)
-    if os.getenv("FLASK_ENV") != "production":
+    if os.getenv("FLASK_ENV") != "production" and not os.environ.get("WERKZEUG_RUN_MAIN"):
         t = threading.Thread(target=_idle_watcher, daemon=True)
         t.start()
 
-        # Open browser after Flask is ready
+        # Open browser after Flask is ready (once only, avoid double-tab)
         threading.Timer(1.5, open_browser).start()
 
     app.run(host="0.0.0.0", port=port, debug=True)
+n# Force Reload V1.0.3

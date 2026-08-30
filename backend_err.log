@@ -1892,3 +1892,322 @@ Arguments: ()
 127.0.0.1 - - [30/Aug/2026 07:37:17] "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 -
 127.0.0.1 - - [30/Aug/2026 07:40:40] "GET /health HTTP/1.1" 404 -
 127.0.0.1 - - [30/Aug/2026 07:40:48] "GET /api/health HTTP/1.1" 404 -
+[2026-08-30 07:51:52,228] ERROR in app: Exception on / [GET]
+Traceback (most recent call last):
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\app.py", line 1473, in wsgi_app
+    response = self.full_dispatch_request()
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\app.py", line 882, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask_cors\extension.py", line 178, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+                                                ~^^^^^^^^^^^^^^^^^
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\app.py", line 880, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\app.py", line 865, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "D:\ASTROLOGYPREDICTIONS\app\routes.py", line 71, in index
+    if not calc_client.check_health():
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\templating.py", line 150, in render_template
+    return _render(app, template, context)
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\templating.py", line 131, in _render
+    rv = template.render(context)
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\jinja2\environment.py", line 1295, in render
+    self.environment.handle_exception()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\jinja2\environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "D:\ASTROLOGYPREDICTIONS\app\templates\index.html", line 1, in top-level template code
+    {% extends "base.html" %}
+  File "D:\ASTROLOGYPREDICTIONS\app\templates\base.html", line 43, in top-level template code
+    <a href="{{ url_for('main.prashna') }}" class="nav-link {% if request.endpoint == 'main.prashna' %}active{% endif %}">
+    ^^^^^^^^^^^^^
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\app.py", line 1084, in url_for
+    return self.handle_url_build_error(error, endpoint, values)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\app.py", line 1073, in url_for
+    rv = url_adapter.build(  # type: ignore[union-attr]
+        endpoint,
+    ...<3 lines>...
+        force_external=_external,
+    )
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\werkzeug\routing\map.py", line 901, in build
+    raise BuildError(endpoint, values, method, self)
+werkzeug.routing.exceptions.BuildError: Could not build url for endpoint 'main.prashna'. Did you mean 'main.dashboard' instead?
+--- Logging error ---
+Traceback (most recent call last):
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\app.py", line 1473, in wsgi_app
+    response = self.full_dispatch_request()
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\app.py", line 882, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask_cors\extension.py", line 178, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+                                                ~^^^^^^^^^^^^^^^^^
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\app.py", line 880, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\app.py", line 865, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "D:\ASTROLOGYPREDICTIONS\app\routes.py", line 71, in index
+    if not calc_client.check_health():
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\templating.py", line 150, in render_template
+    return _render(app, template, context)
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\templating.py", line 131, in _render
+    rv = template.render(context)
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\jinja2\environment.py", line 1295, in render
+    self.environment.handle_exception()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\jinja2\environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "D:\ASTROLOGYPREDICTIONS\app\templates\index.html", line 1, in top-level template code
+    {% extends "base.html" %}
+  File "D:\ASTROLOGYPREDICTIONS\app\templates\base.html", line 43, in top-level template code
+    <a href="{{ url_for('main.prashna') }}" class="nav-link {% if request.endpoint == 'main.prashna' %}active{% endif %}">
+    ^^^^^^^^^^^^^
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\app.py", line 1084, in url_for
+    return self.handle_url_build_error(error, endpoint, values)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\app.py", line 1073, in url_for
+    rv = url_adapter.build(  # type: ignore[union-attr]
+        endpoint,
+    ...<3 lines>...
+        force_external=_external,
+    )
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\werkzeug\routing\map.py", line 901, in build
+    raise BuildError(endpoint, values, method, self)
+werkzeug.routing.exceptions.BuildError: Could not build url for endpoint 'main.prashna'. Did you mean 'main.dashboard' instead?
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\User\AppData\Local\Programs\Python\Python313\Lib\logging\handlers.py", line 80, in emit
+    self.doRollover()
+    ~~~~~~~~~~~~~~~^^
+  File "C:\Users\User\AppData\Local\Programs\Python\Python313\Lib\logging\handlers.py", line 185, in doRollover
+    self.rotate(self.baseFilename, dfn)
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\User\AppData\Local\Programs\Python\Python313\Lib\logging\handlers.py", line 121, in rotate
+    os.rename(source, dest)
+    ~~~~~~~~~^^^^^^^^^^^^^^
+PermissionError: [WinError 32] The process cannot access the file because it is being used by another process: 'D:\\ASTROLOGYPREDICTIONS\\logs\\app.log' -> 'D:\\ASTROLOGYPREDICTIONS\\logs\\app.log.1'
+Call stack:
+  File "C:\Users\User\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 1012, in _bootstrap
+    self._bootstrap_inner()
+  File "C:\Users\User\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 1041, in _bootstrap_inner
+    self.run()
+  File "C:\Users\User\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 992, in run
+    self._target(*self._args, **self._kwargs)
+  File "C:\Users\User\AppData\Local\Programs\Python\Python313\Lib\socketserver.py", line 692, in process_request_thread
+    self.finish_request(request, client_address)
+  File "C:\Users\User\AppData\Local\Programs\Python\Python313\Lib\socketserver.py", line 362, in finish_request
+    self.RequestHandlerClass(request, client_address, self)
+  File "C:\Users\User\AppData\Local\Programs\Python\Python313\Lib\socketserver.py", line 761, in __init__
+    self.handle()
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\werkzeug\serving.py", line 399, in handle
+    super().handle()
+  File "C:\Users\User\AppData\Local\Programs\Python\Python313\Lib\http\server.py", line 436, in handle
+    self.handle_one_request()
+  File "C:\Users\User\AppData\Local\Programs\Python\Python313\Lib\http\server.py", line 424, in handle_one_request
+    method()
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\werkzeug\serving.py", line 371, in run_wsgi
+    execute(self.server.app)
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\werkzeug\serving.py", line 332, in execute
+    application_iter = app(environ, start_response)
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\app.py", line 1498, in __call__
+    return self.wsgi_app(environ, start_response)
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\app.py", line 1476, in wsgi_app
+    response = self.handle_exception(e)
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask_cors\extension.py", line 178, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\app.py", line 817, in handle_exception
+    self.log_exception(exc_info)
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\app.py", line 838, in log_exception
+    self.logger.error(
+Message: 'Exception on / [GET]'
+Arguments: ()
+127.0.0.1 - - [30/Aug/2026 07:51:52] "GET / HTTP/1.1" 500 -
+127.0.0.1 - - [30/Aug/2026 07:51:52] "GET /favicon.ico HTTP/1.1" 404 -
+[2026-08-30 07:52:11,802] ERROR in app: Exception on / [GET]
+Traceback (most recent call last):
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\app.py", line 1473, in wsgi_app
+    response = self.full_dispatch_request()
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\app.py", line 882, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask_cors\extension.py", line 178, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+                                                ~^^^^^^^^^^^^^^^^^
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\app.py", line 880, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\app.py", line 865, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "D:\ASTROLOGYPREDICTIONS\app\routes.py", line 71, in index
+    if not calc_client.check_health():
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\templating.py", line 150, in render_template
+    return _render(app, template, context)
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\templating.py", line 131, in _render
+    rv = template.render(context)
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\jinja2\environment.py", line 1295, in render
+    self.environment.handle_exception()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\jinja2\environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "D:\ASTROLOGYPREDICTIONS\app\templates\index.html", line 1, in top-level template code
+    {% extends "base.html" %}
+  File "D:\ASTROLOGYPREDICTIONS\app\templates\base.html", line 43, in top-level template code
+    <a href="{{ url_for('main.prashna') }}" class="nav-link {% if request.endpoint == 'main.prashna' %}active{% endif %}">
+    ^^^^^^^^^^^^^
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\app.py", line 1084, in url_for
+    return self.handle_url_build_error(error, endpoint, values)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\app.py", line 1073, in url_for
+    rv = url_adapter.build(  # type: ignore[union-attr]
+        endpoint,
+    ...<3 lines>...
+        force_external=_external,
+    )
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\werkzeug\routing\map.py", line 901, in build
+    raise BuildError(endpoint, values, method, self)
+werkzeug.routing.exceptions.BuildError: Could not build url for endpoint 'main.prashna'. Did you mean 'main.dashboard' instead?
+--- Logging error ---
+Traceback (most recent call last):
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\app.py", line 1473, in wsgi_app
+    response = self.full_dispatch_request()
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\app.py", line 882, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask_cors\extension.py", line 178, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+                                                ~^^^^^^^^^^^^^^^^^
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\app.py", line 880, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\app.py", line 865, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "D:\ASTROLOGYPREDICTIONS\app\routes.py", line 71, in index
+    if not calc_client.check_health():
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\templating.py", line 150, in render_template
+    return _render(app, template, context)
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\templating.py", line 131, in _render
+    rv = template.render(context)
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\jinja2\environment.py", line 1295, in render
+    self.environment.handle_exception()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\jinja2\environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "D:\ASTROLOGYPREDICTIONS\app\templates\index.html", line 1, in top-level template code
+    {% extends "base.html" %}
+  File "D:\ASTROLOGYPREDICTIONS\app\templates\base.html", line 43, in top-level template code
+    <a href="{{ url_for('main.prashna') }}" class="nav-link {% if request.endpoint == 'main.prashna' %}active{% endif %}">
+    ^^^^^^^^^^^^^
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\app.py", line 1084, in url_for
+    return self.handle_url_build_error(error, endpoint, values)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\app.py", line 1073, in url_for
+    rv = url_adapter.build(  # type: ignore[union-attr]
+        endpoint,
+    ...<3 lines>...
+        force_external=_external,
+    )
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\werkzeug\routing\map.py", line 901, in build
+    raise BuildError(endpoint, values, method, self)
+werkzeug.routing.exceptions.BuildError: Could not build url for endpoint 'main.prashna'. Did you mean 'main.dashboard' instead?
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\User\AppData\Local\Programs\Python\Python313\Lib\logging\handlers.py", line 80, in emit
+    self.doRollover()
+    ~~~~~~~~~~~~~~~^^
+  File "C:\Users\User\AppData\Local\Programs\Python\Python313\Lib\logging\handlers.py", line 185, in doRollover
+    self.rotate(self.baseFilename, dfn)
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\User\AppData\Local\Programs\Python\Python313\Lib\logging\handlers.py", line 121, in rotate
+    os.rename(source, dest)
+    ~~~~~~~~~^^^^^^^^^^^^^^
+PermissionError: [WinError 32] The process cannot access the file because it is being used by another process: 'D:\\ASTROLOGYPREDICTIONS\\logs\\app.log' -> 'D:\\ASTROLOGYPREDICTIONS\\logs\\app.log.1'
+Call stack:
+  File "C:\Users\User\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 1012, in _bootstrap
+    self._bootstrap_inner()
+  File "C:\Users\User\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 1041, in _bootstrap_inner
+    self.run()
+  File "C:\Users\User\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 992, in run
+    self._target(*self._args, **self._kwargs)
+  File "C:\Users\User\AppData\Local\Programs\Python\Python313\Lib\socketserver.py", line 692, in process_request_thread
+    self.finish_request(request, client_address)
+  File "C:\Users\User\AppData\Local\Programs\Python\Python313\Lib\socketserver.py", line 362, in finish_request
+    self.RequestHandlerClass(request, client_address, self)
+  File "C:\Users\User\AppData\Local\Programs\Python\Python313\Lib\socketserver.py", line 761, in __init__
+    self.handle()
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\werkzeug\serving.py", line 399, in handle
+    super().handle()
+  File "C:\Users\User\AppData\Local\Programs\Python\Python313\Lib\http\server.py", line 436, in handle
+    self.handle_one_request()
+  File "C:\Users\User\AppData\Local\Programs\Python\Python313\Lib\http\server.py", line 424, in handle_one_request
+    method()
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\werkzeug\serving.py", line 371, in run_wsgi
+    execute(self.server.app)
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\werkzeug\serving.py", line 332, in execute
+    application_iter = app(environ, start_response)
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\app.py", line 1498, in __call__
+    return self.wsgi_app(environ, start_response)
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\app.py", line 1476, in wsgi_app
+    response = self.handle_exception(e)
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask_cors\extension.py", line 178, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\app.py", line 817, in handle_exception
+    self.log_exception(exc_info)
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\app.py", line 838, in log_exception
+    self.logger.error(
+Message: 'Exception on / [GET]'
+Arguments: ()
+127.0.0.1 - - [30/Aug/2026 07:52:11] "GET / HTTP/1.1" 500 -
+127.0.0.1 - - [30/Aug/2026 07:52:18] "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 -
+127.0.0.1 - - [30/Aug/2026 09:54:30] "GET /dashboard HTTP/1.1" 302 -
+[2026-08-30 09:54:31,422] ERROR in app: Exception on / [GET]
+Traceback (most recent call last):
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\app.py", line 1473, in wsgi_app
+    response = self.full_dispatch_request()
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\app.py", line 882, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask_cors\extension.py", line 178, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+                                                ~^^^^^^^^^^^^^^^^^
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\app.py", line 880, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\app.py", line 865, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "D:\ASTROLOGYPREDICTIONS\app\routes.py", line 71, in index
+    def kundli():
+               ^^
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\templating.py", line 150, in render_template
+    return _render(app, template, context)
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\templating.py", line 131, in _render
+    rv = template.render(context)
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\jinja2\environment.py", line 1295, in render
+    self.environment.handle_exception()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\jinja2\environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "D:\ASTROLOGYPREDICTIONS\app\templates\index.html", line 1, in top-level template code
+    {% extends "base.html" %}
+  File "D:\ASTROLOGYPREDICTIONS\app\templates\base.html", line 43, in top-level template code
+    <a href="{{ url_for('main.prashna') }}" class="nav-link {% if request.endpoint == 'main.prashna' %}active{% endif %}">
+    ^^^^^^^^^^^^^
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\app.py", line 1084, in url_for
+    return self.handle_url_build_error(error, endpoint, values)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\app.py", line 1073, in url_for
+    rv = url_adapter.build(  # type: ignore[union-attr]
+        endpoint,
+    ...<3 lines>...
+        force_external=_external,
+    )
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\werkzeug\routing\map.py", line 901, in build
+    raise BuildError(endpoint, values, method, self)
+werkzeug.routing.exceptions.BuildError: Could not build url for endpoint 'main.prashna'. Did you mean 'main.dashboard' instead?
+127.0.0.1 - - [30/Aug/2026 09:54:31] "GET / HTTP/1.1" 500 -

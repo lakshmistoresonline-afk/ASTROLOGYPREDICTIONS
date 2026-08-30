@@ -1,13 +1,24 @@
 # Centralized Swiss Ephemeris Proxy.
 # Enforces deterministic calculations by requiring swisseph for functions.
+import sys
+import os
+
 try:
     import swisseph as swe
 except ImportError:
-    swe = None
+    # Diagnostic: check for venv presence
+    venv_site = os.path.join(os.getcwd(), "venv", "Lib", "site-packages")
+    if os.path.exists(venv_site) and venv_site not in sys.path:
+        sys.path.append(venv_site)
+        try:
+            import swisseph as swe
+        except ImportError:
+            swe = None
+    else:
+        swe = None
 
 if not swe:
     class ProxyError:
-        # Standard IDs to avoid module-level import errors
         SUN = 0
         MOON = 1
         MERCURY = 2
@@ -27,7 +38,10 @@ if not swe:
         FLG_TOPOCTR = 32768
 
         def __getattr__(self, name):
-            # Fail loudly only when a function is called
+            # Allow hasattr() to return False for non-existent methods
+            if name in ['__wrapped__', '__members__', '__methods__', '__class__']:
+                raise AttributeError(name)
+
             def _fail(*args, **kwargs):
                 raise ImportError(
                     f"Swiss Ephemeris function '{name}' called but pyswisseph is not installed. "
