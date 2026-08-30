@@ -2,23 +2,22 @@
 {% block title %}Dashboard — Jyotish Celestial OS{% endblock %}
 
 {% block content %}
-<div class="mb-5">
-    <h2 class="fw-black text-white mb-1">Namaste, {{ session.get('birth_name', 'Explorer') }}</h2>
-    <p class="text-dim small">Explore your birth promise and the current planetary flow.</p>
+<div class="hero-v2 mb-5">
+    <div class="glow-orb"></div>
+    <div class="container-fluid p-0">
+        <h1 class="display-3 fw-black text-white mb-2">Explore the Celestial Flow</h1>
+        <p class="fs-5 text-dim opacity-70">Deterministic Jyotish Intelligence for your unique life blueprint.</p>
+    </div>
 </div>
 
 <div class="row g-4">
     <!-- Main Actions -->
     <div class="col-lg-8">
-        <div class="d-flex align-items-center gap-3 mb-4">
+        <div class="d-flex align-items-center gap-4 mb-5">
+            <h4 class="font-premium text-white mb-0">CHART VAULT</h4>
             <div class="mode-tabs">
-                <button class="kmt-btn active" id="tab-saved" onclick="switchTab('saved')">Saved Profiles</button>
-                <button class="kmt-btn" id="tab-new" onclick="switchTab('new')">New Profile</button>
-            </div>
-
-            <div class="search-box position-relative flex-grow-1" id="vault-search-container">
-                <i class="bi bi-search position-absolute top-50 start-0 translate-middle-y ms-3 text-dim small"></i>
-                <input type="text" id="vault-search" class="form-control-vedic ps-5" placeholder="Find profile..." oninput="searchVault()">
+                <button class="kmt-btn active" id="tab-saved" onclick="switchTab('saved')">RECALL</button>
+                <button class="kmt-btn" id="tab-new" onclick="switchTab('new')">GENERATE</button>
             </div>
         </div>
 

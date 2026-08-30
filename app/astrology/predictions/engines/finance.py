@@ -6,8 +6,8 @@ from ...timing.precision import timing_engine
 
 class FinancePredictionEngine:
     """
-    Hardened Finance Engine (Phase 4).
-    Separates Wealth Potential from Immediate Gains.
+    V2 Hardened Finance & Wealth Engine.
+    Analyzes 2nd House (Accumulation), 11th (Gains), and 8th (Inheritance/Sudden).
     """
 
     @staticmethod
@@ -26,15 +26,28 @@ class FinancePredictionEngine:
         if l2.house in [1, 4, 7, 10, 2, 11, 5, 9]:
             promise_level = "STRONG"
             evidence.append(CorroborationEngine.create_evidence(
-                "NATAL_PROMISE", f"WEALTH PROMISE: Inherent capacity for accumulation supported by 2nd Lord {l2_name}.", 85.0
+                "NATAL_PROMISE",
+                f"WEALTH PROMISE: Inherent capacity for accumulation supported by 2nd Lord {l2_name} placement.",
+                85.0
             ))
 
         if l11.house in [1, 4, 7, 10, 2, 11, 5, 9]:
              evidence.append(CorroborationEngine.create_evidence(
-                "NATAL_PROMISE", f"GAINS PROMISE: High revenue potential indicated by 11th Lord {l11_name} placement.", 80.0
+                "NATAL_PROMISE",
+                f"GAINS PROMISE: High revenue potential indicated by 11th Lord {l11_name} strength.",
+                80.0
             ))
 
-        # 2. ACTIVATION (Dasha)
+        # 2. CONTRADICTIONS (Malefic Aspects to Wealth Houses)
+        # (Simplified malefic check)
+        if planets["Saturn"].house in [2, 11, 12]:
+            evidence.append(CorroborationEngine.create_evidence(
+                "CONFLICTS",
+                "RESOURCE PRESSURE: Saturnian influence suggests slow accumulation or heavy commitments.",
+                -30.0
+            ))
+
+        # 3. DASHA ACTIVATION
         from ...dasha import calculate_vimshottari
         moon_lon = chart.planets["Moon"].longitude
         dasha = calculate_vimshottari(moon_lon, chart.birth_datetime)
@@ -42,32 +55,34 @@ class FinancePredictionEngine:
 
         if antar_lord in [l2_name, l11_name, "Jupiter", "Venus"]:
             evidence.append(CorroborationEngine.create_evidence(
-                "DASHA_ACTIVATION", f"FINANCIAL ACTIVATION: Period of {antar_lord} triggers wealth generation cycles.", 90.0
+                "DASHA_ACTIVATION",
+                f"FINANCIAL ACTIVATION: Life-period of {antar_lord} triggers major wealth generation cycles.",
+                90.0
             ))
         else:
             evidence.append(CorroborationEngine.create_evidence(
-                "DASHA_ACTIVATION", "CURRENT ACTIVATION: Resource focus is secondary in the current life-period.", 60.0
+                "DASHA_ACTIVATION",
+                "RESOURCE STABILITY: Current life-period favors consolidation over high-risk expansion.",
+                60.0
             ))
 
-        # 3. YOGAS (Dhana Yogas)
-        for yoga in chart.yogas:
-            if "Dhana" in yoga["name"]:
-                evidence.append(CorroborationEngine.create_evidence(
-                    "YOGA_SUPPORT", f"YOGA MODIFIER: {yoga['name']} acts as a significant wealth catalyst.", 90.0
-                ))
-
-        # 4. TIMING
-        window = timing_engine.calculate_window(chart, ["Jupiter", "Venus", l2_name], [2, 11, 5])
-
+        # 4. SYNTHESIS
         summary_template = (
-            "Your financial trajectory has a {promise} foundation and shows {strength} alignment for growth. "
-            "Hierarchical confidence is rated at {score}%."
+            "Your financial trajectory shows a {promise} foundation with {strength} alignment for growth. "
+            "Hierarchical synthesis results in a {score}% confidence score for fiscal security."
         )
 
-        res = CorroborationEngine.synthesize("Finance & Wealth", promise_level, evidence, summary_template, timing_window=window)
-        res.practical_guidance = [
-            "This is trend analysis, not investment advice. Consult a financial professional.",
-            "Focus on long-term resource stability and disciplined saving.",
-            "Avoid speculative risks in sectors where corroboration is weak."
+        res = CorroborationEngine.synthesize("Finance & Wealth", promise_level, evidence, summary_template)
+
+        res.manifestations = [
+            "Steady increase in liquid assets or savings.",
+            "Opportunities for secondary income streams.",
+            "Strategic investments reaching a maturation phase."
         ]
+        res.practical_actions = [
+            "Focus on long-term resource security during this cycle.",
+            "Maintain disciplined budgeting to counter temporary malefic pressure.",
+            "Evaluate large-scale investments against dasha timing peaks."
+        ]
+
         return res

@@ -72,6 +72,9 @@ def generate_evidence_based_predictions(chart: CanonicalChart, selected_date: da
             }
             p_dict = prediction.model_dump()
             p_dict["category"] = cat_map.get(name, "essence")
+
+            # Map V2 Headline
+            p_dict["headline"] = prediction.headline
             return p_dict
         except Exception as e:
             # Domain failures are logged but don't break the report

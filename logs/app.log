@@ -342,3 +342,104 @@ werkzeug.routing.exceptions.BuildError: Could not build url for endpoint 'main.p
 2026-08-30 16:31:45,999 WARNING:  * Debugger is active!
 2026-08-30 16:31:46,023 INFO:  * Debugger PIN: 644-143-807
 2026-08-30 16:32:20,700 INFO:  * Detected change in 'D:\\ASTROLOGYPREDICTIONS\\app\\astrology\\predictions\\engines\\education.py', reloading
+2026-08-30 16:32:22,170 INFO:  * Restarting with stat
+2026-08-30 16:32:32,028 INFO: Jyotish OS V1.0.0 starting...
+2026-08-30 16:32:42,326 WARNING:  * Debugger is active!
+2026-08-30 16:32:42,347 INFO:  * Debugger PIN: 644-143-807
+2026-08-30 18:06:43,161 INFO: Jyotish OS V1.0.0 starting...
+2026-08-30 18:06:51,124 INFO: [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5001
+ * Running on http://192.168.1.11:5001
+2026-08-30 18:06:51,124 INFO: [33mPress CTRL+C to quit[0m
+2026-08-30 18:06:51,131 INFO:  * Restarting with stat
+2026-08-30 18:06:57,837 INFO: Jyotish OS V1.0.0 starting...
+2026-08-30 18:07:09,649 WARNING:  * Debugger is active!
+2026-08-30 18:07:09,669 INFO:  * Debugger PIN: 644-143-807
+2026-08-30 18:07:11,452 INFO: 127.0.0.1 - - [30/Aug/2026 18:07:11] "GET / HTTP/1.1" 200 -
+2026-08-30 18:07:12,643 INFO: 127.0.0.1 - - [30/Aug/2026 18:07:12] "[36mGET /static/manifest.json HTTP/1.1[0m" 304 -
+2026-08-30 18:07:12,644 INFO: 127.0.0.1 - - [30/Aug/2026 18:07:12] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+2026-08-30 18:07:14,305 INFO: 127.0.0.1 - - [30/Aug/2026 18:07:14] "[36mGET /static/img/icon.svg HTTP/1.1[0m" 304 -
+2026-08-30 18:07:14,426 INFO: 127.0.0.1 - - [30/Aug/2026 18:07:14] "GET /api/sky?lat=8.43128&lon=77.0128&tz=Asia/Kolkata HTTP/1.1" 200 -
+2026-08-30 18:54:47,413 INFO: Jyotish OS V1.0.0 starting...
+2026-08-30 18:54:56,049 INFO: [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5001
+ * Running on http://192.168.1.11:5001
+2026-08-30 18:54:56,049 INFO: [33mPress CTRL+C to quit[0m
+2026-08-30 18:54:56,056 INFO:  * Restarting with stat
+2026-08-30 18:55:03,340 INFO: Jyotish OS V1.0.0 starting...
+2026-08-30 18:55:15,858 WARNING:  * Debugger is active!
+2026-08-30 18:55:15,882 INFO:  * Debugger PIN: 644-143-807
+2026-08-30 18:55:17,826 INFO: 127.0.0.1 - - [30/Aug/2026 18:55:17] "GET / HTTP/1.1" 200 -
+2026-08-30 18:55:19,095 INFO: 127.0.0.1 - - [30/Aug/2026 18:55:19] "[36mGET /static/manifest.json HTTP/1.1[0m" 304 -
+2026-08-30 18:55:19,141 INFO: 127.0.0.1 - - [30/Aug/2026 18:55:19] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+2026-08-30 18:55:21,031 INFO: 127.0.0.1 - - [30/Aug/2026 18:55:21] "[36mGET /static/img/icon.svg HTTP/1.1[0m" 304 -
+2026-08-30 18:55:21,259 INFO: 127.0.0.1 - - [30/Aug/2026 18:55:21] "GET /api/sky?lat=8.43128&lon=77.0128&tz=Asia/Kolkata HTTP/1.1" 200 -
+2026-08-30 18:59:43,263 INFO: 127.0.0.1 - - [30/Aug/2026 18:59:43] "[32mGET /kundli/load/a4e492cd?next=predictions HTTP/1.1[0m" 302 -
+2026-08-30 18:59:43,341 INFO: 127.0.0.1 - - [30/Aug/2026 18:59:43] "[32mGET /predictions HTTP/1.1[0m" 302 -
+2026-08-30 18:59:44,524 INFO: 127.0.0.1 - - [30/Aug/2026 18:59:44] "GET / HTTP/1.1" 200 -
+2026-08-30 18:59:45,098 INFO: 127.0.0.1 - - [30/Aug/2026 18:59:45] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+2026-08-30 18:59:45,104 INFO: 127.0.0.1 - - [30/Aug/2026 18:59:45] "[36mGET /static/manifest.json HTTP/1.1[0m" 304 -
+2026-08-30 18:59:45,357 INFO: 127.0.0.1 - - [30/Aug/2026 18:59:45] "GET /api/sky?lat=8.43128&lon=77.0128&tz=Asia/Kolkata HTTP/1.1" 200 -
+2026-08-30 18:59:45,607 INFO: 127.0.0.1 - - [30/Aug/2026 18:59:45] "[36mGET /static/img/icon.svg HTTP/1.1[0m" 304 -
+2026-08-30 19:00:01,114 INFO: 127.0.0.1 - - [30/Aug/2026 19:00:01] "[32mGET /kundli/load/a4e492cd?next=predictions HTTP/1.1[0m" 302 -
+2026-08-30 19:00:01,422 INFO: 127.0.0.1 - - [30/Aug/2026 19:00:01] "[32mGET /predictions HTTP/1.1[0m" 302 -
+2026-08-30 19:00:02,636 INFO: 127.0.0.1 - - [30/Aug/2026 19:00:02] "GET / HTTP/1.1" 200 -
+2026-08-30 19:00:02,799 INFO: 127.0.0.1 - - [30/Aug/2026 19:00:02] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+2026-08-30 19:00:02,803 INFO: 127.0.0.1 - - [30/Aug/2026 19:00:02] "[36mGET /static/manifest.json HTTP/1.1[0m" 304 -
+2026-08-30 19:00:03,317 INFO: 127.0.0.1 - - [30/Aug/2026 19:00:03] "GET /api/sky?lat=8.43128&lon=77.0128&tz=Asia/Kolkata HTTP/1.1" 200 -
+2026-08-30 19:00:03,323 INFO: 127.0.0.1 - - [30/Aug/2026 19:00:03] "[36mGET /static/img/icon.svg HTTP/1.1[0m" 304 -
+2026-08-30 19:00:07,815 INFO: 127.0.0.1 - - [30/Aug/2026 19:00:07] "[32mGET /dashboard HTTP/1.1[0m" 302 -
+2026-08-30 19:00:08,687 INFO: 127.0.0.1 - - [30/Aug/2026 19:00:08] "GET / HTTP/1.1" 200 -
+2026-08-30 19:00:09,169 INFO: 127.0.0.1 - - [30/Aug/2026 19:00:09] "[36mGET /static/manifest.json HTTP/1.1[0m" 304 -
+2026-08-30 19:00:09,175 INFO: 127.0.0.1 - - [30/Aug/2026 19:00:09] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+2026-08-30 19:00:09,427 INFO: 127.0.0.1 - - [30/Aug/2026 19:00:09] "GET /api/sky?lat=8.43128&lon=77.0128&tz=Asia/Kolkata HTTP/1.1" 200 -
+2026-08-30 19:00:09,698 INFO: 127.0.0.1 - - [30/Aug/2026 19:00:09] "[36mGET /static/img/icon.svg HTTP/1.1[0m" 304 -
+2026-08-30 20:27:31,037 INFO: Jyotish OS V1.0.0 starting...
+2026-08-30 20:27:39,074 INFO: [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5001
+ * Running on http://192.168.1.11:5001
+2026-08-30 20:27:39,075 INFO: [33mPress CTRL+C to quit[0m
+2026-08-30 20:27:39,082 INFO:  * Restarting with stat
+2026-08-30 20:27:46,238 INFO: Jyotish OS V1.0.0 starting...
+2026-08-30 20:27:58,931 WARNING:  * Debugger is active!
+2026-08-30 20:27:58,949 INFO:  * Debugger PIN: 644-143-807
+2026-08-30 20:28:01,116 INFO: 127.0.0.1 - - [30/Aug/2026 20:28:01] "GET / HTTP/1.1" 200 -
+2026-08-30 20:28:02,529 INFO: 127.0.0.1 - - [30/Aug/2026 20:28:02] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+2026-08-30 20:28:02,554 INFO: 127.0.0.1 - - [30/Aug/2026 20:28:02] "[36mGET /static/manifest.json HTTP/1.1[0m" 304 -
+2026-08-30 20:28:04,248 INFO: 127.0.0.1 - - [30/Aug/2026 20:28:04] "[36mGET /static/img/icon.svg HTTP/1.1[0m" 304 -
+2026-08-30 20:28:04,681 INFO: 127.0.0.1 - - [30/Aug/2026 20:28:04] "GET /api/sky?lat=8.43128&lon=77.0128&tz=Asia/Kolkata HTTP/1.1" 200 -
+2026-08-30 20:28:04,692 INFO: 127.0.0.1 - - [30/Aug/2026 20:28:04] "[36mGET /static/img/icon.svg HTTP/1.1[0m" 304 -
+2026-08-30 20:28:48,428 INFO: 127.0.0.1 - - [30/Aug/2026 20:28:48] "[32mGET /kundli/load/a4e492cd?next=predictions HTTP/1.1[0m" 302 -
+2026-08-30 20:28:48,510 INFO: 127.0.0.1 - - [30/Aug/2026 20:28:48] "[32mGET /predictions HTTP/1.1[0m" 302 -
+2026-08-30 20:28:49,403 INFO: 127.0.0.1 - - [30/Aug/2026 20:28:49] "GET / HTTP/1.1" 200 -
+2026-08-30 20:28:49,572 INFO: 127.0.0.1 - - [30/Aug/2026 20:28:49] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+2026-08-30 20:28:49,605 INFO: 127.0.0.1 - - [30/Aug/2026 20:28:49] "[36mGET /static/manifest.json HTTP/1.1[0m" 304 -
+2026-08-30 20:28:49,959 INFO: 127.0.0.1 - - [30/Aug/2026 20:28:49] "GET /api/sky?lat=8.43128&lon=77.0128&tz=Asia/Kolkata HTTP/1.1" 200 -
+2026-08-30 20:28:50,071 INFO: 127.0.0.1 - - [30/Aug/2026 20:28:50] "[36mGET /static/img/icon.svg HTTP/1.1[0m" 304 -
+2026-08-30 20:29:20,434 INFO: 127.0.0.1 - - [30/Aug/2026 20:29:20] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+2026-08-30 20:29:21,450 INFO: 127.0.0.1 - - [30/Aug/2026 20:29:21] "[36mGET /static/manifest.json HTTP/1.1[0m" 304 -
+2026-08-30 20:29:21,661 INFO: 127.0.0.1 - - [30/Aug/2026 20:29:21] "[33mGET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1[0m" 404 -
+2026-08-30 20:29:22,010 INFO: 127.0.0.1 - - [30/Aug/2026 20:29:22] "[32mGET /kundli/load/a4e492cd?next=predictions HTTP/1.1[0m" 302 -
+2026-08-30 20:29:22,657 INFO: 127.0.0.1 - - [30/Aug/2026 20:29:22] "[32mGET /predictions HTTP/1.1[0m" 302 -
+2026-08-30 20:29:23,587 INFO: 127.0.0.1 - - [30/Aug/2026 20:29:23] "GET / HTTP/1.1" 200 -
+2026-08-30 20:29:23,953 INFO: 127.0.0.1 - - [30/Aug/2026 20:29:23] "[33mGET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1[0m" 404 -
+2026-08-30 20:29:24,132 INFO: 127.0.0.1 - - [30/Aug/2026 20:29:24] "[36mGET /static/manifest.json HTTP/1.1[0m" 304 -
+2026-08-30 20:29:24,476 INFO: 127.0.0.1 - - [30/Aug/2026 20:29:24] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+2026-08-30 20:29:25,439 INFO: 127.0.0.1 - - [30/Aug/2026 20:29:25] "GET /api/sky?lat=8.43128&lon=77.0128&tz=Asia/Kolkata HTTP/1.1" 200 -
+2026-08-30 20:29:25,449 INFO: 127.0.0.1 - - [30/Aug/2026 20:29:25] "[36mGET /static/img/icon.svg HTTP/1.1[0m" 304 -
+2026-08-30 20:29:35,757 INFO: 127.0.0.1 - - [30/Aug/2026 20:29:35] "POST /kundli/delete/a4e492cd HTTP/1.1" 200 -
+2026-08-30 20:30:00,865 INFO: 127.0.0.1 - - [30/Aug/2026 20:30:00] "GET /api/geocode?q=palakkad HTTP/1.1" 200 -
+2026-08-30 20:30:02,384 INFO: 127.0.0.1 - - [30/Aug/2026 20:30:02] "[32mPOST /kundli HTTP/1.1[0m" 302 -
+2026-08-30 20:30:34,163 INFO: 127.0.0.1 - - [30/Aug/2026 20:30:34] "GET /dashboard HTTP/1.1" 200 -
+2026-08-30 20:30:35,081 INFO: 127.0.0.1 - - [30/Aug/2026 20:30:35] "[33mGET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1[0m" 404 -
+2026-08-30 20:30:35,083 INFO: 127.0.0.1 - - [30/Aug/2026 20:30:35] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+2026-08-30 20:30:35,086 INFO: 127.0.0.1 - - [30/Aug/2026 20:30:35] "[36mGET /static/manifest.json HTTP/1.1[0m" 304 -
+2026-08-30 20:30:36,278 INFO: 127.0.0.1 - - [30/Aug/2026 20:30:36] "[36mGET /static/img/icon.svg HTTP/1.1[0m" 304 -
+2026-08-30 20:32:17,560 INFO: 127.0.0.1 - - [30/Aug/2026 20:32:17] "GET /predictions HTTP/1.1" 200 -
+2026-08-30 20:32:17,910 INFO: 127.0.0.1 - - [30/Aug/2026 20:32:17] "[33mGET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1[0m" 404 -
+2026-08-30 20:32:18,118 INFO: 127.0.0.1 - - [30/Aug/2026 20:32:18] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+2026-08-30 20:32:19,029 INFO: 127.0.0.1 - - [30/Aug/2026 20:32:19] "[36mGET /static/manifest.json HTTP/1.1[0m" 304 -
+2026-08-30 20:32:19,458 INFO: 127.0.0.1 - - [30/Aug/2026 20:32:19] "[36mGET /static/img/icon.svg HTTP/1.1[0m" 304 -

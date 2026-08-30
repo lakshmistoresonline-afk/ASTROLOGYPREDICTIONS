@@ -70,43 +70,44 @@ class CanonicalChart(BaseModel):
     pindayu: Dict[str, float] = {}
 
 class CorroborationEvidence(BaseModel):
-    source: str
+    source: str # NATAL_PROMISE, DASHA_ACTIVATION, etc.
+    level: str = "PRIMARY" # PRIMARY, SECONDARY, MITIGATING
     planet_involved: Optional[str] = None
     house_involved: Optional[int] = None
-    strength_score: float
+    strength_score: float # Weighted impact
     description: str
+    rationale: Optional[str] = None # Technical explanation
 
 class DomainPrediction(BaseModel):
     domain: str
+    headline: str = ""
     score: float
-    confidence: str
+    confidence: str # VERY STRONG, STRONG, etc.
     prediction_strength: str
     summary: str
+    manifestations: List[str] = [] # How it appears in life
+    supporting_signals: List[str] = []
+    conflicting_signals: List[str] = []
     validation_status: str = "PRELIMINARY"
 
-    # IMMUTABLE SNAPSHOT (V1.0.0)
+    # IMMUTABLE SNAPSHOT (V2.0.0)
     version_snapshot: Dict[str, str] = {
         "calculation": "CALC-SWE-2.10.3",
+        "engine": "PREDICT-V2-CONFLUENCE",
         "dasha": "DASHA-VIM-365.2425",
-        "transit": "TRANSIT-PEAK-ORB1.0",
-        "evidence": "EVIDENCE-HIERARCHY-7L",
-        "remedy": "REMEDY-CONTEXT-V2",
-        "prompt": "PROMPT-MASTER-JYOTISHI-V1"
+        "evidence": "EVIDENCE-HIERARCHY-9L"
     }
 
     evidence_chain: List[CorroborationEvidence] = []
-    supporting_signals: List[str] = []
-    conflicting_signals: List[str] = []
 
     timing_window: Dict[str, Any] = {
-        "preparation": None,
+        "phase": "SCANNING", # BUILD-UP, PEAK, DECLINE
         "build": None,
         "peak": None,
         "decline": None,
-        "end": None,
         "description": ""
     }
 
     remedies: List[Dict[str, Any]] = []
-    practical_guidance: List[str] = []
+    practical_actions: List[str] = [] # Actionable steps
     limitations: Optional[str] = None

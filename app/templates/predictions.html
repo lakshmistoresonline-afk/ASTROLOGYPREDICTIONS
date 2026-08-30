@@ -51,87 +51,98 @@
         </div>
 
         <!-- PREDICTION FEED -->
+        {% if not preds.predictions %}
+        <div class="card-premium p-5 text-center border-dashed opacity-50">
+            <h4 class="text-white fw-bold mb-3 font-premium">Scanning Deterministic Blueprint</h4>
+            <p class="text-dim mb-0">The V2 engine is calculating hierarchical confluence. Please ensure your birth profile is correctly loaded.</p>
+        </div>
+        {% endif %}
+
         {% for cat, domains in preds.categorized_domains.items() %}
         <div id="section-{{ cat|lower }}" class="cat-content-block mb-5">
-            <h6 class="text-white fw-black tracking-widest xsmall mb-4 uppercase">{{ cat }} INDICATORS</h6>
+            <div class="nav-group-title mb-4">{{ cat }} Indicators</div>
             <div class="row g-4">
                 {% for domain in domains %}
                 <div class="col-12">
-                    <div class="card-vedic p-0 overflow-hidden">
+                    <div class="card-premium p-0 overflow-hidden">
                         <div class="row g-0">
                             <!-- Left: Summary Info -->
                             <div class="col-lg-8 p-4 p-md-5 border-end border-white border-opacity-5">
                                 <div class="d-flex justify-content-between align-items-start mb-4">
                                     <div>
-                                        <h4 class="text-white fw-black mb-1">{{ domain.domain }}</h4>
-                                        <span class="xsmall fw-black text-gold tracking-widest">{{ domain.prediction_strength }}</span>
-                                        <span class="mx-2 text-dim">|</span>
-                                        <span class="xsmall text-dim">{{ domain.validation_status }}</span>
+                                        <h3 class="font-premium text-white mb-1">{{ domain.domain }}</h3>
+                                        <div class="d-flex align-items-center gap-2 mt-2">
+                                            {% set s_cls = 'badge-strong' if domain.prediction_strength == 'VERY STRONG' or domain.prediction_strength == 'STRONG' else 'badge-moderate' %}
+                                            <span class="badge-v2 {{ s_cls }}">{{ domain.prediction_strength }}</span>
+                                            <span class="badge-v2 bg-glass-subtle text-dim">CONFIDENCE: {{ domain.confidence }}</span>
+                                        </div>
                                     </div>
                                     <div class="text-end">
-                                        <div class="h2 fw-black text-white mb-0">{{ domain.score|int }}%</div>
-                                        <div class="xxsmall text-dim fw-bold">EVIDENCE MATCH</div>
+                                        <div class="score-circle">{{ domain.score|int }}</div>
+                                        <div class="xxsmall text-dim fw-bold mt-1 uppercase tracking-widest">Composite</div>
                                     </div>
                                 </div>
 
-                                <p class="small text-white leading-relaxed mb-5">{{ domain.summary }}</p>
+                                <h5 class="text-white opacity-90 mb-3">{{ domain.headline }}</h5>
+                                <p class="small text-white-50 leading-relaxed mb-5">{{ domain.summary }}</p>
 
-                                <div class="row g-4">
+                                <div class="row g-5">
                                     <div class="col-md-6">
-                                        <h6 class="xxsmall text-gold fw-black tracking-widest mb-3 uppercase">TIMING WINDOW</h6>
-                                        <div class="p-3 rounded-4 bg-glass-subtle border border-white border-opacity-5">
-                                            <div class="d-flex justify-content-between align-items-center mb-1">
-                                                <span class="xxsmall text-dim">PEAK START</span>
-                                                <span class="xxsmall text-white fw-bold">{{ domain.timing_window.peak }}</span>
-                                            </div>
-                                            <div class="xxsmall text-dim italic mb-2">"{{ domain.timing_window.description }}"</div>
-                                            <div class="d-flex justify-content-between align-items-center pt-2 border-top border-white border-opacity-5">
-                                                <span class="xxsmall text-dim uppercase">Confidence:</span>
-                                                <span class="xxsmall text-white fw-bold">{{ domain.timing_window.timing_confidence }}</span>
-                                            </div>
-                                        </div>
+                                        <h6 class="nav-group-title mt-0">POSSIBLE MANIFESTATIONS</h6>
+                                        <ul class="ps-3 mb-0">
+                                            {% for mf in domain.manifestations %}
+                                            <li class="small text-dim mb-2">{{ mf }}</li>
+                                            {% endfor %}
+                                        </ul>
                                     </div>
                                     <div class="col-md-6">
-                                        <h6 class="xxsmall text-gold fw-black tracking-widest mb-3 uppercase">PRACTICAL GUIDANCE (WHAT TO DO)</h6>
+                                        <h6 class="nav-group-title mt-0">PRACTICAL ACTIONS</h6>
                                         <ul class="ps-3 mb-0">
-                                            {% for guide in domain.practical_guidance %}
-                                            <li class="xxsmall text-dim mb-1">{{ guide }}</li>
+                                            {% for action in domain.practical_actions %}
+                                            <li class="small text-gold opacity-80 mb-2">{{ action }}</li>
                                             {% endfor %}
                                         </ul>
                                     </div>
                                 </div>
                             </div>
 
-                            <!-- Right: Hierarchical Evidence (WHY THIS PREDICTION?) -->
+                            <!-- Right: Hierarchical Evidence -->
                             <div class="col-lg-4 p-4 p-md-5 bg-black bg-opacity-20">
-                                <h6 class="text-white fw-black tracking-widest xsmall mb-4 uppercase">EVIDENCE CHAIN</h6>
+                                <h6 class="nav-group-title mt-0">EVIDENCE CONFLUENCE</h6>
                                 <div class="d-flex flex-column gap-3">
                                     {% for ev in domain.evidence_chain %}
-                                    <div class="p-3 rounded-4 border border-white border-opacity-5 bg-glass-subtle">
-                                        <div class="d-flex justify-content-between xsmall mb-2">
-                                            <span class="fw-black text-white opacity-50">{{ ev.source|replace('_', ' ') }}</span>
-                                            <span class="text-{{ 'success' if ev.strength_score > 0 else 'danger' }} fw-bold">{{ '+' if ev.strength_score > 0 }}{{ (ev.strength_score * 100)|round|int }}</span>
+                                    <div class="evidence-node">
+                                        <div class="d-flex justify-content-between align-items-center mb-1">
+                                            <span class="evidence-title">{{ ev.source|replace('_', ' ') }}</span>
+                                            <span class="small fw-bold text-{{ 'success' if ev.strength_score > 0 else 'danger' }}">
+                                                {{ '+' if ev.strength_score > 0 }}{{ (ev.strength_score * 100)|round|int }}
+                                            </span>
                                         </div>
-                                        <p class="xxsmall text-dim mb-0">{{ ev.description }}</p>
+                                        <p class="xxsmall text-white opacity-70 mb-0">{{ ev.description }}</p>
+                                        {% if ev.rationale %}
+                                        <div class="mt-2 pt-2 border-top border-white border-opacity-5 xxsmall text-dim italic">
+                                            Logic: {{ ev.rationale }}
+                                        </div>
+                                        {% endif %}
                                     </div>
                                     {% endfor %}
                                 </div>
 
                                 {% if domain.conflicting_signals %}
-                                <div class="mt-4 p-3 rounded-4 border border-danger border-opacity-20 bg-danger bg-opacity-5">
-                                    <h6 class="xxsmall text-danger fw-black mb-2 uppercase">CONFLICTS DETECTED</h6>
+                                <div class="mt-5 p-4 rounded-4 border border-danger border-opacity-10 bg-danger bg-opacity-5">
+                                    <h6 class="xxsmall text-danger fw-black mb-3 uppercase tracking-widest">CONTRADICTIONS</h6>
                                     {% for conflict in domain.conflicting_signals %}
-                                    <p class="xxsmall text-white-50 mb-1">• {{ conflict }}</p>
+                                    <div class="xxsmall text-white opacity-50 mb-2">• {{ conflict }}</div>
                                     {% endfor %}
                                 </div>
                                 {% endif %}
                             </div>
                         </div>
 
-                        <!-- Footer: Remedy Shortcut -->
-                        <div class="p-4 bg-glass-subtle border-top border-white border-opacity-5 d-flex justify-content-between align-items-center">
-                            <span class="xsmall text-dim">Domain Logic: DETERMINISTIC (V1.0.0)</span>
-                            <button class="btn btn-sm btn-vedic py-2 px-4 xsmall fw-black">CORRECTION SUITE <i class="bi bi-magic ms-2"></i></button>
+                        <!-- Footer: Correction Suite -->
+                        <div class="p-4 bg-glass border-top border-white border-opacity-5 d-flex justify-content-between align-items-center">
+                            <div class="xsmall text-dim">Engine: <span class="text-gold">PREDICT-V2-CONFLUENCE</span></div>
+                            <button class="btn btn-vedic py-2 px-5 xsmall fw-black">VIEW REMEDIES <i class="bi bi-shield-check ms-2"></i></button>
                         </div>
                     </div>
                 </div>
