@@ -43,7 +43,7 @@ $env:PATH = "$(Join-Path $env:VIRTUAL_ENV 'Scripts');$env:PATH"
 
 # 6. Start Application
 Write-Host "------------------------------------------------" -ForegroundColor Gray
-Write-Host "  🔮 Trademind Jyotish AI Dashboard (V1.0.0)" -ForegroundColor Yellow
+Write-Host "  JYOTISH AI Dashboard (V1.0.0)" -ForegroundColor Yellow
 Write-Host "  Engine: Swiss Ephemeris (Deterministic)" -ForegroundColor Yellow
 Write-Host "------------------------------------------------" -ForegroundColor Gray
 Write-Host "Starting Backend at http://localhost:5001..." -ForegroundColor Green
