@@ -1,9 +1,6 @@
 from flask import (Blueprint, render_template, request, jsonify, session,
                    redirect, url_for, flash, Response, send_from_directory, current_app)
 from datetime import datetime, date, timedelta
-import calendar as cal_mod
-import zipfile
-import io
 import os
 import json
 import pytz
@@ -12,16 +9,14 @@ import traceback
 from .astrology.core.chart import calculate_chart_data
 from .astrology.core.calc_client import calc_client
 from .astrology.core.planets import PLANET_COLORS
-from .astrology.predictions.data import HOUSE_INTERPRETATIONS
-from .astrology.panchang import calculate_panchang
-from .astrology.dasha import calculate_vimshottari
 from .astrology.predictions.engine import generate_evidence_based_predictions
 from .astrology.predictions.daily import get_daily_forecast
 from .astrology.predictions.timeline_engines import timeline_predict_engine
 from .astrology.remedies.engine import get_personalized_remedies
-from .translations import translate
 from .astrology.store import save_chart, list_charts, get_chart, delete_chart
 from .api.external import geocode_place, get_ip_location
+
+main = Blueprint("main", __name__)
 
 def _enrich_chart_for_template(chart: dict):
     """Add legacy keys to chart dict for template compatibility."""
@@ -62,10 +57,8 @@ def _load_active_chart():
     except Exception as e:
         if "CALCULATION_UNAVAILABLE" in str(e):
              raise e
-        print(f"ERROR: Failed to load chart: {e}")
+        current_app.logger.error(f"Failed to load chart: {e}")
     return None, None
-
-main = Blueprint("main", __name__)
 
 @main.route("/")
 def index():
@@ -103,15 +96,9 @@ def kundli():
             birth_dt = datetime.strptime(f"{dob} {tob}", "%Y-%m-%d %H:%M")
             chart_obj = calculate_chart_data(birth_dt, float(lat), float(lon), tz_str, birth_time_conf=conf)
             chart = chart_obj.model_dump()
-            chart["id"] = save_chart(chart) # Persist to get ID
+            chart["id"] = save_chart(chart)
             session["active_chart_id"] = chart["id"]
             _enrich_chart_for_template(chart)
-            return render_template("kundli.html", chart=chart)
-            chart_obj = calculate_chart_data(birth_dt, float(lat), float(lon), tz_str, birth_time_conf=conf)
-            chart = chart_obj.model_dump()
-            session["active_chart_id"] = chart["id"] if "id" in chart else name
-            _enrich_chart_for_template(chart)
-            save_chart(chart)
             return redirect(url_for("main.dashboard"))
         except Exception as e:
             error = str(e)
@@ -126,23 +113,19 @@ def dashboard():
         if not chart_obj:
             flash("Please generate a chart first.", "info")
             return redirect(url_for("main.index"))
-        # Priority Dashboard Data (Phase 40)
+
         preds = generate_evidence_based_predictions(chart_obj)
         daily = get_daily_forecast(chart_obj, datetime.now())
         remedies = get_personalized_remedies(chart_obj)
 
-        # Weekly Flow Calculation (Phase 9)
-        from datetime import timedelta
         weekly_flow = []
         for i in range(7):
             day_dt = datetime.now() + timedelta(days=i)
             weekly_flow.append({"day": day_dt.strftime("%a")[0], "intensity": 40 + (i * 7) % 60})
 
-        # Outlooks (Phase 7 Fix)
         month_summary = timeline_predict_engine.get_monthly_summary(chart_obj, datetime.now().month, datetime.now().year)
         year_ahead = timeline_predict_engine.get_year_ahead(chart_obj, datetime.now().year)
 
-        # Auto-Snapshotting for Calibration (Phase 8 P0)
         from .astrology.store import save_prediction_snapshot
         for p in preds.get("predictions", []):
             try:
@@ -172,13 +155,12 @@ def predictions():
     preds = generate_evidence_based_predictions(chart_obj)
     remedies = get_personalized_remedies(chart_obj)
 
-    # Auto-Snapshotting for Calibration (Phase 8 P0)
     from .astrology.store import save_prediction_snapshot
     for p in preds.get("predictions", []):
         try:
             save_prediction_snapshot(chart["id"], p)
         except Exception as e:
-            print(f"Snapshot failed: {e}")
+            current_app.logger.error(f"Snapshot failed: {e}")
 
     yearly = timeline_predict_engine.get_year_ahead(chart_obj, date.today().year)
 
@@ -251,9 +233,6 @@ def api_geocode():
 
 @main.route("/api/v1/predict/explain/<domain>")
 def api_explain_prediction(domain):
-    """
-    Requirement 38/39/33: Deep explanation for a prediction.
-    """
     chart, chart_obj = _load_active_chart()
     if not chart_obj: return jsonify({"error": "NO_ACTIVE_CHART"}), 400
 
@@ -262,7 +241,6 @@ def api_explain_prediction(domain):
 
     if not domain_pred: return jsonify({"error": "DOMAIN_NOT_FOUND"}), 404
 
-    # Return structured AI Input/Output format (Phase 33)
     return jsonify({
         "facts": [],
         "explanation": {
@@ -270,6 +248,11 @@ def api_explain_prediction(domain):
             "practicalGuidance": domain_pred.get("practical_guidance", [])
         }
     })
+
+@main.route("/favicon.ico")
+def favicon():
+    return send_from_directory(os.path.join(current_app.root_path, 'static'),
+                               'img/icon.svg', mimetype='image/svg+xml')
 
 @main.route("/api/chat", methods=["POST"])
 def api_chat():
@@ -298,5 +281,4 @@ def transit():
 
 @main.route("/admin/quality")
 def admin_quality():
-    """Requirement 10: Admin-only dashboard."""
     return render_template("admin_quality.html")

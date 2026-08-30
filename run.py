@@ -90,4 +90,4 @@ if __name__ == "__main__":
         # Open browser after Flask is ready
         threading.Timer(1.5, open_browser).start()
 
-    app.run(host="0.0.0.0", port=port, debug=False)
+    app.run(host="0.0.0.0", port=port, debug=True)
