@@ -6,8 +6,8 @@ from ...timing.precision import timing_engine
 
 class EducationPredictionEngine:
     """
-    Hardened Education & Knowledge Engine (Phase 4).
-    Evaluates 4th house, 5th house, and Mercury/Jupiter stability.
+    Hardened Education & Knowledge Engine.
+    Evaluates 4th house (Basic Ed), 5th house (Intellect), and Mercury/Jupiter stability.
     """
 
     @staticmethod
@@ -24,17 +24,29 @@ class EducationPredictionEngine:
         if planets[l4_name].house in [1, 4, 7, 10, 5, 9]:
             promise_level = "STRONG"
             evidence.append(CorroborationEngine.create_evidence(
-                "NATAL_PROMISE", "KNOWLEDGE PROMISE: Inherent capacity for academic and intellectual growth.", 85.0
+                "NATAL_PROMISE", f"KNOWLEDGE PROMISE: High capacity for learning supported by 4th Lord {l4_name} placement.", 85.0
+            ))
+
+        # Mercury & Jupiter (Karakas)
+        merc = planets["Mercury"]
+        jup = planets["Jupiter"]
+        if merc.shadbala_score > 1.1:
+            evidence.append(CorroborationEngine.create_evidence(
+                "MODIFIERS", "INTELLECT MODIFIER: Strong Mercury grants sharp analytical and linguistic skills.", 80.0
+            ))
+        if jup.house in [1, 4, 7, 10, 5, 9]:
+            evidence.append(CorroborationEngine.create_evidence(
+                "MODIFIERS", "WISDOM MODIFIER: Beneficial Jupiter placement supports higher educational attainment.", 75.0
             ))
 
         # 2. DASHA ACTIVATION
         evidence.append(CorroborationEngine.create_evidence(
-            "DASHA_ACTIVATION", "CURRENT ACTIVATION: Intellectual and learning sectors are highlighted.", 80.0
+            "DASHA_ACTIVATION", "CURRENT ACTIVATION: Intellectual and learning sectors are highlighted in the current life-period.", 80.0
         ))
 
         # 3. TRANSIT TRIGGER
         evidence.append(CorroborationEngine.create_evidence(
-            "TRANSIT_TRIGGER", "TRANSIT TRIGGER: Supporting planetary transits favor focused study or acquisition of skills.", 70.0
+            "TRANSIT_TRIGGER", "TRANSIT TRIGGER: Supporting planetary transits favor focused study or acquisition of new skills.", 70.0
         ))
 
         # 4. TIMING

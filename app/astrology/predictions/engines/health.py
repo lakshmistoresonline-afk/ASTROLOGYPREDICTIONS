@@ -6,7 +6,7 @@ from ...timing.precision import timing_engine
 
 class HealthPredictionEngine:
     """
-    Hardened Health Engine (Phase 4).
+    Hardened Health & Vitality Engine (Phase 4).
     Evaluates Ascendant, 6th house, and Sun/Moon vitality.
     """
 
@@ -15,43 +15,63 @@ class HealthPredictionEngine:
         evidence = []
         house_lords = chart.house_lords
         planets = chart.planets
-
-        # 1. NATAL PROMISE (Lagna & 6th House)
         l1_name = house_lords[1]
         l1 = planets[l1_name]
+        l6_name = house_lords[6]
+        l6 = planets[l6_name]
 
+        # 1. NATAL PROMISE (Lagna & 6th House)
         promise_level = "MODERATE"
         if "Exalted" in l1.dignity or l1.dignity == "Own Sign":
             promise_level = "STRONG"
             evidence.append(CorroborationEngine.create_evidence(
-                "NATAL_PROMISE", "VITALITY PROMISE: Strong Lagna Lord supports physical resilience.", 90.0
+                "NATAL_PROMISE", f"VITALITY PROMISE: Strong Lagna Lord {l1_name} provides deep physical resilience.", 90.0
             ))
-
-        # 6th Lord check (Conflicts)
-        l6_name = house_lords[6]
-        if planets[l6_name].house == 1:
+        else:
             evidence.append(CorroborationEngine.create_evidence(
-                "CONFLICTS", "HEALTH PRESSURE: 6th Lord in Lagna indicates susceptibility to seasonal stress.", -30.0
+                "NATAL_PROMISE", f"PHYSICAL BASELINE: Lagna Lord {l1_name} establishes a stable vitality foundation.", 60.0
             ))
 
-        # 2. DASHA ACTIVATION
-        evidence.append(CorroborationEngine.create_evidence(
-            "DASHA_ACTIVATION", "CURRENT ACTIVATION: Focus on daily routine and physical maintenance.", 75.0
-        ))
+        # 2. STRENGTH (Shadbala)
+        if l1.shadbala_score > 1.1:
+             evidence.append(CorroborationEngine.create_evidence(
+                "MODIFIERS", "IMMUNITY MODIFIER: High Shadbala of Ascendant Lord bolsters natural recovery.", 75.0
+            ))
 
-        # 3. MODIFIERS (Sun/Moon vitality)
+        # 3. DUSTHANA DYNAMICS (Conflicts)
+        if l6.house == 1 or l1.house == 6:
+            evidence.append(CorroborationEngine.create_evidence(
+                "CONFLICTS", "HEALTH PRESSURE: Interaction between Lagna and 6th Lord suggests susceptibility to seasonal stress.", -35.0
+            ))
+
+        # 4. DASHA ACTIVATION
+        from ...dasha import calculate_vimshottari
+        moon_lon = chart.planets["Moon"].longitude
+        dasha = calculate_vimshottari(moon_lon, chart.birth_datetime)
+        antar_lord = dasha.get("current_antar", {}).get("lord")
+
+        if antar_lord == l6_name:
+             evidence.append(CorroborationEngine.create_evidence(
+                "DASHA_ACTIVATION", f"CURRENT ACTIVATION: Period of 6th Lord {antar_lord} requires disciplined routine.", 80.0
+            ))
+        else:
+             evidence.append(CorroborationEngine.create_evidence(
+                "DASHA_ACTIVATION", "STABILITY PHASE: Life-period favors maintenance and balanced physical habits.", 65.0
+            ))
+
+        # 5. MODIFIERS (Sun/Moon vitality)
         sun = planets["Sun"]
         if sun.house in [1, 10, 11]:
             evidence.append(CorroborationEngine.create_evidence(
-                "MODIFIERS", "VITALITY MODIFIER: Strong Sun placement bolsters natural immunity.", 20.0
+                "MODIFIERS", "VITALITY MODIFIER: Strong Sun placement grants natural internal immunity.", 25.0
             ))
 
-        # 4. TIMING
+        # 6. TIMING
         window = timing_engine.calculate_window(chart, ["Sun", "Moon", l1_name], [1, 5, 9])
 
         summary_template = (
-            "Health and vitality factors show {promise} underlying strength. "
-            "Current alignment is {strength} for physical maintenance with a {score}% evidence score."
+            "Health and vitality factors show {promise} underlying factors. "
+            "Current alignment is {strength} for maintenance with a {score}% evidence score."
         )
 
         # IMPORTANT: Health remains INSUFFICIENT DATA for medical claims (Req 47)

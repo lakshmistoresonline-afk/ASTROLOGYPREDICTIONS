@@ -9,6 +9,14 @@ from .engines.travel import TravelPredictionEngine
 from .engines.education import EducationPredictionEngine
 from .engines.personality import PersonalityPredictionEngine
 from .engines.property import PropertyPredictionEngine
+from .engines.business import BusinessPredictionEngine
+from .engines.children import ChildrenPredictionEngine
+from .engines.spirituality import SpiritualityPredictionEngine
+from .engines.foreign import ForeignSettlementEngine
+from .engines.family import FamilyPredictionEngine
+from .engines.vehicles import VehiclesPredictionEngine
+from .engines.legal import LegalPredictionEngine
+from .engines.fame import FamePredictionEngine
 
 from concurrent.futures import ThreadPoolExecutor
 
@@ -27,7 +35,15 @@ def generate_evidence_based_predictions(chart: CanonicalChart, selected_date: da
         "Travel": TravelPredictionEngine.get_prediction,
         "Education": EducationPredictionEngine.get_prediction,
         "Personality": PersonalityPredictionEngine.get_prediction,
-        "Property": PropertyPredictionEngine.get_prediction
+        "Property": PropertyPredictionEngine.get_prediction,
+        "Business": BusinessPredictionEngine.get_prediction,
+        "Children": ChildrenPredictionEngine.get_prediction,
+        "Spirituality": SpiritualityPredictionEngine.get_prediction,
+        "Foreign Settlement": ForeignSettlementEngine.get_prediction,
+        "Family": FamilyPredictionEngine.get_prediction,
+        "Vehicles": VehiclesPredictionEngine.get_prediction,
+        "Legal": LegalPredictionEngine.get_prediction,
+        "Fame": FamePredictionEngine.get_prediction
     }
 
     results = []
@@ -44,7 +60,15 @@ def generate_evidence_based_predictions(chart: CanonicalChart, selected_date: da
                 "Travel": "survival",
                 "Education": "essence",
                 "Personality": "essence",
-                "Property": "material"
+                "Property": "material",
+                "Business": "material",
+                "Children": "social",
+                "Spirituality": "essence",
+                "Foreign Settlement": "survival",
+                "Family": "social",
+                "Vehicles": "material",
+                "Legal": "survival",
+                "Fame": "material"
             }
             p_dict = prediction.model_dump()
             p_dict["category"] = cat_map.get(name, "essence")
@@ -54,7 +78,7 @@ def generate_evidence_based_predictions(chart: CanonicalChart, selected_date: da
             return None
 
     # Parallel synthesis for performance
-    with ThreadPoolExecutor(max_workers=5) as executor:
+    with ThreadPoolExecutor(max_workers=8) as executor:
         futures = {executor.submit(process_domain, n, f): n for n, f in domain_tasks.items()}
         for future in futures:
             res = future.result()

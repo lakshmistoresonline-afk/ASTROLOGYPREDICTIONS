@@ -23,17 +23,37 @@ class PersonalityPredictionEngine:
         if "Exalted" in l1.dignity or l1.dignity == "Own Sign":
             promise_level = "STRONG"
             evidence.append(CorroborationEngine.create_evidence(
-                "NATAL_PROMISE", f"NATAL PROMISE: Strong Lagna Lord {l1_name} indicates physical and mental vitality.", 90.0
+                "NATAL_PROMISE", f"NATAL PROMISE: Strong Lagna Lord {l1_name} indicates high physical and mental vitality.", 90.0
+            ))
+        else:
+             evidence.append(CorroborationEngine.create_evidence(
+                "NATAL_PROMISE", f"NATAL FOUNDATION: Lagna Lord {l1_name} provides a stable energetic baseline.", 50.0
             ))
 
-        # 2. MOON DISPOSITION (Mental State)
+        # 2. LAGNA CHARACTERISTICS
+        asc_rashi = chart.asc_rashi
+        r_types = ["Movable (Action-oriented)", "Fixed (Stability-focused)", "Dual (Adaptable)"]
+        r_elements = ["Fire (Inspirational)", "Earth (Practical)", "Air (Intellectual)", "Water (Emotional)"]
+
+        evidence.append(CorroborationEngine.create_evidence(
+            "MODIFIERS", f"TEMPERAMENT: {r_elements[asc_rashi % 4]} and {r_types[asc_rashi % 3]} nature defines your core approach.", 60.0
+        ))
+
+        # 3. MOON DISPOSITION (Mental State)
         moon = planets["Moon"]
+        m_nak = moon.nakshatra.name
         if moon.house in [1, 4, 7, 10, 5, 9]:
              evidence.append(CorroborationEngine.create_evidence(
-                "MODIFIERS", "MENTAL ESSENCE: Moon in a Kendra/Trikona supports emotional stability.", 70.0
+                "MODIFIERS", f"MENTAL ESSENCE: Moon in a Kendra/Trikona supports emotional stability and clarity.", 70.0
             ))
 
-        # 3. YOGAS (Gaja Kesari, etc.)
+        from ..data import NAKSHATRA_MEANINGS
+        m_nak_meaning = NAKSHATRA_MEANINGS.get(m_nak, "General lunar influence.")
+        evidence.append(CorroborationEngine.create_evidence(
+            "MODIFIERS", f"LUNAR SIGNATURE: Birth in {m_nak} Nakshatra indicates: {m_nak_meaning}", 55.0
+        ))
+
+        # 4. YOGAS (Gaja Kesari, etc.)
         for yoga in chart.yogas:
              if yoga["name"] in ["Gaja Kesari Yoga", "Pancha Mahapurusha"]:
                  evidence.append(CorroborationEngine.create_evidence(

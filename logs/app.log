@@ -207,3 +207,138 @@ werkzeug.routing.exceptions.BuildError: Could not build url for endpoint 'main.p
 2026-08-30 14:16:27,433 INFO: Jyotish OS V1.0.0 starting...
 2026-08-30 14:19:17,023 INFO: Jyotish OS V1.0.0 starting...
 2026-08-30 14:21:05,059 INFO: Jyotish OS V1.0.0 starting...
+2026-08-30 14:59:29,169 INFO: Jyotish OS V1.0.0 starting...
+2026-08-30 14:59:35,562 INFO: [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5001
+ * Running on http://192.168.1.11:5001
+2026-08-30 14:59:35,562 INFO: [33mPress CTRL+C to quit[0m
+2026-08-30 14:59:35,569 INFO:  * Restarting with stat
+2026-08-30 14:59:48,048 INFO: Jyotish OS V1.0.0 starting...
+2026-08-30 15:00:00,317 WARNING:  * Debugger is active!
+2026-08-30 15:00:00,330 INFO:  * Debugger PIN: 996-634-484
+2026-08-30 15:00:25,837 INFO: 127.0.0.1 - - [30/Aug/2026 15:00:25] "GET / HTTP/1.1" 200 -
+2026-08-30 15:00:29,506 INFO: 127.0.0.1 - - [30/Aug/2026 15:00:29] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+2026-08-30 15:00:29,592 INFO: 127.0.0.1 - - [30/Aug/2026 15:00:29] "[36mGET /static/manifest.json HTTP/1.1[0m" 304 -
+2026-08-30 15:00:31,352 INFO: 127.0.0.1 - - [30/Aug/2026 15:00:31] "GET /api/sky?lat=11.0056&lon=76.9661&tz=Asia/Kolkata HTTP/1.1" 200 -
+2026-08-30 15:00:37,392 INFO: 127.0.0.1 - - [30/Aug/2026 15:00:37] "[36mGET /static/img/icon.svg HTTP/1.1[0m" 304 -
+2026-08-30 15:01:01,534 INFO: 127.0.0.1 - - [30/Aug/2026 15:01:01] "GET /api/geocode?q=palakkad HTTP/1.1" 200 -
+2026-08-30 15:01:02,515 INFO: 127.0.0.1 - - [30/Aug/2026 15:01:02] "POST /kundli HTTP/1.1" 200 -
+2026-08-30 15:01:03,365 INFO: 127.0.0.1 - - [30/Aug/2026 15:01:03] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+2026-08-30 15:01:03,431 INFO: 127.0.0.1 - - [30/Aug/2026 15:01:03] "[36mGET /static/manifest.json HTTP/1.1[0m" 304 -
+2026-08-30 15:01:03,620 INFO: 127.0.0.1 - - [30/Aug/2026 15:01:03] "[36mGET /static/img/icon.svg HTTP/1.1[0m" 304 -
+2026-08-30 15:01:31,712 INFO: 127.0.0.1 - - [30/Aug/2026 15:01:31] "POST /kundli HTTP/1.1" 200 -
+2026-08-30 15:01:31,954 INFO: 127.0.0.1 - - [30/Aug/2026 15:01:31] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+2026-08-30 15:01:32,113 INFO: 127.0.0.1 - - [30/Aug/2026 15:01:32] "[36mGET /static/img/icon.svg HTTP/1.1[0m" 304 -
+2026-08-30 15:01:32,306 INFO: 127.0.0.1 - - [30/Aug/2026 15:01:32] "[36mGET /static/manifest.json HTTP/1.1[0m" 304 -
+2026-08-30 15:01:32,747 INFO: 127.0.0.1 - - [30/Aug/2026 15:01:32] "[36mGET /static/img/icon.svg HTTP/1.1[0m" 304 -
+2026-08-30 15:02:09,975 INFO: 127.0.0.1 - - [30/Aug/2026 15:02:09] "POST /kundli HTTP/1.1" 200 -
+2026-08-30 15:02:10,226 INFO: 127.0.0.1 - - [30/Aug/2026 15:02:10] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+2026-08-30 15:02:10,228 INFO: 127.0.0.1 - - [30/Aug/2026 15:02:10] "[36mGET /static/manifest.json HTTP/1.1[0m" 304 -
+2026-08-30 15:02:10,778 INFO: 127.0.0.1 - - [30/Aug/2026 15:02:10] "[36mGET /static/img/icon.svg HTTP/1.1[0m" 304 -
+2026-08-30 15:02:11,036 INFO: 127.0.0.1 - - [30/Aug/2026 15:02:11] "[36mGET /static/img/icon.svg HTTP/1.1[0m" 304 -
+2026-08-30 15:09:56,854 INFO: Jyotish OS V1.0.0 starting...
+2026-08-30 15:10:06,189 INFO: [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5001
+ * Running on http://192.168.1.11:5001
+2026-08-30 15:10:06,190 INFO: [33mPress CTRL+C to quit[0m
+2026-08-30 15:10:06,197 INFO:  * Restarting with stat
+2026-08-30 15:10:16,032 INFO: Jyotish OS V1.0.0 starting...
+2026-08-30 15:10:29,188 WARNING:  * Debugger is active!
+2026-08-30 15:10:29,202 INFO:  * Debugger PIN: 644-143-807
+2026-08-30 15:10:31,532 INFO: 127.0.0.1 - - [30/Aug/2026 15:10:31] "GET / HTTP/1.1" 200 -
+2026-08-30 15:10:32,332 INFO: 127.0.0.1 - - [30/Aug/2026 15:10:32] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+2026-08-30 15:10:33,275 INFO: 127.0.0.1 - - [30/Aug/2026 15:10:33] "[36mGET /static/manifest.json HTTP/1.1[0m" 304 -
+2026-08-30 15:10:34,591 INFO: 127.0.0.1 - - [30/Aug/2026 15:10:34] "[36mGET /static/img/icon.svg HTTP/1.1[0m" 304 -
+2026-08-30 15:10:35,819 INFO: 127.0.0.1 - - [30/Aug/2026 15:10:35] "GET /api/sky?lat=11.0056&lon=76.9661&tz=Asia/Kolkata HTTP/1.1" 200 -
+2026-08-30 15:10:58,137 INFO: 127.0.0.1 - - [30/Aug/2026 15:10:58] "GET /api/geocode?q=palakkad HTTP/1.1" 200 -
+2026-08-30 15:10:59,353 INFO: 127.0.0.1 - - [30/Aug/2026 15:10:59] "POST /kundli HTTP/1.1" 200 -
+2026-08-30 15:10:59,599 INFO: 127.0.0.1 - - [30/Aug/2026 15:10:59] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+2026-08-30 15:10:59,939 INFO: 127.0.0.1 - - [30/Aug/2026 15:10:59] "[36mGET /static/manifest.json HTTP/1.1[0m" 304 -
+2026-08-30 15:11:00,351 INFO: 127.0.0.1 - - [30/Aug/2026 15:11:00] "[36mGET /static/img/icon.svg HTTP/1.1[0m" 304 -
+2026-08-30 16:09:41,929 INFO: Jyotish OS V1.0.0 starting...
+2026-08-30 16:10:00,583 INFO: [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5001
+ * Running on http://192.168.1.11:5001
+2026-08-30 16:10:00,584 INFO: [33mPress CTRL+C to quit[0m
+2026-08-30 16:10:00,591 INFO:  * Restarting with stat
+2026-08-30 16:10:11,751 INFO: Jyotish OS V1.0.0 starting...
+2026-08-30 16:10:22,732 WARNING:  * Debugger is active!
+2026-08-30 16:10:22,751 INFO:  * Debugger PIN: 644-143-807
+2026-08-30 16:10:24,595 INFO: 127.0.0.1 - - [30/Aug/2026 16:10:24] "GET / HTTP/1.1" 200 -
+2026-08-30 16:10:25,723 INFO: 127.0.0.1 - - [30/Aug/2026 16:10:25] "[36mGET /static/manifest.json HTTP/1.1[0m" 304 -
+2026-08-30 16:10:25,765 INFO: 127.0.0.1 - - [30/Aug/2026 16:10:25] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+2026-08-30 16:10:27,402 INFO: 127.0.0.1 - - [30/Aug/2026 16:10:27] "[36mGET /static/img/icon.svg HTTP/1.1[0m" 304 -
+2026-08-30 16:10:27,711 INFO: 127.0.0.1 - - [30/Aug/2026 16:10:27] "GET /api/sky?lat=8.43128&lon=77.0128&tz=Asia/Kolkata HTTP/1.1" 200 -
+2026-08-30 16:11:03,692 INFO: 127.0.0.1 - - [30/Aug/2026 16:11:03] "GET /api/geocode?q=palakkad HTTP/1.1" 200 -
+2026-08-30 16:11:04,974 INFO: 127.0.0.1 - - [30/Aug/2026 16:11:04] "[32mPOST /kundli HTTP/1.1[0m" 302 -
+2026-08-30 16:11:30,099 INFO: 127.0.0.1 - - [30/Aug/2026 16:11:30] "[33mGET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1[0m" 404 -
+2026-08-30 16:11:30,686 INFO: 127.0.0.1 - - [30/Aug/2026 16:11:30] "[36mGET /static/manifest.json HTTP/1.1[0m" 304 -
+2026-08-30 16:11:30,695 INFO: 127.0.0.1 - - [30/Aug/2026 16:11:30] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+2026-08-30 16:11:40,664 INFO: 127.0.0.1 - - [30/Aug/2026 16:11:40] "GET /dashboard HTTP/1.1" 200 -
+2026-08-30 16:11:41,221 INFO: 127.0.0.1 - - [30/Aug/2026 16:11:41] "[36mGET /static/manifest.json HTTP/1.1[0m" 304 -
+2026-08-30 16:11:41,495 INFO: 127.0.0.1 - - [30/Aug/2026 16:11:41] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+2026-08-30 16:11:41,863 INFO: 127.0.0.1 - - [30/Aug/2026 16:11:41] "[33mGET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1[0m" 404 -
+2026-08-30 16:11:42,704 INFO: 127.0.0.1 - - [30/Aug/2026 16:11:42] "[36mGET /static/img/icon.svg HTTP/1.1[0m" 304 -
+2026-08-30 16:12:31,670 INFO: 127.0.0.1 - - [30/Aug/2026 16:12:31] "GET /predictions HTTP/1.1" 200 -
+2026-08-30 16:12:31,806 INFO: 127.0.0.1 - - [30/Aug/2026 16:12:31] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+2026-08-30 16:12:32,308 INFO: 127.0.0.1 - - [30/Aug/2026 16:12:32] "[36mGET /static/manifest.json HTTP/1.1[0m" 304 -
+2026-08-30 16:12:32,406 INFO: 127.0.0.1 - - [30/Aug/2026 16:12:32] "[36mGET /static/img/icon.svg HTTP/1.1[0m" 304 -
+2026-08-30 16:18:30,441 INFO:  * Detected change in 'D:\\ASTROLOGYPREDICTIONS\\app\\astrology\\predictions\\engines\\children.py', reloading
+2026-08-30 16:18:31,400 INFO:  * Restarting with stat
+2026-08-30 16:18:36,607 INFO: Jyotish OS V1.0.0 starting...
+2026-08-30 16:18:49,426 WARNING:  * Debugger is active!
+2026-08-30 16:18:49,445 INFO:  * Debugger PIN: 644-143-807
+2026-08-30 16:20:02,808 INFO:  * Detected change in 'D:\\ASTROLOGYPREDICTIONS\\app\\astrology\\predictions\\engine.py', reloading
+2026-08-30 16:20:03,779 INFO:  * Restarting with stat
+2026-08-30 16:20:09,001 INFO: Jyotish OS V1.0.0 starting...
+2026-08-30 16:20:26,095 WARNING:  * Debugger is active!
+2026-08-30 16:20:26,113 INFO:  * Debugger PIN: 644-143-807
+2026-08-30 16:20:36,992 INFO:  * Detected change in 'D:\\ASTROLOGYPREDICTIONS\\app\\astrology\\predictions\\engines\\career.py', reloading
+2026-08-30 16:20:38,122 INFO:  * Restarting with stat
+2026-08-30 16:20:47,178 INFO: Jyotish OS V1.0.0 starting...
+2026-08-30 16:20:57,703 WARNING:  * Debugger is active!
+2026-08-30 16:20:57,720 INFO:  * Debugger PIN: 644-143-807
+2026-08-30 16:21:08,023 INFO:  * Detected change in 'D:\\ASTROLOGYPREDICTIONS\\app\\astrology\\predictions\\engines\\finance.py', reloading
+2026-08-30 16:21:09,226 INFO:  * Restarting with stat
+2026-08-30 16:21:18,859 INFO: Jyotish OS V1.0.0 starting...
+2026-08-30 16:21:29,614 WARNING:  * Debugger is active!
+2026-08-30 16:21:29,632 INFO:  * Debugger PIN: 644-143-807
+2026-08-30 16:23:32,582 INFO:  * Detected change in 'D:\\ASTROLOGYPREDICTIONS\\app\\astrology\\predictions\\engines\\family.py', reloading
+2026-08-30 16:23:39,841 INFO:  * Restarting with stat
+2026-08-30 16:23:57,077 INFO: Jyotish OS V1.0.0 starting...
+2026-08-30 16:24:10,994 WARNING:  * Debugger is active!
+2026-08-30 16:24:11,009 INFO:  * Debugger PIN: 644-143-807
+2026-08-30 16:25:11,498 INFO:  * Detected change in 'D:\\ASTROLOGYPREDICTIONS\\app\\astrology\\predictions\\engine.py', reloading
+2026-08-30 16:25:13,177 INFO:  * Restarting with stat
+2026-08-30 16:25:20,067 INFO: Jyotish OS V1.0.0 starting...
+2026-08-30 16:25:36,023 WARNING:  * Debugger is active!
+2026-08-30 16:25:36,120 INFO:  * Debugger PIN: 644-143-807
+2026-08-30 16:25:41,958 INFO:  * Detected change in 'D:\\ASTROLOGYPREDICTIONS\\app\\astrology\\predictions\\engines\\personality.py', reloading
+2026-08-30 16:25:48,298 INFO:  * Restarting with stat
+2026-08-30 16:25:55,539 INFO: Jyotish OS V1.0.0 starting...
+2026-08-30 16:26:11,738 WARNING:  * Debugger is active!
+2026-08-30 16:26:11,797 INFO:  * Debugger PIN: 644-143-807
+2026-08-30 16:26:18,878 INFO:  * Detected change in 'D:\\ASTROLOGYPREDICTIONS\\app\\astrology\\predictions\\engines\\fame.py', reloading
+2026-08-30 16:26:19,711 INFO:  * Restarting with stat
+2026-08-30 16:26:29,083 INFO: Jyotish OS V1.0.0 starting...
+2026-08-30 16:26:56,561 WARNING:  * Debugger is active!
+2026-08-30 16:26:56,579 INFO:  * Debugger PIN: 644-143-807
+2026-08-30 16:27:39,204 INFO:  * Detected change in 'D:\\ASTROLOGYPREDICTIONS\\app\\astrology\\predictions\\engines\\health.py', reloading
+2026-08-30 16:27:40,707 INFO:  * Restarting with stat
+2026-08-30 16:27:51,181 INFO: Jyotish OS V1.0.0 starting...
+2026-08-30 16:28:01,947 WARNING:  * Debugger is active!
+2026-08-30 16:28:01,964 INFO:  * Debugger PIN: 644-143-807
+2026-08-30 16:28:39,011 INFO:  * Detected change in 'D:\\ASTROLOGYPREDICTIONS\\app\\astrology\\predictions\\engine.py', reloading
+2026-08-30 16:28:40,165 INFO:  * Restarting with stat
+2026-08-30 16:28:55,102 INFO: Jyotish OS V1.0.0 starting...
+2026-08-30 16:29:06,403 WARNING:  * Debugger is active!
+2026-08-30 16:29:06,421 INFO:  * Debugger PIN: 644-143-807
+2026-08-30 16:31:12,221 INFO:  * Detected change in 'D:\\ASTROLOGYPREDICTIONS\\app\\astrology\\predictions\\engines\\personality.py', reloading
+2026-08-30 16:31:14,084 INFO:  * Restarting with stat
+2026-08-30 16:31:21,454 INFO: Jyotish OS V1.0.0 starting...
+2026-08-30 16:31:45,999 WARNING:  * Debugger is active!
+2026-08-30 16:31:46,023 INFO:  * Debugger PIN: 644-143-807
+2026-08-30 16:32:20,700 INFO:  * Detected change in 'D:\\ASTROLOGYPREDICTIONS\\app\\astrology\\predictions\\engines\\education.py', reloading
