@@ -54,6 +54,9 @@
             </a>
 
             <div class="nav-group-title">TOOLS & GUIDANCE</div>
+            <a href="{{ url_for('main.history') }}" class="nav-item-v2 {% if request.endpoint == 'main.history' %}active{% endif %}">
+                <i class="bi bi-clock-history"></i> <span>Temporal Vault</span>
+            </a>
             <a href="{{ url_for('main.transit') }}" class="nav-item-v2 {% if request.endpoint == 'main.transit' %}active{% endif %}">
                 <i class="bi bi-clock-history"></i> <span>Transit Live</span>
             </a>
@@ -66,6 +69,13 @@
         </nav>
 
         <div class="p-4 mt-auto border-top border-white border-opacity-5">
+            <div class="d-flex align-items-center justify-content-between mb-3">
+                <span class="xxsmall text-gold fw-black tracking-widest uppercase opacity-40">Expert Mode</span>
+                <div class="form-check form-switch p-0 m-0">
+                    <input class="form-check-input ms-0" type="checkbox" role="switch" id="expertToggle"
+                           {% if session.get('expert_mode') %}checked{% endif %} onchange="toggleExpertMode(this)">
+                </div>
+            </div>
             <div class="d-flex align-items-center justify-content-between">
                 <span class="xsmall text-dim">Night Mode</span>
                 <button class="btn btn-sm p-0 text-gold" onclick="toggleTheme()">
@@ -138,6 +148,14 @@ function toggleTheme() {
 }
 const savedTheme = localStorage.getItem("theme") || "dark";
 document.documentElement.setAttribute("data-bs-theme", savedTheme);
+
+function toggleExpertMode(el) {
+  fetch("/api/v1/user/settings", {
+    method: "POST",
+    headers: {"Content-Type": "application/json"},
+    body: JSON.stringify({expert_mode: el.checked})
+  }).then(() => window.location.reload());
+}
 </script>
 
 <!-- AstroChat Floating Interface -->

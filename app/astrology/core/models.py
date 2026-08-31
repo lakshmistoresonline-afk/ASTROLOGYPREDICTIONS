@@ -81,13 +81,14 @@ class CorroborationEvidence(BaseModel):
 class DomainPrediction(BaseModel):
     domain: str
     headline: str = ""
-    score: float
+    score: float # Confluence Score
+    quality_score: float = 0.0 # V3 Quality Metric
     confidence: str # VERY STRONG, STRONG, etc.
     prediction_strength: str
     summary: str
     manifestations: List[str] = [] # How it appears in life
-    supporting_signals: List[str] = []
-    conflicting_signals: List[str] = []
+    supporting_factors: List[str] = []
+    contradicting_factors: List[str] = []
     validation_status: str = "PRELIMINARY"
 
     # IMMUTABLE SNAPSHOT (V2.0.0)

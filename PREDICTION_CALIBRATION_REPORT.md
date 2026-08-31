@@ -1,24 +1,20 @@
-# PREDICTION CALIBRATION REPORT
+# PREDICTION CALIBRATION REPORT (V3)
+Generated: 2026-08-31
 
-## 1. OBJECTIVE
-To determine if confidence labels (VERY STRONG, STRONG, MODERATE) correlate with actual event match rates.
+## 1. DATASET OVERVIEW
+- **Total Snapshots**: 32
+- **Available Outcomes**: 0
+- **Pending Validation**: 32
 
-## 2. CALIBRATION DATA
+## 2. EMPIRICAL ACCURACY
 
-| Label | Predicted | Matched | Match Rate | Status |
-| :--- | :--- | :--- | :--- | :--- |
-| **VERY STRONG** | 1 | 1 | 100% | Validated (Small n) |
-| **STRONG** | 2 | 2 | 100% | Validated (Small n) |
-| **MODERATE** | 1 | 1 | 100% | Validated (Small n) |
-| **MIXED** | 0 | 0 | 0% | Not Tested |
-| **WEAK** | 0 | 0 | 0% | Not Tested |
+> [!CAUTION]
+> EMPIRICAL VALIDATION INSUFFICIENT: Dataset size < 10 cases. Precision metrics are not yet statistically significant.
 
-## 3. EMPIRICAL BEHAVIOR
-- **Observation**: High-confidence labels (VERY STRONG) in the development set matched exactly (±0d). Lower confidence (MODERATE) matched in a broader window (±90d).
-- **Correlation**: Positive correlation detected between Evidence Strength and Timing Precision.
-
-## 4. CALIBRATION STATUS
-**PRELIMINARY CALIBRATED.** 
-The hierarchical weighting model correctly distinguishes between high-certainty dasha-transit intersections and lower-certainty natal-only indications.
-
-**Lead Architect Signature**: [Jyotish AI OS]
+## 3. CONFIDENCE CALIBRATION
+| Confidence Label | Count | Match Rate |
+| :--- | :---: | :---: |
+| VERY STRONG | 0 | N/A |
+| STRONG | 0 | N/A |
+| MODERATE | 0 | N/A |
+| WEAK | 0 | N/A |

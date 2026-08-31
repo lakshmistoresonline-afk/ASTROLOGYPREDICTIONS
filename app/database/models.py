@@ -51,6 +51,8 @@ class PredictionOutcome(db.Model):
     domain = db.Column(db.String(50), nullable=False)
     prediction_strength = db.Column(db.String(20))
     engine_confidence = db.Column(db.String(20))
+    confluence_score = db.Column(db.Float) # V3 Calibration
+    quality_score = db.Column(db.Float) # V3 Metric
     prediction_text = db.Column(db.Text, nullable=False)
 
     # Timing Snapshot

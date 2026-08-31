@@ -65,12 +65,12 @@
                         <h4 class="font-premium text-white mb-2">{{ pred.domain }}</h4>
                         <div class="d-flex align-items-center gap-3">
                             <span class="badge-v2 badge-strong">{{ pred.prediction_strength }}</span>
-                            <span class="xxsmall text-dim">CONFLUENCE: {{ pred.score|int }}%</span>
+                            <span class="xxsmall text-gold fw-black tracking-widest uppercase">Confluence Match: {{ pred.score|int }}%</span>
                         </div>
                     </div>
                     <div class="text-end">
-                        <div class="xxsmall text-dim fw-bold tracking-widest mb-1 uppercase">Phase</div>
-                        <div class="xsmall fw-black text-gold">ACTIVE PEAK</div>
+                        <div class="xxsmall text-dim fw-bold tracking-widest mb-1 uppercase">Quality</div>
+                        <div class="xsmall fw-black text-white">{{ pred.quality_score|int }}%</div>
                     </div>
                 </div>
 

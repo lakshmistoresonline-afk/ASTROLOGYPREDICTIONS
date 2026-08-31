@@ -104,11 +104,36 @@
                                         </ul>
                                     </div>
                                 </div>
+
+                                {% if session.get('expert_mode') %}
+                                <div class="mt-5 p-4 rounded-4 bg-gold-glass border border-gold border-opacity-10">
+                                    <h6 class="xxsmall text-gold fw-black mb-3 uppercase tracking-widest">Expert Metrics</h6>
+                                    <div class="row g-4">
+                                        <div class="col-6 col-md-3">
+                                            <div class="xxsmall text-dim mb-1">Quality Score</div>
+                                            <div class="small fw-bold text-white">{{ domain.quality_score }}%</div>
+                                        </div>
+                                        <div class="col-6 col-md-3">
+                                            <div class="xxsmall text-dim mb-1">Nodes Count</div>
+                                            <div class="small fw-bold text-white">{{ domain.evidence_chain|length }}</div>
+                                        </div>
+                                        <div class="col-6 col-md-3">
+                                            <div class="xxsmall text-dim mb-1">Validation</div>
+                                            <div class="small fw-bold text-white">{{ domain.validation_status }}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endif %}
                             </div>
 
                             <!-- Right: Hierarchical Evidence -->
                             <div class="col-lg-4 p-4 p-md-5 bg-black bg-opacity-20">
-                                <h6 class="nav-group-title mt-0">EVIDENCE CONFLUENCE</h6>
+                                <h6 class="nav-group-title mt-0 d-flex justify-content-between">
+                                    <span>EVIDENCE CONFLUENCE</span>
+                                    {% if session.get('expert_mode') %}
+                                    <span class="badge bg-gold text-dark xxsmall">EXPERT</span>
+                                    {% endif %}
+                                </h6>
                                 <div class="d-flex flex-column gap-3">
                                     {% for ev in domain.evidence_chain %}
                                     <div class="evidence-node">
@@ -119,9 +144,10 @@
                                             </span>
                                         </div>
                                         <p class="xxsmall text-white opacity-70 mb-0">{{ ev.description }}</p>
-                                        {% if ev.rationale %}
-                                        <div class="mt-2 pt-2 border-top border-white border-opacity-5 xxsmall text-dim italic">
-                                            Logic: {{ ev.rationale }}
+
+                                        {% if session.get('expert_mode') and ev.rationale %}
+                                        <div class="mt-2 pt-2 border-top border-white border-opacity-5 xxsmall text-gold opacity-50 italic">
+                                            Astrological Rationale: {{ ev.rationale }}
                                         </div>
                                         {% endif %}
                                     </div>

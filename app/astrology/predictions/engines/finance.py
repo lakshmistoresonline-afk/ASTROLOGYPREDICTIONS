@@ -28,14 +28,14 @@ class FinancePredictionEngine:
             evidence.append(CorroborationEngine.create_evidence(
                 "NATAL_PROMISE",
                 f"WEALTH PROMISE: Inherent capacity for accumulation supported by 2nd Lord {l2_name} placement.",
-                85.0
+                85.0, rationale=f"{l2_name} is favorably placed in house {l2.house}."
             ))
 
         if l11.house in [1, 4, 7, 10, 2, 11, 5, 9]:
              evidence.append(CorroborationEngine.create_evidence(
                 "NATAL_PROMISE",
                 f"GAINS PROMISE: High revenue potential indicated by 11th Lord {l11_name} strength.",
-                80.0
+                80.0, rationale=f"{l11_name} is in house {l11.house}."
             ))
 
         # 2. CONTRADICTIONS (Malefic Aspects to Wealth Houses)

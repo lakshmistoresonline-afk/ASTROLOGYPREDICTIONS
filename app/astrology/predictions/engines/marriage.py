@@ -27,14 +27,14 @@ class MarriagePredictionEngine:
             evidence.append(CorroborationEngine.create_evidence(
                 "NATAL_PROMISE",
                 f"RELATIONSHIP PROMISE: Beneficial 7th Lord {l7_name} placement indicates partnership stability.",
-                90.0
+                90.0, rationale=f"{l7_name} is in house {l7.house}."
             ))
         elif l7.house in [6, 8, 12]:
             promise_level = "CONDITIONAL"
             evidence.append(CorroborationEngine.create_evidence(
                 "CONFLICTS",
                 f"RELATIONSHIP PRESSURE: 7th Lord {l7_name} in Dusthana suggests karmic complexity in partnerships.",
-                -40.0
+                -40.0, rationale=f"{l7_name} in challenging house {l7.house}."
             ))
 
         # 2. KARAKA STRENGTH (Venus/Jupiter)

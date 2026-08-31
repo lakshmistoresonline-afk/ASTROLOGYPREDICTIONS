@@ -82,7 +82,7 @@ class CorroborationEngine:
 
         # 5. Extract Lists
         supporting = [e.description for e in evidence if e.strength_score > 0]
-        conflicting = [e.description for e in evidence if e.strength_score < 0]
+        contradicting = [e.description for e in evidence if e.strength_score < 0]
 
         from .data import DOMAIN_STATUS
         validation = DOMAIN_STATUS.get(domain, "UNDER REVIEW")
@@ -90,17 +90,25 @@ class CorroborationEngine:
         # 6. Build Timing
         tw = timing_window or {"phase": "SCANNING", "description": "Analyzing triggers..."}
 
+        # 7. Quality Score (V3 Calibration)
+        # Factors: Evidence density + Confluence + Lack of contradictions
+        density_bonus = min(0.2, len(evidence) * 0.05)
+        friction_penalty = abs(total_friction)
+        q_score = (composite_score * 0.5) + density_bonus - (friction_penalty * 0.2)
+        q_score = round(max(0, min(1, q_score)) * 100, 2)
+
         return DomainPrediction(
             domain=domain,
             headline=f"{strength}: {domain} Trends",
             score=round(composite_score * 100, 2),
+            quality_score=q_score,
             confidence=confidence,
             prediction_strength=strength,
             validation_status=validation,
             summary=summary_template.format(score=int(composite_score*100), strength=strength, promise=promise_level),
             evidence_chain=evidence,
-            supporting_signals=supporting,
-            conflicting_signals=conflicting,
+            supporting_factors=supporting,
+            contradicting_factors=contradicting,
             timing_window=tw,
             practical_actions=["Evaluate current planetary peak before major shifts."]
         )
