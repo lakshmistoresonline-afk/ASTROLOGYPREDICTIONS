@@ -15,14 +15,14 @@ class CorroborationEngine:
     """
 
     WEIGHTS = {
-        "NATAL_PROMISE": 0.25, # Inherent capacity
-        "DASHA_ACTIVATION": 0.15, # Timing - Life period context
-        "TRANSIT_TRIGGER": 0.40, # Timing - Immediate trigger
+        "NATAL_PROMISE": 0.30, # Inherent capacity
+        "DASHA_ACTIVATION": 0.25, # Timing - Life period context
+        "TRANSIT_TRIGGER": 0.20, # Timing - Immediate trigger (Reduced for V3.8)
         "DIVISIONAL_CONFIRM": 0.15, # Soul/Action confirmation
         "YOGA_SUPPORT": 0.05, # Special combinations
         "ASPECT_SUPPORT": 0.05, # Influences
         "PLANETARY_STRENGTH": 0.05, # Shadbala
-        "CONFLICTS": -0.60 # Limiting factors (Contradiction)
+        "CONFLICTS": -0.50 # Limiting factors (Contradiction)
     }
 
     @staticmethod
@@ -31,8 +31,9 @@ class CorroborationEngine:
                         house: int = None, rationale: str = None) -> CorroborationEvidence:
 
         weight = CorroborationEngine.WEIGHTS.get(level, 0.0)
-        # Score is 0-100, normalize to weighted impact
-        weighted_score = (score / 100.0) * weight
+        # Score is 0-100+, cap at 100 for normalization (V3.8 Hardening)
+        effective_score = min(100.0, score)
+        weighted_score = (effective_score / 100.0) * weight
 
         return CorroborationEvidence(
             source=level,
@@ -48,19 +49,28 @@ class CorroborationEngine:
     def synthesize(domain: str, promise_level: str, evidence: List[CorroborationEvidence],
                     summary_template: str, timing_window: Dict[str, Any] = None) -> DomainPrediction:
 
-        # 1. Group evidence by source to prevent double-counting (V3.7 Hardening)
+        # 1. Group evidence by source and anchor (Planet/House) (V3.8)
         source_contributions = {}
+        unique_anchors = set()
+
         for e in evidence:
             if e.source not in source_contributions:
                 source_contributions[e.source] = []
             source_contributions[e.source].append(e.strength_score)
 
+            # Anchor is Planet or House involved
+            anchor = e.planet_involved or f"H{e.house_involved}" if e.house_involved else e.source
+            if e.strength_score > 0:
+                unique_anchors.add(anchor)
+
         # 2. Calculate Confluence (Positive factors)
         # Take the maximum contribution for each source type to prevent "Node Inflation"
         total_potential = 0.0
+        unique_confirmation_layers = 0
         for source, scores in source_contributions.items():
             if any(s > 0 for s in scores):
                 total_potential += max(s for s in scores)
+                unique_confirmation_layers += 1
 
         # 3. Calculate Contradiction (Negative factors)
         total_friction = 0.0
@@ -71,38 +81,44 @@ class CorroborationEngine:
         # 4. Final Composite Score
         composite_score = total_potential + total_friction
 
-        # 4. Evidence Diversity Bonus (V3.7)
-        # Reward convergence of independent layers
+        # 5. Evidence Diversity Bonus (V3.8)
+        # Reward convergence of multiple independent layers
         sources = {e.source for e in evidence if e.strength_score > 0}
         diversity_bonus = 0.0
-        if "NATAL_PROMISE" in sources and "DASHA_ACTIVATION" in sources and "TRANSIT_TRIGGER" in sources:
-            diversity_bonus = 0.05
+        # If we have Natal + Dasha + (Transit or Varga), add bonus
+        if "NATAL_PROMISE" in sources and "DASHA_ACTIVATION" in sources:
+            if "TRANSIT_TRIGGER" in sources or "DIVISIONAL_CONFIRM" in sources:
+                diversity_bonus = 0.08
 
         composite_score += diversity_bonus
 
-        # 5. State Determination Model (V3.7 Hardened)
+        # 6. State Determination Model (V3.8 Hardened)
         tw = timing_window or {"phase": "SCANNING", "description": "Analyzing triggers..."}
         phase = tw.get("phase")
 
         is_peak = phase == "PEAK_MANIFESTATION"
         is_active = phase in ["NEAR_TERM_ACTIVE", "PEAK_ACTIVE", "PEAK_MANIFESTATION"]
-        is_watch = phase == "BUILD_UP" or (is_active and composite_score < 0.48)
 
-        # Quality Gate (V3.7 Hardened)
-        # Factors: Evidence density + Confluence + Lack of contradictions
-        density_bonus = min(0.2, len(evidence) * 0.04)
-        friction_penalty = abs(total_friction)
-        q_score = (composite_score * 0.4) + density_bonus - (friction_penalty * 0.8)
+        # 7. Quality Metric (V3.8)
+        # Factors: Evidence density + Independent Anchors + Confluence + Lack of contradictions
+        density_bonus = min(0.2, len(evidence) * 0.03)
+        anchor_diversity_bonus = min(0.2, len(unique_anchors) * 0.04)
+        friction_penalty = abs(total_friction) * 1.5 # Stricter for Precision recovery
+
+        q_score = (composite_score * 0.3) + density_bonus + anchor_diversity_bonus - friction_penalty
         q_score = round(max(0, min(1, q_score)) * 100, 2)
 
-        # Scoring Gates (V3.7 Hardened)
-        if composite_score >= 0.65 and is_peak and q_score >= 50:
+        # 8. Scoring Gates (V3.8 Precision Recovery)
+        # PEAK requires high score, peak timing, and high diversity
+        if composite_score >= 0.65 and is_peak and q_score >= 52 and len(unique_anchors) >= 3:
             strength = "PEAK"
             confidence = "EXTREME"
-        elif composite_score >= 0.54 and is_active and q_score >= 42:
+        # ACTIVE requires independent layers convergence
+        elif composite_score >= 0.48 and is_active and q_score >= 40 and unique_confirmation_layers >= 2:
             strength = "ACTIVE"
             confidence = "HIGH"
-        elif composite_score >= 0.38 or (composite_score >= 0.28 and is_watch):
+        # WATCH is more inclusive
+        elif composite_score >= 0.38 or (composite_score >= 0.28 and is_active):
             strength = "WATCH"
             confidence = "MEDIUM"
         elif composite_score > 0:
@@ -113,7 +129,7 @@ class CorroborationEngine:
             confidence = "SCANNING"
 
         # Special Case: Contradiction override
-        if total_friction <= -0.25:
+        if total_friction <= -0.30:
              strength = "MIXED"
              confidence = "VARYING"
 

@@ -598,5 +598,125 @@
                 "type": "STABILITY"
             }
         ]
+    },
+    {
+        "name": "Tom Hanks",
+        "dob": "1956-07-09",
+        "tob": "11:17",
+        "lat": 37.80,
+        "lon": -122.27,
+        "tz": "America/Los_Angeles",
+        "events": [
+            {
+                "date": "1994-03-21",
+                "domain": "Fame & Reputation",
+                "description": "First Oscar for Philadelphia",
+                "status": "OCCURRED",
+                "type": "AWARD"
+            },
+            {
+                "date": "1975-01-01",
+                "domain": "Fame & Reputation",
+                "description": "Student years - stable",
+                "status": "DID_NOT_OCCUR",
+                "type": "STABILITY"
+            }
+        ]
+    },
+    {
+        "name": "Stephen King",
+        "dob": "1947-09-21",
+        "tob": "01:30",
+        "lat": 43.66,
+        "lon": -70.25,
+        "tz": "America/New_York",
+        "events": [
+            {
+                "date": "1974-04-05",
+                "domain": "Finance & Wealth",
+                "description": "Carrie published",
+                "status": "OCCURRED",
+                "type": "BREAKTHROUGH"
+            },
+            {
+                "date": "1960-01-01",
+                "domain": "Finance & Wealth",
+                "description": "Childhood - stable",
+                "status": "DID_NOT_OCCUR",
+                "type": "STABILITY"
+            }
+        ]
+    },
+    {
+        "name": "Indira Gandhi",
+        "dob": "1917-11-19",
+        "tob": "23:11",
+        "lat": 25.45,
+        "lon": 81.85,
+        "tz": "Asia/Kolkata",
+        "events": [
+            {
+                "date": "1966-01-24",
+                "domain": "Career & Authority",
+                "description": "Inaugurated as Prime Minister",
+                "status": "OCCURRED",
+                "type": "BREAKTHROUGH"
+            },
+            {
+                "date": "1940-01-01",
+                "domain": "Career & Authority",
+                "description": "Stable years - no PM event",
+                "status": "DID_NOT_OCCUR",
+                "type": "STABILITY"
+            }
+        ]
+    },
+    {
+        "name": "Srinivasa Ramanujan",
+        "dob": "1887-12-22",
+        "tob": "18:20",
+        "lat": 11.34,
+        "lon": 77.71,
+        "tz": "Asia/Kolkata",
+        "events": [
+            {
+                "date": "1913-01-16",
+                "domain": "Education & Knowledge",
+                "description": "Letter to Hardy",
+                "status": "OCCURRED",
+                "type": "BREAKTHROUGH"
+            },
+            {
+                "date": "1900-01-01",
+                "domain": "Education & Knowledge",
+                "description": "Student years - stable",
+                "status": "DID_NOT_OCCUR",
+                "type": "STABILITY"
+            }
+        ]
+    },
+    {
+        "name": "Amitabh Bachchan",
+        "dob": "1942-10-11",
+        "tob": "16:00",
+        "lat": 25.45,
+        "lon": 81.85,
+        "tz": "Asia/Kolkata",
+        "events": [
+            {
+                "date": "1973-05-11",
+                "domain": "Fame & Reputation",
+                "description": "Zanjeer released - Angry Young Man",
+                "status": "OCCURRED",
+                "type": "BREAKTHROUGH"
+            },
+            {
+                "date": "1960-01-01",
+                "domain": "Fame & Reputation",
+                "description": "Student phase - stable",
+                "status": "DID_NOT_OCCUR",
+                "type": "STABILITY"
+            }
+        ]
     }
 ]
