@@ -118,5 +118,485 @@
                 "type": "STABILITY"
             }
         ]
+    },
+    {
+        "name": "Richard Branson",
+        "dob": "1950-07-18",
+        "tob": "07:00",
+        "lat": 51.5074,
+        "lon": -0.1278,
+        "tz": "Europe/London",
+        "events": [
+            {
+                "date": "1972-01-01",
+                "domain": "Business & Enterprise",
+                "description": "Virgin Records Founded",
+                "status": "OCCURRED",
+                "type": "FOUNDING"
+            },
+            {
+                "date": "1960-01-01",
+                "domain": "Business & Enterprise",
+                "description": "Childhood - stable",
+                "status": "DID_NOT_OCCUR",
+                "type": "STABILITY"
+            }
+        ]
+    },
+    {
+        "name": "Warren Buffett",
+        "dob": "1930-08-30",
+        "tob": "15:00",
+        "lat": 41.2565,
+        "lon": -95.9345,
+        "tz": "America/Chicago",
+        "events": [
+            {
+                "date": "1962-01-01",
+                "domain": "Finance & Wealth",
+                "description": "Became a millionaire",
+                "status": "OCCURRED",
+                "type": "WEALTH_EVENT"
+            },
+            {
+                "date": "1940-01-01",
+                "domain": "Finance & Wealth",
+                "description": "Childhood - stable",
+                "status": "DID_NOT_OCCUR",
+                "type": "STABILITY"
+            }
+        ]
+    },
+    {
+        "name": "Oprah Winfrey",
+        "dob": "1954-01-29",
+        "tob": "04:30",
+        "lat": 31.4504,
+        "lon": -88.9028,
+        "tz": "America/Chicago",
+        "events": [
+            {
+                "date": "1986-09-08",
+                "domain": "Fame & Reputation",
+                "description": "The Oprah Winfrey Show launches",
+                "status": "OCCURRED",
+                "type": "BREAKTHROUGH"
+            },
+            {
+                "date": "1970-01-01",
+                "domain": "Fame & Reputation",
+                "description": "Youth - stable",
+                "status": "DID_NOT_OCCUR",
+                "type": "STABILITY"
+            }
+        ]
+    },
+    {
+        "name": "J.K. Rowling",
+        "dob": "1965-07-31",
+        "tob": "21:10",
+        "lat": 51.5428,
+        "lon": -2.5972,
+        "tz": "Europe/London",
+        "events": [
+            {
+                "date": "1997-06-26",
+                "domain": "Finance & Wealth",
+                "description": "Harry Potter first published",
+                "status": "OCCURRED",
+                "type": "BREAKTHROUGH"
+            },
+            {
+                "date": "1985-01-01",
+                "domain": "Finance & Wealth",
+                "description": "Student years - stable",
+                "status": "DID_NOT_OCCUR",
+                "type": "STABILITY"
+            }
+        ]
+    },
+    {
+        "name": "Michael Jordan",
+        "dob": "1963-02-17",
+        "tob": "13:40",
+        "lat": 40.6782,
+        "lon": -73.9442,
+        "tz": "America/New_York",
+        "events": [
+            {
+                "date": "1984-06-19",
+                "domain": "Career & Authority",
+                "description": "NBA Draft - Chicago Bulls",
+                "status": "OCCURRED",
+                "type": "BREAKTHROUGH"
+            },
+            {
+                "date": "1975-01-01",
+                "domain": "Career & Authority",
+                "description": "Youth - stable",
+                "status": "DID_NOT_OCCUR",
+                "type": "STABILITY"
+            }
+        ]
+    },
+    {
+        "name": "Nelson Mandela",
+        "dob": "1918-07-18",
+        "tob": "14:54",
+        "lat": -28.1,
+        "lon": 28.3,
+        "tz": "Africa/Johannesburg",
+        "events": [
+            {
+                "date": "1994-05-10",
+                "domain": "Fame & Reputation",
+                "description": "Inaugurated as President",
+                "status": "OCCURRED",
+                "type": "BREAKTHROUGH"
+            },
+            {
+                "date": "1970-01-01",
+                "domain": "Fame & Reputation",
+                "description": "Imprisonment - no president event",
+                "status": "DID_NOT_OCCUR",
+                "type": "STABILITY"
+            }
+        ]
+    },
+    {
+        "name": "Marie Curie",
+        "dob": "1867-11-07",
+        "tob": "11:00",
+        "lat": 52.2297,
+        "lon": 21.0122,
+        "tz": "Europe/Warsaw",
+        "events": [
+            {
+                "date": "1903-12-10",
+                "domain": "Education & Knowledge",
+                "description": "Nobel Prize in Physics",
+                "status": "OCCURRED",
+                "type": "BREAKTHROUGH"
+            },
+            {
+                "date": "1885-01-01",
+                "domain": "Education & Knowledge",
+                "description": "Youth - student phase",
+                "status": "DID_NOT_OCCUR",
+                "type": "STABILITY"
+            }
+        ]
+    },
+    {
+        "name": "Mark Zuckerberg",
+        "dob": "1984-05-14",
+        "tob": "14:39",
+        "lat": 41.12,
+        "lon": -73.86,
+        "tz": "America/New_York",
+        "events": [
+            {
+                "date": "2004-02-04",
+                "domain": "Business & Enterprise",
+                "description": "Facebook Founded",
+                "status": "OCCURRED",
+                "type": "FOUNDING"
+            },
+            {
+                "date": "1995-01-01",
+                "domain": "Business & Enterprise",
+                "description": "Childhood - stable",
+                "status": "DID_NOT_OCCUR",
+                "type": "STABILITY"
+            }
+        ]
+    },
+    {
+        "name": "Jeff Bezos",
+        "dob": "1964-01-12",
+        "tob": "11:33",
+        "lat": 35.0844,
+        "lon": -106.6504,
+        "tz": "America/Denver",
+        "events": [
+            {
+                "date": "1994-07-05",
+                "domain": "Business & Enterprise",
+                "description": "Amazon Founded",
+                "status": "OCCURRED",
+                "type": "FOUNDING"
+            },
+            {
+                "date": "1980-01-01",
+                "domain": "Business & Enterprise",
+                "description": "Teenager - stable",
+                "status": "DID_NOT_OCCUR",
+                "type": "STABILITY"
+            }
+        ]
+    },
+    {
+        "name": "Malala Yousafzai",
+        "dob": "1997-07-12",
+        "tob": "08:00",
+        "lat": 34.7717,
+        "lon": 72.3601,
+        "tz": "Asia/Karachi",
+        "events": [
+            {
+                "date": "2014-10-10",
+                "domain": "Fame & Reputation",
+                "description": "Nobel Peace Prize winner",
+                "status": "OCCURRED",
+                "type": "BREAKTHROUGH"
+            },
+            {
+                "date": "2005-01-01",
+                "domain": "Fame & Reputation",
+                "description": "Childhood - stable",
+                "status": "DID_NOT_OCCUR",
+                "type": "STABILITY"
+            }
+        ]
+    },
+    {
+        "name": "Abraham Lincoln",
+        "dob": "1809-02-12",
+        "tob": "06:54",
+        "lat": 37.5,
+        "lon": -85.7,
+        "tz": "America/New_York",
+        "events": [
+            {
+                "date": "1860-11-06",
+                "domain": "Fame & Reputation",
+                "description": "Elected President",
+                "status": "OCCURRED",
+                "type": "BREAKTHROUGH"
+            },
+            {
+                "date": "1830-01-01",
+                "domain": "Fame & Reputation",
+                "description": "Early adulthood - stable",
+                "status": "DID_NOT_OCCUR",
+                "type": "STABILITY"
+            }
+        ]
+    },
+    {
+        "name": "Nikola Tesla",
+        "dob": "1856-07-10",
+        "tob": "00:00",
+        "lat": 44.5,
+        "lon": 15.3,
+        "tz": "Europe/Belgrade",
+        "events": [
+            {
+                "date": "1888-05-01",
+                "domain": "Education & Knowledge",
+                "description": "Induction motor breakthrough",
+                "status": "OCCURRED",
+                "type": "BREAKTHROUGH"
+            },
+            {
+                "date": "1870-01-01",
+                "domain": "Education & Knowledge",
+                "description": "Childhood - stable",
+                "status": "DID_NOT_OCCUR",
+                "type": "STABILITY"
+            }
+        ]
+    },
+    {
+        "name": "Mother Teresa",
+        "dob": "1910-08-26",
+        "tob": "14:25",
+        "lat": 42.0,
+        "lon": 21.4,
+        "tz": "Europe/Skopje",
+        "events": [
+            {
+                "date": "1950-10-07",
+                "domain": "Spirituality & Growth",
+                "description": "Missionaries of Charity Founded",
+                "status": "OCCURRED",
+                "type": "BREAKTHROUGH"
+            },
+            {
+                "date": "1930-01-01",
+                "domain": "Spirituality & Growth",
+                "description": "Teacher phase - stable",
+                "status": "DID_NOT_OCCUR",
+                "type": "STABILITY"
+            }
+        ]
+    },
+    {
+        "name": "Serena Williams",
+        "dob": "1981-09-26",
+        "tob": "20:28",
+        "lat": 42.4,
+        "lon": -83.2,
+        "tz": "America/New_York",
+        "events": [
+            {
+                "date": "1999-09-11",
+                "domain": "Career & Authority",
+                "description": "First Grand Slam Title",
+                "status": "OCCURRED",
+                "type": "BREAKTHROUGH"
+            },
+            {
+                "date": "1988-01-01",
+                "domain": "Career & Authority",
+                "description": "Childhood - stable",
+                "status": "DID_NOT_OCCUR",
+                "type": "STABILITY"
+            }
+        ]
+    },
+    {
+        "name": "Cristiano Ronaldo",
+        "dob": "1985-02-05",
+        "tob": "05:25",
+        "lat": 32.6,
+        "lon": -16.9,
+        "tz": "Atlantic/Madeira",
+        "events": [
+            {
+                "date": "2003-08-12",
+                "domain": "Career & Authority",
+                "description": "Signed by Manchester United",
+                "status": "OCCURRED",
+                "type": "BREAKTHROUGH"
+            },
+            {
+                "date": "1995-01-01",
+                "domain": "Career & Authority",
+                "description": "Childhood - stable",
+                "status": "DID_NOT_OCCUR",
+                "type": "STABILITY"
+            }
+        ]
+    },
+    {
+        "name": "Leonardo da Vinci",
+        "dob": "1452-04-15",
+        "tob": "21:40",
+        "lat": 43.8,
+        "lon": 10.9,
+        "tz": "Europe/Rome",
+        "events": [
+            {
+                "date": "1503-01-01",
+                "domain": "Fame & Reputation",
+                "description": "Painting Mona Lisa begins",
+                "status": "OCCURRED",
+                "type": "BREAKTHROUGH"
+            },
+            {
+                "date": "1470-01-01",
+                "domain": "Fame & Reputation",
+                "description": "Apprentice years - stable",
+                "status": "DID_NOT_OCCUR",
+                "type": "STABILITY"
+            }
+        ]
+    },
+    {
+        "name": "Isaac Newton",
+        "dob": "1643-01-04",
+        "tob": "00:00",
+        "lat": 52.8,
+        "lon": -0.6,
+        "tz": "Europe/London",
+        "events": [
+            {
+                "date": "1687-07-05",
+                "domain": "Education & Knowledge",
+                "description": "Principia Mathematica published",
+                "status": "OCCURRED",
+                "type": "BREAKTHROUGH"
+            },
+            {
+                "date": "1660-01-01",
+                "domain": "Education & Knowledge",
+                "description": "Student years - stable",
+                "status": "DID_NOT_OCCUR",
+                "type": "STABILITY"
+            }
+        ]
+    },
+    {
+        "name": "Muhammad Ali",
+        "dob": "1942-01-17",
+        "tob": "18:35",
+        "lat": 38.2,
+        "lon": -85.7,
+        "tz": "America/Kentucky/Louisville",
+        "events": [
+            {
+                "date": "1964-02-25",
+                "domain": "Career & Authority",
+                "description": "Becomes Heavyweight Champion",
+                "status": "OCCURRED",
+                "type": "BREAKTHROUGH"
+            },
+            {
+                "date": "1955-01-01",
+                "domain": "Career & Authority",
+                "description": "Youth - stable",
+                "status": "DID_NOT_OCCUR",
+                "type": "STABILITY"
+            }
+        ]
+    },
+    {
+        "name": "Walt Disney",
+        "dob": "1901-12-05",
+        "tob": "00:35",
+        "lat": 41.9,
+        "lon": -87.6,
+        "tz": "America/Chicago",
+        "events": [
+            {
+                "date": "1928-11-18",
+                "domain": "Business & Enterprise",
+                "description": "Steamboat Willie Premiere",
+                "status": "OCCURRED",
+                "type": "BREAKTHROUGH"
+            },
+            {
+                "date": "1915-01-01",
+                "domain": "Business & Enterprise",
+                "description": "Youth - stable",
+                "status": "DID_NOT_OCCUR",
+                "type": "STABILITY"
+            }
+        ]
+    },
+    {
+        "name": "Marilyn Monroe",
+        "dob": "1926-06-01",
+        "tob": "09:30",
+        "lat": 34.0,
+        "lon": -118.2,
+        "tz": "America/Los_Angeles",
+        "events": [
+            {
+                "date": "1953-01-01",
+                "domain": "Fame & Reputation",
+                "description": "Major movie breakthroughs",
+                "status": "OCCURRED",
+                "type": "BREAKTHROUGH"
+            },
+            {
+                "date": "1940-01-01",
+                "domain": "Fame & Reputation",
+                "description": "Orphanage years - stable",
+                "status": "DID_NOT_OCCUR",
+                "type": "STABILITY"
+            }
+        ]
     }
 ]
