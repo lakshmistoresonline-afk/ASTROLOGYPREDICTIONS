@@ -25,10 +25,16 @@ class HighPrecisionTransitEngine:
     """
 
     VEDIC_ASPECTS = {
-        "Mars": [4, 7, 8],
-        "Jupiter": [5, 7, 9],
-        "Saturn": [3, 7, 10],
-        "Default": [7]
+        "Mars": [1, 4, 7, 8],
+        "Jupiter": [1, 5, 7, 9],
+        "Saturn": [1, 3, 7, 10],
+        "Sun": [1, 7],
+        "Moon": [1, 7],
+        "Mercury": [1, 7],
+        "Venus": [1, 7],
+        "Rahu": [1, 5, 7, 9],
+        "Ketu": [1, 5, 7, 9],
+        "Default": [1, 7]
     }
 
     @staticmethod
@@ -51,69 +57,87 @@ class HighPrecisionTransitEngine:
                 t_rashi = int(t_lon // 30)
                 t_house = (t_rashi - asc_rashi + 12) % 12 + 1
 
-                # 1. House Ingress Check
-                # (Detected by comparing with previous day in real scan, here simplified)
-
-                # 2. Transit-to-Natal Aspect Check
+                # 1. Vedic Aspect Trigger (Sign-to-Sign)
                 for n_name, n_lon in natal_positions.items():
-                    if n_name == "Ketu" or n_name == "Rahu": continue # Handle nodes separately
-
-                    diff = abs(t_lon - n_lon) % 360
-                    if diff > 180: diff = 360 - diff
-
-                    # Conjunction (Orb 1.0 deg)
-                    if diff < 1.0:
-                        events.append(TransitEvent(
-                            p_name, "CONJUNCTION", day["date"], target_natal=n_name, orb=diff, house=t_house
-                        ))
-
-                    # Vedic Aspects (Sign-based)
                     n_rashi = int(n_lon // 30)
                     sign_diff = (t_rashi - n_rashi + 12) % 12 + 1
 
-                    aspects = HighPrecisionTransitEngine.VEDIC_ASPECTS.get(p_name, [7])
-                    if sign_diff in aspects:
-                        events.append(TransitEvent(
-                            p_name, f"VEDIC_ASPECT_{sign_diff}", day["date"], target_natal=n_name, house=t_house
-                        ))
+                    allowed_aspects = HighPrecisionTransitEngine.VEDIC_ASPECTS.get(p_name, [1, 7])
+
+                    if sign_diff in allowed_aspects:
+                        # Calculation of exact peak within the sign
+                        # For now, we flag the date if within 3.0 degrees of exact aspect
+                        # (1st house = 0 deg, 7th = 180, 5th = 120, etc)
+                        target_angle = (sign_diff - 1) * 30.0
+                        # Special check for Mars 4/8, Jup 5/9, Sat 3/10
+
+                        actual_diff = (t_lon - n_lon + 360) % 360
+                        angle_error = abs(actual_diff - target_angle)
+                        if angle_error > 180: angle_error = 360 - angle_error
+
+                        if angle_error < 3.0: # Peak window threshold
+                            type_label = "CONJUNCTION" if sign_diff == 1 else f"ASPECT_{sign_diff}H"
+                            events.append(TransitEvent(
+                                p_name, type_label, day["date"], target_natal=n_name, orb=angle_error, house=t_house
+                            ))
 
         return events
 
 class TimingWindowEngine:
     """
-    Calculates deterministic event windows with Preparation, Build, Peak, Decline, End.
+    Calculates deterministic event windows with Activation, Build, Peak, Manifestation, Decline.
     """
 
     @staticmethod
     def calculate_window(chart: CanonicalChart, supporting_planets: List[str], houses: List[int], calculation_date: datetime = None) -> Dict[str, Any]:
-        # 1. Dasha Activation
-        from ..dasha import calculate_vimshottari
-        moon_lon = chart.planets["Moon"].longitude
-        dasha_data = calculate_vimshottari(moon_lon, chart.birth_datetime, calculation_date=calculation_date)
-        current_antar = dasha_data.get("current_antar", {})
-
-        # 2. Timing Stages Logic
-        # Simulation Target Date (Phase 3.1)
+        # 1. Point-in-time reference
         if calculation_date is None:
             start_date = datetime.now()
         else:
             start_date = calculation_date
 
-        # Peak is determined by Transit Trigger
+        # 2. Dasha Activation (Base Layer)
+        from ..dasha import calculate_vimshottari
+        moon_lon = chart.planets["Moon"].longitude
+        dasha_data = calculate_vimshottari(moon_lon, chart.birth_datetime, calculation_date=start_date)
+        current_antar = dasha_data.get("current_antar", {})
+
+        # 3. Transit Trigger (Precision Layer)
+        # Scan 180 days ahead for triggers
         transit_events = HighPrecisionTransitEngine.get_transit_events(chart, start_date, start_date + timedelta(days=180))
 
-        peak_event = next((e for e in transit_events if e.planet in supporting_planets and e.house in houses), None)
+        # Filter for "Strong Triggers": supporting planets hitting relevant houses or natal planets
+        # We prioritize conjunctions or special aspects
+        triggers = [e for e in transit_events if e.planet in supporting_planets]
 
-        peak_dt = datetime.strptime(peak_event.peak_date, "%Y-%m-%d") if peak_event else (start_date + timedelta(days=45))
+        # Sort by proximity (earliest peak)
+        triggers.sort(key=lambda x: x.peak_date)
 
-        return {
-            "preparation": (peak_dt - timedelta(days=30)).strftime("%Y-%m-%d"),
-            "build": (peak_dt - timedelta(days=10)).strftime("%Y-%m-%d"),
-            "peak": peak_dt.strftime("%Y-%m-%d"),
-            "decline": (peak_dt + timedelta(days=15)).strftime("%Y-%m-%d"),
-            "end": (peak_dt + timedelta(days=45)).strftime("%Y-%m-%d"),
-            "description": peak_event.event_type if peak_event else "General support cycle.",
-            "timing_confidence": "HIGH (Transit Verified)" if peak_event else "MEDIUM (Dasha Only)"
-        }
+        peak_event = triggers[0] if triggers else None
+
+        if peak_event:
+            peak_dt = datetime.strptime(peak_event.peak_date, "%Y-%m-%d")
+            return {
+                "phase": "PEAK_ACTIVE",
+                "activation": (peak_dt - timedelta(days=20)).strftime("%Y-%m-%d"),
+                "build": (peak_dt - timedelta(days=7)).strftime("%Y-%m-%d"),
+                "peak": peak_dt.strftime("%Y-%m-%d"),
+                "manifestation": (peak_dt + timedelta(days=3)).strftime("%Y-%m-%d"),
+                "decline": (peak_dt + timedelta(days=15)).strftime("%Y-%m-%d"),
+                "description": f"{peak_event.planet} {peak_event.event_type} trigger.",
+                "timing_confidence": "HIGH (Transit Verified)"
+            }
+        else:
+            # Fallback to Dasha-based estimation
+            return {
+                "phase": "BUILD_UP",
+                "activation": start_date.strftime("%Y-%m-%d"),
+                "build": (start_date + timedelta(days=15)).strftime("%Y-%m-%d"),
+                "peak": (start_date + timedelta(days=30)).strftime("%Y-%m-%d"),
+                "manifestation": (start_date + timedelta(days=35)).strftime("%Y-%m-%d"),
+                "decline": (start_date + timedelta(days=60)).strftime("%Y-%m-%d"),
+                "description": "General life-period support (Dasha only).",
+                "timing_confidence": "MEDIUM (Dasha Estimation)"
+            }
 
 timing_engine = TimingWindowEngine()

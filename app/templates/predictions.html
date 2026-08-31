@@ -88,12 +88,18 @@
 
                                 <div class="row g-5">
                                     <div class="col-md-6">
-                                        <h6 class="nav-group-title mt-0">POSSIBLE MANIFESTATIONS</h6>
-                                        <ul class="ps-3 mb-0">
-                                            {% for mf in domain.manifestations %}
-                                            <li class="small text-dim mb-2">{{ mf }}</li>
-                                            {% endfor %}
-                                        </ul>
+                                        <h6 class="nav-group-title mt-0 uppercase">TIMING INTEL (V3.3)</h6>
+                                        <div class="p-3 rounded-4 bg-glass-subtle border border-white border-opacity-5">
+                                            <div class="d-flex justify-content-between align-items-center mb-1">
+                                                <span class="xxsmall text-dim">PEAK POTENTIAL</span>
+                                                <span class="xxsmall text-white fw-bold">{{ domain.timing_window.peak }}</span>
+                                            </div>
+                                            <div class="xxsmall text-gold italic mb-2">"{{ domain.timing_window.description }}"</div>
+                                            <div class="d-flex justify-content-between align-items-center pt-2 border-top border-white border-opacity-5">
+                                                <span class="xxsmall text-dim uppercase">Current Phase:</span>
+                                                <span class="badge bg-gold text-dark xxsmall">{{ domain.timing_window.phase }}</span>
+                                            </div>
+                                        </div>
                                     </div>
                                     <div class="col-md-6">
                                         <h6 class="nav-group-title mt-0">PRACTICAL ACTIONS</h6>

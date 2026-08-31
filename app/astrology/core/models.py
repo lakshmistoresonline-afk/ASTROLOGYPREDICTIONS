@@ -102,11 +102,14 @@ class DomainPrediction(BaseModel):
     evidence_chain: List[CorroborationEvidence] = []
 
     timing_window: Dict[str, Any] = {
-        "phase": "SCANNING", # BUILD-UP, PEAK, DECLINE
+        "phase": "SCANNING", # BUILD_UP, PEAK_ACTIVE, DECLINE
+        "activation": None,
         "build": None,
         "peak": None,
+        "manifestation": None,
         "decline": None,
-        "description": ""
+        "description": "",
+        "timing_confidence": "LOW"
     }
 
     remedies: List[Dict[str, Any]] = []

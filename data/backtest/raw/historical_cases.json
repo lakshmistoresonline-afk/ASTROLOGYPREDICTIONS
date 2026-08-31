@@ -11,7 +11,15 @@
                 "date": "1980-12-12",
                 "domain": "Career & Authority",
                 "description": "Apple IPO - breakthrough",
-                "status": "OCCURRED"
+                "status": "OCCURRED",
+                "type": "BREAKTHROUGH"
+            },
+            {
+                "date": "1985-09-17",
+                "domain": "Career & Authority",
+                "description": "Resigned from Apple",
+                "status": "OCCURRED",
+                "type": "RESIGNATION"
             }
         ]
     },
@@ -27,7 +35,15 @@
                 "date": "1981-07-29",
                 "domain": "Marriage & Relationships",
                 "description": "Royal Wedding",
-                "status": "OCCURRED"
+                "status": "OCCURRED",
+                "type": "MARRIAGE"
+            },
+            {
+                "date": "1996-08-28",
+                "domain": "Marriage & Relationships",
+                "description": "Divorce finalized",
+                "status": "OCCURRED",
+                "type": "DIVORCE"
             }
         ]
     },
@@ -43,39 +59,32 @@
                 "date": "1905-09-27",
                 "domain": "Education & Knowledge",
                 "description": "Annus Mirabilis papers (E=mc2)",
-                "status": "OCCURRED"
+                "status": "OCCURRED",
+                "type": "ACADEMIC_BREAKTHROUGH"
+            },
+            {
+                "date": "1921-11-09",
+                "domain": "Fame & Reputation",
+                "description": "Nobel Prize announcement",
+                "status": "OCCURRED",
+                "type": "AWARD"
             }
         ]
     },
     {
-        "name": "Mahatma Gandhi",
-        "dob": "1869-10-02",
-        "tob": "07:12",
-        "lat": 21.6417,
-        "lon": 69.6006,
+        "name": "Negative Case 1",
+        "dob": "1990-01-01",
+        "tob": "12:00",
+        "lat": 28.61,
+        "lon": 77.20,
         "tz": "Asia/Kolkata",
         "events": [
             {
-                "date": "1930-03-12",
-                "domain": "Fame & Reputation",
-                "description": "Salt March begins",
-                "status": "OCCURRED"
-            }
-        ]
-    },
-    {
-        "name": "Bill Gates",
-        "dob": "1955-10-28",
-        "tob": "22:00",
-        "lat": 47.6062,
-        "lon": -122.3321,
-        "tz": "America/Los_Angeles",
-        "events": [
-            {
-                "date": "1995-08-24",
-                "domain": "Business & Enterprise",
-                "description": "Windows 95 Launch",
-                "status": "OCCURRED"
+                "date": "2020-01-01",
+                "domain": "Marriage & Relationships",
+                "description": "Stable year - no marriage event",
+                "status": "DID_NOT_OCCUR",
+                "type": "STABILITY"
             }
         ]
     }
