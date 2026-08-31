@@ -2,6 +2,7 @@ from typing import Dict, Any, List
 from datetime import datetime
 from ..framework import CorroborationEngine
 from ...core.models import CanonicalChart, DomainPrediction
+from ...timing.precision import timing_engine
 
 class LegalPredictionEngine:
     """
@@ -56,13 +57,16 @@ class LegalPredictionEngine:
                 60.0
             ))
 
-        # 3. SYNTHESIS
+        # 3. TIMING
+        window = timing_engine.calculate_window(chart, ["Jupiter", "Saturn", l6_name], [6, 10, 1], calculation_date=selected_date)
+
+        # 4. SYNTHESIS
         summary_template = (
             "Legal matters and conflict resolution show {promise} natal strength. "
             "Current alignment is {strength} for success with a {score}% match."
         )
 
-        res = CorroborationEngine.synthesize("Legal & Disputes", promise_level, evidence, summary_template)
+        res = CorroborationEngine.synthesize("Legal & Disputes", promise_level, evidence, summary_template, timing_window=window)
 
         res.manifestations = [
             "Resolution of pending disputes or administrative hurdles.",

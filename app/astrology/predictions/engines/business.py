@@ -60,13 +60,16 @@ class BusinessPredictionEngine:
                 65.0
             ))
 
-        # 3. SYNTHESIS
+        # 3. TIMING
+        window = timing_engine.calculate_window(chart, ["Mercury", "Sun", l7_name, l10_name], [7, 10, 11], calculation_date=selected_date)
+
+        # 4. SYNTHESIS
         summary_template = (
             "Independent venture and market activity show {promise} natal promise. "
             "Current alignment is {strength} for commercial expansion with a {score}% match."
         )
 
-        res = CorroborationEngine.synthesize("Business & Enterprise", promise_level, evidence, summary_template)
+        res = CorroborationEngine.synthesize("Business & Enterprise", promise_level, evidence, summary_template, timing_window=window)
 
         res.manifestations = [
             "New partnership opportunities or strategic alliances.",

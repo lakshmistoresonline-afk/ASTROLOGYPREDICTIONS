@@ -66,13 +66,17 @@ class FinancePredictionEngine:
                 60.0
             ))
 
-        # 4. SYNTHESIS
+        # 4. TIMING
+        l11_name = house_lords[11]
+        window = timing_engine.calculate_window(chart, ["Jupiter", "Venus", l2_name, l11_name], [2, 11, 1], calculation_date=selected_date)
+
+        # 5. SYNTHESIS
         summary_template = (
             "Your financial trajectory shows a {promise} foundation with {strength} alignment for growth. "
             "Hierarchical synthesis results in a {score}% confidence score for fiscal security."
         )
 
-        res = CorroborationEngine.synthesize("Finance & Wealth", promise_level, evidence, summary_template)
+        res = CorroborationEngine.synthesize("Finance & Wealth", promise_level, evidence, summary_template, timing_window=window)
 
         res.manifestations = [
             "Steady increase in liquid assets or savings.",

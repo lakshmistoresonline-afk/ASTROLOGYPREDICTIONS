@@ -2,6 +2,7 @@ from typing import Dict, Any, List
 from datetime import datetime
 from ..framework import CorroborationEngine
 from ...core.models import CanonicalChart, DomainPrediction
+from ...timing.precision import timing_engine
 
 class PersonalityPredictionEngine:
     """
@@ -60,12 +61,15 @@ class PersonalityPredictionEngine:
                     "YOGA_SUPPORT", f"YOGA MODIFIER: {yoga['name']} enhances leadership and character.", 85.0
                 ))
 
+        # 5. TIMING
+        window = timing_engine.calculate_window(chart, ["Moon", l1_name], [1, 4, 7, 10], calculation_date=selected_date)
+
         summary_template = (
             "Your personality and mental essence show a {promise} natal foundation. "
             "Hierarchical synthesis results in a {score}% match for character strength."
         )
 
-        res = CorroborationEngine.synthesize("Personality & Essence", promise_level, evidence, summary_template)
+        res = CorroborationEngine.synthesize("Personality & Essence", promise_level, evidence, summary_template, timing_window=window)
         res.practical_actions = [
             "Observe the activation of the Lagna Lord for self-growth.",
             "Maintain emotional hygiene through meditation and mindfulness.",

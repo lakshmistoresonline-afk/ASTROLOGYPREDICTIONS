@@ -66,19 +66,44 @@ def report_snapshot_outcome(snapshot_id):
     db.session.commit()
     return jsonify({"success": True})
 
+@tracking_bp.route("/api/tracking/history", methods=["GET"])
+def get_outcome_history():
+    """Returns a list of recent outcomes for the dashboard."""
+    outcomes = PredictionOutcome.query.order_by(PredictionOutcome.created_at.desc()).limit(20).all()
+    history = []
+    for o in outcomes:
+        history.append({
+            "category": o.domain,
+            "status": o.status,
+            "prediction": o.prediction_text[:120],
+            "timing_quality": o.timing_quality
+        })
+    return jsonify({"history": history})
+
 @tracking_bp.route("/api/v1/calibration/dashboard", methods=["GET"])
 def get_quality_dashboard():
-    """Requirement 6: Internal Quality Dashboard data."""
-    domains = ["Career & Authority", "Finance & Wealth", "Marriage & Relationships", "Health & Vitality"]
+    """Requirement 6: Internal Quality Dashboard data (V3.2 Enhanced)."""
+    domains = [
+        "Career & Authority", "Finance & Wealth", "Marriage & Relationships",
+        "Health & Vitality", "Business & Enterprise", "Fame & Reputation"
+    ]
     stats = []
     for d in domains:
-        outcomes = PredictionOutcome.query.filter_by(domain=d).all()
+        outcomes = PredictionOutcome.query.filter(PredictionOutcome.domain.ilike(f"%{d}%")).all()
         cases = len(outcomes)
         occurred = len([o for o in outcomes if o.status == "OCCURRED"])
+
+        timing_15 = len([o for o in outcomes if o.status == "OCCURRED" and o.timing_quality == "ACTIVE_WINDOW_HIT"])
+        timing_30 = len([o for o in outcomes if o.status == "OCCURRED" and o.timing_quality == "BROAD_MATCH"]) # Mapping old/broad for UI
+        timing_90 = len([o for o in outcomes if o.status == "OCCURRED" and o.timing_quality == "BROAD_MATCH"])
+
         stats.append({
             "domain": d,
             "total": cases,
             "occurred": occurred,
+            "timing_15": timing_15,
+            "timing_30": timing_30,
+            "timing_90": timing_90,
             "match_rate": round(occurred/cases * 100, 2) if cases > 0 else 0
         })
     return jsonify(stats)

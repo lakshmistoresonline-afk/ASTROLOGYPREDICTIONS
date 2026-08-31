@@ -2,6 +2,7 @@ from typing import Dict, Any, List
 from datetime import datetime
 from ..framework import CorroborationEngine
 from ...core.models import CanonicalChart, DomainPrediction
+from ...timing.precision import timing_engine
 
 class FamePredictionEngine:
     """
@@ -55,13 +56,16 @@ class FamePredictionEngine:
                 60.0
             ))
 
-        # 3. SYNTHESIS
+        # 3. TIMING
+        window = timing_engine.calculate_window(chart, ["Sun", "Jupiter", l10_name], [10, 1, 5], calculation_date=selected_date)
+
+        # 4. SYNTHESIS
         summary_template = (
             "The potential for public recognition and status shows {promise} underlying factors. "
             "Current alignment is {strength} for achievement with a {score}% match."
         )
 
-        res = CorroborationEngine.synthesize("Fame & Reputation", promise_level, evidence, summary_template)
+        res = CorroborationEngine.synthesize("Fame & Reputation", promise_level, evidence, summary_template, timing_window=window)
 
         res.manifestations = [
             "Recognition within professional or social circles.",

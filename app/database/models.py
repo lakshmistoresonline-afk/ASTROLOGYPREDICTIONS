@@ -63,15 +63,21 @@ class PredictionOutcome(db.Model):
     peak_date = db.Column(db.String(20))
     end_date = db.Column(db.String(20))
 
-    # User Reported Outcome
-    # OCCURRED, PARTIALLY_OCCURRED, DID_NOT_OCCUR, UNKNOWN
+    # User Reported or Historical Outcome
+    # OCCURRED, PARTIALLY_OCCURRED, DID_NOT_OCCUR, TOO_EARLY, UNKNOWN
     status = db.Column(db.String(30), default="PENDING")
     actual_event_date = db.Column(db.String(20))
     event_description = db.Column(db.Text)
 
+    # Validation Source (V3.2)
+    # USER_REPORTED, HISTORICAL_VERIFIED, SYNTHETIC_TEST
+    source_type = db.Column(db.String(30), default="USER_REPORTED")
+    verification_status = db.Column(db.String(30), default="UNVERIFIED")
+
     # Timing Match Categorization (Calculated post-report)
-    # TIMING_MATCH_15, TIMING_MATCH_30, TIMING_MATCH_90, BROAD_MATCH, NO_MATCH
+    # PEAK_HIT, ACTIVE_WINDOW_HIT, BROAD_MATCH, NO_MATCH
     timing_quality = db.Column(db.String(30))
+    timing_error_days = db.Column(db.Integer) # Actual - Peak
 
     user_reported_confidence = db.Column(db.Integer) # 1-5
     user_notes = db.Column(db.Text)

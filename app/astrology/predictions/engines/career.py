@@ -74,13 +74,16 @@ class CareerPredictionEngine:
                 60.0
             ))
 
-        # 5. SYNTHESIS
+        # 5. TIMING GENERATION
+        window = timing_engine.calculate_window(chart, ["Sun", "Jupiter", l10_name], [10, 11, 1], calculation_date=selected_date)
+
+        # 6. SYNTHESIS
         summary_template = (
             "Your professional trajectory has a {promise} natal foundation and is currently {strength} aligned. "
             "Hierarchical synthesis shows a {score}% match for status expansion."
         )
 
-        res = CorroborationEngine.synthesize("Career & Authority", promise_level, evidence, summary_template)
+        res = CorroborationEngine.synthesize("Career & Authority", promise_level, evidence, summary_template, timing_window=window)
 
         res.manifestations = [
             "Increased responsibility in existing roles.",

@@ -2,6 +2,7 @@ from typing import Dict, Any, List
 from datetime import datetime
 from ..framework import CorroborationEngine
 from ...core.models import CanonicalChart, DomainPrediction
+from ...timing.precision import timing_engine
 
 class PropertyPredictionEngine:
     """
@@ -65,13 +66,16 @@ class PropertyPredictionEngine:
                 60.0
             ))
 
+        # 4. TIMING
+        window = timing_engine.calculate_window(chart, ["Mars", "Saturn", l4_name], [4, 11, 2], calculation_date=selected_date)
+
         # 5. SYNTHESIS
         summary_template = (
             "Property and fixed asset dynamics show {promise} natal foundation and {strength} current alignment. "
             "Hierarchical synthesis shows a {score}% match for asset acquisition."
         )
 
-        res = CorroborationEngine.synthesize("Property & Assets", promise_level, evidence, summary_template)
+        res = CorroborationEngine.synthesize("Property & Assets", promise_level, evidence, summary_template, timing_window=window)
 
         res.manifestations = [
             "Opportunities for residential or commercial acquisition.",

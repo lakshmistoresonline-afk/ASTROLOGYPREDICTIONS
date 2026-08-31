@@ -2,6 +2,7 @@ from typing import Dict, Any, List
 from datetime import datetime
 from ..framework import CorroborationEngine
 from ...core.models import CanonicalChart, DomainPrediction
+from ...timing.precision import timing_engine
 
 class SpiritualityPredictionEngine:
     """
@@ -56,13 +57,16 @@ class SpiritualityPredictionEngine:
                 65.0
             ))
 
-        # 3. SYNTHESIS
+        # 3. TIMING
+        window = timing_engine.calculate_window(chart, ["Jupiter", "Ketu", l9_name, l12_name], [9, 12, 8], calculation_date=selected_date)
+
+        # 4. SYNTHESIS
         summary_template = (
             "The trajectory for inner growth and wisdom shows {promise} potential. "
             "Current alignment is {strength} for deep practice with a {score}% match."
         )
 
-        res = CorroborationEngine.synthesize("Spirituality & Growth", promise_level, evidence, summary_template)
+        res = CorroborationEngine.synthesize("Spirituality & Growth", promise_level, evidence, summary_template, timing_window=window)
 
         res.manifestations = [
             "Increased interest in philosophical or dharmic study.",

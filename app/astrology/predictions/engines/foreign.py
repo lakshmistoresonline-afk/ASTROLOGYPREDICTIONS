@@ -2,6 +2,7 @@ from typing import Dict, Any, List
 from datetime import datetime
 from ..framework import CorroborationEngine
 from ...core.models import CanonicalChart, DomainPrediction
+from ...timing.precision import timing_engine
 
 class ForeignSettlementEngine:
     """
@@ -56,13 +57,16 @@ class ForeignSettlementEngine:
                 60.0
             ))
 
-        # 3. SYNTHESIS
+        # 3. TIMING
+        window = timing_engine.calculate_window(chart, ["Rahu", "Saturn", l12_name], [12, 9, 7], calculation_date=selected_date)
+
+        # 4. SYNTHESIS
         summary_template = (
             "The potential for international relocation shows {promise} underlying factors. "
             "Current alignment is {strength} for foreign engagement with a {score}% match."
         )
 
-        res = CorroborationEngine.synthesize("Foreign Settlement", promise_level, evidence, summary_template)
+        res = CorroborationEngine.synthesize("Foreign Settlement", promise_level, evidence, summary_template, timing_window=window)
 
         res.manifestations = [
             "Opportunities for long-distance travel or relocation.",

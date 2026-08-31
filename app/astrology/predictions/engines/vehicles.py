@@ -2,6 +2,7 @@ from typing import Dict, Any, List
 from datetime import datetime
 from ..framework import CorroborationEngine
 from ...core.models import CanonicalChart, DomainPrediction
+from ...timing.precision import timing_engine
 
 class VehiclesPredictionEngine:
     """
@@ -55,13 +56,16 @@ class VehiclesPredictionEngine:
                 60.0
             ))
 
-        # 3. SYNTHESIS
+        # 3. TIMING
+        window = timing_engine.calculate_window(chart, ["Venus", "Mars", l4_name], [4, 11], calculation_date=selected_date)
+
+        # 4. SYNTHESIS
         summary_template = (
             "Potential for vehicle acquisition and mobility shows {promise} potential. "
             "Current alignment is {strength} for upgrades with a {score}% match."
         )
 
-        res = CorroborationEngine.synthesize("Vehicles & Mobility", promise_level, evidence, summary_template)
+        res = CorroborationEngine.synthesize("Vehicles & Mobility", promise_level, evidence, summary_template, timing_window=window)
 
         res.manifestations = [
             "Upgrading personal or professional transport.",

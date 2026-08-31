@@ -12,12 +12,6 @@
                 "domain": "Career & Authority",
                 "description": "Apple IPO - breakthrough",
                 "status": "OCCURRED"
-            },
-            {
-                "date": "1970-03-01",
-                "domain": "Career & Authority",
-                "description": "Random school year - no breakthrough",
-                "status": "DID_NOT_OCCUR"
             }
         ]
     },
@@ -33,6 +27,54 @@
                 "date": "1981-07-29",
                 "domain": "Marriage & Relationships",
                 "description": "Royal Wedding",
+                "status": "OCCURRED"
+            }
+        ]
+    },
+    {
+        "name": "Albert Einstein",
+        "dob": "1879-03-14",
+        "tob": "11:30",
+        "lat": 48.4011,
+        "lon": 9.9876,
+        "tz": "Europe/Berlin",
+        "events": [
+            {
+                "date": "1905-09-27",
+                "domain": "Education & Knowledge",
+                "description": "Annus Mirabilis papers (E=mc2)",
+                "status": "OCCURRED"
+            }
+        ]
+    },
+    {
+        "name": "Mahatma Gandhi",
+        "dob": "1869-10-02",
+        "tob": "07:12",
+        "lat": 21.6417,
+        "lon": 69.6006,
+        "tz": "Asia/Kolkata",
+        "events": [
+            {
+                "date": "1930-03-12",
+                "domain": "Fame & Reputation",
+                "description": "Salt March begins",
+                "status": "OCCURRED"
+            }
+        ]
+    },
+    {
+        "name": "Bill Gates",
+        "dob": "1955-10-28",
+        "tob": "22:00",
+        "lat": 47.6062,
+        "lon": -122.3321,
+        "tz": "America/Los_Angeles",
+        "events": [
+            {
+                "date": "1995-08-24",
+                "domain": "Business & Enterprise",
+                "description": "Windows 95 Launch",
                 "status": "OCCURRED"
             }
         ]

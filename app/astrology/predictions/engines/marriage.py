@@ -75,13 +75,16 @@ class MarriagePredictionEngine:
                 65.0
             ))
 
-        # 5. SYNTHESIS
+        # 5. TIMING
+        window = timing_engine.calculate_window(chart, ["Venus", "Jupiter", l7_name], [7, 5, 2], calculation_date=selected_date)
+
+        # 6. SYNTHESIS
         summary_template = (
             "Partnership and relational dynamics show {promise} natal strength and {strength} current alignment. "
             "Hierarchical synthesis shows a {score}% match for union themes."
         )
 
-        res = CorroborationEngine.synthesize("Marriage & Relationships", promise_level, evidence, summary_template)
+        res = CorroborationEngine.synthesize("Marriage & Relationships", promise_level, evidence, summary_template, timing_window=window)
 
         res.manifestations = [
             "Formalization of existing commitments.",

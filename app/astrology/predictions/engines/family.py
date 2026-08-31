@@ -2,6 +2,7 @@ from typing import Dict, Any, List
 from datetime import datetime
 from ..framework import CorroborationEngine
 from ...core.models import CanonicalChart, DomainPrediction
+from ...timing.precision import timing_engine
 
 class FamilyPredictionEngine:
     """
@@ -53,13 +54,16 @@ class FamilyPredictionEngine:
                 65.0
             ))
 
-        # 3. SYNTHESIS
+        # 3. TIMING
+        window = timing_engine.calculate_window(chart, ["Moon", "Venus", l4_name], [2, 4], calculation_date=selected_date)
+
+        # 4. SYNTHESIS
         summary_template = (
             "Domestic harmony and family support show {promise} natal foundation. "
             "Current alignment is {strength} for family matters with a {score}% match."
         )
 
-        res = CorroborationEngine.synthesize("Family & Roots", promise_level, evidence, summary_template)
+        res = CorroborationEngine.synthesize("Family & Roots", promise_level, evidence, summary_template, timing_window=window)
 
         res.manifestations = [
             "Increased focus on family traditions and gatherings.",

@@ -73,8 +73,9 @@ class HighPrecisionTransitEngine:
 
                     aspects = HighPrecisionTransitEngine.VEDIC_ASPECTS.get(p_name, [7])
                     if sign_diff in aspects:
-                        # SIGN ASPECT FOUND
-                        pass
+                        events.append(TransitEvent(
+                            p_name, f"VEDIC_ASPECT_{sign_diff}", day["date"], target_natal=n_name, house=t_house
+                        ))
 
         return events
 

@@ -2,6 +2,7 @@ from typing import Dict, Any, List
 from datetime import datetime
 from ..framework import CorroborationEngine
 from ...core.models import CanonicalChart, DomainPrediction
+from ...timing.precision import timing_engine
 
 class ChildrenPredictionEngine:
     """
@@ -65,13 +66,16 @@ class ChildrenPredictionEngine:
                 60.0
             ))
 
-        # 4. SYNTHESIS
+        # 4. TIMING
+        window = timing_engine.calculate_window(chart, ["Jupiter", "Moon", l5_name], [5, 9, 2], calculation_date=selected_date)
+
+        # 5. SYNTHESIS
         summary_template = (
             "Growth of lineage and creative legacy shows {promise} natal foundation. "
             "Current alignment is {strength} for developmental milestones with a {score}% evidence score."
         )
 
-        res = CorroborationEngine.synthesize("Children & Creativity", promise_level, evidence, summary_template)
+        res = CorroborationEngine.synthesize("Children & Creativity", promise_level, evidence, summary_template, timing_window=window)
 
         res.manifestations = [
             "Increased focus on child-related developmental phases.",
