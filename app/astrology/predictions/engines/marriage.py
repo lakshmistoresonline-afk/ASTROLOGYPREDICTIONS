@@ -22,12 +22,18 @@ class MarriagePredictionEngine:
         l7 = planets[l7_name]
 
         promise_level = "MODERATE"
-        if l7.house in [1, 4, 7, 10, 5, 9, 11]:
+        if l7.house in [1, 4, 7, 10, 5, 9]:
             promise_level = "STRONG"
             evidence.append(CorroborationEngine.create_evidence(
                 "NATAL_PROMISE",
-                f"RELATIONSHIP PROMISE: Beneficial 7th Lord {l7_name} placement indicates partnership stability.",
-                90.0, rationale=f"{l7_name} is in house {l7.house}."
+                f"NATAL PROMISE: High relationship stability indicated by Kendra/Trikona placement of 7th Lord {l7_name}.",
+                90.0, rationale=f"{l7_name} is in house {l7.house}"
+            ))
+        elif l7.house in [2, 11]:
+            evidence.append(CorroborationEngine.create_evidence(
+                "SECONDARY_PROMISE",
+                f"SECONDARY PROMISE: Supportive house placement (2/11) for 7th Lord {l7_name} provides stable partnership foundation.",
+                60.0, rationale=f"{l7_name} is in house {l7.house}"
             ))
         elif l7.house in [6, 8, 12]:
             promise_level = "CONDITIONAL"

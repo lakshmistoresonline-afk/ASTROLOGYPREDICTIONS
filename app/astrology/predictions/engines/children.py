@@ -22,12 +22,18 @@ class ChildrenPredictionEngine:
         l5 = planets[l5_name]
 
         promise_level = "MODERATE"
-        if l5.house in [1, 4, 7, 10, 5, 9, 11]:
+        if l5.house in [1, 4, 7, 10, 5, 9]:
             promise_level = "STRONG"
             evidence.append(CorroborationEngine.create_evidence(
                 "NATAL_PROMISE",
-                f"LEGACY PROMISE: Supportive 5th Lord {l5_name} placement indicates joy through lineage.",
-                85.0
+                f"NATAL PROMISE: High legacy potential indicated by Kendra/Trikona placement of 5th Lord {l5_name}.",
+                90.0, rationale=f"{l5_name} is in house {l5.house}"
+            ))
+        elif l5.house in [2, 11]:
+            evidence.append(CorroborationEngine.create_evidence(
+                "SECONDARY_PROMISE",
+                f"SECONDARY PROMISE: Supportive house placement (2/11) for 5th Lord {l5_name} provides stable creative foundation.",
+                60.0, rationale=f"{l5_name} is in house {l5.house}"
             ))
 
         # Jupiter (Putrakaraka)

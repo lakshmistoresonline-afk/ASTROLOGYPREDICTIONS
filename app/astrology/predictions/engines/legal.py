@@ -20,13 +20,19 @@ class LegalPredictionEngine:
         l6_name = house_lords[6]
 
         promise_level = "MODERATE"
-        # 6th lord in Upachaya (3, 6, 10, 11) is strong to defeat enemies
-        if planets[l6_name].house in [3, 6, 10, 11]:
+        l6_house = planets[l6_name].house
+        if l6_house in [1, 4, 7, 10, 5, 9]:
             promise_level = "STRONG"
             evidence.append(CorroborationEngine.create_evidence(
                 "NATAL_PROMISE",
-                "CONFLICT RESOLUTION: Strong 6th Lord suggests victory over legal hurdles.",
-                85.0
+                f"NATAL PROMISE: High victory potential indicated by Kendra/Trikona placement of 6th Lord {l6_name}.",
+                90.0, rationale=f"{l6_name} is in house {l6_house}"
+            ))
+        elif l6_house in [2, 11]:
+            evidence.append(CorroborationEngine.create_evidence(
+                "SECONDARY_PROMISE",
+                f"SECONDARY PROMISE: Supportive house placement (2/11) for 6th Lord {l6_name} provides stable dispute management.",
+                60.0, rationale=f"{l6_name} is in house {l6_house}"
             ))
 
         # Jupiter (Significator of law and justice)

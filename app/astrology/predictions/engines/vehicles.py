@@ -20,12 +20,19 @@ class VehiclesPredictionEngine:
         l4_name = house_lords[4]
 
         promise_level = "MODERATE"
-        if planets[l4_name].house in [1, 4, 7, 10, 5, 9, 11]:
+        l4_house = planets[l4_name].house
+        if l4_house in [1, 4, 7, 10, 5, 9]:
             promise_level = "STRONG"
             evidence.append(CorroborationEngine.create_evidence(
                 "NATAL_PROMISE",
-                f"MOBILITY PROMISE: Beneficial 4th Lord {l4_name} supports acquisition of vehicles.",
-                80.0
+                f"NATAL PROMISE: High mobility potential indicated by Kendra/Trikona placement of 4th Lord {l4_name}.",
+                90.0, rationale=f"{l4_name} is in house {l4_house}"
+            ))
+        elif l4_house in [2, 11]:
+            evidence.append(CorroborationEngine.create_evidence(
+                "SECONDARY_PROMISE",
+                f"SECONDARY PROMISE: Supportive house placement (2/11) for 4th Lord {l4_name} provides stable mobility foundation.",
+                60.0, rationale=f"{l4_name} is in house {l4_house}"
             ))
 
         # Venus (Karaka for luxury/vehicles)

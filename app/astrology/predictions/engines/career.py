@@ -29,6 +29,12 @@ class CareerPredictionEngine:
                 f"NATAL PROMISE: High professional status indicated by Kendra/Trikona placement of 10th Lord {l10_name}.",
                 90.0, rationale=f"{l10_name} is in house {l10.house}"
             ))
+        elif l10.house in [2, 11]:
+            evidence.append(CorroborationEngine.create_evidence(
+                "SECONDARY_PROMISE",
+                f"SECONDARY PROMISE: Supportive house placement (2/11) for 10th Lord {l10_name} provides stable material gains.",
+                60.0, rationale=f"{l10_name} is in house {l10.house}"
+            ))
         elif l10.house in [6, 8, 12]:
             promise_level = "CONDITIONAL"
             evidence.append(CorroborationEngine.create_evidence(

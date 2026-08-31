@@ -106,11 +106,14 @@ class TimingWindowEngine:
         # Scan 60 days ahead for triggers (Reduced for V3.5 Discrimination)
         transit_events = HighPrecisionTransitEngine.get_transit_events(chart, start_date, start_date + timedelta(days=60))
 
-        # Filter for "Strong Triggers": supporting planets hitting relevant houses or natal planets
-        # We prioritize conjunctions or special aspects
+        # Filter for "Strong Triggers"
         triggers = [e for e in transit_events if e.planet in supporting_planets]
 
-        # Sort by proximity (earliest peak)
+        # Unique triggers (prevent counting same planet twice)
+        unique_planets = {e.planet for e in triggers}
+        trigger_count = len(unique_planets)
+
+        # Sort by proximity
         triggers.sort(key=lambda x: x.peak_date)
 
         # 4. Temporal Discrimination Gate (V3.5 Hardening)
@@ -144,12 +147,13 @@ class TimingWindowEngine:
                 temporal_weight = 1.0
             elif abs_dist <= 21:
                 phase = "NEAR_TERM_ACTIVE"
-                temporal_weight = 0.70
+                temporal_weight = 0.35 # Reduced from 0.40
             else:
                 phase = "BUILD_UP"
-                temporal_weight = 0.30
+                temporal_weight = 0.05
 
-            proximity_weight = temporal_weight * p_imp
+            convergence_bonus = 1.4 if trigger_count >= 2 else 0.7
+            proximity_weight = temporal_weight * p_imp * convergence_bonus
 
             return {
                 "phase": phase,
@@ -161,7 +165,8 @@ class TimingWindowEngine:
                 "description": f"{valid_peak_event.planet} {valid_peak_event.event_type} trigger.",
                 "timing_confidence": f"{phase} ({int(proximity_weight*100)}%)",
                 "proximity_weight": proximity_weight,
-                "days_to_peak": days_to_peak
+                "days_to_peak": days_to_peak,
+                "trigger_count": trigger_count
             }
         else:
             # Fallback to Dasha-based estimation
@@ -175,7 +180,8 @@ class TimingWindowEngine:
                 "description": "General life-period support (No immediate trigger).",
                 "timing_confidence": "LOW (Dasha Only)",
                 "proximity_weight": 0.0,
-                "days_to_peak": 999
+                "days_to_peak": 999,
+                "trigger_count": 0
             }
 
 timing_engine = TimingWindowEngine()

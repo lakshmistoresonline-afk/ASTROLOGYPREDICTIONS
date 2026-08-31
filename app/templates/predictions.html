@@ -72,9 +72,9 @@
                                     <div>
                                         <h3 class="font-premium text-white mb-1">{{ domain.domain }}</h3>
                                         <div class="d-flex align-items-center gap-2 mt-2">
-                                            {% set s_cls = 'badge-strong' if domain.prediction_strength == 'VERY STRONG' or domain.prediction_strength == 'STRONG' else 'badge-moderate' %}
+                                            {% set s_cls = 'badge-strong' if domain.prediction_strength in ['PEAK', 'ACTIVE'] else 'badge-moderate' %}
                                             <span class="badge-v2 {{ s_cls }}">{{ domain.prediction_strength }}</span>
-                                            <span class="badge-v2 bg-glass-subtle text-dim">CONFIDENCE: {{ domain.confidence }}</span>
+                                            <span class="badge-v2 bg-glass-subtle text-dim">SUPPORT: {{ domain.confidence }}</span>
                                         </div>
                                     </div>
                                     <div class="text-end">

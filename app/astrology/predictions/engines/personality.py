@@ -21,14 +21,23 @@ class PersonalityPredictionEngine:
         l1 = planets[l1_name]
 
         promise_level = "MODERATE"
-        if "Exalted" in l1.dignity or l1.dignity == "Own Sign":
+        if l1.house in [1, 4, 7, 10, 5, 9]:
+            promise_level = "STRONG"
+            evidence.append(CorroborationEngine.create_evidence(
+                "NATAL_PROMISE",
+                f"NATAL PROMISE: High physical and mental vitality indicated by Kendra/Trikona placement of Lagna Lord {l1_name}.",
+                90.0, rationale=f"{l1_name} is in house {l1.house}"
+            ))
+        elif l1.house in [2, 11]:
+            evidence.append(CorroborationEngine.create_evidence(
+                "SECONDARY_PROMISE",
+                f"SECONDARY PROMISE: Supportive house placement (2/11) for Lagna Lord {l1_name} provides stable energetic baseline.",
+                60.0, rationale=f"{l1_name} is in house {l1.house}"
+            ))
+        elif "Exalted" in l1.dignity or l1.dignity == "Own Sign":
             promise_level = "STRONG"
             evidence.append(CorroborationEngine.create_evidence(
                 "NATAL_PROMISE", f"NATAL PROMISE: Strong Lagna Lord {l1_name} indicates high physical and mental vitality.", 90.0
-            ))
-        else:
-             evidence.append(CorroborationEngine.create_evidence(
-                "NATAL_PROMISE", f"NATAL FOUNDATION: Lagna Lord {l1_name} provides a stable energetic baseline.", 50.0
             ))
 
         # 2. LAGNA CHARACTERISTICS

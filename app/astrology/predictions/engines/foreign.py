@@ -21,12 +21,18 @@ class ForeignSettlementEngine:
         l12 = planets[l12_name]
 
         promise_level = "MODERATE"
-        if l12.house in [1, 4, 7, 9, 10]:
+        if l12.house in [1, 4, 7, 10, 5, 9]:
             promise_level = "STRONG"
             evidence.append(CorroborationEngine.create_evidence(
                 "NATAL_PROMISE",
-                f"HORIZON PROMISE: Link between Home (4H/1H) and Foreign (12H) sectors indicates migration potential.",
-                85.0
+                f"NATAL PROMISE: High migration potential indicated by Kendra/Trikona placement of 12th Lord {l12_name}.",
+                90.0, rationale=f"{l12_name} is in house {l12.house}"
+            ))
+        elif l12.house in [2, 11]:
+            evidence.append(CorroborationEngine.create_evidence(
+                "SECONDARY_PROMISE",
+                f"SECONDARY PROMISE: Supportive house placement (2/11) for 12th Lord {l12_name} provides stable transition potential.",
+                60.0, rationale=f"{l12_name} is in house {l12.house}"
             ))
 
         # Rahu (Karaka for Foreign things)

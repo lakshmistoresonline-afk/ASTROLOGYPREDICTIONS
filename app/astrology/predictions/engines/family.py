@@ -21,18 +21,40 @@ class FamilyPredictionEngine:
         l4_name = house_lords[4]
 
         promise_level = "MODERATE"
-        if planets[l2_name].house in [1, 2, 4, 5, 7, 9, 10, 11]:
+        l2_house = planets[l2_name].house
+        if l2_house in [1, 4, 7, 10, 5, 9]:
+            promise_level = "STRONG"
+            evidence.append(CorroborationEngine.create_evidence(
+                "NATAL_PROMISE",
+                f"NATAL PROMISE: Strong 2nd Lord {l2_name} in Kendra/Trikona indicates deep family roots.",
+                90.0, rationale=f"{l2_name} is in house {l2_house}"
+            ))
+        elif l2_house in [2, 11]:
+            evidence.append(CorroborationEngine.create_evidence(
+                "SECONDARY_PROMISE",
+                f"SECONDARY PROMISE: Supportive house placement (2/11) for 2nd Lord {l2_name} provides stable family foundation.",
+                60.0, rationale=f"{l2_name} is in house {l2_house}"
+            ))
+        elif planets[l2_name].house in [1, 2, 4, 5, 7, 9, 10, 11]:
             evidence.append(CorroborationEngine.create_evidence(
                 "NATAL_PROMISE",
                 f"FAMILY PROMISE: Supportive 2nd Lord {l2_name} placement indicates strong roots.",
                 80.0
             ))
 
-        if planets[l4_name].house in [1, 4, 7, 10, 5, 9]:
+        l4_house = planets[l4_name].house
+        if l4_house in [1, 4, 7, 10, 5, 9]:
+             promise_level = "STRONG"
              evidence.append(CorroborationEngine.create_evidence(
                 "NATAL_PROMISE",
-                f"DOMESTIC PROMISE: Beneficial 4th Lord {l4_name} supports home stability.",
-                85.0
+                f"NATAL PROMISE: Beneficial 4th Lord {l4_name} in Kendra/Trikona supports home stability.",
+                90.0, rationale=f"{l4_name} is in house {l4_house}"
+            ))
+        elif l4_house in [2, 11]:
+            evidence.append(CorroborationEngine.create_evidence(
+                "SECONDARY_PROMISE",
+                f"SECONDARY PROMISE: Supportive house placement (2/11) for 4th Lord {l4_name} provides stable domestic base.",
+                60.0, rationale=f"{l4_name} is in house {l4_house}"
             ))
 
         # 2. DASHA ACTIVATION

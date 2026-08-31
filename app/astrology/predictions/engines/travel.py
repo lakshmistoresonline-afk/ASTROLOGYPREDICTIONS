@@ -21,10 +21,32 @@ class TravelPredictionEngine:
         l12_name = house_lords[12]
 
         promise_level = "MODERATE"
-        if planets[l9_name].house in [1, 4, 7, 10, 5, 9, 11] or planets[l12_name].house in [1, 4, 7, 10]:
+        l9_house = planets[l9_name].house
+        if l9_house in [1, 4, 7, 10, 5, 9]:
             promise_level = "STRONG"
             evidence.append(CorroborationEngine.create_evidence(
-                "NATAL_PROMISE", "TRAVEL PROMISE: High probability of long-distance or international horizons.", 85.0
+                "NATAL_PROMISE",
+                f"NATAL PROMISE: High travel potential indicated by Kendra/Trikona placement of 9th Lord {l9_name}.",
+                90.0, rationale=f"{l9_name} is in house {l9_house}"
+            ))
+        elif l9_house in [2, 11]:
+            evidence.append(CorroborationEngine.create_evidence(
+                "SECONDARY_PROMISE",
+                f"SECONDARY PROMISE: Supportive house placement (2/11) for 9th Lord {l9_name} provides stable travel foundation.",
+                60.0, rationale=f"{l9_name} is in house {l9_house}"
+            ))
+        l12_house = planets[l12_name].house
+        if l12_house in [1, 4, 7, 10, 5, 9]:
+             evidence.append(CorroborationEngine.create_evidence(
+                "NATAL_PROMISE",
+                f"HORIZON PROMISE: High migration potential indicated by Kendra/Trikona placement of 12th Lord {l12_name}.",
+                90.0, rationale=f"{l12_name} is in house {l12_house}"
+            ))
+        elif l12_house in [2, 11]:
+             evidence.append(CorroborationEngine.create_evidence(
+                "SECONDARY_PROMISE",
+                f"SECONDARY PROMISE: Supportive house placement (2/11) for 12th Lord {l12_name} provides stable transition potential.",
+                60.0, rationale=f"{l12_name} is in house {l12_house}"
             ))
 
         # 2. DASHA ACTIVATION

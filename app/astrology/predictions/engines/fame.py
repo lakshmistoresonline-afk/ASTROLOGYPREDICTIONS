@@ -30,11 +30,19 @@ class FamePredictionEngine:
                 90.0
             ))
 
-        if planets[l10_name].house in [1, 4, 7, 10, 5, 9]:
+        l10_house = planets[l10_name].house
+        if l10_house in [1, 4, 7, 10, 5, 9]:
+            promise_level = "STRONG"
             evidence.append(CorroborationEngine.create_evidence(
                 "NATAL_PROMISE",
-                f"REPUTATION PROMISE: High status potential indicated by 10th Lord {l10_name} placement.",
-                85.0
+                f"NATAL PROMISE: High status potential indicated by Kendra/Trikona placement of 10th Lord {l10_name}.",
+                90.0, rationale=f"{l10_name} is in house {l10_house}"
+            ))
+        elif l10_house in [2, 11]:
+            evidence.append(CorroborationEngine.create_evidence(
+                "SECONDARY_PROMISE",
+                f"SECONDARY PROMISE: Supportive house placement (2/11) for 10th Lord {l10_name} provides stable reputation base.",
+                60.0, rationale=f"{l10_name} is in house {l10_house}"
             ))
 
         # 2. DASHA ACTIVATION

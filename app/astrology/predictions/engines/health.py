@@ -22,16 +22,24 @@ class HealthPredictionEngine:
 
         # 1. NATAL PROMISE (Lagna & 6th House)
         promise_level = "MODERATE"
-        if "Exalted" in l1.dignity or l1.dignity == "Own Sign":
+        if l1.house in [1, 4, 7, 10, 5, 9]:
+            promise_level = "STRONG"
+            evidence.append(CorroborationEngine.create_evidence(
+                "NATAL_PROMISE",
+                f"NATAL PROMISE: High physical resilience indicated by Kendra/Trikona placement of Lagna Lord {l1_name}.",
+                90.0, rationale=f"{l1_name} is in house {l1.house}"
+            ))
+        elif l1.house in [2, 11]:
+            evidence.append(CorroborationEngine.create_evidence(
+                "SECONDARY_PROMISE",
+                f"SECONDARY PROMISE: Supportive house placement (2/11) for Lagna Lord {l1_name} provides stable vitality foundation.",
+                60.0, rationale=f"{l1_name} is in house {l1.house}"
+            ))
+        elif "Exalted" in l1.dignity or l1.dignity == "Own Sign":
             promise_level = "STRONG"
             evidence.append(CorroborationEngine.create_evidence(
                 "NATAL_PROMISE", f"VITALITY PROMISE: Strong Lagna Lord {l1_name} provides deep physical resilience.", 90.0,
                 rationale=f"{l1_name} is in its own sign or exaltation."
-            ))
-        else:
-            evidence.append(CorroborationEngine.create_evidence(
-                "NATAL_PROMISE", f"PHYSICAL BASELINE: Lagna Lord {l1_name} establishes a stable vitality foundation.", 60.0,
-                rationale=f"Ascendant lord is active in the natal chart."
             ))
 
         # 2. STRENGTH (Shadbala)

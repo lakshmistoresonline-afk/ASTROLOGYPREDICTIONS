@@ -22,12 +22,18 @@ class PropertyPredictionEngine:
         l4 = planets[l4_name]
 
         promise_level = "MODERATE"
-        if l4.house in [1, 4, 7, 10, 5, 9, 11]:
+        if l4.house in [1, 4, 7, 10, 5, 9]:
             promise_level = "STRONG"
             evidence.append(CorroborationEngine.create_evidence(
                 "NATAL_PROMISE",
-                f"ASSET PROMISE: Beneficial 4th Lord {l4_name} placement supports fixed asset acquisition.",
-                90.0
+                f"NATAL PROMISE: High asset potential indicated by Kendra/Trikona placement of 4th Lord {l4_name}.",
+                90.0, rationale=f"{l4_name} is in house {l4.house}"
+            ))
+        elif l4.house in [2, 11]:
+            evidence.append(CorroborationEngine.create_evidence(
+                "SECONDARY_PROMISE",
+                f"SECONDARY PROMISE: Supportive house placement (2/11) for 4th Lord {l4_name} provides stable asset foundation.",
+                60.0, rationale=f"{l4_name} is in house {l4.house}"
             ))
 
         # 2. KARAKA STRENGTH (Mars)

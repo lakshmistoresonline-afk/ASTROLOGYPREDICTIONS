@@ -21,10 +21,19 @@ class EducationPredictionEngine:
         l5_name = house_lords[5]
 
         promise_level = "MODERATE"
-        if planets[l4_name].house in [1, 4, 7, 10, 5, 9]:
+        l4_house = planets[l4_name].house
+        if l4_house in [1, 4, 7, 10, 5, 9]:
             promise_level = "STRONG"
             evidence.append(CorroborationEngine.create_evidence(
-                "NATAL_PROMISE", f"KNOWLEDGE PROMISE: High capacity for learning supported by 4th Lord {l4_name} placement.", 85.0
+                "NATAL_PROMISE",
+                f"NATAL PROMISE: High capacity for learning supported by Kendra/Trikona placement of 4th Lord {l4_name}.",
+                90.0, rationale=f"{l4_name} is in house {l4_house}"
+            ))
+        elif l4_house in [2, 11]:
+            evidence.append(CorroborationEngine.create_evidence(
+                "SECONDARY_PROMISE",
+                f"SECONDARY PROMISE: Supportive house placement (2/11) for 4th Lord {l4_name} provides stable educational base.",
+                60.0, rationale=f"{l4_name} is in house {l4_house}"
             ))
 
         # Mercury & Jupiter (Karakas)

@@ -23,6 +23,33 @@ class BusinessPredictionEngine:
         l10 = planets[l10_name]
 
         promise_level = "MODERATE"
+        if l7.house in [1, 4, 7, 10, 5, 9]:
+            promise_level = "STRONG"
+            evidence.append(CorroborationEngine.create_evidence(
+                "NATAL_PROMISE",
+                f"NATAL PROMISE: High market potential indicated by Kendra/Trikona placement of 7th Lord {l7_name}.",
+                90.0, rationale=f"{l7_name} is in house {l7.house}"
+            ))
+        elif l7.house in [2, 11]:
+            evidence.append(CorroborationEngine.create_evidence(
+                "SECONDARY_PROMISE",
+                f"SECONDARY PROMISE: Supportive house placement (2/11) for 7th Lord {l7_name} provides stable business base.",
+                60.0, rationale=f"{l7_name} is in house {l7.house}"
+            ))
+
+        if l10.house in [1, 4, 7, 10, 5, 9]:
+            evidence.append(CorroborationEngine.create_evidence(
+                "NATAL_PROMISE",
+                f"ACTION PROMISE: High entrepreneurial status indicated by Kendra/Trikona placement of 10th Lord {l10_name}.",
+                90.0, rationale=f"{l10_name} is in house {l10.house}"
+            ))
+        elif l10.house in [2, 11]:
+            evidence.append(CorroborationEngine.create_evidence(
+                "SECONDARY_PROMISE",
+                f"SECONDARY PROMISE: Supportive house placement (2/11) for 10th Lord {l10_name} provides stable income stream.",
+                60.0, rationale=f"{l10_name} is in house {l10.house}"
+            ))
+
         # Business Yoga: 7th lord and 10th lord association
         if l7.rashi == l10.rashi or l7.house == 10 or l10.house == 7:
             promise_level = "STRONG"

@@ -15,14 +15,14 @@ class CorroborationEngine:
     """
 
     WEIGHTS = {
-        "NATAL_PROMISE": 0.35, # Inherent capacity
-        "DASHA_ACTIVATION": 0.25, # Timing - Life period
-        "TRANSIT_TRIGGER": 0.15, # Timing - Current sky
-        "DIVISIONAL_CONFIRM": 0.10, # Soul/Action confirmation
+        "NATAL_PROMISE": 0.25, # Inherent capacity
+        "DASHA_ACTIVATION": 0.15, # Timing - Life period context
+        "TRANSIT_TRIGGER": 0.40, # Timing - Immediate trigger
+        "DIVISIONAL_CONFIRM": 0.15, # Soul/Action confirmation
         "YOGA_SUPPORT": 0.05, # Special combinations
         "ASPECT_SUPPORT": 0.05, # Influences
         "PLANETARY_STRENGTH": 0.05, # Shadbala
-        "CONFLICTS": -0.40 # Limiting factors (Contradiction)
+        "CONFLICTS": -0.60 # Limiting factors (Contradiction)
     }
 
     @staticmethod
@@ -48,49 +48,76 @@ class CorroborationEngine:
     def synthesize(domain: str, promise_level: str, evidence: List[CorroborationEvidence],
                     summary_template: str, timing_window: Dict[str, Any] = None) -> DomainPrediction:
 
-        # 1. Calculate Confluence (Positive factors)
-        total_potential = sum(e.strength_score for e in evidence if e.strength_score > 0)
+        # 1. Group evidence by source to prevent double-counting (V3.7 Hardening)
+        source_contributions = {}
+        for e in evidence:
+            if e.source not in source_contributions:
+                source_contributions[e.source] = []
+            source_contributions[e.source].append(e.strength_score)
 
-        # 2. Calculate Contradiction (Negative factors)
-        total_friction = sum(e.strength_score for e in evidence if e.strength_score < 0)
+        # 2. Calculate Confluence (Positive factors)
+        # Take the maximum contribution for each source type to prevent "Node Inflation"
+        total_potential = 0.0
+        for source, scores in source_contributions.items():
+            if any(s > 0 for s in scores):
+                total_potential += max(s for s in scores)
 
-        # 3. Final Composite Score
+        # 3. Calculate Contradiction (Negative factors)
+        total_friction = 0.0
+        for source, scores in source_contributions.items():
+            if any(s < 0 for s in scores):
+                total_friction += min(s for s in scores) # Most negative
+
+        # 4. Final Composite Score
         composite_score = total_potential + total_friction
 
-        # 4. Active Event Gate (V3.5 Hardening)
-        # Predictions cannot reach STRONG (>60%) without a current PEAK trigger.
-        # This prevents "Always-On" strong predictions during long dashas.
+        # 4. Evidence Diversity Bonus (V3.7)
+        # Reward convergence of independent layers
+        sources = {e.source for e in evidence if e.strength_score > 0}
+        diversity_bonus = 0.0
+        if "NATAL_PROMISE" in sources and "DASHA_ACTIVATION" in sources and "TRANSIT_TRIGGER" in sources:
+            diversity_bonus = 0.05
+
+        composite_score += diversity_bonus
+
+        # 5. State Determination Model (V3.7 Hardened)
         tw = timing_window or {"phase": "SCANNING", "description": "Analyzing triggers..."}
+        phase = tw.get("phase")
 
-        is_peak = tw.get("phase") == "PEAK_MANIFESTATION"
+        is_peak = phase == "PEAK_MANIFESTATION"
+        is_active = phase in ["NEAR_TERM_ACTIVE", "PEAK_ACTIVE", "PEAK_MANIFESTATION"]
+        is_watch = phase == "BUILD_UP" or (is_active and composite_score < 0.48)
 
-        if composite_score >= 0.60 and not is_peak:
-            composite_score = 0.58 # Cap at high MODERATE for background promise only
+        # Quality Gate (V3.7 Hardened)
+        # Factors: Evidence density + Confluence + Lack of contradictions
+        density_bonus = min(0.2, len(evidence) * 0.04)
+        friction_penalty = abs(total_friction)
+        q_score = (composite_score * 0.4) + density_bonus - (friction_penalty * 0.8)
+        q_score = round(max(0, min(1, q_score)) * 100, 2)
 
-        composite_score = max(0, min(1, composite_score))
-
-        # 5. Determine Confidence Labels
-        if total_friction <= -0.20:
-             strength = "MIXED"
-             confidence = "VARYING"
-        elif composite_score >= 0.80:
-            strength = "VERY STRONG"
+        # Scoring Gates (V3.7 Hardened)
+        if composite_score >= 0.65 and is_peak and q_score >= 50:
+            strength = "PEAK"
             confidence = "EXTREME"
-        elif composite_score >= 0.60:
-            strength = "STRONG"
+        elif composite_score >= 0.54 and is_active and q_score >= 42:
+            strength = "ACTIVE"
             confidence = "HIGH"
-        elif composite_score >= 0.40:
-            strength = "MODERATE"
+        elif composite_score >= 0.38 or (composite_score >= 0.28 and is_watch):
+            strength = "WATCH"
             confidence = "MEDIUM"
-        elif composite_score >= 0.20:
-            strength = "CONDITIONAL"
-            confidence = "VARYING"
         elif composite_score > 0:
-            strength = "WEAK"
+            strength = "BACKGROUND"
             confidence = "LOW"
         else:
             strength = "INSUFFICIENT DATA"
             confidence = "SCANNING"
+
+        # Special Case: Contradiction override
+        if total_friction <= -0.25:
+             strength = "MIXED"
+             confidence = "VARYING"
+
+        composite_score = max(0, min(1, composite_score))
 
         # 5. Extract Lists
         supporting = [e.description for e in evidence if e.strength_score > 0]
@@ -101,13 +128,6 @@ class CorroborationEngine:
 
         # 6. Build Timing
         tw = timing_window or {"phase": "SCANNING", "description": "Analyzing triggers..."}
-
-        # 7. Quality Score (V3 Calibration)
-        # Factors: Evidence density + Confluence + Lack of contradictions
-        density_bonus = min(0.2, len(evidence) * 0.05)
-        friction_penalty = abs(total_friction)
-        q_score = (composite_score * 0.5) + density_bonus - (friction_penalty * 0.2)
-        q_score = round(max(0, min(1, q_score)) * 100, 2)
 
         return DomainPrediction(
             domain=domain,
