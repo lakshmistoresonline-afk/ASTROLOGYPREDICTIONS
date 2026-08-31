@@ -718,5 +718,221 @@
                 "type": "STABILITY"
             }
         ]
+    },
+    {
+        "name": "Lata Mangeshkar",
+        "dob": "1929-09-28",
+        "tob": "21:30",
+        "lat": 22.7196,
+        "lon": 75.8577,
+        "tz": "Asia/Kolkata",
+        "events": [
+            {
+                "date": "1949-01-01",
+                "domain": "Fame & Reputation",
+                "description": "Mahal movie - Aayega Aanewala hit",
+                "status": "OCCURRED",
+                "type": "BREAKTHROUGH"
+            },
+            {
+                "date": "1940-01-01",
+                "domain": "Fame & Reputation",
+                "description": "Childhood - stable",
+                "status": "DID_NOT_OCCUR",
+                "type": "STABILITY"
+            }
+        ]
+    },
+    {
+        "name": "Sachin Tendulkar",
+        "dob": "1973-04-24",
+        "tob": "16:20",
+        "lat": 19.0760,
+        "lon": 72.8777,
+        "tz": "Asia/Kolkata",
+        "events": [
+            {
+                "date": "1989-11-15",
+                "domain": "Career & Authority",
+                "description": "International Debut",
+                "status": "OCCURRED",
+                "type": "BREAKTHROUGH"
+            },
+            {
+                "date": "1980-01-01",
+                "domain": "Career & Authority",
+                "description": "Childhood - stable",
+                "status": "DID_NOT_OCCUR",
+                "type": "STABILITY"
+            }
+        ]
+    },
+    {
+        "name": "Ratan Tata",
+        "dob": "1937-12-28",
+        "tob": "06:30",
+        "lat": 19.0760,
+        "lon": 72.8777,
+        "tz": "Asia/Kolkata",
+        "events": [
+            {
+                "date": "1991-03-25",
+                "domain": "Business & Enterprise",
+                "description": "Appointed Chairman of Tata Group",
+                "status": "OCCURRED",
+                "type": "BREAKTHROUGH"
+            },
+            {
+                "date": "1950-01-01",
+                "domain": "Business & Enterprise",
+                "description": "Student years - stable",
+                "status": "DID_NOT_OCCUR",
+                "type": "STABILITY"
+            }
+        ]
+    },
+    {
+        "name": "A.P.J. Abdul Kalam",
+        "dob": "1931-10-15",
+        "tob": "01:15",
+        "lat": 9.2876,
+        "lon": 79.3126,
+        "tz": "Asia/Kolkata",
+        "events": [
+            {
+                "date": "1980-07-18",
+                "domain": "Career & Authority",
+                "description": "SLV-3 Satellite Launch success",
+                "status": "OCCURRED",
+                "type": "BREAKTHROUGH"
+            },
+            {
+                "date": "1950-01-01",
+                "domain": "Career & Authority",
+                "description": "Early career - stable",
+                "status": "DID_NOT_OCCUR",
+                "type": "STABILITY"
+            }
+        ]
+    },
+    {
+        "name": "Dhirubhai Ambani",
+        "dob": "1932-12-28",
+        "tob": "06:30",
+        "lat": 21.5222,
+        "lon": 70.4579,
+        "tz": "Asia/Kolkata",
+        "events": [
+            {
+                "date": "1977-01-01",
+                "domain": "Business & Enterprise",
+                "description": "Reliance IPO",
+                "status": "OCCURRED",
+                "type": "BREAKTHROUGH"
+            },
+            {
+                "date": "1950-01-01",
+                "domain": "Business & Enterprise",
+                "description": "Yemen years - stable",
+                "status": "DID_NOT_OCCUR",
+                "type": "STABILITY"
+            }
+        ]
+    },
+    {
+        "name": "Kalpana Chawla",
+        "dob": "1962-03-17",
+        "tob": "08:15",
+        "lat": 29.6857,
+        "lon": 76.9907,
+        "tz": "Asia/Kolkata",
+        "events": [
+            {
+                "date": "1997-11-19",
+                "domain": "Travel & Horizons",
+                "description": "First Space Mission (STS-87)",
+                "status": "OCCURRED",
+                "type": "BREAKTHROUGH"
+            },
+            {
+                "date": "1980-01-01",
+                "domain": "Travel & Horizons",
+                "description": "Student years - stable",
+                "status": "DID_NOT_OCCUR",
+                "type": "STABILITY"
+            }
+        ]
+    },
+    {
+        "name": "C.V. Raman",
+        "dob": "1888-11-07",
+        "tob": "05:40",
+        "lat": 10.7870,
+        "lon": 79.1378,
+        "tz": "Asia/Kolkata",
+        "events": [
+            {
+                "date": "1928-02-28",
+                "domain": "Education & Knowledge",
+                "description": "Raman Effect Discovery",
+                "status": "OCCURRED",
+                "type": "BREAKTHROUGH"
+            },
+            {
+                "date": "1900-01-01",
+                "domain": "Education & Knowledge",
+                "description": "Early studies - stable",
+                "status": "DID_NOT_OCCUR",
+                "type": "STABILITY"
+            }
+        ]
+    },
+    {
+        "name": "B.R. Ambedkar",
+        "dob": "1891-04-14",
+        "tob": "12:00",
+        "lat": 22.51,
+        "lon": 75.77,
+        "tz": "Asia/Kolkata",
+        "events": [
+            {
+                "date": "1947-08-29",
+                "domain": "Career & Authority",
+                "description": "Drafting Committee Chairman",
+                "status": "OCCURRED",
+                "type": "BREAKTHROUGH"
+            },
+            {
+                "date": "1910-01-01",
+                "domain": "Career & Authority",
+                "description": "Student phase - stable",
+                "status": "DID_NOT_OCCUR",
+                "type": "STABILITY"
+            }
+        ]
+    },
+    {
+        "name": "M.S. Dhoni",
+        "dob": "1981-07-07",
+        "tob": "11:15",
+        "lat": 23.3441,
+        "lon": 85.3096,
+        "tz": "Asia/Kolkata",
+        "events": [
+            {
+                "date": "2007-09-24",
+                "domain": "Fame & Reputation",
+                "description": "T20 World Cup Win",
+                "status": "OCCURRED",
+                "type": "BREAKTHROUGH"
+            },
+            {
+                "date": "1995-01-01",
+                "domain": "Fame & Reputation",
+                "description": "Childhood - stable",
+                "status": "DID_NOT_OCCUR",
+                "type": "STABILITY"
+            }
+        ]
     }
 ]

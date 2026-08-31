@@ -1,5 +1,6 @@
 from datetime import datetime, timedelta
 from typing import Dict, Any, List, Optional
+from collections import defaultdict
 from ..core.models import CanonicalChart
 from ..core.calc_client import calc_client
 
@@ -81,7 +82,20 @@ class HighPrecisionTransitEngine:
                                 p_name, type_label, day["date"], target_natal=n_name, orb=angle_error, house=t_house
                             ))
 
-        return events
+        # Group by Planet + Type + NatalTarget to find local minima (peaks)
+        grouped_events = defaultdict(list)
+        for e in events:
+            key = (e.planet, e.event_type, e.target_natal)
+            grouped_events[key].append(e)
+
+        peak_events = []
+        for key, group in grouped_events.items():
+            # Find event with minimum orb in this group
+            # We filter for contiguous blocks (simplified: find global min in the range)
+            best = min(group, key=lambda x: x.orb)
+            peak_events.append(best)
+
+        return peak_events
 
 class TimingWindowEngine:
     """
@@ -107,9 +121,20 @@ class TimingWindowEngine:
         transit_events = HighPrecisionTransitEngine.get_transit_events(chart, start_date, start_date + timedelta(days=60))
 
         # Filter for "Strong Triggers"
-        triggers = [e for e in transit_events if e.planet in supporting_planets]
+        # Requirement: Transit must involve a supporting planet AND hit a relevant house OR relevant natal planet
+        relevant_natal_planets = {chart.house_lords.get(h) for h in houses}
 
-        # Unique triggers (prevent counting same planet twice)
+        triggers = []
+        for e in transit_events:
+            if e.planet in supporting_planets:
+                # Does it hit a relevant house?
+                if e.house in houses:
+                    triggers.append(e)
+                # Or does it hit the lord of a relevant house?
+                elif e.target_natal in relevant_natal_planets:
+                    triggers.append(e)
+
+        # Unique triggers
         unique_planets = {e.planet for e in triggers}
         trigger_count = len(unique_planets)
 
