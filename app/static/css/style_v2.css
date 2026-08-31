@@ -155,3 +155,48 @@ h1, h2, .font-premium {
 
 .progress { background: rgba(255,255,255,0.05); border-radius: 10px; }
 .progress-bar { background: var(--gold); }
+
+/* --- Dasha Timeline --- */
+.dasha-timeline {
+    display: flex;
+    height: 60px;
+    border-radius: 12px;
+    overflow: hidden;
+    margin-top: 20px;
+    background: rgba(0,0,0,0.2);
+}
+
+.dasha-segment {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    font-size: 0.6rem;
+    transition: all 0.3s;
+    cursor: pointer;
+    border-left: 1px solid rgba(255,255,255,0.05);
+}
+
+.dasha-segment:hover {
+    filter: brightness(1.5);
+    transform: scaleY(1.1);
+}
+
+.dasha-current {
+    box-shadow: inset 0 0 20px rgba(255,255,255,0.1);
+    position: relative;
+}
+
+.dasha-current::after {
+    content: 'NOW';
+    position: absolute;
+    top: -20px;
+    font-size: 0.5rem;
+    font-weight: 900;
+    color: var(--gold);
+    letter-spacing: 1px;
+}
+
+.ds-lord { font-weight: 900; }
+.ds-years { opacity: 0.5; }
