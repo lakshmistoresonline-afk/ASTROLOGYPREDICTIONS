@@ -59,6 +59,10 @@ class ForeignSettlementEngine:
 
         # 3. TIMING
         window = timing_engine.calculate_window(chart, ["Rahu", "Saturn", l12_name], [12, 9, 7], calculation_date=selected_date)
+        if window.get("timing_confidence") == "HIGH (Transit Verified)":
+             evidence.append(CorroborationEngine.create_evidence(
+                "TRANSIT_TRIGGER", f"PRECISION TRIGGER: {window.get('description')}", 90.0
+            ))
 
         # 4. SYNTHESIS
         summary_template = (

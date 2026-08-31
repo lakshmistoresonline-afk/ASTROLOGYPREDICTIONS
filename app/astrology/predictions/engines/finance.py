@@ -69,6 +69,10 @@ class FinancePredictionEngine:
         # 4. TIMING
         l11_name = house_lords[11]
         window = timing_engine.calculate_window(chart, ["Jupiter", "Venus", l2_name, l11_name], [2, 11, 1], calculation_date=selected_date)
+        if window.get("timing_confidence") == "HIGH (Transit Verified)":
+             evidence.append(CorroborationEngine.create_evidence(
+                "TRANSIT_TRIGGER", f"PRECISION TRIGGER: {window.get('description')}", 90.0
+            ))
 
         # 5. SYNTHESIS
         summary_template = (

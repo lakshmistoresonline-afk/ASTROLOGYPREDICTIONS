@@ -82,12 +82,10 @@ def generate_evidence_based_predictions(chart: CanonicalChart, selected_date: da
             traceback.print_exc()
             return None
 
-    # Parallel synthesis for performance
-    with ThreadPoolExecutor(max_workers=8) as executor:
-        futures = {executor.submit(process_domain, n, f): n for n, f in domain_tasks.items()}
-        for future in futures:
-            res = future.result()
-            if res: results.append(res)
+    # Sequential synthesis for audit stability (V3.4 Verification)
+    for name, engine_func in domain_tasks.items():
+        res = process_domain(name, engine_func)
+        if res: results.append(res)
 
     # Explicitly categorize for the UI template
     categorized = {"material": [], "social": [], "survival": [], "essence": []}

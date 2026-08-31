@@ -58,6 +58,10 @@ class FamePredictionEngine:
 
         # 3. TIMING
         window = timing_engine.calculate_window(chart, ["Sun", "Jupiter", l10_name], [10, 1, 5], calculation_date=selected_date)
+        if window.get("timing_confidence") == "HIGH (Transit Verified)":
+             evidence.append(CorroborationEngine.create_evidence(
+                "TRANSIT_TRIGGER", f"PRECISION TRIGGER: {window.get('description')}", 90.0
+            ))
 
         # 4. SYNTHESIS
         summary_template = (

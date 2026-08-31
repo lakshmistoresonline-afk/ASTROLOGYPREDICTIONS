@@ -68,6 +68,10 @@ class PropertyPredictionEngine:
 
         # 4. TIMING
         window = timing_engine.calculate_window(chart, ["Mars", "Saturn", l4_name], [4, 11, 2], calculation_date=selected_date)
+        if window.get("timing_confidence") == "HIGH (Transit Verified)":
+             evidence.append(CorroborationEngine.create_evidence(
+                "TRANSIT_TRIGGER", f"PRECISION TRIGGER: {window.get('description')}", 90.0
+            ))
 
         # 5. SYNTHESIS
         summary_template = (

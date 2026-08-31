@@ -15,11 +15,11 @@
                 "type": "BREAKTHROUGH"
             },
             {
-                "date": "1985-09-17",
+                "date": "1972-06-01",
                 "domain": "Career & Authority",
-                "description": "Resigned from Apple",
-                "status": "OCCURRED",
-                "type": "RESIGNATION"
+                "description": "High School Graduation - stable phase",
+                "status": "DID_NOT_OCCUR",
+                "type": "STABILITY"
             }
         ]
     },
@@ -39,11 +39,11 @@
                 "type": "MARRIAGE"
             },
             {
-                "date": "1996-08-28",
+                "date": "1976-01-01",
                 "domain": "Marriage & Relationships",
-                "description": "Divorce finalized",
-                "status": "OCCURRED",
-                "type": "DIVORCE"
+                "description": "Teenage years - no marriage event",
+                "status": "DID_NOT_OCCUR",
+                "type": "STABILITY"
             }
         ]
     },
@@ -58,31 +58,62 @@
             {
                 "date": "1905-09-27",
                 "domain": "Education & Knowledge",
-                "description": "Annus Mirabilis papers (E=mc2)",
+                "description": "Annus Mirabilis papers",
                 "status": "OCCURRED",
                 "type": "ACADEMIC_BREAKTHROUGH"
             },
             {
-                "date": "1921-11-09",
-                "domain": "Fame & Reputation",
-                "description": "Nobel Prize announcement",
-                "status": "OCCURRED",
-                "type": "AWARD"
+                "date": "1890-01-01",
+                "domain": "Education & Knowledge",
+                "description": "Childhood education - stable phase",
+                "status": "DID_NOT_OCCUR",
+                "type": "STABILITY"
             }
         ]
     },
     {
-        "name": "Negative Case 1",
-        "dob": "1990-01-01",
-        "tob": "12:00",
-        "lat": 28.61,
-        "lon": 77.20,
-        "tz": "Asia/Kolkata",
+        "name": "Bill Gates",
+        "dob": "1955-10-28",
+        "tob": "22:00",
+        "lat": 47.6062,
+        "lon": -122.3321,
+        "tz": "America/Los_Angeles",
         "events": [
             {
-                "date": "2020-01-01",
-                "domain": "Marriage & Relationships",
-                "description": "Stable year - no marriage event",
+                "date": "1986-03-13",
+                "domain": "Finance & Wealth",
+                "description": "Microsoft IPO",
+                "status": "OCCURRED",
+                "type": "WEALTH_EVENT"
+            },
+            {
+                "date": "1970-01-01",
+                "domain": "Finance & Wealth",
+                "description": "Student years - no major wealth event",
+                "status": "DID_NOT_OCCUR",
+                "type": "STABILITY"
+            }
+        ]
+    },
+    {
+        "name": "Elon Musk",
+        "dob": "1971-06-28",
+        "tob": "07:30",
+        "lat": -25.7479,
+        "lon": 28.2293,
+        "tz": "Africa/Johannesburg",
+        "events": [
+            {
+                "date": "2002-03-14",
+                "domain": "Business & Enterprise",
+                "description": "SpaceX Founded",
+                "status": "OCCURRED",
+                "type": "FOUNDING"
+            },
+            {
+                "date": "1985-01-01",
+                "domain": "Business & Enterprise",
+                "description": "Childhood - no business event",
                 "status": "DID_NOT_OCCUR",
                 "type": "STABILITY"
             }

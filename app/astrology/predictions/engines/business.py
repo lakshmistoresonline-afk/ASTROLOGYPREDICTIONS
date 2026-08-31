@@ -62,6 +62,10 @@ class BusinessPredictionEngine:
 
         # 3. TIMING
         window = timing_engine.calculate_window(chart, ["Mercury", "Sun", l7_name, l10_name], [7, 10, 11], calculation_date=selected_date)
+        if window.get("timing_confidence") == "HIGH (Transit Verified)":
+             evidence.append(CorroborationEngine.create_evidence(
+                "TRANSIT_TRIGGER", f"PRECISION TRIGGER: {window.get('description')}", 90.0
+            ))
 
         # 4. SYNTHESIS
         summary_template = (
