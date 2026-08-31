@@ -75,10 +75,11 @@ class CareerPredictionEngine:
             ))
 
         # 5. TIMING GENERATION
-        window = timing_engine.calculate_window(chart, ["Sun", "Jupiter", l10_name], [10, 11, 1], calculation_date=selected_date)
-        if window.get("timing_confidence") == "HIGH (Transit Verified)":
+        window = timing_engine.calculate_window(chart, ["Jupiter", l10_name], [10, 11, 1], calculation_date=selected_date)
+        if window.get("proximity_weight", 0) > 0:
              evidence.append(CorroborationEngine.create_evidence(
-                "TRANSIT_TRIGGER", f"PRECISION TRIGGER: {window.get('description')}", 90.0
+                "TRANSIT_TRIGGER", f"TEMPORAL TRIGGER: {window.get('description')}",
+                90.0 * window.get("proximity_weight")
             ))
 
         # 6. SYNTHESIS

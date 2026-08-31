@@ -32,13 +32,13 @@ class TravelPredictionEngine:
             "DASHA_ACTIVATION", "CURRENT ACTIVATION: Movement and expansion sectors are currently triggered.", 80.0
         ))
 
-        # 3. TRANSIT TRIGGER
-        evidence.append(CorroborationEngine.create_evidence(
-            "TRANSIT_TRIGGER", "TRANSIT TRIGGER: Active planetary transits support physical relocation or travel.", 70.0
-        ))
-
-        # 4. TIMING
+        # 3. TIMING
         window = timing_engine.calculate_window(chart, [l9_name, l12_name, "Moon"], [9, 12, 3], calculation_date=selected_date)
+        if window.get("proximity_weight", 0) > 0:
+             evidence.append(CorroborationEngine.create_evidence(
+                "TRANSIT_TRIGGER", f"TEMPORAL TRIGGER: {window.get('description')}",
+                90.0 * window.get("proximity_weight")
+            ))
 
         summary_template = (
             "Opportunities for travel and expansion show {promise} natal potential. "

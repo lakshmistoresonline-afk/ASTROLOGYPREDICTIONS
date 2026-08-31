@@ -20,7 +20,7 @@ from .engines.fame import FamePredictionEngine
 
 from concurrent.futures import ThreadPoolExecutor
 
-def generate_evidence_based_predictions(chart: CanonicalChart, selected_date: datetime = None) -> Dict[str, Any]:
+def generate_evidence_based_predictions(chart: CanonicalChart, selected_date: datetime = None, limit_domains: List[str] = None) -> Dict[str, Any]:
     """
     Master Engine (V3): Orchestrates specialized domain engines using hierarchical corroboration.
     """
@@ -45,6 +45,10 @@ def generate_evidence_based_predictions(chart: CanonicalChart, selected_date: da
         "Legal": LegalPredictionEngine.get_prediction,
         "Fame": FamePredictionEngine.get_prediction
     }
+
+    # Optimization: Only process requested domains if limit_domains is provided
+    if limit_domains:
+        domain_tasks = {k: v for k, v in domain_tasks.items() if any(k.lower() in ld.lower() for ld in limit_domains)}
 
     results = []
 
@@ -82,10 +86,12 @@ def generate_evidence_based_predictions(chart: CanonicalChart, selected_date: da
             traceback.print_exc()
             return None
 
-    # Sequential synthesis for audit stability (V3.4 Verification)
-    for name, engine_func in domain_tasks.items():
-        res = process_domain(name, engine_func)
-        if res: results.append(res)
+    # V3.5 Optimization: Parallel synthesis for speed
+    with ThreadPoolExecutor(max_workers=4) as executor:
+        future_to_domain = {executor.submit(process_domain, name, func): name for name, func in domain_tasks.items()}
+        for future in future_to_domain:
+            res = future.result()
+            if res: results.append(res)
 
     # Explicitly categorize for the UI template
     categorized = {"material": [], "social": [], "survival": [], "essence": []}

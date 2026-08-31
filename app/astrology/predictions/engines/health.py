@@ -70,6 +70,11 @@ class HealthPredictionEngine:
 
         # 6. TIMING
         window = timing_engine.calculate_window(chart, ["Sun", "Moon", l1_name], [1, 5, 9], calculation_date=selected_date)
+        if window.get("proximity_weight", 0) > 0:
+             evidence.append(CorroborationEngine.create_evidence(
+                "TRANSIT_TRIGGER", f"TEMPORAL TRIGGER: {window.get('description')}",
+                90.0 * window.get("proximity_weight")
+            ))
 
         summary_template = (
             "Health and vitality factors show {promise} underlying factors. "

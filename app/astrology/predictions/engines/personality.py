@@ -63,9 +63,10 @@ class PersonalityPredictionEngine:
 
         # 5. TIMING
         window = timing_engine.calculate_window(chart, ["Moon", l1_name], [1, 4, 7, 10], calculation_date=selected_date)
-        if window.get("timing_confidence") == "HIGH (Transit Verified)":
+        if window.get("proximity_weight", 0) > 0:
              evidence.append(CorroborationEngine.create_evidence(
-                "TRANSIT_TRIGGER", f"PRECISION TRIGGER: {window.get('description')}", 90.0
+                "TRANSIT_TRIGGER", f"TEMPORAL TRIGGER: {window.get('description')}",
+                90.0 * window.get("proximity_weight")
             ))
 
         summary_template = (

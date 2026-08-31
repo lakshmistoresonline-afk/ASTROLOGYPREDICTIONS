@@ -55,9 +55,21 @@ class CorroborationEngine:
         total_friction = sum(e.strength_score for e in evidence if e.strength_score < 0)
 
         # 3. Final Composite Score
-        composite_score = max(0, min(1, total_potential + total_friction))
+        composite_score = total_potential + total_friction
 
-        # 4. Determine Confidence Labels
+        # 4. Active Event Gate (V3.5 Hardening)
+        # Predictions cannot reach STRONG (>60%) without a current PEAK trigger.
+        # This prevents "Always-On" strong predictions during long dashas.
+        tw = timing_window or {"phase": "SCANNING", "description": "Analyzing triggers..."}
+
+        is_peak = tw.get("phase") == "PEAK_MANIFESTATION"
+
+        if composite_score >= 0.60 and not is_peak:
+            composite_score = 0.58 # Cap at high MODERATE for background promise only
+
+        composite_score = max(0, min(1, composite_score))
+
+        # 5. Determine Confidence Labels
         if total_friction <= -0.20:
              strength = "MIXED"
              confidence = "VARYING"

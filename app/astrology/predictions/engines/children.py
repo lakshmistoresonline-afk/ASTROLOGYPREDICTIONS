@@ -68,9 +68,10 @@ class ChildrenPredictionEngine:
 
         # 4. TIMING
         window = timing_engine.calculate_window(chart, ["Jupiter", "Moon", l5_name], [5, 9, 2], calculation_date=selected_date)
-        if window.get("timing_confidence") == "HIGH (Transit Verified)":
+        if window.get("proximity_weight", 0) > 0:
              evidence.append(CorroborationEngine.create_evidence(
-                "TRANSIT_TRIGGER", f"PRECISION TRIGGER: {window.get('description')}", 90.0
+                "TRANSIT_TRIGGER", f"TEMPORAL TRIGGER: {window.get('description')}",
+                90.0 * window.get("proximity_weight")
             ))
 
         # 5. SYNTHESIS

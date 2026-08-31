@@ -44,13 +44,13 @@ class EducationPredictionEngine:
             "DASHA_ACTIVATION", "CURRENT ACTIVATION: Intellectual and learning sectors are highlighted in the current life-period.", 80.0
         ))
 
-        # 3. TRANSIT TRIGGER
-        evidence.append(CorroborationEngine.create_evidence(
-            "TRANSIT_TRIGGER", "TRANSIT TRIGGER: Supporting planetary transits favor focused study or acquisition of new skills.", 70.0
-        ))
-
-        # 4. TIMING
+        # 3. TIMING
         window = timing_engine.calculate_window(chart, ["Mercury", "Jupiter", l4_name, l5_name], [4, 5, 2], calculation_date=selected_date)
+        if window.get("proximity_weight", 0) > 0:
+             evidence.append(CorroborationEngine.create_evidence(
+                "TRANSIT_TRIGGER", f"TEMPORAL TRIGGER: {window.get('description')}",
+                90.0 * window.get("proximity_weight")
+            ))
 
         summary_template = (
             "Opportunities for learning and intellectual growth show {promise} natal potential. "

@@ -59,9 +59,10 @@ class LegalPredictionEngine:
 
         # 3. TIMING
         window = timing_engine.calculate_window(chart, ["Jupiter", "Saturn", l6_name], [6, 10, 1], calculation_date=selected_date)
-        if window.get("timing_confidence") == "HIGH (Transit Verified)":
+        if window.get("proximity_weight", 0) > 0:
              evidence.append(CorroborationEngine.create_evidence(
-                "TRANSIT_TRIGGER", f"PRECISION TRIGGER: {window.get('description')}", 90.0
+                "TRANSIT_TRIGGER", f"TEMPORAL TRIGGER: {window.get('description')}",
+                90.0 * window.get("proximity_weight")
             ))
 
         # 4. SYNTHESIS

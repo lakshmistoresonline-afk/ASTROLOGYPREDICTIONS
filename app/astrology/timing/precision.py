@@ -103,8 +103,8 @@ class TimingWindowEngine:
         current_antar = dasha_data.get("current_antar", {})
 
         # 3. Transit Trigger (Precision Layer)
-        # Scan 180 days ahead for triggers
-        transit_events = HighPrecisionTransitEngine.get_transit_events(chart, start_date, start_date + timedelta(days=180))
+        # Scan 60 days ahead for triggers (Reduced for V3.5 Discrimination)
+        transit_events = HighPrecisionTransitEngine.get_transit_events(chart, start_date, start_date + timedelta(days=60))
 
         # Filter for "Strong Triggers": supporting planets hitting relevant houses or natal planets
         # We prioritize conjunctions or special aspects
@@ -113,31 +113,69 @@ class TimingWindowEngine:
         # Sort by proximity (earliest peak)
         triggers.sort(key=lambda x: x.peak_date)
 
-        peak_event = triggers[0] if triggers else None
+        # 4. Temporal Discrimination Gate (V3.5 Hardening)
+        # Only accept triggers within a tightly defined window for ACTIVE status.
 
-        if peak_event:
-            peak_dt = datetime.strptime(peak_event.peak_date, "%Y-%m-%d")
+        valid_peak_event = None
+        for t in triggers:
+            t_dt = datetime.strptime(t.peak_date, "%Y-%m-%d")
+            dist = abs((t_dt - start_date).days)
+            if dist <= 30: # Stricter active gate (±30 days around simulation date)
+                valid_peak_event = t
+                break
+
+        if valid_peak_event:
+            peak_dt = datetime.strptime(valid_peak_event.peak_date, "%Y-%m-%d")
+            days_to_peak = (peak_dt - start_date).days
+
+            # 5. Temporal Decay Logic (V3.5)
+            # We scale the bonus based on both temporal distance AND planet importance (speed)
+
+            PLANET_IMPORTANCE = {
+                "Moon": 0.1, "Mercury": 0.3, "Venus": 0.4, "Sun": 0.4,
+                "Mars": 0.7, "Jupiter": 1.0, "Saturn": 1.0, "Rahu": 1.0, "Ketu": 1.0
+            }
+
+            p_imp = PLANET_IMPORTANCE.get(valid_peak_event.planet, 0.5)
+
+            abs_dist = abs(days_to_peak)
+            if abs_dist <= 7:
+                phase = "PEAK_MANIFESTATION"
+                temporal_weight = 1.0
+            elif abs_dist <= 21:
+                phase = "NEAR_TERM_ACTIVE"
+                temporal_weight = 0.70
+            else:
+                phase = "BUILD_UP"
+                temporal_weight = 0.30
+
+            proximity_weight = temporal_weight * p_imp
+
             return {
-                "phase": "PEAK_ACTIVE",
+                "phase": phase,
                 "activation": (peak_dt - timedelta(days=20)).strftime("%Y-%m-%d"),
                 "build": (peak_dt - timedelta(days=7)).strftime("%Y-%m-%d"),
                 "peak": peak_dt.strftime("%Y-%m-%d"),
                 "manifestation": (peak_dt + timedelta(days=3)).strftime("%Y-%m-%d"),
                 "decline": (peak_dt + timedelta(days=15)).strftime("%Y-%m-%d"),
-                "description": f"{peak_event.planet} {peak_event.event_type} trigger.",
-                "timing_confidence": "HIGH (Transit Verified)"
+                "description": f"{valid_peak_event.planet} {valid_peak_event.event_type} trigger.",
+                "timing_confidence": f"{phase} ({int(proximity_weight*100)}%)",
+                "proximity_weight": proximity_weight,
+                "days_to_peak": days_to_peak
             }
         else:
             # Fallback to Dasha-based estimation
             return {
-                "phase": "BUILD_UP",
+                "phase": "STABLE_BACKGROUND",
                 "activation": start_date.strftime("%Y-%m-%d"),
-                "build": (start_date + timedelta(days=15)).strftime("%Y-%m-%d"),
-                "peak": (start_date + timedelta(days=30)).strftime("%Y-%m-%d"),
-                "manifestation": (start_date + timedelta(days=35)).strftime("%Y-%m-%d"),
-                "decline": (start_date + timedelta(days=60)).strftime("%Y-%m-%d"),
-                "description": "General life-period support (Dasha only).",
-                "timing_confidence": "MEDIUM (Dasha Estimation)"
+                "build": (start_date + timedelta(days=30)).strftime("%Y-%m-%d"),
+                "peak": (start_date + timedelta(days=60)).strftime("%Y-%m-%d"),
+                "manifestation": (start_date + timedelta(days=65)).strftime("%Y-%m-%d"),
+                "decline": (start_date + timedelta(days=90)).strftime("%Y-%m-%d"),
+                "description": "General life-period support (No immediate trigger).",
+                "timing_confidence": "LOW (Dasha Only)",
+                "proximity_weight": 0.0,
+                "days_to_peak": 999
             }
 
 timing_engine = TimingWindowEngine()
