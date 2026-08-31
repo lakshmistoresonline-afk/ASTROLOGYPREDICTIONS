@@ -49,7 +49,7 @@ class HealthPredictionEngine:
         # 4. DASHA ACTIVATION
         from ...dasha import calculate_vimshottari
         moon_lon = chart.planets["Moon"].longitude
-        dasha = calculate_vimshottari(moon_lon, chart.birth_datetime)
+        dasha = calculate_vimshottari(moon_lon, chart.birth_datetime, calculation_date=selected_date)
         antar_lord = dasha.get("current_antar", {}).get("lord")
 
         if antar_lord == l6_name:
@@ -69,7 +69,7 @@ class HealthPredictionEngine:
             ))
 
         # 6. TIMING
-        window = timing_engine.calculate_window(chart, ["Sun", "Moon", l1_name], [1, 5, 9])
+        window = timing_engine.calculate_window(chart, ["Sun", "Moon", l1_name], [1, 5, 9], calculation_date=selected_date)
 
         summary_template = (
             "Health and vitality factors show {promise} underlying factors. "
@@ -79,7 +79,7 @@ class HealthPredictionEngine:
         # IMPORTANT: Health remains INSUFFICIENT DATA for medical claims (Req 47)
         res = CorroborationEngine.synthesize("Health & Vitality", promise_level, evidence, summary_template, timing_window=window)
         res.validation_status = "INSUFFICIENT DATA"
-        res.practical_guidance = [
+        res.practical_actions = [
             "This is not a medical diagnosis. Consult a doctor for any health concerns.",
             "Maintain consistent physical routine and hygiene.",
             "Observe standard safety protocols for daily activity."

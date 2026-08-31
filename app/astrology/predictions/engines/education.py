@@ -50,7 +50,7 @@ class EducationPredictionEngine:
         ))
 
         # 4. TIMING
-        window = timing_engine.calculate_window(chart, ["Mercury", "Jupiter", l4_name, l5_name], [4, 5, 2])
+        window = timing_engine.calculate_window(chart, ["Mercury", "Jupiter", l4_name, l5_name], [4, 5, 2], calculation_date=selected_date)
 
         summary_template = (
             "Opportunities for learning and intellectual growth show {promise} natal potential. "
@@ -58,7 +58,7 @@ class EducationPredictionEngine:
         )
 
         res = CorroborationEngine.synthesize("Education & Knowledge", promise_level, evidence, summary_template, timing_window=window)
-        res.practical_guidance = [
+        res.practical_actions = [
             "Maintain disciplined study habits during energetic peaks.",
             "Jupiter-based wisdom practices support deep acquisition of knowledge.",
             "Verify academic deadlines and requirements during transition phases."

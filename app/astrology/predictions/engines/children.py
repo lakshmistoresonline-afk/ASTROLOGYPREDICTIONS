@@ -49,7 +49,7 @@ class ChildrenPredictionEngine:
         # 3. DASHA ACTIVATION
         from ...dasha import calculate_vimshottari
         moon_lon = planets["Moon"].longitude
-        dasha = calculate_vimshottari(moon_lon, chart.birth_datetime)
+        dasha = calculate_vimshottari(moon_lon, chart.birth_datetime, calculation_date=selected_date)
         antar_lord = dasha.get("current_antar", {}).get("lord")
 
         if antar_lord == l5_name or antar_lord == "Jupiter":

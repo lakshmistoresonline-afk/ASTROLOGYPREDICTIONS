@@ -55,6 +55,9 @@ class PredictionOutcome(db.Model):
     quality_score = db.Column(db.Float) # V3 Metric
     prediction_text = db.Column(db.Text, nullable=False)
 
+    # Point-in-Time Simulation (V3.1)
+    historical_prediction_date = db.Column(db.DateTime, nullable=True)
+
     # Timing Snapshot
     start_date = db.Column(db.String(20))
     peak_date = db.Column(db.String(20))

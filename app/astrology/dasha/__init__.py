@@ -2,16 +2,19 @@ from .vimshottari import get_vimshottari_periods, calculate_dasha_balance
 from datetime import datetime
 from ..core.planets import PLANET_COLORS
 
-def calculate_vimshottari(moon_longitude: float, birth_dt: datetime) -> dict:
-    """Enhanced Vimshottari Dasha calculation for Dashboard 2.0."""
+def calculate_vimshottari(moon_longitude: float, birth_dt: datetime, calculation_date: datetime = None) -> dict:
+    """Enhanced Vimshottari Dasha calculation with point-in-time support."""
     balance = calculate_dasha_balance(moon_longitude)
     mahadashas_raw = get_vimshottari_periods(moon_longitude, birth_dt)
 
-    # Match timezone awareness of birth_dt
-    if birth_dt.tzinfo:
-        now = datetime.now(birth_dt.tzinfo)
+    # Simulation Target Date (Phase 3.1)
+    if calculation_date is None:
+        if birth_dt.tzinfo:
+            target_date = datetime.now(birth_dt.tzinfo)
+        else:
+            target_date = datetime.now()
     else:
-        now = datetime.now()
+        target_date = calculation_date
 
     mahadashas = []
     current_maha = None
@@ -21,7 +24,7 @@ def calculate_vimshottari(moon_longitude: float, birth_dt: datetime) -> dict:
     for m in mahadashas_raw:
         m_start = m["start"]
         m_end = m["end"]
-        is_m_current = m_start <= now < m_end
+        is_m_current = m_start <= target_date < m_end
 
         m_data = {
             "lord": m["lord"],
@@ -41,7 +44,7 @@ def calculate_vimshottari(moon_longitude: float, birth_dt: datetime) -> dict:
         for a in m["antardashas"]:
             a_start = a["start"]
             a_end = a["end"]
-            is_a_current = a_start <= now < a_end
+            is_a_current = a_start <= target_date < a_end
 
             a_data = {
                 "lord": a["lord"],
@@ -59,7 +62,7 @@ def calculate_vimshottari(moon_longitude: float, birth_dt: datetime) -> dict:
             for p in a["pratyantardashas"]:
                 p_start = p["start"]
                 p_end = p["end"]
-                is_p_current = p_start <= now < p_end
+                is_p_current = p_start <= target_date < p_end
 
                 p_data = {
                     "lord": p["lord"],

@@ -66,7 +66,7 @@ class PersonalityPredictionEngine:
         )
 
         res = CorroborationEngine.synthesize("Personality & Essence", promise_level, evidence, summary_template)
-        res.practical_guidance = [
+        res.practical_actions = [
             "Observe the activation of the Lagna Lord for self-growth.",
             "Maintain emotional hygiene through meditation and mindfulness.",
             "Traditional Vedic alignment practices for the Moon are supported."

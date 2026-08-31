@@ -26,6 +26,7 @@ def save_prediction_snapshot():
         domain=data.get("domain"),
         prediction_strength=data.get("strength"),
         prediction_text=data.get("summary"),
+        historical_prediction_date=datetime.now(), # Default to now for live
         start_date=data.get("start"),
         peak_date=data.get("peak"),
         end_date=data.get("end"),

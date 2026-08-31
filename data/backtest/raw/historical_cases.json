@@ -1,0 +1,40 @@
+[
+    {
+        "name": "Steve Jobs",
+        "dob": "1955-02-24",
+        "tob": "19:15",
+        "lat": 37.7749,
+        "lon": -122.4194,
+        "tz": "America/Los_Angeles",
+        "events": [
+            {
+                "date": "1980-12-12",
+                "domain": "Career & Authority",
+                "description": "Apple IPO - breakthrough",
+                "status": "OCCURRED"
+            },
+            {
+                "date": "1970-03-01",
+                "domain": "Career & Authority",
+                "description": "Random school year - no breakthrough",
+                "status": "DID_NOT_OCCUR"
+            }
+        ]
+    },
+    {
+        "name": "Princess Diana",
+        "dob": "1961-07-01",
+        "tob": "19:45",
+        "lat": 52.833,
+        "lon": 0.516,
+        "tz": "Europe/London",
+        "events": [
+            {
+                "date": "1981-07-29",
+                "domain": "Marriage & Relationships",
+                "description": "Royal Wedding",
+                "status": "OCCURRED"
+            }
+        ]
+    }
+]

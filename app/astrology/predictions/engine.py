@@ -78,6 +78,8 @@ def generate_evidence_based_predictions(chart: CanonicalChart, selected_date: da
             return p_dict
         except Exception as e:
             # Domain failures are logged but don't break the report
+            import traceback
+            traceback.print_exc()
             return None
 
     # Parallel synthesis for performance

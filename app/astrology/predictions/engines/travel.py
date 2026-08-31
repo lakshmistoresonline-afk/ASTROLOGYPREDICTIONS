@@ -38,7 +38,7 @@ class TravelPredictionEngine:
         ))
 
         # 4. TIMING
-        window = timing_engine.calculate_window(chart, [l9_name, l12_name, "Moon"], [9, 12, 3])
+        window = timing_engine.calculate_window(chart, [l9_name, l12_name, "Moon"], [9, 12, 3], calculation_date=selected_date)
 
         summary_template = (
             "Opportunities for travel and expansion show {promise} natal potential. "
@@ -46,7 +46,7 @@ class TravelPredictionEngine:
         )
 
         res = CorroborationEngine.synthesize("Travel & Horizons", promise_level, evidence, summary_template, timing_window=window)
-        res.practical_guidance = [
+        res.practical_actions = [
             "Verify travel documents and insurance before departure.",
             "Traditional journey-blessing practices are recommended.",
             "Maintain flexibility during planetary transition periods."

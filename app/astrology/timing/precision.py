@@ -84,15 +84,19 @@ class TimingWindowEngine:
     """
 
     @staticmethod
-    def calculate_window(chart: CanonicalChart, supporting_planets: List[str], houses: List[int]) -> Dict[str, Any]:
+    def calculate_window(chart: CanonicalChart, supporting_planets: List[str], houses: List[int], calculation_date: datetime = None) -> Dict[str, Any]:
         # 1. Dasha Activation
         from ..dasha import calculate_vimshottari
         moon_lon = chart.planets["Moon"].longitude
-        dasha_data = calculate_vimshottari(moon_lon, chart.birth_datetime)
+        dasha_data = calculate_vimshottari(moon_lon, chart.birth_datetime, calculation_date=calculation_date)
         current_antar = dasha_data.get("current_antar", {})
 
         # 2. Timing Stages Logic
-        start_date = datetime.now()
+        # Simulation Target Date (Phase 3.1)
+        if calculation_date is None:
+            start_date = datetime.now()
+        else:
+            start_date = calculation_date
 
         # Peak is determined by Transit Trigger
         transit_events = HighPrecisionTransitEngine.get_transit_events(chart, start_date, start_date + timedelta(days=180))
