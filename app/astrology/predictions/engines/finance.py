@@ -56,7 +56,7 @@ class FinancePredictionEngine:
             evidence.append(CorroborationEngine.create_evidence(
                 "CONFLICTS",
                 "RESOURCE PRESSURE: Saturnian influence suggests slow accumulation or heavy commitments.",
-                -30.0
+                30.0
             ))
 
         # 3. DASHA ACTIVATION

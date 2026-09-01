@@ -10,13 +10,14 @@ class TransitEvent:
     Calculates exact degree contact and aspect separation.
     """
     def __init__(self, planet: str, event_type: str, peak_date: str, target_natal: str = None,
-                 orb: float = 0.0, house: int = None, nakshatra: str = None):
+                 orb: float = 0.0, house: int = None, target_house: int = None, nakshatra: str = None):
         self.planet = planet
         self.event_type = event_type
         self.peak_date = peak_date
         self.target_natal = target_natal
         self.orb = orb
-        self.house = house
+        self.house = house # House where transiting planet is located
+        self.target_house = target_house # House being aspected
         self.nakshatra = nakshatra
 
 class HighPrecisionTransitEngine:
@@ -78,8 +79,13 @@ class HighPrecisionTransitEngine:
 
                         if angle_error < 3.0: # Peak window threshold
                             type_label = "CONJUNCTION" if sign_diff == 1 else f"ASPECT_{sign_diff}H"
+                            # Calculate the house being hit by this aspect
+                            # Sign-based house index:
+                            target_h = (t_house + sign_diff - 2) % 12 + 1
+
                             events.append(TransitEvent(
-                                p_name, type_label, day["date"], target_natal=n_name, orb=angle_error, house=t_house
+                                p_name, type_label, day["date"], target_natal=n_name, orb=angle_error,
+                                house=t_house, target_house=target_h
                             ))
 
         # Group by Planet + Type + NatalTarget to find local minima (peaks)
@@ -117,21 +123,27 @@ class TimingWindowEngine:
         current_antar = dasha_data.get("current_antar", {})
 
         # 3. Transit Trigger (Precision Layer)
-        # Scan 60 days ahead for triggers (Reduced for V3.5 Discrimination)
+        # Scan 60 days ahead for triggers
         transit_events = HighPrecisionTransitEngine.get_transit_events(chart, start_date, start_date + timedelta(days=60))
 
         # Filter for "Strong Triggers"
-        # Requirement: Transit must involve a supporting planet AND hit a relevant house OR relevant natal planet
         relevant_natal_planets = {chart.house_lords.get(h) for h in houses}
+        antar_lord = current_antar.get("lord")
 
         triggers = []
         for e in transit_events:
-            if e.planet in supporting_planets:
-                # Does it hit a relevant house?
-                if e.house in houses:
-                    triggers.append(e)
+            # V3.12: Expanded supporting planets to include Dasha Lords
+            effective_supporting = set(supporting_planets) | {antar_lord, dasha_data.get("current_maha", {}).get("lord")}
+
+            if e.planet in effective_supporting:
+                # Does it hit a relevant house (position or aspect)?
+                is_hit = e.house in houses or e.target_house in houses
                 # Or does it hit the lord of a relevant house?
-                elif e.target_natal in relevant_natal_planets:
+                is_lord_hit = e.target_natal in relevant_natal_planets
+                # V3.12: High-impact trigger if Antar Lord hits a relevant target
+                is_antar_trigger = e.planet == antar_lord and (is_hit or is_lord_hit)
+
+                if is_hit or is_lord_hit or is_antar_trigger:
                     triggers.append(e)
 
         # Unique triggers

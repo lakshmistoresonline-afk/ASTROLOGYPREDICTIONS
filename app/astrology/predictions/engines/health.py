@@ -51,7 +51,7 @@ class HealthPredictionEngine:
         # 3. DUSTHANA DYNAMICS (Conflicts)
         if l6.house == 1 or l1.house == 6:
             evidence.append(CorroborationEngine.create_evidence(
-                "CONFLICTS", "HEALTH PRESSURE: Interaction between Lagna and 6th Lord suggests susceptibility to seasonal stress.", -35.0
+                "CONFLICTS", "HEALTH PRESSURE: Interaction between Lagna and 6th Lord suggests susceptibility to seasonal stress.", 35.0
             ))
 
         # 4. DASHA ACTIVATION

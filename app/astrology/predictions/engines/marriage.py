@@ -40,7 +40,7 @@ class MarriagePredictionEngine:
             evidence.append(CorroborationEngine.create_evidence(
                 "CONFLICTS",
                 f"RELATIONSHIP PRESSURE: 7th Lord {l7_name} in Dusthana suggests karmic complexity in partnerships.",
-                -40.0, rationale=f"{l7_name} in challenging house {l7.house}."
+                40.0, rationale=f"{l7_name} in challenging house {l7.house}."
             ))
 
         # 2. KARAKA STRENGTH (Venus/Jupiter)
