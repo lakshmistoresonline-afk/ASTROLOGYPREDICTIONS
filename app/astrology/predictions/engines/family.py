@@ -61,9 +61,11 @@ class FamilyPredictionEngine:
         from ...dasha import calculate_vimshottari
         moon_lon = planets["Moon"].longitude
         dasha = calculate_vimshottari(moon_lon, chart.birth_datetime, calculation_date=selected_date)
+        maha_lord = dasha.get("current_maha", {}).get("lord")
         antar_lord = dasha.get("current_antar", {}).get("lord")
 
-        if antar_lord in [l2_name, l4_name, "Moon"]:
+        relevant_lords = [l2_name, l4_name, "Moon"]
+        if antar_lord in relevant_lords:
             evidence.append(CorroborationEngine.create_evidence(
                 "DASHA_ACTIVATION",
                 f"ROOTS ACTIVATION: Period of {antar_lord} highlights domestic and family sectors.",
@@ -74,6 +76,13 @@ class FamilyPredictionEngine:
                 "DASHA_ACTIVATION",
                 "STABILITY PHASE: Focus on maintenance of domestic foundations.",
                 65.0
+            ))
+
+        if maha_lord in relevant_lords:
+            evidence.append(CorroborationEngine.create_evidence(
+                "DASHA_FOUNDATION",
+                f"DASHA FOUNDATION: Major life-cycle ruled by {maha_lord} provides underlying support for family stability.",
+                60.0
             ))
 
         # 3. TIMING

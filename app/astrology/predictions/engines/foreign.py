@@ -48,9 +48,11 @@ class ForeignSettlementEngine:
         from ...dasha import calculate_vimshottari
         moon_lon = planets["Moon"].longitude
         dasha = calculate_vimshottari(moon_lon, chart.birth_datetime, calculation_date=selected_date)
+        maha_lord = dasha.get("current_maha", {}).get("lord")
         antar_lord = dasha.get("current_antar", {}).get("lord")
 
-        if antar_lord == l12_name or antar_lord == "Rahu":
+        relevant_lords = [l12_name, "Rahu"]
+        if antar_lord in relevant_lords:
             evidence.append(CorroborationEngine.create_evidence(
                 "DASHA_ACTIVATION",
                 f"MIGRATION ACTIVATION: Period of {antar_lord} triggers movement and relocation cycles.",
@@ -60,6 +62,13 @@ class ForeignSettlementEngine:
             evidence.append(CorroborationEngine.create_evidence(
                 "DASHA_ACTIVATION",
                 "LOCAL STABILITY: Life-period focuses on maintenance of current domestic base.",
+                60.0
+            ))
+
+        if maha_lord in relevant_lords:
+            evidence.append(CorroborationEngine.create_evidence(
+                "DASHA_FOUNDATION",
+                f"DASHA FOUNDATION: Major life-cycle ruled by {maha_lord} provides underlying support for foreign relocation.",
                 60.0
             ))
 

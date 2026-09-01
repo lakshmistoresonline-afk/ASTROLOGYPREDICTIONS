@@ -70,7 +70,35 @@ class PersonalityPredictionEngine:
                     "YOGA_SUPPORT", f"YOGA MODIFIER: {yoga['name']} enhances leadership and character.", 85.0
                 ))
 
-        # 5. TIMING
+        # 5. DASHA ACTIVATION
+        from ...dasha import calculate_vimshottari
+        moon_lon = planets["Moon"].longitude
+        dasha = calculate_vimshottari(moon_lon, chart.birth_datetime, calculation_date=selected_date)
+        maha_lord = dasha.get("current_maha", {}).get("lord")
+        antar_lord = dasha.get("current_antar", {}).get("lord")
+
+        relevant_lords = [l1_name, "Moon"]
+        if antar_lord in relevant_lords:
+            evidence.append(CorroborationEngine.create_evidence(
+                "DASHA_ACTIVATION",
+                f"ESSENCE ACTIVATION: Period of {antar_lord} triggers major personality and vitality themes.",
+                90.0
+            ))
+        else:
+            evidence.append(CorroborationEngine.create_evidence(
+                "DASHA_ACTIVATION",
+                "STABILITY PHASE: Life-period focuses on maintenance of internal consistency.",
+                65.0
+            ))
+
+        if maha_lord in relevant_lords:
+            evidence.append(CorroborationEngine.create_evidence(
+                "DASHA_FOUNDATION",
+                f"DASHA FOUNDATION: Major life-cycle ruled by {maha_lord} provides underlying support for self-development.",
+                60.0
+            ))
+
+        # 6. TIMING
         window = timing_engine.calculate_window(chart, ["Moon", l1_name], [1, 4, 7, 10], calculation_date=selected_date)
         if window.get("proximity_weight", 0) > 0:
              evidence.append(CorroborationEngine.create_evidence(

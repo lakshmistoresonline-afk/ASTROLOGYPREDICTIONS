@@ -50,9 +50,32 @@ class TravelPredictionEngine:
             ))
 
         # 2. DASHA ACTIVATION
-        evidence.append(CorroborationEngine.create_evidence(
-            "DASHA_ACTIVATION", "CURRENT ACTIVATION: Movement and expansion sectors are currently triggered.", 80.0
-        ))
+        from ...dasha import calculate_vimshottari
+        moon_lon = chart.planets["Moon"].longitude
+        dasha = calculate_vimshottari(moon_lon, chart.birth_datetime, calculation_date=selected_date)
+        maha_lord = dasha.get("current_maha", {}).get("lord")
+        antar_lord = dasha.get("current_antar", {}).get("lord")
+
+        relevant_lords = [l9_name, l12_name, "Moon"]
+        if antar_lord in relevant_lords:
+            evidence.append(CorroborationEngine.create_evidence(
+                "DASHA_ACTIVATION",
+                f"MOVEMENT ACTIVATION: Period of {antar_lord} triggers expansion and journey sectors.",
+                90.0
+            ))
+        else:
+            evidence.append(CorroborationEngine.create_evidence(
+                "DASHA_ACTIVATION",
+                "LOCAL FOCUS: Life-period favors maintenance of current horizons.",
+                65.0
+            ))
+
+        if maha_lord in relevant_lords:
+            evidence.append(CorroborationEngine.create_evidence(
+                "DASHA_FOUNDATION",
+                f"DASHA FOUNDATION: Major life-cycle ruled by {maha_lord} provides underlying support for movement.",
+                60.0
+            ))
 
         # 3. TIMING
         window = timing_engine.calculate_window(chart, [l9_name, l12_name, "Moon"], [9, 12, 3], calculation_date=selected_date)

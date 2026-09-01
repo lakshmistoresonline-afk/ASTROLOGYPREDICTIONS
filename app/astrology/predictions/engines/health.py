@@ -58,15 +58,24 @@ class HealthPredictionEngine:
         from ...dasha import calculate_vimshottari
         moon_lon = chart.planets["Moon"].longitude
         dasha = calculate_vimshottari(moon_lon, chart.birth_datetime, calculation_date=selected_date)
+        maha_lord = dasha.get("current_maha", {}).get("lord")
         antar_lord = dasha.get("current_antar", {}).get("lord")
 
-        if antar_lord == l6_name:
-             evidence.append(CorroborationEngine.create_evidence(
-                "DASHA_ACTIVATION", f"CURRENT ACTIVATION: Period of 6th Lord {antar_lord} requires disciplined routine.", 80.0
+        relevant_lords = [l6_name]
+        if antar_lord in relevant_lords:
+            evidence.append(CorroborationEngine.create_evidence(
+                "DASHA_ACTIVATION", f"CURRENT ACTIVATION: Period of 6th Lord {antar_lord} requires disciplined routine.", 90.0
             ))
         else:
-             evidence.append(CorroborationEngine.create_evidence(
+            evidence.append(CorroborationEngine.create_evidence(
                 "DASHA_ACTIVATION", "STABILITY PHASE: Life-period favors maintenance and balanced physical habits.", 65.0
+            ))
+
+        if maha_lord in relevant_lords:
+            evidence.append(CorroborationEngine.create_evidence(
+                "DASHA_FOUNDATION",
+                f"DASHA FOUNDATION: Major life-cycle ruled by {maha_lord} highlights structural health themes.",
+                60.0
             ))
 
         # 5. MODIFIERS (Sun/Moon vitality)

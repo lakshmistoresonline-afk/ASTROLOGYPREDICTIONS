@@ -48,9 +48,11 @@ class LegalPredictionEngine:
         from ...dasha import calculate_vimshottari
         moon_lon = planets["Moon"].longitude
         dasha = calculate_vimshottari(moon_lon, chart.birth_datetime, calculation_date=selected_date)
+        maha_lord = dasha.get("current_maha", {}).get("lord")
         antar_lord = dasha.get("current_antar", {}).get("lord")
 
-        if antar_lord == l6_name or antar_lord == "Jupiter":
+        relevant_lords = [l6_name, "Jupiter"]
+        if antar_lord in relevant_lords:
             evidence.append(CorroborationEngine.create_evidence(
                 "DASHA_ACTIVATION",
                 f"ADMINISTRATIVE ACTIVATION: Period of {antar_lord} triggers resolution of disputes.",
@@ -60,6 +62,13 @@ class LegalPredictionEngine:
             evidence.append(CorroborationEngine.create_evidence(
                 "DASHA_ACTIVATION",
                 "STABILITY PHASE: Focus on maintenance of existing formal commitments.",
+                60.0
+            ))
+
+        if maha_lord in relevant_lords:
+            evidence.append(CorroborationEngine.create_evidence(
+                "DASHA_FOUNDATION",
+                f"DASHA FOUNDATION: Major life-cycle ruled by {maha_lord} provides underlying support for conflict resolution.",
                 60.0
             ))
 

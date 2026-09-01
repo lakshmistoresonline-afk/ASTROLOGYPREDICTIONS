@@ -57,9 +57,11 @@ class ChildrenPredictionEngine:
         from ...dasha import calculate_vimshottari
         moon_lon = planets["Moon"].longitude
         dasha = calculate_vimshottari(moon_lon, chart.birth_datetime, calculation_date=selected_date)
+        maha_lord = dasha.get("current_maha", {}).get("lord")
         antar_lord = dasha.get("current_antar", {}).get("lord")
 
-        if antar_lord == l5_name or antar_lord == "Jupiter":
+        relevant_lords = [l5_name, "Jupiter"]
+        if antar_lord in relevant_lords:
             evidence.append(CorroborationEngine.create_evidence(
                 "DASHA_ACTIVATION",
                 f"LEGACY ACTIVATION: Period of {antar_lord} triggers sectors of creation and procreation.",
@@ -69,6 +71,13 @@ class ChildrenPredictionEngine:
             evidence.append(CorroborationEngine.create_evidence(
                 "DASHA_ACTIVATION",
                 "NURTURING PHASE: Focus on maintenance of existing foundations.",
+                60.0
+            ))
+
+        if maha_lord in relevant_lords:
+            evidence.append(CorroborationEngine.create_evidence(
+                "DASHA_FOUNDATION",
+                f"DASHA FOUNDATION: Major life-cycle ruled by {maha_lord} provides underlying support for creative legacy.",
                 60.0
             ))
 

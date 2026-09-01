@@ -15,10 +15,12 @@ class CorroborationEngine:
     """
 
     WEIGHTS = {
-        "NATAL_PROMISE": 0.30, # Inherent capacity
-        "DASHA_ACTIVATION": 0.25, # Timing - Life period context
-        "TRANSIT_TRIGGER": 0.20, # Timing - Immediate trigger (Reduced for V3.8)
-        "DIVISIONAL_CONFIRM": 0.15, # Soul/Action confirmation
+        "NATAL_PROMISE": 0.25, # Inherent capacity (Primary)
+        "SECONDARY_PROMISE": 0.15, # Supporting house lords
+        "DASHA_ACTIVATION": 0.20, # Timing - Life period context (Antar)
+        "DASHA_FOUNDATION": 0.10, # Timing - Life period foundation (Maha)
+        "TRANSIT_TRIGGER": 0.15, # Timing - Immediate trigger (Precision)
+        "DIVISIONAL_CONFIRM": 0.10, # Soul/Action confirmation
         "YOGA_SUPPORT": 0.05, # Special combinations
         "ASPECT_SUPPORT": 0.05, # Influences
         "PLANETARY_STRENGTH": 0.05, # Shadbala
@@ -85,10 +87,13 @@ class CorroborationEngine:
         # Reward convergence of multiple independent layers
         sources = {e.source for e in evidence if e.strength_score > 0}
         diversity_bonus = 0.0
-        # If we have Natal + Dasha + (Transit or Varga), add bonus
-        if "NATAL_PROMISE" in sources and "DASHA_ACTIVATION" in sources:
-            if "TRANSIT_TRIGGER" in sources or "DIVISIONAL_CONFIRM" in sources:
-                diversity_bonus = 0.08
+        # If we have (Natal or Secondary) + (Dasha or Foundation) + (Transit or Varga), add bonus
+        has_promise = "NATAL_PROMISE" in sources or "SECONDARY_PROMISE" in sources
+        has_dasha = "DASHA_ACTIVATION" in sources or "DASHA_FOUNDATION" in sources
+        has_trigger = "TRANSIT_TRIGGER" in sources or "DIVISIONAL_CONFIRM" in sources
+
+        if has_promise and has_dasha and has_trigger:
+            diversity_bonus = 0.10 # Increased from 0.08 for Recall recovery
 
         composite_score += diversity_bonus
 
@@ -110,15 +115,15 @@ class CorroborationEngine:
 
         # 8. Scoring Gates (V3.8 Precision Recovery)
         # PEAK requires high score, peak timing, and high diversity
-        if composite_score >= 0.65 and is_peak and q_score >= 52 and len(unique_anchors) >= 3:
+        if composite_score >= 0.60 and is_peak and q_score >= 48 and len(unique_anchors) >= 3:
             strength = "PEAK"
             confidence = "EXTREME"
         # ACTIVE requires independent layers convergence
-        elif composite_score >= 0.48 and is_active and q_score >= 40 and unique_confirmation_layers >= 2:
+        elif composite_score >= 0.42 and is_active and q_score >= 35 and unique_confirmation_layers >= 2:
             strength = "ACTIVE"
             confidence = "HIGH"
         # WATCH is more inclusive
-        elif composite_score >= 0.38 or (composite_score >= 0.28 and is_active):
+        elif composite_score >= 0.33 or (composite_score >= 0.25 and is_active):
             strength = "WATCH"
             confidence = "MEDIUM"
         elif composite_score > 0:

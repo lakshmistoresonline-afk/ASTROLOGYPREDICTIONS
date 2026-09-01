@@ -66,19 +66,28 @@ class MarriagePredictionEngine:
         from ...dasha import calculate_vimshottari
         moon_lon = chart.planets["Moon"].longitude
         dasha = calculate_vimshottari(moon_lon, chart.birth_datetime, calculation_date=selected_date)
+        maha_lord = dasha.get("current_maha", {}).get("lord")
         antar_lord = dasha.get("current_antar", {}).get("lord")
 
-        if antar_lord == l7_name or antar_lord == "Venus":
+        relevant_lords = [l7_name, "Venus"]
+        if antar_lord in relevant_lords:
             evidence.append(CorroborationEngine.create_evidence(
                 "DASHA_ACTIVATION",
                 f"SOCIAL ACTIVATION: Life-period of {antar_lord} triggers partnership and public union themes.",
-                95.0
+                90.0
             ))
         else:
             evidence.append(CorroborationEngine.create_evidence(
                 "DASHA_ACTIVATION",
                 "RELATIONAL STABILITY: Current life-period focuses on maintenance and internal consistency.",
                 65.0
+            ))
+
+        if maha_lord in relevant_lords:
+            evidence.append(CorroborationEngine.create_evidence(
+                "DASHA_FOUNDATION",
+                f"DASHA FOUNDATION: Major life-cycle ruled by {maha_lord} provides underlying support for relational longevity.",
+                60.0
             ))
 
         # 5. TIMING

@@ -49,9 +49,32 @@ class EducationPredictionEngine:
             ))
 
         # 2. DASHA ACTIVATION
-        evidence.append(CorroborationEngine.create_evidence(
-            "DASHA_ACTIVATION", "CURRENT ACTIVATION: Intellectual and learning sectors are highlighted in the current life-period.", 80.0
-        ))
+        from ...dasha import calculate_vimshottari
+        moon_lon = chart.planets["Moon"].longitude
+        dasha = calculate_vimshottari(moon_lon, chart.birth_datetime, calculation_date=selected_date)
+        maha_lord = dasha.get("current_maha", {}).get("lord")
+        antar_lord = dasha.get("current_antar", {}).get("lord")
+
+        relevant_lords = [l4_name, l5_name, "Mercury", "Jupiter"]
+        if antar_lord in relevant_lords:
+            evidence.append(CorroborationEngine.create_evidence(
+                "DASHA_ACTIVATION",
+                f"KNOWLEDGE ACTIVATION: Period of {antar_lord} triggers intellectual and learning sectors.",
+                90.0
+            ))
+        else:
+            evidence.append(CorroborationEngine.create_evidence(
+                "DASHA_ACTIVATION",
+                "STABILITY PHASE: Life-period favors maintenance of existing knowledge base.",
+                65.0
+            ))
+
+        if maha_lord in relevant_lords:
+            evidence.append(CorroborationEngine.create_evidence(
+                "DASHA_FOUNDATION",
+                f"DASHA FOUNDATION: Major life-cycle ruled by {maha_lord} provides underlying support for educational growth.",
+                60.0
+            ))
 
         # 3. TIMING
         window = timing_engine.calculate_window(chart, ["Mercury", "Jupiter", l4_name, l5_name], [4, 5, 2], calculation_date=selected_date)

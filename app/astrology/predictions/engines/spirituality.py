@@ -69,9 +69,11 @@ class SpiritualityPredictionEngine:
         from ...dasha import calculate_vimshottari
         moon_lon = planets["Moon"].longitude
         dasha = calculate_vimshottari(moon_lon, chart.birth_datetime, calculation_date=selected_date)
+        maha_lord = dasha.get("current_maha", {}).get("lord")
         antar_lord = dasha.get("current_antar", {}).get("lord")
 
-        if antar_lord in [l9_name, l12_name, "Jupiter", "Ketu"]:
+        relevant_lords = [l9_name, l12_name, "Jupiter", "Ketu"]
+        if antar_lord in relevant_lords:
             evidence.append(CorroborationEngine.create_evidence(
                 "DASHA_ACTIVATION",
                 f"INTERNAL ACTIVATION: Period of {antar_lord} favors introspection and study of truth.",
@@ -82,6 +84,13 @@ class SpiritualityPredictionEngine:
                 "DASHA_ACTIVATION",
                 "STABILITY PHASE: Life-period focuses on maintenance of external commitments.",
                 65.0
+            ))
+
+        if maha_lord in relevant_lords:
+            evidence.append(CorroborationEngine.create_evidence(
+                "DASHA_FOUNDATION",
+                f"DASHA FOUNDATION: Major life-cycle ruled by {maha_lord} provides underlying support for inner growth.",
+                60.0
             ))
 
         # 3. TIMING

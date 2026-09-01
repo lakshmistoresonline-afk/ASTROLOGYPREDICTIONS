@@ -154,39 +154,41 @@ class TimingWindowEngine:
 
         if valid_peak_event:
             peak_dt = datetime.strptime(valid_peak_event.peak_date, "%Y-%m-%d")
-            days_to_peak = (peak_dt - start_date).days
+            # 5. Manifestation Lag (V3.11): Events often manifest 7-14 days after trigger
+            manifest_peak = peak_dt + timedelta(days=14)
+            days_to_peak = (manifest_peak - start_date).days
 
             # 5. Temporal Decay Logic (V3.5)
             # We scale the bonus based on both temporal distance AND planet importance (speed)
 
             PLANET_IMPORTANCE = {
-                "Moon": 0.1, "Mercury": 0.3, "Venus": 0.4, "Sun": 0.4,
-                "Mars": 0.7, "Jupiter": 1.0, "Saturn": 1.0, "Rahu": 1.0, "Ketu": 1.0
+                "Moon": 0.15, "Mercury": 0.4, "Venus": 0.5, "Sun": 0.5,
+                "Mars": 0.8, "Jupiter": 1.0, "Saturn": 1.0, "Rahu": 1.0, "Ketu": 1.0
             }
 
             p_imp = PLANET_IMPORTANCE.get(valid_peak_event.planet, 0.5)
 
-            abs_dist = abs(days_to_peak)
-            if abs_dist <= 7:
+            abs_dist = abs((peak_dt - start_date).days)
+            if abs_dist <= 10:
                 phase = "PEAK_MANIFESTATION"
                 temporal_weight = 1.0
-            elif abs_dist <= 21:
+            elif abs_dist <= 30:
                 phase = "NEAR_TERM_ACTIVE"
-                temporal_weight = 0.35 # Reduced from 0.40
+                temporal_weight = 0.60
             else:
                 phase = "BUILD_UP"
-                temporal_weight = 0.05
+                temporal_weight = 0.20
 
-            convergence_bonus = 1.4 if trigger_count >= 2 else 0.7
+            convergence_bonus = 1.3 if trigger_count >= 2 else 1.0
             proximity_weight = temporal_weight * p_imp * convergence_bonus
 
             return {
                 "phase": phase,
                 "activation": (peak_dt - timedelta(days=20)).strftime("%Y-%m-%d"),
                 "build": (peak_dt - timedelta(days=7)).strftime("%Y-%m-%d"),
-                "peak": peak_dt.strftime("%Y-%m-%d"),
-                "manifestation": (peak_dt + timedelta(days=3)).strftime("%Y-%m-%d"),
-                "decline": (peak_dt + timedelta(days=15)).strftime("%Y-%m-%d"),
+                "peak": manifest_peak.strftime("%Y-%m-%d"),
+                "manifestation": (manifest_peak + timedelta(days=5)).strftime("%Y-%m-%d"),
+                "decline": (manifest_peak + timedelta(days=15)).strftime("%Y-%m-%d"),
                 "description": f"{valid_peak_event.planet} {valid_peak_event.event_type} trigger.",
                 "timing_confidence": f"{phase} ({int(proximity_weight*100)}%)",
                 "proximity_weight": proximity_weight,

@@ -63,9 +63,11 @@ class FinancePredictionEngine:
         from ...dasha import calculate_vimshottari
         moon_lon = chart.planets["Moon"].longitude
         dasha = calculate_vimshottari(moon_lon, chart.birth_datetime, calculation_date=selected_date)
+        maha_lord = dasha.get("current_maha", {}).get("lord")
         antar_lord = dasha.get("current_antar", {}).get("lord")
 
-        if antar_lord in [l2_name, l11_name, "Jupiter", "Venus"]:
+        relevant_lords = [l2_name, l11_name, "Jupiter", "Venus"]
+        if antar_lord in relevant_lords:
             evidence.append(CorroborationEngine.create_evidence(
                 "DASHA_ACTIVATION",
                 f"FINANCIAL ACTIVATION: Life-period of {antar_lord} triggers major wealth generation cycles.",
@@ -75,6 +77,13 @@ class FinancePredictionEngine:
             evidence.append(CorroborationEngine.create_evidence(
                 "DASHA_ACTIVATION",
                 "RESOURCE STABILITY: Current life-period favors consolidation over high-risk expansion.",
+                60.0
+            ))
+
+        if maha_lord in relevant_lords:
+            evidence.append(CorroborationEngine.create_evidence(
+                "DASHA_FOUNDATION",
+                f"DASHA FOUNDATION: Major life-cycle ruled by {maha_lord} provides underlying support for wealth accumulation.",
                 60.0
             ))
 
