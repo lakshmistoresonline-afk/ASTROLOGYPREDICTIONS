@@ -184,3 +184,24 @@
 2026-09-08 17:15:11,837 WARNING:  * Debugger is active!
 2026-09-08 17:15:11,854 INFO:  * Debugger PIN: 644-143-807
 2026-09-08 17:24:14,228 INFO:  * Detected change in 'D:\\ASTROLOGYPREDICTIONS\\app\\api\\external.py', reloading
+2026-09-08 17:24:15,315 INFO:  * Restarting with stat
+2026-09-08 17:24:23,021 INFO: Jyotish OS V1.0.0 starting...
+2026-09-08 17:24:37,976 WARNING:  * Debugger is active!
+2026-09-08 17:24:37,994 INFO:  * Debugger PIN: 644-143-807
+2026-09-08 17:32:04,539 INFO: 127.0.0.1 - - [08/Sep/2026 17:32:04] "GET /?vault=1 HTTP/1.1" 200 -
+2026-09-08 17:32:06,055 INFO: 127.0.0.1 - - [08/Sep/2026 17:32:06] "[36mGET /static/manifest.json HTTP/1.1[0m" 304 -
+2026-09-08 17:32:06,128 INFO: 127.0.0.1 - - [08/Sep/2026 17:32:06] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+2026-09-08 17:32:06,515 INFO: 127.0.0.1 - - [08/Sep/2026 17:32:06] "[36mGET /static/css/style_v2.css HTTP/1.1[0m" 304 -
+2026-09-08 17:32:07,165 INFO: 127.0.0.1 - - [08/Sep/2026 17:32:07] "[36mGET /static/img/icon.svg HTTP/1.1[0m" 304 -
+2026-09-08 17:32:07,795 INFO: 127.0.0.1 - - [08/Sep/2026 17:32:07] "[36mGET /static/img/icon.svg HTTP/1.1[0m" 304 -
+2026-09-08 17:32:08,554 INFO: 127.0.0.1 - - [08/Sep/2026 17:32:08] "[32mGET /kundli/load/df399344?next=dashboard HTTP/1.1[0m" 302 -
+2026-09-08 17:32:40,981 ERROR: Dashboard Rendering Error: ASTROLOGY_CALCULATION_UNAVAILABLE
+2026-09-08 17:32:40,996 INFO: 127.0.0.1 - - [08/Sep/2026 17:32:40] "GET /dashboard HTTP/1.1" 200 -
+2026-09-08 17:32:41,104 INFO: 127.0.0.1 - - [08/Sep/2026 17:32:41] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+2026-09-08 17:32:41,175 INFO: 127.0.0.1 - - [08/Sep/2026 17:32:41] "[36mGET /static/manifest.json HTTP/1.1[0m" 304 -
+2026-09-08 17:32:41,434 INFO: 127.0.0.1 - - [08/Sep/2026 17:32:41] "[36mGET /static/css/style_v2.css HTTP/1.1[0m" 304 -
+2026-09-08 17:32:41,913 INFO: 127.0.0.1 - - [08/Sep/2026 17:32:41] "[36mGET /static/img/icon.svg HTTP/1.1[0m" 304 -
+2026-09-08 17:32:57,847 INFO: 127.0.0.1 - - [08/Sep/2026 17:32:57] "GET /dashboard HTTP/1.1" 200 -
+2026-09-08 17:35:32,400 INFO:  * Detected change in 'D:\\ASTROLOGYPREDICTIONS\\app\\routes.py', reloading
+2026-09-08 17:35:34,842 INFO:  * Restarting with stat
+2026-09-08 17:35:45,455 INFO: Jyotish OS V1.0.0 starting...
