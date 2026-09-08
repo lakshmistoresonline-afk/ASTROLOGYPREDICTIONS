@@ -1022,3 +1022,112 @@
 2026-09-08 22:02:06,381 INFO [_internal.py:97]: 127.0.0.1 - - [08/Sep/2026 22:02:06] "[36mGET /static/img/icon.svg HTTP/1.1[0m" 304 -
 2026-09-08 22:05:07,458 INFO [_internal.py:97]:  * Detected change in 'D:\\ASTROLOGYPREDICTIONS\\app\\routes.py', reloading
 2026-09-08 22:05:07,535 INFO [_internal.py:97]:  * Detected change in 'D:\\ASTROLOGYPREDICTIONS\\app\\routes.py', reloading
+2026-09-08 22:05:08,220 INFO [_internal.py:97]:  * Restarting with stat
+2026-09-08 22:05:18,696 INFO [__init__.py:51]: Astro Predictions V3.22.1 starting with debug logging enabled...
+2026-09-08 22:05:30,615 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): 127.0.0.1:8000
+2026-09-08 22:05:30,638 DEBUG [connectionpool.py:544]: http://127.0.0.1:8000 "GET /health HTTP/1.1" 200 42
+2026-09-08 22:05:30,764 WARNING [_internal.py:97]:  * Debugger is active!
+2026-09-08 22:05:30,787 INFO [_internal.py:97]:  * Debugger PIN: 644-143-807
+2026-09-08 22:07:24,332 INFO [__init__.py:51]: Astro Predictions V3.22.1 starting with debug logging enabled...
+2026-09-08 22:07:34,488 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): 127.0.0.1:8000
+2026-09-08 22:07:34,528 DEBUG [connectionpool.py:544]: http://127.0.0.1:8000 "GET /health HTTP/1.1" 200 42
+2026-09-08 22:07:34,641 INFO [_internal.py:97]: [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5001
+ * Running on http://192.168.1.11:5001
+2026-09-08 22:07:34,642 INFO [_internal.py:97]: [33mPress CTRL+C to quit[0m
+2026-09-08 22:07:34,648 INFO [_internal.py:97]:  * Restarting with stat
+2026-09-08 22:07:41,108 INFO [__init__.py:51]: Astro Predictions V3.22.1 starting with debug logging enabled...
+2026-09-08 22:07:54,861 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): 127.0.0.1:8000
+2026-09-08 22:07:54,876 DEBUG [connectionpool.py:544]: http://127.0.0.1:8000 "GET /health HTTP/1.1" 200 42
+2026-09-08 22:07:54,974 WARNING [_internal.py:97]:  * Debugger is active!
+2026-09-08 22:07:54,990 INFO [_internal.py:97]:  * Debugger PIN: 644-143-807
+2026-09-08 22:07:55,660 DEBUG [connectionpool.py:1062]: Starting new HTTPS connection (1): freeipapi.com:443
+2026-09-08 22:07:56,108 DEBUG [connectionpool.py:544]: https://freeipapi.com:443 "GET /api/json HTTP/1.1" 302 None
+2026-09-08 22:07:56,114 DEBUG [connectionpool.py:1062]: Starting new HTTPS connection (1): free.freeipapi.com:443
+2026-09-08 22:07:58,675 DEBUG [connectionpool.py:544]: https://free.freeipapi.com:443 "GET /api/json HTTP/1.1" 200 None
+2026-09-08 22:07:58,773 INFO [_internal.py:97]: 127.0.0.1 - - [08/Sep/2026 22:07:58] "GET / HTTP/1.1" 200 -
+2026-09-08 22:08:00,043 INFO [_internal.py:97]: 127.0.0.1 - - [08/Sep/2026 22:08:00] "[36mGET /static/css/style_v2.css HTTP/1.1[0m" 304 -
+2026-09-08 22:08:00,049 INFO [_internal.py:97]: 127.0.0.1 - - [08/Sep/2026 22:08:00] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+2026-09-08 22:08:00,191 INFO [_internal.py:97]: 127.0.0.1 - - [08/Sep/2026 22:08:00] "[36mGET /static/manifest.json HTTP/1.1[0m" 304 -
+2026-09-08 22:08:01,433 INFO [_internal.py:97]: 127.0.0.1 - - [08/Sep/2026 22:08:01] "[36mGET /static/img/icon.svg HTTP/1.1[0m" 304 -
+2026-09-08 22:08:10,704 INFO [_internal.py:97]: 127.0.0.1 - - [08/Sep/2026 22:08:10] "[32mGET /kundli/load/1f603be9?next=dashboard HTTP/1.1[0m" 302 -
+2026-09-08 22:08:11,526 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): 127.0.0.1:8000
+2026-09-08 22:08:11,559 DEBUG [connectionpool.py:544]: http://127.0.0.1:8000 "POST /v1/natal-chart HTTP/1.1" 200 1387
+2026-09-08 22:08:11,567 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): 127.0.0.1:8000
+2026-09-08 22:08:11,578 DEBUG [connectionpool.py:544]: http://127.0.0.1:8000 "POST /v1/sky-events HTTP/1.1" 200 62
+2026-09-08 22:08:11,590 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): 127.0.0.1:8000
+2026-09-08 22:08:11,603 DEBUG [connectionpool.py:544]: http://127.0.0.1:8000 "POST /v1/sky-events HTTP/1.1" 200 62
+2026-09-08 22:08:11,608 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): 127.0.0.1:8000
+2026-09-08 22:08:11,620 DEBUG [connectionpool.py:544]: http://127.0.0.1:8000 "POST /v1/sky-events HTTP/1.1" 200 63
+2026-09-08 22:08:22,133 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): 127.0.0.1:8000
+2026-09-08 22:08:22,407 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): 127.0.0.1:8000
+2026-09-08 22:08:22,454 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): 127.0.0.1:8000
+2026-09-08 22:08:23,455 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): 127.0.0.1:8000
+2026-09-08 22:08:23,544 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): 127.0.0.1:8000
+2026-09-08 22:08:23,723 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): 127.0.0.1:8000
+2026-09-08 22:08:23,726 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): 127.0.0.1:8000
+2026-09-08 22:08:23,736 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): 127.0.0.1:8000
+2026-09-08 22:08:30,781 DEBUG [connectionpool.py:544]: http://127.0.0.1:8000 "POST /v1/transits/range HTTP/1.1" 200 29507
+2026-09-08 22:08:59,113 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): 127.0.0.1:8000
+2026-09-08 22:08:59,153 DEBUG [connectionpool.py:544]: http://127.0.0.1:8000 "POST /v1/natal-chart HTTP/1.1" 200 1383
+2026-09-08 22:08:59,349 INFO [_internal.py:97]: 127.0.0.1 - - [08/Sep/2026 22:08:59] "GET /dashboard HTTP/1.1" 200 -
+2026-09-08 22:08:59,639 INFO [_internal.py:97]: 127.0.0.1 - - [08/Sep/2026 22:08:59] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+2026-09-08 22:08:59,660 INFO [_internal.py:97]: 127.0.0.1 - - [08/Sep/2026 22:08:59] "[36mGET /static/manifest.json HTTP/1.1[0m" 304 -
+2026-09-08 22:08:59,967 INFO [_internal.py:97]: 127.0.0.1 - - [08/Sep/2026 22:08:59] "[36mGET /static/css/style_v2.css HTTP/1.1[0m" 304 -
+2026-09-08 22:09:00,707 INFO [_internal.py:97]: 127.0.0.1 - - [08/Sep/2026 22:09:00] "[36mGET /static/img/icon.svg HTTP/1.1[0m" 304 -
+2026-09-08 22:11:10,299 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): 127.0.0.1:8000
+2026-09-08 22:11:10,406 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): 127.0.0.1:8000
+2026-09-08 22:11:10,529 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): 127.0.0.1:8000
+2026-09-08 22:11:10,734 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): 127.0.0.1:8000
+2026-09-08 22:11:10,754 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): 127.0.0.1:8000
+2026-09-08 22:11:14,347 DEBUG [connectionpool.py:544]: http://127.0.0.1:8000 "POST /v1/transits/range HTTP/1.1" 200 29498
+2026-09-08 22:11:15,514 DEBUG [connectionpool.py:544]: http://127.0.0.1:8000 "POST /v1/transits/range HTTP/1.1" 200 29498
+2026-09-08 22:11:15,644 DEBUG [connectionpool.py:544]: http://127.0.0.1:8000 "POST /v1/transits/range HTTP/1.1" 200 29498
+2026-09-08 22:11:15,695 DEBUG [connectionpool.py:544]: http://127.0.0.1:8000 "POST /v1/transits/range HTTP/1.1" 200 29498
+2026-09-08 22:11:15,734 DEBUG [connectionpool.py:544]: http://127.0.0.1:8000 "POST /v1/transits/range HTTP/1.1" 200 29498
+2026-09-08 22:11:20,930 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): 127.0.0.1:8000
+2026-09-08 22:11:21,564 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): 127.0.0.1:8000
+2026-09-08 22:11:22,397 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): 127.0.0.1:8000
+2026-09-08 22:11:22,678 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): 127.0.0.1:8000
+2026-09-08 22:11:23,095 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): 127.0.0.1:8000
+2026-09-08 22:11:25,252 DEBUG [connectionpool.py:544]: http://127.0.0.1:8000 "POST /v1/transits/range HTTP/1.1" 200 29641
+2026-09-08 22:11:26,104 DEBUG [connectionpool.py:544]: http://127.0.0.1:8000 "POST /v1/transits/range HTTP/1.1" 200 29641
+2026-09-08 22:11:26,560 DEBUG [connectionpool.py:544]: http://127.0.0.1:8000 "POST /v1/transits/range HTTP/1.1" 200 29641
+2026-09-08 22:11:26,794 DEBUG [connectionpool.py:544]: http://127.0.0.1:8000 "POST /v1/transits/range HTTP/1.1" 200 29641
+2026-09-08 22:11:26,840 DEBUG [connectionpool.py:544]: http://127.0.0.1:8000 "POST /v1/transits/range HTTP/1.1" 200 29641
+2026-09-08 22:11:33,336 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): 127.0.0.1:8000
+2026-09-08 22:11:33,614 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): 127.0.0.1:8000
+2026-09-08 22:11:33,716 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): 127.0.0.1:8000
+2026-09-08 22:11:33,827 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): 127.0.0.1:8000
+2026-09-08 22:11:33,842 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): 127.0.0.1:8000
+2026-09-08 22:11:36,641 DEBUG [connectionpool.py:544]: http://127.0.0.1:8000 "POST /v1/transits/range HTTP/1.1" 200 29521
+2026-09-08 22:11:37,988 DEBUG [connectionpool.py:544]: http://127.0.0.1:8000 "POST /v1/transits/range HTTP/1.1" 200 29521
+2026-09-08 22:11:38,138 DEBUG [connectionpool.py:544]: http://127.0.0.1:8000 "POST /v1/transits/range HTTP/1.1" 200 29521
+2026-09-08 22:11:38,162 DEBUG [connectionpool.py:544]: http://127.0.0.1:8000 "POST /v1/transits/range HTTP/1.1" 200 29521
+2026-09-08 22:11:38,188 DEBUG [connectionpool.py:544]: http://127.0.0.1:8000 "POST /v1/transits/range HTTP/1.1" 200 29521
+2026-09-08 22:11:44,463 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): 127.0.0.1:8000
+2026-09-08 22:11:44,886 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): 127.0.0.1:8000
+2026-09-08 22:11:44,936 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): 127.0.0.1:8000
+2026-09-08 22:11:45,020 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): 127.0.0.1:8000
+2026-09-08 22:11:45,022 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): 127.0.0.1:8000
+2026-09-08 22:11:47,753 DEBUG [connectionpool.py:544]: http://127.0.0.1:8000 "POST /v1/transits/range HTTP/1.1" 200 29529
+2026-09-08 22:11:49,190 DEBUG [connectionpool.py:544]: http://127.0.0.1:8000 "POST /v1/transits/range HTTP/1.1" 200 29529
+2026-09-08 22:11:49,292 DEBUG [connectionpool.py:544]: http://127.0.0.1:8000 "POST /v1/transits/range HTTP/1.1" 200 29529
+2026-09-08 22:11:49,320 DEBUG [connectionpool.py:544]: http://127.0.0.1:8000 "POST /v1/transits/range HTTP/1.1" 200 29529
+2026-09-08 22:11:49,355 DEBUG [connectionpool.py:544]: http://127.0.0.1:8000 "POST /v1/transits/range HTTP/1.1" 200 29529
+2026-09-08 22:11:56,196 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): 127.0.0.1:8000
+2026-09-08 22:11:56,540 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): 127.0.0.1:8000
+2026-09-08 22:11:56,585 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): 127.0.0.1:8000
+2026-09-08 22:11:56,722 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): 127.0.0.1:8000
+2026-09-08 22:11:56,876 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): 127.0.0.1:8000
+2026-09-08 22:12:02,272 DEBUG [connectionpool.py:544]: http://127.0.0.1:8000 "POST /v1/transits/range HTTP/1.1" 200 29589
+2026-09-08 22:12:02,541 DEBUG [connectionpool.py:544]: http://127.0.0.1:8000 "POST /v1/transits/range HTTP/1.1" 200 29589
+2026-09-08 22:12:02,602 DEBUG [connectionpool.py:544]: http://127.0.0.1:8000 "POST /v1/transits/range HTTP/1.1" 200 29589
+2026-09-08 22:12:02,886 DEBUG [connectionpool.py:544]: http://127.0.0.1:8000 "POST /v1/transits/range HTTP/1.1" 200 29589
+2026-09-08 22:12:02,916 DEBUG [connectionpool.py:544]: http://127.0.0.1:8000 "POST /v1/transits/range HTTP/1.1" 200 29589
+2026-09-08 22:12:03,103 INFO [_internal.py:97]: 127.0.0.1 - - [08/Sep/2026 22:12:03] "GET /timeline HTTP/1.1" 200 -
+2026-09-08 22:12:04,165 INFO [_internal.py:97]: 127.0.0.1 - - [08/Sep/2026 22:12:04] "[36mGET /static/css/style_v2.css HTTP/1.1[0m" 304 -
+2026-09-08 22:12:04,173 INFO [_internal.py:97]: 127.0.0.1 - - [08/Sep/2026 22:12:04] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+2026-09-08 22:12:04,267 INFO [_internal.py:97]: 127.0.0.1 - - [08/Sep/2026 22:12:04] "[36mGET /static/manifest.json HTTP/1.1[0m" 304 -
+2026-09-08 22:12:04,444 INFO [_internal.py:97]: 127.0.0.1 - - [08/Sep/2026 22:12:04] "[36mGET /static/img/icon.svg HTTP/1.1[0m" 304 -
