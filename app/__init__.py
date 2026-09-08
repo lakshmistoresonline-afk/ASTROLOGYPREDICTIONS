@@ -34,14 +34,21 @@ def create_app():
     app.config["TEMPLATES_AUTO_RELOAD"] = True
     CORS(app)
 
-    # Lightweight Monitoring (Part 33)
+    # Detailed Monitoring & Debug Logging (V3.22.1)
     import logging
+    import sys
     if not os.path.exists('logs'):
         os.mkdir('logs')
-    # Use standard logging for beta
-    logging.basicConfig(filename='logs/app.log', level=logging.INFO,
-                        format='%(asctime)s %(levelname)s: %(message)s')
-    app.logger.info("Jyotish OS V1.0.0 starting...")
+    logging.basicConfig(
+        level=logging.DEBUG,
+        format='%(asctime)s %(levelname)s [%(filename)s:%(lineno)d]: %(message)s',
+        handlers=[
+            logging.FileHandler("logs/app.log"),
+            logging.StreamHandler(sys.stdout)
+        ]
+    )
+    app.logger.setLevel(logging.DEBUG)
+    app.logger.info("Astro Predictions V3.22.1 starting with debug logging enabled...")
 
     from .routes import main
     from .api.tracking import tracking_bp

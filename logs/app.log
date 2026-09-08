@@ -258,3 +258,48 @@
 2026-09-08 17:55:33,130 INFO: 127.0.0.1 - - [08/Sep/2026 17:55:33] "[36mGET /static/manifest.json HTTP/1.1[0m" 304 -
 2026-09-08 17:55:33,591 INFO: 127.0.0.1 - - [08/Sep/2026 17:55:33] "[36mGET /static/img/icon.svg HTTP/1.1[0m" 304 -
 2026-09-08 17:57:56,746 INFO:  * Detected change in 'D:\\ASTROLOGYPREDICTIONS\\app\\astrology\\core\\calc_client.py', reloading
+2026-09-08 17:57:57,555 INFO:  * Restarting with stat
+2026-09-08 17:58:04,793 INFO: Jyotish OS V1.0.0 starting...
+2026-09-08 17:58:17,017 WARNING:  * Debugger is active!
+2026-09-08 17:58:17,036 INFO:  * Debugger PIN: 644-143-807
+2026-09-08 18:10:04,819 INFO: 127.0.0.1 - - [08/Sep/2026 18:10:04] "GET /dashboard HTTP/1.1" 200 -
+2026-09-08 18:10:06,098 INFO: 127.0.0.1 - - [08/Sep/2026 18:10:06] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+2026-09-08 18:10:06,103 INFO: 127.0.0.1 - - [08/Sep/2026 18:10:06] "[36mGET /static/css/style_v2.css HTTP/1.1[0m" 304 -
+2026-09-08 18:10:06,174 INFO: 127.0.0.1 - - [08/Sep/2026 18:10:06] "[36mGET /static/manifest.json HTTP/1.1[0m" 304 -
+2026-09-08 18:10:06,297 INFO: 127.0.0.1 - - [08/Sep/2026 18:10:06] "[36mGET /static/img/icon.svg HTTP/1.1[0m" 304 -
+2026-09-08 18:10:06,653 INFO: 127.0.0.1 - - [08/Sep/2026 18:10:06] "[36mGET /static/img/icon.svg HTTP/1.1[0m" 304 -
+2026-09-08 18:19:59,998 INFO: Jyotish OS V1.0.0 starting...
+2026-09-08 18:20:09,208 INFO: [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5001
+ * Running on http://192.168.1.11:5001
+2026-09-08 18:20:09,209 INFO: [33mPress CTRL+C to quit[0m
+2026-09-08 18:20:09,215 INFO:  * Restarting with stat
+2026-09-08 18:20:19,125 INFO: Jyotish OS V1.0.0 starting...
+2026-09-08 18:20:32,081 WARNING:  * Debugger is active!
+2026-09-08 18:20:32,099 INFO:  * Debugger PIN: 644-143-807
+2026-09-08 18:20:33,373 INFO: 127.0.0.1 - - [08/Sep/2026 18:20:33] "[32mGET / HTTP/1.1[0m" 302 -
+2026-09-08 18:22:11,367 INFO: 127.0.0.1 - - [08/Sep/2026 18:22:11] "GET /dashboard HTTP/1.1" 200 -
+2026-09-08 18:22:12,874 INFO: 127.0.0.1 - - [08/Sep/2026 18:22:12] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+2026-09-08 18:22:12,991 INFO: 127.0.0.1 - - [08/Sep/2026 18:22:12] "[36mGET /static/manifest.json HTTP/1.1[0m" 304 -
+2026-09-08 18:22:13,015 INFO: 127.0.0.1 - - [08/Sep/2026 18:22:13] "[36mGET /static/css/style_v2.css HTTP/1.1[0m" 304 -
+2026-09-08 18:22:14,247 INFO: 127.0.0.1 - - [08/Sep/2026 18:22:14] "[36mGET /static/img/icon.svg HTTP/1.1[0m" 304 -
+2026-09-08 18:22:37,275 INFO: 127.0.0.1 - - [08/Sep/2026 18:22:37] "GET /?vault=1 HTTP/1.1" 200 -
+2026-09-08 18:22:37,479 INFO: 127.0.0.1 - - [08/Sep/2026 18:22:37] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+2026-09-08 18:22:37,502 INFO: 127.0.0.1 - - [08/Sep/2026 18:22:37] "[36mGET /static/css/style_v2.css HTTP/1.1[0m" 304 -
+2026-09-08 18:22:37,521 INFO: 127.0.0.1 - - [08/Sep/2026 18:22:37] "[36mGET /static/manifest.json HTTP/1.1[0m" 304 -
+2026-09-08 18:22:38,170 INFO: 127.0.0.1 - - [08/Sep/2026 18:22:38] "[36mGET /static/img/icon.svg HTTP/1.1[0m" 304 -
+2026-09-08 18:22:39,542 INFO: 127.0.0.1 - - [08/Sep/2026 18:22:39] "[32mGET /kundli/load/df399344?next=dashboard HTTP/1.1[0m" 302 -
+2026-09-08 18:22:41,043 INFO: 127.0.0.1 - - [08/Sep/2026 18:22:41] "GET /dashboard HTTP/1.1" 200 -
+2026-09-08 18:22:41,521 INFO: 127.0.0.1 - - [08/Sep/2026 18:22:41] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+2026-09-08 18:22:41,539 INFO: 127.0.0.1 - - [08/Sep/2026 18:22:41] "[36mGET /static/css/style_v2.css HTTP/1.1[0m" 304 -
+2026-09-08 18:22:41,556 INFO: 127.0.0.1 - - [08/Sep/2026 18:22:41] "[36mGET /static/manifest.json HTTP/1.1[0m" 304 -
+2026-09-08 18:22:41,773 INFO: 127.0.0.1 - - [08/Sep/2026 18:22:41] "[36mGET /static/img/icon.svg HTTP/1.1[0m" 304 -
+2026-09-08 18:25:02,875 INFO:  * Detected change in 'D:\\ASTROLOGYPREDICTIONS\\app\\__init__.py', reloading
+2026-09-08 18:25:03,535 INFO:  * Restarting with stat
+2026-09-08 18:25:07,610 INFO [__init__.py:51]: Astro Predictions V3.22.1 starting with debug logging enabled...
+2026-09-08 18:25:15,360 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): 127.0.0.1:8000
+2026-09-08 18:25:15,370 DEBUG [connectionpool.py:544]: http://127.0.0.1:8000 "GET /health HTTP/1.1" 200 42
+2026-09-08 18:25:15,444 WARNING [_internal.py:97]:  * Debugger is active!
+2026-09-08 18:25:15,458 INFO [_internal.py:97]:  * Debugger PIN: 644-143-807
+2026-09-08 18:26:02,008 INFO [_internal.py:97]:  * Detected change in 'D:\\ASTROLOGYPREDICTIONS\\app\\routes.py', reloading
