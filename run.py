@@ -74,6 +74,24 @@ def open_browser():
 if __name__ == "__main__":
     port = int(os.getenv("PORT", 5001))
 
+    # Auto-start calculation service on port 8000 if not already running
+    import requests
+    def _ensure_calc_service():
+        try:
+            import uvicorn
+            from calculation_service.app.main import app as calc_app
+            uvicorn.run(calc_app, host="127.0.0.1", port=8000, log_level="error")
+        except Exception as e:
+            print(f"Calc service background start error: {e}")
+
+    try:
+        requests.get("http://127.0.0.1:8000/health", timeout=0.5)
+    except:
+        calc_thread = threading.Thread(target=_ensure_calc_service, daemon=True)
+        calc_thread.start()
+        print("\n  ⚡ Auto-started Calculation Service on http://127.0.0.1:8000", flush=True)
+        time.sleep(1)
+
     idle_mins = IDLE_TIMEOUT // 60
     print(
         f"\n  Auto-shutdown: server will stop after "
