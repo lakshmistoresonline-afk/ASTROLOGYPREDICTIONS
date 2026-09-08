@@ -205,3 +205,56 @@
 2026-09-08 17:35:32,400 INFO:  * Detected change in 'D:\\ASTROLOGYPREDICTIONS\\app\\routes.py', reloading
 2026-09-08 17:35:34,842 INFO:  * Restarting with stat
 2026-09-08 17:35:45,455 INFO: Jyotish OS V1.0.0 starting...
+2026-09-08 17:52:23,411 WARNING:  * Debugger is active!
+2026-09-08 17:52:23,426 INFO:  * Debugger PIN: 644-143-807
+2026-09-08 17:52:39,501 INFO: Jyotish OS V1.0.0 starting...
+2026-09-08 17:52:46,730 INFO: [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5001
+ * Running on http://192.168.1.11:5001
+2026-09-08 17:52:46,731 INFO: [33mPress CTRL+C to quit[0m
+2026-09-08 17:52:46,737 INFO:  * Restarting with stat
+2026-09-08 17:52:54,983 INFO: Jyotish OS V1.0.0 starting...
+2026-09-08 17:53:06,362 WARNING:  * Debugger is active!
+2026-09-08 17:53:06,381 INFO:  * Debugger PIN: 644-143-807
+2026-09-08 17:53:07,045 INFO: 127.0.0.1 - - [08/Sep/2026 17:53:07] "[32mGET / HTTP/1.1[0m" 302 -
+2026-09-08 17:54:33,223 INFO: 127.0.0.1 - - [08/Sep/2026 17:54:33] "GET /dashboard HTTP/1.1" 200 -
+2026-09-08 17:54:34,483 INFO: 127.0.0.1 - - [08/Sep/2026 17:54:34] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+2026-09-08 17:54:34,507 INFO: 127.0.0.1 - - [08/Sep/2026 17:54:34] "[36mGET /static/css/style_v2.css HTTP/1.1[0m" 304 -
+2026-09-08 17:54:34,581 INFO: 127.0.0.1 - - [08/Sep/2026 17:54:34] "[36mGET /static/manifest.json HTTP/1.1[0m" 304 -
+2026-09-08 17:54:35,881 INFO: 127.0.0.1 - - [08/Sep/2026 17:54:35] "[36mGET /static/img/icon.svg HTTP/1.1[0m" 304 -
+2026-09-08 17:54:45,964 INFO: 127.0.0.1 - - [08/Sep/2026 17:54:45] "GET /?vault=1 HTTP/1.1" 200 -
+2026-09-08 17:54:46,144 INFO: 127.0.0.1 - - [08/Sep/2026 17:54:46] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+2026-09-08 17:54:46,161 INFO: 127.0.0.1 - - [08/Sep/2026 17:54:46] "[36mGET /static/manifest.json HTTP/1.1[0m" 304 -
+2026-09-08 17:54:46,171 INFO: 127.0.0.1 - - [08/Sep/2026 17:54:46] "[36mGET /static/css/style_v2.css HTTP/1.1[0m" 304 -
+2026-09-08 17:54:47,409 INFO: 127.0.0.1 - - [08/Sep/2026 17:54:47] "[36mGET /static/img/icon.svg HTTP/1.1[0m" 304 -
+2026-09-08 17:54:49,023 INFO: 127.0.0.1 - - [08/Sep/2026 17:54:49] "[32mGET /kundli/load/df399344?next=dashboard HTTP/1.1[0m" 302 -
+2026-09-08 17:54:49,934 INFO: 127.0.0.1 - - [08/Sep/2026 17:54:49] "GET /dashboard HTTP/1.1" 200 -
+2026-09-08 17:54:50,629 INFO: 127.0.0.1 - - [08/Sep/2026 17:54:50] "[36mGET /static/css/style_v2.css HTTP/1.1[0m" 304 -
+2026-09-08 17:54:50,633 INFO: 127.0.0.1 - - [08/Sep/2026 17:54:50] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+2026-09-08 17:54:50,800 INFO: 127.0.0.1 - - [08/Sep/2026 17:54:50] "[36mGET /static/manifest.json HTTP/1.1[0m" 304 -
+2026-09-08 17:54:50,914 INFO: 127.0.0.1 - - [08/Sep/2026 17:54:50] "[36mGET /static/img/icon.svg HTTP/1.1[0m" 304 -
+2026-09-08 17:55:04,989 INFO: 127.0.0.1 - - [08/Sep/2026 17:55:04] "GET /?vault=1 HTTP/1.1" 200 -
+2026-09-08 17:55:05,134 INFO: 127.0.0.1 - - [08/Sep/2026 17:55:05] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+2026-09-08 17:55:05,156 INFO: 127.0.0.1 - - [08/Sep/2026 17:55:05] "[36mGET /static/manifest.json HTTP/1.1[0m" 304 -
+2026-09-08 17:55:05,438 INFO: 127.0.0.1 - - [08/Sep/2026 17:55:05] "[36mGET /static/css/style_v2.css HTTP/1.1[0m" 304 -
+2026-09-08 17:55:05,901 INFO: 127.0.0.1 - - [08/Sep/2026 17:55:05] "[36mGET /static/img/icon.svg HTTP/1.1[0m" 304 -
+2026-09-08 17:55:08,073 INFO: 127.0.0.1 - - [08/Sep/2026 17:55:08] "[32mGET /kundli/load/df399344?next=dashboard HTTP/1.1[0m" 302 -
+2026-09-08 17:55:09,150 INFO: 127.0.0.1 - - [08/Sep/2026 17:55:09] "GET /dashboard HTTP/1.1" 200 -
+2026-09-08 17:55:09,663 INFO: 127.0.0.1 - - [08/Sep/2026 17:55:09] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+2026-09-08 17:55:09,708 INFO: 127.0.0.1 - - [08/Sep/2026 17:55:09] "[36mGET /static/css/style_v2.css HTTP/1.1[0m" 304 -
+2026-09-08 17:55:09,876 INFO: 127.0.0.1 - - [08/Sep/2026 17:55:09] "[36mGET /static/manifest.json HTTP/1.1[0m" 304 -
+2026-09-08 17:55:09,955 INFO: 127.0.0.1 - - [08/Sep/2026 17:55:09] "[36mGET /static/img/icon.svg HTTP/1.1[0m" 304 -
+2026-09-08 17:55:16,446 INFO: 127.0.0.1 - - [08/Sep/2026 17:55:16] "GET /?action=new HTTP/1.1" 200 -
+2026-09-08 17:55:16,598 INFO: 127.0.0.1 - - [08/Sep/2026 17:55:16] "[36mGET /static/manifest.json HTTP/1.1[0m" 304 -
+2026-09-08 17:55:16,606 INFO: 127.0.0.1 - - [08/Sep/2026 17:55:16] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+2026-09-08 17:55:16,610 INFO: 127.0.0.1 - - [08/Sep/2026 17:55:16] "[36mGET /static/css/style_v2.css HTTP/1.1[0m" 304 -
+2026-09-08 17:55:17,294 INFO: 127.0.0.1 - - [08/Sep/2026 17:55:17] "[36mGET /static/img/icon.svg HTTP/1.1[0m" 304 -
+2026-09-08 17:55:28,747 INFO: 127.0.0.1 - - [08/Sep/2026 17:55:28] "GET /api/geocode?q=palakkad HTTP/1.1" 200 -
+2026-09-08 17:55:31,598 INFO: 127.0.0.1 - - [08/Sep/2026 17:55:31] "[32mPOST /kundli HTTP/1.1[0m" 302 -
+2026-09-08 17:55:32,544 INFO: 127.0.0.1 - - [08/Sep/2026 17:55:32] "GET /dashboard HTTP/1.1" 200 -
+2026-09-08 17:55:32,815 INFO: 127.0.0.1 - - [08/Sep/2026 17:55:32] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+2026-09-08 17:55:33,127 INFO: 127.0.0.1 - - [08/Sep/2026 17:55:33] "[36mGET /static/css/style_v2.css HTTP/1.1[0m" 304 -
+2026-09-08 17:55:33,130 INFO: 127.0.0.1 - - [08/Sep/2026 17:55:33] "[36mGET /static/manifest.json HTTP/1.1[0m" 304 -
+2026-09-08 17:55:33,591 INFO: 127.0.0.1 - - [08/Sep/2026 17:55:33] "[36mGET /static/img/icon.svg HTTP/1.1[0m" 304 -
+2026-09-08 17:57:56,746 INFO:  * Detected change in 'D:\\ASTROLOGYPREDICTIONS\\app\\astrology\\core\\calc_client.py', reloading
