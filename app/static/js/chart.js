@@ -113,9 +113,22 @@ function renderSouthIndianChart(canvasId, houseOccupants, lagnaRashi, planets) {
     // Simplified South Indian implementation
 }
 
+function safeParseJSON(str) {
+    if (!str) return {};
+    try {
+        // Handle cases where the string might be double-escaped or contain HTML entities
+        const doc = new DOMParser().parseFromString(str, 'text/html');
+        const unescaped = doc.documentElement.textContent;
+        return JSON.parse(unescaped || str);
+    } catch (e) {
+        console.error("JSON PARSE ERROR:", e, "SOURCE STR:", str);
+        return {};
+    }
+}
+
 window.addEventListener("resize", () => {
     document.querySelectorAll(".kundli-canvas").forEach(canvas => {
-        const d = JSON.parse(canvas.dataset.chart || "{}");
+        const d = safeParseJSON(canvas.dataset.chart);
         if (d.house_occupants) {
             renderNorthIndianChart(canvas.id, d.house_occupants, d.lagna.rashi, d.planets);
         }

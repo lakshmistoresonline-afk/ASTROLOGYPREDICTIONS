@@ -62,7 +62,7 @@ def generate():
 
         chart = calculate_chart_data(
             birth_dt, tc['lat'], tc['lon'], tc['tz']
-        )
+        ).model_dump()
 
         panchang = calculate_panchang_2_0(
             birth_dt.date(), tc['lat'], tc['lon'], tc['tz']

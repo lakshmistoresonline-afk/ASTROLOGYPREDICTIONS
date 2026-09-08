@@ -1,6 +1,7 @@
 from pydantic import BaseModel, Field
 from typing import Dict, List, Any, Optional
 from datetime import datetime
+import uuid
 
 class NakshatraInfo(BaseModel):
     name: str
@@ -78,6 +79,11 @@ class CorroborationEvidence(BaseModel):
     description: str
     rationale: Optional[str] = None # Technical explanation
 
+    # V3.22 Independence Layer
+    evidence_type: str = "SUPPORTING" # INDEPENDENT, SHARED_TRIGGER, DERIVED, CONFLICT
+    source_layer: str = "NATAL" # NATAL, DASHA, TRANSIT, VARGA
+    independence_group: Optional[str] = None # e.g. "Mars-Trigger"
+
 class DomainPrediction(BaseModel):
     domain: str
     headline: str = ""
@@ -85,8 +91,12 @@ class DomainPrediction(BaseModel):
     quality_score: float = 0.0 # V3 Quality Metric
     confidence: str # VERY STRONG, STRONG, etc.
     prediction_strength: str
+    event_type: Optional[str] = None
+    event_magnitude: Optional[str] = "MODERATE"
+    what_may_develop: Optional[str] = None # V3.15 Event Class
     summary: str
     manifestations: List[str] = [] # How it appears in life
+    confirmation_criteria: List[str] = [] # Specific success markers
     supporting_factors: List[str] = []
     contradicting_factors: List[str] = []
     validation_status: str = "PRELIMINARY"
@@ -115,3 +125,48 @@ class DomainPrediction(BaseModel):
     remedies: List[Dict[str, Any]] = []
     practical_actions: List[str] = [] # Actionable steps
     limitations: Optional[str] = None
+
+class TimelineEvent(BaseModel):
+    event_id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    profile_id: Optional[str] = None
+    domain: str
+    event_type: str
+    event_magnitude: str # LOW, MODERATE, SIGNIFICANT, MAJOR
+
+    start_date: str
+    peak_date: str
+    end_date: str
+
+    age_at_start: float
+    age_at_peak: float
+    age_at_end: float
+
+    signal_strength: str
+    confidence: str
+    timing_precision: str = "MODERATE" # NARROW, MODERATE, BROAD
+
+    evidence_count: int = 0
+    independent_evidence_count: int = 0
+    conflict_count: int = 0
+
+    status: str # PAST_RECONSTRUCTION, PRESENT_ACTIVE, FUTURE_FORECAST, VERIFIED_OUTCOME
+    provenance: str = "GENERATED"
+    engine_version: str = "V3.17"
+
+    evidence_summary: str
+    why_now: Optional[str] = None
+    evidence_chain: List[CorroborationEvidence] = []
+    conflicts: List[str] = []
+
+    # Validation Fields
+    actual_event_date: Optional[str] = None
+    matching_status: str = "UNKNOWN" # MATCH, PARTIAL_MATCH, NO_MATCH, UNKNOWN
+    timing_error_days: Optional[int] = None
+
+class LifeTimeline(BaseModel):
+    profile_id: str
+    birth_datetime: datetime
+    events: List[TimelineEvent] = []
+    phases: List[Dict[str, Any]] = [] # V3.16 Phases
+    generated_at: datetime = Field(default_factory=datetime.now)
+    engine_version: str = "V3.17"

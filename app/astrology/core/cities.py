@@ -16,6 +16,9 @@ OFFLINE_CITIES = [
     {"name": "Chennai", "lat": 13.0827, "lon": 80.2707, "tz": "Asia/Kolkata", "country": "India"},
     {"name": "Hyderabad", "lat": 17.3850, "lon": 78.4867, "tz": "Asia/Kolkata", "country": "India"},
     {"name": "Kolkata", "lat": 22.5726, "lon": 88.3639, "tz": "Asia/Kolkata", "country": "India"},
+    {"name": "Coimbatore", "lat": 11.0168, "lon": 76.9558, "tz": "Asia/Kolkata", "country": "India"},
+    {"name": "Thrissur", "lat": 10.5276, "lon": 76.2144, "tz": "Asia/Kolkata", "country": "India"},
+    {"name": "Palakkad", "lat": 10.7867, "lon": 76.6547, "tz": "Asia/Kolkata", "country": "India"},
     # [A full database would contain 150,000 cities, this is the core hub subset]
 ]
 

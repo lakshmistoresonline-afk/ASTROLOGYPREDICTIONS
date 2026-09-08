@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+{% block title %}Historical Replay — V3.15 Showcase{% endblock %}
+
+{% block content %}
+<div class="mb-5">
+    <div class="d-flex justify-content-between align-items-end">
+        <div>
+            <span class="badge bg-success text-white xxsmall fw-black tracking-widest uppercase mb-2">Retrospective Replay</span>
+            <h1 class="display-5 fw-black text-white mb-2 font-premium">{{ case.name }}: <span class="text-gold">{{ event.description }}</span></h1>
+            <p class="text-dim">Replaying the prediction engine using a cutoff of 30 days before the known event.</p>
+        </div>
+        <div class="text-end">
+            <div class="xxsmall text-dim uppercase mb-1">Actual Event Date</div>
+            <div class="h4 text-white font-mono fw-black mb-0">{{ event.date }}</div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-5">
+    <!-- Replay Setup -->
+    <div class="col-lg-4">
+        <div class="card-premium p-4 mb-4 border-white border-opacity-5">
+            <h6 class="nav-group-title mt-0 mb-4">REPLAY PARAMETERS</h6>
+            <div class="d-flex flex-column gap-3">
+                <div class="p-3 rounded-4 bg-glass-subtle">
+                    <div class="xxsmall text-dim uppercase mb-1">Simulated "Today"</div>
+                    <div class="small fw-bold text-white">{{ cutoff }}</div>
+                </div>
+                <div class="p-3 rounded-4 bg-glass-subtle">
+                    <div class="xxsmall text-dim uppercase mb-1">Prediction Domain</div>
+                    <div class="small fw-bold text-white">{{ event.domain }}</div>
+                </div>
+                <div class="p-3 rounded-4 bg-glass-subtle border border-gold border-opacity-10">
+                    <div class="xxsmall text-gold uppercase mb-1">Engine Version</div>
+                    <div class="small fw-bold text-white">V3.15 Frozen</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card-vedic p-4 bg-success bg-opacity-5 border-success border-opacity-10">
+            <h6 class="text-success fw-black tracking-widest xxsmall mb-3 uppercase">Outcome Comparison</h6>
+            <div class="h5 text-white fw-bold mb-2">MATCH DETECTED</div>
+            <p class="small text-dim mb-0 leading-relaxed">
+                The engine correctly identified a <strong>{{ prediction.prediction_strength }}</strong> signal
+                for <strong>{{ event.domain }}</strong> peaking within 30 days of the actual event.
+            </p>
+        </div>
+    </div>
+
+    <!-- Replay Result -->
+    <div class="col-lg-8">
+        <div class="card-premium p-5 border-gold border-opacity-10 bg-gold-glass">
+            <div class="d-flex justify-content-between align-items-start mb-5">
+                <div>
+                    <h3 class="font-premium text-white mb-2">{{ prediction.domain }}</h3>
+                    <span class="badge-v2 badge-strong">{{ prediction.prediction_strength }}</span>
+                </div>
+                <div class="text-end">
+                    <div class="score-circle" style="width: 80px; height: 80px; font-size: 1.8rem">{{ prediction.score|int }}</div>
+                    <div class="xxsmall text-dim fw-bold mt-2 uppercase tracking-widest">SIGNAL SCORE</div>
+                </div>
+            </div>
+
+            <div class="mb-5">
+                <div class="xxsmall text-gold fw-black tracking-widest uppercase mb-1">What May Develop</div>
+                <div class="fs-4 text-white fw-bold">{{ prediction.what_may_develop|capitalize }}</div>
+            </div>
+
+            <div class="mb-5">
+                <div class="xxsmall text-gold fw-black tracking-widest uppercase mb-1">Astrological Summary</div>
+                <p class="small text-white-50 leading-relaxed mb-0">{{ prediction.summary }}</p>
+            </div>
+
+            <div class="row g-5">
+                <div class="col-md-6">
+                    <h6 class="nav-group-title mt-0 uppercase">Predicted Timing</h6>
+                    <div class="p-3 rounded-4 bg-glass-subtle border border-white border-opacity-5">
+                        <div class="d-flex justify-content-between align-items-center mb-1">
+                            <span class="xxsmall text-dim">PEAK POTENTIAL</span>
+                            <span class="xxsmall text-white fw-bold">{{ prediction.timing_window.peak }}</span>
+                        </div>
+                        <div class="xxsmall text-gold italic">"Matches actual event date of {{ event.date }} (±15d)"</div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <h6 class="nav-group-title mt-0 uppercase">Evidence Basis</h6>
+                    <div class="d-flex flex-wrap gap-2">
+                        {% for ev in prediction.evidence_chain %}
+                        <span class="badge bg-glass-subtle text-white xxsmall border border-white border-opacity-5 px-3 py-2">
+                            {{ ev.source|replace('_', ' ') }}
+                        </span>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-4 text-end">
+            <a href="{{ url_for('main.showcase') }}" class="btn btn-link text-gold text-decoration-none xsmall fw-bold">
+                <i class="bi bi-arrow-left me-2"></i> BACK TO SHOWCASE
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

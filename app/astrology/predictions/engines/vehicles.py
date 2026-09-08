@@ -86,7 +86,10 @@ class VehiclesPredictionEngine:
             "Current alignment is {strength} for upgrades with a {score}% match."
         )
 
-        res = CorroborationEngine.synthesize("Vehicles & Mobility", promise_level, evidence, summary_template, timing_window=window)
+        event_class = "vehicle acquisition, replacement, major repair, mobility upgrade, or significant vehicle-related decision"
+
+        res = CorroborationEngine.synthesize("Vehicles & Mobility", promise_level, evidence, summary_template,
+                                                timing_window=window, what_may_develop=event_class)
 
         res.manifestations = [
             "Upgrading personal or professional transport.",

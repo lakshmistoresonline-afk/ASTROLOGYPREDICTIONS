@@ -90,7 +90,10 @@ class TravelPredictionEngine:
             "Timing alignment is {strength} with a {score}% hierarchical match."
         )
 
-        res = CorroborationEngine.synthesize("Travel & Horizons", promise_level, evidence, summary_template, timing_window=window)
+        event_class = "significant journey, relocation-related travel, international travel, or travel planning"
+
+        res = CorroborationEngine.synthesize("Travel & Horizons", promise_level, evidence, summary_template,
+                                                timing_window=window, what_may_develop=event_class)
         res.practical_actions = [
             "Verify travel documents and insurance before departure.",
             "Traditional journey-blessing practices are recommended.",

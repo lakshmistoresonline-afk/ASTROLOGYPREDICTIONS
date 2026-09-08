@@ -10,144 +10,495 @@
     "place": "London, UK"
   },
   "chart": {
-    "jd_ut": 2440771.638888889,
+    "birth_datetime": "1970-07-04 04:20:00",
+    "timezone": "Europe/London",
+    "latitude": 51.5074,
+    "longitude": -0.1278,
+    "ayanamsa": 23.44509501788656,
+    "ayanamsa_name": "Lahiri",
+    "house_system": "Whole Sign",
     "ascendant": 70.71199384421313,
     "asc_rashi": 2,
-    "houses": [
-      90.0,
-      120.0,
-      150.0,
-      180.0,
-      210.0,
-      240.0,
-      270.0,
-      300.0,
-      330.0,
-      0.0,
-      30.0
-    ],
+    "asc_nakshatra": {
+      "name": "Ardra",
+      "index": 5,
+      "pada": 2,
+      "lord": "Rahu",
+      "deity": "Rudra",
+      "symbol": "Teardrop/Diamond",
+      "gana": "Manushya",
+      "yoni": "Dog",
+      "nadi": 0,
+      "degree_range": [
+        66.66666666666667,
+        80.0
+      ]
+    },
+    "birth_time_confidence": "HIGH",
     "planets": {
       "Sun": {
-        "longitude": 78.30053739280365,
-        "rashi": 2,
-        "degree": 18.300537392803648,
-        "house": 1,
+        "name": "Sun",
+        "longitude": 78.30180447836764,
+        "latitude": -0.0019533679116560264,
+        "speed": 0.9599014022398933,
         "is_retrograde": false,
+        "is_combust": false,
+        "rashi": 2,
+        "degree": 18.301804478367643,
+        "house": 1,
         "dignity": "Neutral",
-        "drishti": [
-          8
-        ],
-        "functional_status": "Functional Malefic"
+        "nakshatra": {
+          "name": "Ardra",
+          "index": 5,
+          "pada": 4,
+          "lord": "Rahu",
+          "deity": "Rudra",
+          "symbol": "Teardrop/Diamond",
+          "gana": "Manushya",
+          "yoni": "Dog",
+          "nadi": 0,
+          "degree_range": [
+            66.66666666666667,
+            80.0
+          ]
+        },
+        "dispositor": "Mercury",
+        "functional_status": "Functional Malefic",
+        "shadbala_score": 327.23,
+        "baladi_avastha": "Vriddha (Old)",
+        "deeptadi_avastha": "Deena (Sad/Neutral)",
+        "navamsa_rashi": 11
       },
       "Moon": {
-        "longitude": 83.937133433095,
-        "rashi": 2,
-        "degree": 23.937133433095,
-        "house": 1,
+        "name": "Moon",
+        "longitude": 84.4243466797003,
+        "latitude": 2.9478222832548115,
+        "speed": 14.626765869110159,
         "is_retrograde": false,
+        "is_combust": false,
+        "rashi": 2,
+        "degree": 24.424346679700307,
+        "house": 1,
         "dignity": "Neutral",
-        "drishti": [
-          8
-        ],
-        "functional_status": "Functional Neutral"
+        "nakshatra": {
+          "name": "Punarvasu",
+          "index": 6,
+          "pada": 2,
+          "lord": "Jupiter",
+          "deity": "Aditi",
+          "symbol": "Quiver/Bow",
+          "gana": "Deva",
+          "yoni": "Cat",
+          "nadi": 0,
+          "degree_range": [
+            80.0,
+            93.33333333333334
+          ]
+        },
+        "dispositor": "Mercury",
+        "functional_status": "Functional Neutral",
+        "shadbala_score": 358.29,
+        "baladi_avastha": "Mrita (Dead)",
+        "deeptadi_avastha": "Deena (Sad/Neutral)",
+        "navamsa_rashi": 1
       },
       "Mars": {
-        "longitude": 87.41339254495746,
-        "rashi": 2,
-        "degree": 27.41339254495746,
-        "house": 1,
+        "name": "Mars",
+        "longitude": 87.41382624930623,
+        "latitude": 1.0576926398340136,
+        "speed": 0.6515764540182545,
         "is_retrograde": false,
+        "is_combust": false,
+        "rashi": 2,
+        "degree": 27.413826249306226,
+        "house": 1,
         "dignity": "Neutral",
-        "drishti": [
-          8,
-          9,
-          5
-        ],
-        "functional_status": "Functional Malefic"
+        "nakshatra": {
+          "name": "Punarvasu",
+          "index": 6,
+          "pada": 3,
+          "lord": "Jupiter",
+          "deity": "Aditi",
+          "symbol": "Quiver/Bow",
+          "gana": "Deva",
+          "yoni": "Cat",
+          "nadi": 0,
+          "degree_range": [
+            80.0,
+            93.33333333333334
+          ]
+        },
+        "dispositor": "Mercury",
+        "functional_status": "Functional Malefic",
+        "shadbala_score": 244.79,
+        "baladi_avastha": "Mrita (Dead)",
+        "deeptadi_avastha": "Deena (Sad/Neutral)",
+        "navamsa_rashi": 2
       },
       "Mercury": {
-        "longitude": 74.88313910899143,
-        "rashi": 2,
-        "degree": 14.883139108991429,
-        "house": 1,
+        "name": "Mercury",
+        "longitude": 74.88410784030444,
+        "latitude": 1.0325807191652145,
+        "speed": 2.1762649360823616,
         "is_retrograde": false,
+        "is_combust": false,
+        "rashi": 2,
+        "degree": 14.884107840304438,
+        "house": 1,
         "dignity": "Own Sign",
-        "drishti": [
-          8
-        ],
-        "functional_status": "Yogakaraka"
+        "nakshatra": {
+          "name": "Ardra",
+          "index": 5,
+          "pada": 3,
+          "lord": "Rahu",
+          "deity": "Rudra",
+          "symbol": "Teardrop/Diamond",
+          "gana": "Manushya",
+          "yoni": "Dog",
+          "nadi": 0,
+          "degree_range": [
+            66.66666666666667,
+            80.0
+          ]
+        },
+        "dispositor": "Mercury",
+        "functional_status": "Yogakaraka",
+        "shadbala_score": 358.56,
+        "baladi_avastha": "Yuva (Adult)",
+        "deeptadi_avastha": "Swastha (Content/Own Sign)",
+        "navamsa_rashi": 10
       },
       "Jupiter": {
-        "longitude": 182.7954198469403,
-        "rashi": 6,
-        "degree": 2.795419846940291,
-        "house": 5,
+        "name": "Jupiter",
+        "longitude": 182.7953116762683,
+        "latitude": 1.2471712749144115,
+        "speed": 0.0325548620594418,
         "is_retrograde": false,
+        "is_combust": false,
+        "rashi": 6,
+        "degree": 2.7953116762683123,
+        "house": 5,
         "dignity": "Neutral",
-        "drishti": [
-          0,
-          10,
-          2
-        ],
-        "functional_status": "Functional Neutral"
+        "nakshatra": {
+          "name": "Chitra",
+          "index": 13,
+          "pada": 3,
+          "lord": "Mars",
+          "deity": "Vishwakarma",
+          "symbol": "Pearl/Gem",
+          "gana": "Rakshasa",
+          "yoni": "Tiger",
+          "nadi": 1,
+          "degree_range": [
+            173.33333333333334,
+            186.66666666666669
+          ]
+        },
+        "dispositor": "Venus",
+        "functional_status": "Functional Neutral",
+        "shadbala_score": 295.17,
+        "baladi_avastha": "Bala (Infant)",
+        "deeptadi_avastha": "Deena (Sad/Neutral)",
+        "navamsa_rashi": 6
       },
       "Venus": {
-        "longitude": 116.908068172358,
-        "rashi": 3,
-        "degree": 26.908068172358,
-        "house": 2,
+        "name": "Venus",
+        "longitude": 116.90883555469225,
+        "latitude": 1.7499746278497994,
+        "speed": 1.1664669162314567,
         "is_retrograde": false,
+        "is_combust": false,
+        "rashi": 3,
+        "degree": 26.908835554692246,
+        "house": 2,
         "dignity": "Neutral",
-        "drishti": [
-          9
-        ],
-        "functional_status": "Functional Benefic"
+        "nakshatra": {
+          "name": "Ashlesha",
+          "index": 8,
+          "pada": 4,
+          "lord": "Mercury",
+          "deity": "Sarpa",
+          "symbol": "Coiled Serpent",
+          "gana": "Rakshasa",
+          "yoni": "Cat",
+          "nadi": 2,
+          "degree_range": [
+            106.66666666666667,
+            120.0
+          ]
+        },
+        "dispositor": "Moon",
+        "functional_status": "Functional Benefic",
+        "shadbala_score": 360.81,
+        "baladi_avastha": "Bala (Infant)",
+        "deeptadi_avastha": "Deena (Sad/Neutral)",
+        "navamsa_rashi": 11
       },
       "Saturn": {
-        "longitude": 25.966251118090703,
-        "rashi": 0,
-        "degree": 25.966251118090703,
-        "house": 11,
+        "name": "Saturn",
+        "longitude": 25.966333089018796,
+        "latitude": -2.184981178286708,
+        "speed": 0.09497144416670267,
         "is_retrograde": false,
+        "is_combust": false,
+        "rashi": 0,
+        "degree": 25.966333089018796,
+        "house": 11,
         "dignity": "Debilitated",
-        "drishti": [
-          9,
-          2,
-          6
-        ],
-        "functional_status": "Functional Benefic"
+        "nakshatra": {
+          "name": "Bharani",
+          "index": 1,
+          "pada": 4,
+          "lord": "Venus",
+          "deity": "Yama",
+          "symbol": "Yoni",
+          "gana": "Manushya",
+          "yoni": "Elephant",
+          "nadi": 1,
+          "degree_range": [
+            13.333333333333334,
+            26.666666666666668
+          ]
+        },
+        "dispositor": "Mars",
+        "functional_status": "Functional Benefic",
+        "shadbala_score": 298.31,
+        "baladi_avastha": "Mrita (Dead)",
+        "deeptadi_avastha": "Kopita (Angry/Debilitated)",
+        "navamsa_rashi": 7
       },
       "Rahu": {
+        "name": "Rahu",
         "longitude": 312.08966225390617,
+        "latitude": 0.0,
+        "speed": -0.05299186824458957,
+        "is_retrograde": true,
+        "is_combust": false,
         "rashi": 10,
         "degree": 12.08966225390617,
         "house": 9,
-        "is_retrograde": true,
         "dignity": "Neutral",
-        "drishti": [
-          2,
-          4,
-          6
-        ],
-        "functional_status": "Shadow (Mixed)"
+        "nakshatra": {
+          "name": "Shatabhisha",
+          "index": 23,
+          "pada": 2,
+          "lord": "Rahu",
+          "deity": "Varuna",
+          "symbol": "Empty circle/Flowers",
+          "gana": "Rakshasa",
+          "yoni": "Horse",
+          "nadi": 0,
+          "degree_range": [
+            306.6666666666667,
+            320.0
+          ]
+        },
+        "dispositor": "Saturn",
+        "functional_status": "Shadow (Mixed)",
+        "shadbala_score": 0.0,
+        "baladi_avastha": "Yuva (Adult)",
+        "deeptadi_avastha": "Deena (Sad/Neutral)",
+        "navamsa_rashi": 9
       },
       "Ketu": {
+        "name": "Ketu",
         "longitude": 132.08966225390617,
+        "latitude": -0.0,
+        "speed": -0.05299186824458957,
+        "is_retrograde": true,
+        "is_combust": false,
         "rashi": 4,
         "degree": 12.08966225390617,
         "house": 3,
-        "is_retrograde": true,
         "dignity": "Neutral",
-        "drishti": [
-          8,
-          0,
-          10
-        ],
-        "functional_status": "Shadow (Mixed)"
+        "nakshatra": {
+          "name": "Magha",
+          "index": 9,
+          "pada": 4,
+          "lord": "Ketu",
+          "deity": "Pitru",
+          "symbol": "Palanquin/Throne",
+          "gana": "Rakshasa",
+          "yoni": "Rat",
+          "nadi": 2,
+          "degree_range": [
+            120.0,
+            133.33333333333334
+          ]
+        },
+        "dispositor": "Sun",
+        "functional_status": "Shadow (Mixed)",
+        "shadbala_score": 0.0,
+        "baladi_avastha": "Yuva (Adult)",
+        "deeptadi_avastha": "Deena (Sad/Neutral)",
+        "navamsa_rashi": 3
+      },
+      "Gulika": {
+        "name": "Gulika",
+        "longitude": 248.20036600741003,
+        "latitude": 0.0,
+        "speed": 1.0,
+        "is_retrograde": false,
+        "is_combust": false,
+        "rashi": 8,
+        "degree": 8.200366007410025,
+        "house": 7,
+        "dignity": "Neutral",
+        "nakshatra": {
+          "name": "Mula",
+          "index": 18,
+          "pada": 3,
+          "lord": "Ketu",
+          "deity": "Niriti",
+          "symbol": "Bunch of roots/Elephant goad",
+          "gana": "Rakshasa",
+          "yoni": "Dog",
+          "nadi": 0,
+          "degree_range": [
+            240.0,
+            253.33333333333334
+          ]
+        },
+        "dispositor": "Jupiter",
+        "functional_status": "Functional Malefic",
+        "shadbala_score": 0.0,
+        "baladi_avastha": "Kumara (Youth)",
+        "deeptadi_avastha": "Deena (Sad/Neutral)",
+        "navamsa_rashi": 2
+      },
+      "Mandi": {
+        "name": "Mandi",
+        "longitude": 248.70036600741003,
+        "latitude": 0.0,
+        "speed": 1.0,
+        "is_retrograde": false,
+        "is_combust": false,
+        "rashi": 8,
+        "degree": 8.700366007410025,
+        "house": 7,
+        "dignity": "Neutral",
+        "nakshatra": {
+          "name": "Mula",
+          "index": 18,
+          "pada": 3,
+          "lord": "Ketu",
+          "deity": "Niriti",
+          "symbol": "Bunch of roots/Elephant goad",
+          "gana": "Rakshasa",
+          "yoni": "Dog",
+          "nadi": 0,
+          "degree_range": [
+            240.0,
+            253.33333333333334
+          ]
+        },
+        "dispositor": "Jupiter",
+        "functional_status": "Functional Malefic",
+        "shadbala_score": 0.0,
+        "baladi_avastha": "Kumara (Youth)",
+        "deeptadi_avastha": "Deena (Sad/Neutral)",
+        "navamsa_rashi": 2
       }
     },
-    "ayanamsa": 23.44509501788656,
-    "divisional": {
+    "houses": [
+      70.71199384421313,
+      86.76868998834958,
+      103.99571385364482,
+      126.03942160512888,
+      158.6837676399405,
+      206.3714186479817,
+      250.71199384421308,
+      266.7686899883496,
+      283.9957138536448,
+      306.0394216051289,
+      338.6837676399405,
+      26.371418647981695
+    ],
+    "house_lords": {
+      "1": "Mercury",
+      "2": "Moon",
+      "3": "Sun",
+      "4": "Mercury",
+      "5": "Venus",
+      "6": "Mars",
+      "7": "Jupiter",
+      "8": "Saturn",
+      "9": "Saturn",
+      "10": "Jupiter",
+      "11": "Mars",
+      "12": "Venus"
+    },
+    "divisional_charts": {
+      "D1": {
+        "Lagna": 2,
+        "Sun": 2,
+        "Moon": 2,
+        "Mars": 2,
+        "Mercury": 2,
+        "Jupiter": 6,
+        "Venus": 3,
+        "Saturn": 0,
+        "Rahu": 10,
+        "Ketu": 4,
+        "Gulika": 8,
+        "Mandi": 8
+      },
+      "D2": {
+        "Lagna": 4,
+        "Sun": 3,
+        "Moon": 3,
+        "Mars": 3,
+        "Mercury": 4,
+        "Jupiter": 4,
+        "Venus": 4,
+        "Saturn": 3,
+        "Rahu": 4,
+        "Ketu": 4,
+        "Gulika": 4,
+        "Mandi": 4
+      },
+      "D3": {
+        "Lagna": 6,
+        "Sun": 6,
+        "Moon": 10,
+        "Mars": 10,
+        "Mercury": 6,
+        "Jupiter": 6,
+        "Venus": 11,
+        "Saturn": 8,
+        "Rahu": 2,
+        "Ketu": 8,
+        "Gulika": 8,
+        "Mandi": 8
+      },
+      "D4": {
+        "Lagna": 5,
+        "Sun": 8,
+        "Moon": 11,
+        "Mars": 11,
+        "Mercury": 5,
+        "Jupiter": 6,
+        "Venus": 0,
+        "Saturn": 9,
+        "Rahu": 1,
+        "Ketu": 7,
+        "Gulika": 11,
+        "Mandi": 11
+      },
+      "D7": {
+        "Lagna": 4,
+        "Sun": 6,
+        "Moon": 7,
+        "Mars": 8,
+        "Mercury": 5,
+        "Jupiter": 6,
+        "Venus": 3,
+        "Saturn": 6,
+        "Rahu": 0,
+        "Ketu": 6,
+        "Gulika": 9,
+        "Mandi": 10
+      },
       "D9": {
         "Lagna": 9,
         "Sun": 11,
@@ -158,30 +509,717 @@
         "Venus": 11,
         "Saturn": 7,
         "Rahu": 9,
-        "Ketu": 3
+        "Ketu": 3,
+        "Gulika": 2,
+        "Mandi": 2
       },
       "D10": {
         "Lagna": 5,
         "Sun": 8,
-        "Moon": 9,
+        "Moon": 10,
         "Mars": 11,
         "Mercury": 6,
         "Jupiter": 6,
         "Venus": 7,
         "Saturn": 8,
         "Rahu": 2,
-        "Ketu": 8
+        "Ketu": 8,
+        "Gulika": 10,
+        "Mandi": 10
+      },
+      "D12": {
+        "Lagna": 6,
+        "Sun": 9,
+        "Moon": 11,
+        "Mars": 0,
+        "Mercury": 7,
+        "Jupiter": 7,
+        "Venus": 1,
+        "Saturn": 10,
+        "Rahu": 2,
+        "Ketu": 8,
+        "Gulika": 11,
+        "Mandi": 11
+      },
+      "D16": {
+        "Lagna": 1,
+        "Sun": 5,
+        "Moon": 9,
+        "Mars": 10,
+        "Mercury": 3,
+        "Jupiter": 1,
+        "Venus": 2,
+        "Saturn": 1,
+        "Rahu": 10,
+        "Ketu": 10,
+        "Gulika": 0,
+        "Mandi": 0
+      },
+      "D20": {
+        "Lagna": 11,
+        "Sun": 4,
+        "Moon": 8,
+        "Mars": 10,
+        "Mercury": 1,
+        "Jupiter": 1,
+        "Venus": 5,
+        "Saturn": 5,
+        "Rahu": 4,
+        "Ketu": 4,
+        "Gulika": 9,
+        "Mandi": 9
+      },
+      "D24": {
+        "Lagna": 0,
+        "Sun": 6,
+        "Moon": 11,
+        "Mars": 1,
+        "Mercury": 3,
+        "Jupiter": 6,
+        "Venus": 0,
+        "Saturn": 0,
+        "Rahu": 1,
+        "Ketu": 1,
+        "Gulika": 10,
+        "Mandi": 10
+      },
+      "D27": {
+        "Lagna": 3,
+        "Sun": 10,
+        "Moon": 3,
+        "Mars": 6,
+        "Mercury": 7,
+        "Jupiter": 8,
+        "Venus": 9,
+        "Saturn": 11,
+        "Rahu": 4,
+        "Ketu": 10,
+        "Gulika": 7,
+        "Mandi": 7
+      },
+      "D30": {
+        "Lagna": 8,
+        "Sun": 2,
+        "Moon": 2,
+        "Mars": 6,
+        "Mercury": 8,
+        "Jupiter": 0,
+        "Venus": 7,
+        "Saturn": 6,
+        "Rahu": 8,
+        "Ketu": 8,
+        "Gulika": 10,
+        "Mandi": 10
+      },
+      "D40": {
+        "Lagna": 2,
+        "Sun": 0,
+        "Moon": 8,
+        "Mars": 0,
+        "Mercury": 7,
+        "Jupiter": 3,
+        "Venus": 5,
+        "Saturn": 10,
+        "Rahu": 4,
+        "Ketu": 4,
+        "Gulika": 10,
+        "Mandi": 11
+      },
+      "D45": {
+        "Lagna": 0,
+        "Sun": 11,
+        "Moon": 8,
+        "Mars": 1,
+        "Mercury": 6,
+        "Jupiter": 4,
+        "Venus": 4,
+        "Saturn": 2,
+        "Rahu": 10,
+        "Ketu": 10,
+        "Gulika": 8,
+        "Mandi": 9
+      },
+      "D60": {
+        "Lagna": 9,
+        "Sun": 0,
+        "Moon": 0,
+        "Mars": 6,
+        "Mercury": 5,
+        "Jupiter": 5,
+        "Venus": 11,
+        "Saturn": 3,
+        "Rahu": 0,
+        "Ketu": 0,
+        "Gulika": 4,
+        "Mandi": 5
       }
+    },
+    "ashtakavarga": {
+      "BAV": {
+        "Sun": [
+          6,
+          3,
+          4,
+          3,
+          4,
+          3,
+          2,
+          4,
+          4,
+          4,
+          5,
+          6
+        ],
+        "Moon": [
+          7,
+          2,
+          3,
+          2,
+          7,
+          4,
+          4,
+          5,
+          3,
+          4,
+          2,
+          6
+        ],
+        "Mars": [
+          6,
+          1,
+          3,
+          3,
+          5,
+          2,
+          3,
+          5,
+          3,
+          2,
+          2,
+          4
+        ],
+        "Mercury": [
+          6,
+          5,
+          3,
+          5,
+          3,
+          5,
+          4,
+          6,
+          2,
+          4,
+          5,
+          6
+        ],
+        "Jupiter": [
+          7,
+          2,
+          5,
+          6,
+          4,
+          5,
+          4,
+          4,
+          6,
+          3,
+          4,
+          6
+        ],
+        "Venus": [
+          6,
+          5,
+          4,
+          5,
+          7,
+          3,
+          5,
+          4,
+          1,
+          4,
+          7,
+          1
+        ],
+        "Saturn": [
+          5,
+          3,
+          4,
+          1,
+          5,
+          4,
+          1,
+          4,
+          2,
+          2,
+          3,
+          5
+        ]
+      },
+      "SAV": [
+        43,
+        21,
+        26,
+        25,
+        35,
+        26,
+        23,
+        32,
+        21,
+        23,
+        28,
+        34
+      ],
+      "ShodhyaPinda": {
+        "Sun": 101,
+        "Moon": 123,
+        "Mars": 82,
+        "Mercury": 101,
+        "Jupiter": 79,
+        "Venus": 205,
+        "Saturn": 127
+      }
+    },
+    "yogas": [
+      {
+        "name": "Budha Aditya Yoga",
+        "present": true,
+        "strength": "MODERATE",
+        "interpretation": "High intelligence and administrative ability."
+      },
+      {
+        "name": "Chandra-Mangala Yoga",
+        "present": true,
+        "strength": "MODERATE",
+        "interpretation": "Financial success through active effort and courageous mindset."
+      },
+      {
+        "name": "Bhadra Yoga",
+        "present": true,
+        "strength": "STRONG",
+        "interpretation": "Intelligence and administrative success."
+      },
+      {
+        "name": "Sunapha Yoga",
+        "present": true,
+        "strength": "MODERATE",
+        "interpretation": "Self-earned wealth, fame, and good intelligence."
+      },
+      {
+        "name": "Parijata Yoga",
+        "present": true,
+        "strength": "MODERATE",
+        "interpretation": "Success in the middle and later part of life, happy and respectful."
+      },
+      {
+        "name": "Paapa Kartari Yoga (H2)",
+        "present": true,
+        "strength": "CAUTION",
+        "interpretation": "House hemmed between challenging planets, indicating external pressures on this life area."
+      },
+      {
+        "name": "Paapa Kartari Yoga (H10)",
+        "present": true,
+        "strength": "CAUTION",
+        "interpretation": "House hemmed between challenging planets, indicating external pressures on this life area."
+      },
+      {
+        "name": "Paapa Kartari Yoga (H12)",
+        "present": true,
+        "strength": "CAUTION",
+        "interpretation": "House hemmed between challenging planets, indicating external pressures on this life area."
+      }
+    ],
+    "jaimini_karakas": {
+      "Atmakaraka": "Mars",
+      "Amatyakaraka": "Venus",
+      "Bhratrukaraka": "Saturn",
+      "Matrukaraka": "Moon",
+      "Putrakaraka": "Sun",
+      "Gnatikaraka": "Mercury",
+      "Darakaraka": "Jupiter"
+    },
+    "special_lagnas": {
+      "Hora Lagna": 63.62159610082753,
+      "Ghati Lagna": 41.601283534517364,
+      "Bhava Lagna": 70.96170028959759,
+      "Pranapada Lagna": 19.580970968207197
+    },
+    "arudha_padas": {
+      "AL": 11,
+      "A2": 1,
+      "A3": 0,
+      "A4": 8,
+      "A5": 9,
+      "A6": 9,
+      "A7": 4,
+      "A8": 0,
+      "A9": 2,
+      "A10": 1,
+      "A11": 4,
+      "A12": 5
+    },
+    "yogi_details": {
+      "Yogi": "Venus",
+      "Avayogi": "Saturn",
+      "Saha Yogi": "Jupiter",
+      "Yogi Point": "256.06\u00b0"
+    },
+    "rashi_drishti": {
+      "0": [
+        4,
+        7,
+        10
+      ],
+      "1": [
+        3,
+        6,
+        9
+      ],
+      "2": [
+        5,
+        8,
+        11
+      ],
+      "3": [
+        1,
+        7,
+        10
+      ],
+      "4": [
+        0,
+        6,
+        9
+      ],
+      "5": [
+        2,
+        8,
+        11
+      ],
+      "6": [
+        1,
+        4,
+        10
+      ],
+      "7": [
+        0,
+        3,
+        9
+      ],
+      "8": [
+        2,
+        5,
+        11
+      ],
+      "9": [
+        1,
+        4,
+        7
+      ],
+      "10": [
+        0,
+        3,
+        6
+      ],
+      "11": [
+        2,
+        5,
+        8
+      ]
+    },
+    "karakamsha_swamsha": {
+      "Swamsha": 9,
+      "Karakamsha": 2,
+      "Atmakaraka": "Mars"
+    },
+    "chara_dasha": [
+      {
+        "rashi": 2,
+        "years": 11,
+        "name": "Sign 3 Dasha"
+      },
+      {
+        "rashi": 3,
+        "years": 12,
+        "name": "Sign 4 Dasha"
+      },
+      {
+        "rashi": 4,
+        "years": 1,
+        "name": "Sign 5 Dasha"
+      },
+      {
+        "rashi": 5,
+        "years": 2,
+        "name": "Sign 6 Dasha"
+      },
+      {
+        "rashi": 6,
+        "years": 8,
+        "name": "Sign 7 Dasha"
+      },
+      {
+        "rashi": 7,
+        "years": 6,
+        "name": "Sign 8 Dasha"
+      },
+      {
+        "rashi": 8,
+        "years": 9,
+        "name": "Sign 9 Dasha"
+      },
+      {
+        "rashi": 9,
+        "years": 8,
+        "name": "Sign 10 Dasha"
+      },
+      {
+        "rashi": 10,
+        "years": 9,
+        "name": "Sign 11 Dasha"
+      },
+      {
+        "rashi": 11,
+        "years": 4,
+        "name": "Sign 12 Dasha"
+      },
+      {
+        "rashi": 0,
+        "years": 1,
+        "name": "Sign 1 Dasha"
+      },
+      {
+        "rashi": 1,
+        "years": 1,
+        "name": "Sign 2 Dasha"
+      }
+    ],
+    "kalachakra_dasha": {
+      "is_savya": true,
+      "mahadashas": [
+        {
+          "rashi_idx": 0,
+          "duration": 7,
+          "start": "1970-07-04 04:20:00",
+          "end": "1977-07-04 04:20:00"
+        },
+        {
+          "rashi_idx": 1,
+          "duration": 16,
+          "start": "1977-07-04 04:20:00",
+          "end": "1993-07-04 04:20:00"
+        },
+        {
+          "rashi_idx": 2,
+          "duration": 9,
+          "start": "1993-07-04 04:20:00",
+          "end": "2002-07-04 04:20:00"
+        },
+        {
+          "rashi_idx": 3,
+          "duration": 21,
+          "start": "2002-07-04 04:20:00",
+          "end": "2023-07-04 04:20:00"
+        },
+        {
+          "rashi_idx": 4,
+          "duration": 5,
+          "start": "2023-07-04 04:20:00",
+          "end": "2028-07-04 04:20:00"
+        },
+        {
+          "rashi_idx": 5,
+          "duration": 9,
+          "start": "2028-07-04 04:20:00",
+          "end": "2037-07-04 04:20:00"
+        },
+        {
+          "rashi_idx": 6,
+          "duration": 16,
+          "start": "2037-07-04 04:20:00",
+          "end": "2053-07-04 04:20:00"
+        },
+        {
+          "rashi_idx": 7,
+          "duration": 7,
+          "start": "2053-07-04 04:20:00",
+          "end": "2060-07-04 04:20:00"
+        },
+        {
+          "rashi_idx": 8,
+          "duration": 10,
+          "start": "2060-07-04 04:20:00",
+          "end": "2070-07-04 04:20:00"
+        }
+      ],
+      "deha_rashi_idx": 0,
+      "jiva_rashi_idx": 11
+    },
+    "shattrimsha_dasha": {
+      "mahadashas": [
+        {
+          "lord": "Sun",
+          "start": "1970-07-04 04:20:00",
+          "end": "1972-07-04 04:20:00",
+          "cycle": 1
+        },
+        {
+          "lord": "Jupiter",
+          "start": "1972-07-04 04:20:00",
+          "end": "1975-07-04 04:20:00",
+          "cycle": 1
+        },
+        {
+          "lord": "Rahu",
+          "start": "1975-07-04 04:20:00",
+          "end": "1979-07-04 04:20:00",
+          "cycle": 1
+        },
+        {
+          "lord": "Mercury",
+          "start": "1979-07-04 04:20:00",
+          "end": "1984-07-04 04:20:00",
+          "cycle": 1
+        },
+        {
+          "lord": "Saturn",
+          "start": "1984-07-04 04:20:00",
+          "end": "1990-07-04 04:20:00",
+          "cycle": 1
+        },
+        {
+          "lord": "Mars",
+          "start": "1990-07-04 04:20:00",
+          "end": "1997-07-04 04:20:00",
+          "cycle": 1
+        },
+        {
+          "lord": "Venus",
+          "start": "1997-07-04 04:20:00",
+          "end": "2005-07-04 04:20:00",
+          "cycle": 1
+        },
+        {
+          "lord": "Moon",
+          "start": "2005-07-04 04:20:00",
+          "end": "2006-07-04 04:20:00",
+          "cycle": 1
+        },
+        {
+          "lord": "Sun",
+          "start": "2006-07-04 04:20:00",
+          "end": "2008-07-04 04:20:00",
+          "cycle": 2
+        },
+        {
+          "lord": "Jupiter",
+          "start": "2008-07-04 04:20:00",
+          "end": "2011-07-04 04:20:00",
+          "cycle": 2
+        },
+        {
+          "lord": "Rahu",
+          "start": "2011-07-04 04:20:00",
+          "end": "2015-07-04 04:20:00",
+          "cycle": 2
+        },
+        {
+          "lord": "Mercury",
+          "start": "2015-07-04 04:20:00",
+          "end": "2020-07-04 04:20:00",
+          "cycle": 2
+        },
+        {
+          "lord": "Saturn",
+          "start": "2020-07-04 04:20:00",
+          "end": "2026-07-04 04:20:00",
+          "cycle": 2
+        },
+        {
+          "lord": "Mars",
+          "start": "2026-07-04 04:20:00",
+          "end": "2033-07-04 04:20:00",
+          "cycle": 2
+        },
+        {
+          "lord": "Venus",
+          "start": "2033-07-04 04:20:00",
+          "end": "2041-07-04 04:20:00",
+          "cycle": 2
+        },
+        {
+          "lord": "Moon",
+          "start": "2041-07-04 04:20:00",
+          "end": "2042-07-04 04:20:00",
+          "cycle": 2
+        },
+        {
+          "lord": "Sun",
+          "start": "2042-07-04 04:20:00",
+          "end": "2044-07-04 04:20:00",
+          "cycle": 3
+        },
+        {
+          "lord": "Jupiter",
+          "start": "2044-07-04 04:20:00",
+          "end": "2047-07-04 04:20:00",
+          "cycle": 3
+        },
+        {
+          "lord": "Rahu",
+          "start": "2047-07-04 04:20:00",
+          "end": "2051-07-04 04:20:00",
+          "cycle": 3
+        },
+        {
+          "lord": "Mercury",
+          "start": "2051-07-04 04:20:00",
+          "end": "2056-07-04 04:20:00",
+          "cycle": 3
+        },
+        {
+          "lord": "Saturn",
+          "start": "2056-07-04 04:20:00",
+          "end": "2062-07-04 04:20:00",
+          "cycle": 3
+        },
+        {
+          "lord": "Mars",
+          "start": "2062-07-04 04:20:00",
+          "end": "2069-07-04 04:20:00",
+          "cycle": 3
+        },
+        {
+          "lord": "Venus",
+          "start": "2069-07-04 04:20:00",
+          "end": "2077-07-04 04:20:00",
+          "cycle": 3
+        },
+        {
+          "lord": "Moon",
+          "start": "2077-07-04 04:20:00",
+          "end": "2078-07-04 04:20:00",
+          "cycle": 3
+        }
+      ]
+    },
+    "pindayu": {
+      "Sun": 15.4,
+      "Moon": 21.43,
+      "Mars": 8.77,
+      "Mercury": 3.0,
+      "Jupiter": 11.34,
+      "Venus": 14.01,
+      "Saturn": 9.67
     }
   },
   "panchang": {
     "tithi": {
       "number": 1,
-      "end_time": "06:01 PM"
+      "end_time": "06:58 PM"
     },
     "nakshatra": {
       "number": 7,
-      "end_time": "10:59 PM",
+      "end_time": "11:24 PM",
       "pada": 3
     },
     "yoga": {

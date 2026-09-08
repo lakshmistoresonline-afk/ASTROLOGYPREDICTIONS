@@ -1,4 +1,4 @@
-# Trademind Astrology AI (Jyotish OS)
+# Astro Predictions (Jyotish OS)
 
 A professional-grade Vedic Astrology Prediction & Remedy system built on deterministic astronomical calculations.
 

@@ -72,16 +72,11 @@ class BusinessPredictionEngine:
         from ...dasha import calculate_vimshottari
         moon_lon = planets["Moon"].longitude
         dasha = calculate_vimshottari(moon_lon, chart.birth_datetime, calculation_date=selected_date)
-        maha_lord = dasha.get("current_maha", {}).get("lord")
-        antar_lord = dasha.get("current_antar", {}).get("lord")
 
         relevant_lords = [l7_name, l10_name, "Mercury"]
-        if antar_lord in relevant_lords:
-            evidence.append(CorroborationEngine.create_evidence(
-                "DASHA_ACTIVATION",
-                f"COMMERCIAL ACTIVATION: Period of {antar_lord} triggers active trade and market engagement.",
-                90.0
-            ))
+        dasha_evidence = CorroborationEngine.audit_dasha_activation(dasha, chart, relevant_lords, "commercial")
+        if dasha_evidence:
+            evidence.extend(dasha_evidence)
         else:
             evidence.append(CorroborationEngine.create_evidence(
                 "DASHA_ACTIVATION",
@@ -89,15 +84,9 @@ class BusinessPredictionEngine:
                 65.0
             ))
 
-        if maha_lord in relevant_lords:
-            evidence.append(CorroborationEngine.create_evidence(
-                "DASHA_FOUNDATION",
-                f"DASHA FOUNDATION: Major life-cycle ruled by {maha_lord} provides underlying support for independent enterprise.",
-                60.0
-            ))
-
         # 3. TIMING
-        window = timing_engine.calculate_window(chart, ["Mercury", l7_name, l10_name], [7, 10, 11], calculation_date=selected_date)
+        window = timing_engine.calculate_window(chart, ["Mercury", l7_name, l10_name], [7, 10, 11],
+                                                calculation_date=selected_date, domain="Business & Enterprise")
         if window.get("proximity_weight", 0) > 0:
              evidence.append(CorroborationEngine.create_evidence(
                 "TRANSIT_TRIGGER", f"TEMPORAL TRIGGER: {window.get('description')}",

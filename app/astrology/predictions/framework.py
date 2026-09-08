@@ -10,30 +10,33 @@ def are_associated(p1_name: str, p2_name: str, planets: Dict[str, Any]) -> bool:
 
 class CorroborationEngine:
     """
-    V2 Pro Intelligence Engine.
-    Implements Hierarchical Confluence, Contradiction Penalties, and Node-by-Node evidence.
+    V2 Pro Intelligence Engine (V3.22).
+    Implements Hierarchical Confluence with V3.15 Frozen Logic.
     """
 
+    ENGINE_VERSION = "V3.22"
+
     WEIGHTS = {
-        "NATAL_PROMISE": 0.40, # Primary foundation
-        "SECONDARY_PROMISE": 0.05, # Supporting placements
-        "DASHA_ACTIVATION": 0.20, # Timing - Life period (Antar)
-        "DASHA_FOUNDATION": 0.05, # Timing - Life period (Maha)
-        "TRANSIT_TRIGGER": 0.25, # Timing - Current sky (Trigger)
-        "DIVISIONAL_CONFIRM": 0.12, # Soul/Action confirmation
-        "YOGA_SUPPORT": 0.05, # Special combinations
-        "ASPECT_SUPPORT": 0.05, # Influences
-        "PLANETARY_STRENGTH": 0.05, # Shadbala
-        "CONFLICTS": -0.70 # Limiting factors (Increased penalty)
+        "NATAL_PROMISE": 0.35,
+        "SECONDARY_PROMISE": 0.05,
+        "DASHA_ACTIVATION": 0.25,
+        "DASHA_FOUNDATION": 0.05,
+        "TRANSIT_TRIGGER": 0.15,
+        "DIVISIONAL_CONFIRM": 0.10,
+        "YOGA_SUPPORT": 0.05,
+        "PLANETARY_STRENGTH": 0.05,
+        "CONFLICTS": -0.40
     }
 
     @staticmethod
     def create_evidence(level: str, description: str, score: float,
                         group: str = "PRIMARY", planet: str = None,
-                        house: int = None, rationale: str = None) -> CorroborationEvidence:
+                        house: int = None, rationale: str = None,
+                        evidence_type: str = "SUPPORTING",
+                        source_layer: str = "NATAL",
+                        independence_group: str = None) -> CorroborationEvidence:
 
         weight = CorroborationEngine.WEIGHTS.get(level, 0.0)
-        # Score is 0-100, normalize to weighted impact (Handle as magnitude)
         abs_score = min(100.0, abs(score))
         weighted_score = (abs_score / 100.0) * weight
 
@@ -44,191 +47,163 @@ class CorroborationEngine:
             house_involved=house,
             strength_score=weighted_score,
             description=description,
-            rationale=rationale
+            rationale=rationale,
+            evidence_type=evidence_type,
+            source_layer=source_layer,
+            independence_group=independence_group
         )
-
-    WEIGHTS = {
-        "NATAL_PROMISE": 0.40, # Primary foundation
-        "SECONDARY_PROMISE": 0.05, # Supporting placements
-        "DASHA_ACTIVATION": 0.20, # Timing - Life period (Antar)
-        "DASHA_FOUNDATION": 0.03, # Timing - Life period (Maha)
-        "TRANSIT_TRIGGER": 0.15, # Timing - Current sky
-        "DIVISIONAL_CONFIRM": 0.10, # Soul/Action confirmation
-        "YOGA_SUPPORT": 0.05, # Special combinations
-        "ASPECT_SUPPORT": 0.05, # Influences
-        "PLANETARY_STRENGTH": 0.05, # Shadbala
-        "CONFLICTS": -0.60 # Limiting factors (Contradiction)
-    }
 
     @staticmethod
-    def create_evidence(level: str, description: str, score: float,
-                        group: str = "PRIMARY", planet: str = None,
-                        house: int = None, rationale: str = None) -> CorroborationEvidence:
+    def resolve_node_proxy(planet_name: str, chart: CanonicalChart) -> List[str]:
+        if planet_name not in ["Rahu", "Ketu"]: return [planet_name]
+        proxies = []
+        p_info = chart.planets.get(planet_name)
+        if not p_info: return [planet_name]
+        proxies.append(p_info.dispositor)
+        for other_name, other_p in chart.planets.items():
+            if other_name == planet_name: continue
+            if other_p.rashi == p_info.rashi: proxies.append(other_name)
+        return list(set(proxies))
 
-        weight = CorroborationEngine.WEIGHTS.get(level, 0.0)
-        # Score is 0-100, normalize to weighted impact (Magnitude based)
-        abs_score = min(100.0, abs(score))
-        weighted_score = (abs_score / 100.0) * weight
-
-        return CorroborationEvidence(
-            source=level,
-            level=group,
-            planet_involved=planet,
-            house_involved=house,
-            strength_score=weighted_score,
-            description=description,
-            rationale=rationale
-        )
+    @staticmethod
+    def audit_dasha_activation(dasha_data: Dict[str, Any], chart: CanonicalChart,
+                               relevant_lords: List[str], domain_label: str) -> List[CorroborationEvidence]:
+        evidence = []
+        antar_lord = dasha_data.get("current_antar", {}).get("lord")
+        maha_lord = dasha_data.get("current_maha", {}).get("lord")
+        if not antar_lord: return []
+        if antar_lord in relevant_lords:
+            evidence.append(CorroborationEngine.create_evidence("DASHA_ACTIVATION", f"TEMPORAL ACTIVATION: Period ruled by {antar_lord} triggers major {domain_label} themes.", 90.0, group="PRIMARY"))
+        else:
+            proxies = CorroborationEngine.resolve_node_proxy(antar_lord, chart)
+            for p in proxies:
+                if p in relevant_lords and p != antar_lord:
+                    evidence.append(CorroborationEngine.create_evidence("DASHA_ACTIVATION", f"NODE PROXY: {antar_lord} acts through {p} (Relevant Lord for {domain_label}).", 50.0, group="SECONDARY"))
+                    break
+        if maha_lord in relevant_lords:
+             evidence.append(CorroborationEngine.create_evidence("DASHA_ACTIVATION", f"MAHA ACTIVATION: Major life-cycle ruled by {maha_lord} provides strong support.", 70.0, group="PRIMARY"))
+        else:
+             evidence.append(CorroborationEngine.create_evidence("DASHA_FOUNDATION", f"DASHA FOUNDATION: Major cycle ruled by {maha_lord} provides background support.", 30.0, group="SECONDARY"))
+        return evidence
 
     @staticmethod
     def synthesize(domain: str, promise_level: str, evidence: List[CorroborationEvidence],
-                    summary_template: str, timing_window: Dict[str, Any] = None) -> DomainPrediction:
+                    summary_template: str, timing_window: Dict[str, Any] = None,
+                    event_type: str = None, event_magnitude: str = "MODERATE",
+                    what_may_develop: str = None) -> DomainPrediction:
 
-        # 1. Higher-level groups for independence audit (V3.12)
-        LAYER_GROUPS = {
-            "NATAL_PROMISE": "PROMISE",
-            "SECONDARY_PROMISE": "PROMISE",
-            "DASHA_ACTIVATION": "DASHA",
-            "DASHA_FOUNDATION": "DASHA",
-            "TRANSIT_TRIGGER": "TRANSIT",
-            "DIVISIONAL_CONFIRM": "VARGA",
-            "YOGA_SUPPORT": "NATAL_OTHER",
-            "ASPECT_SUPPORT": "NATAL_OTHER",
-            "PLANETARY_STRENGTH": "NATAL_OTHER"
-        }
-
-        # 2. Group evidence by Layer Group to prevent "Node Inflation"
+        LAYER_GROUPS = {"NATAL_PROMISE": "PROMISE", "SECONDARY_PROMISE": "PROMISE", "DASHA_ACTIVATION": "DASHA", "DASHA_FOUNDATION": "DASHA", "TRANSIT_TRIGGER": "TRANSIT", "DIVISIONAL_CONFIRM": "VARGA", "YOGA_SUPPORT": "NATAL_OTHER", "PLANETARY_STRENGTH": "NATAL_OTHER"}
         group_contributions = {}
         unique_anchors = set()
-
         for e in evidence:
             group = LAYER_GROUPS.get(e.source, "OTHER")
-            if group not in group_contributions:
-                group_contributions[group] = []
+            if group not in group_contributions: group_contributions[group] = []
             group_contributions[group].append(e.strength_score)
-
-            # Anchor is Planet or House involved
             anchor = e.planet_involved or f"H{e.house_involved}" if e.house_involved else e.source
-            if e.strength_score > 0:
-                unique_anchors.add(anchor)
+            if e.strength_score > 0: unique_anchors.add(anchor)
 
-        # 3. Calculate Confluence (Positive factors)
-        # Take the maximum contribution for each GROUP to ensure independence
         total_potential = 0.0
-        unique_layer_groups = set()
+        unique_confirmation_layers = 0
+        major_groups = set()
         for group, scores in group_contributions.items():
             pos_scores = [s for s in scores if s > 0]
             if pos_scores:
                 m_score = max(pos_scores)
                 total_potential += m_score
-                # V3.12: Hardened Layer Counting - Only count as a "Layer" if significant
-                if m_score >= 0.08: # Min weighted impact to count as a major layer
-                    unique_layer_groups.add(group)
+                if m_score >= 0.05:
+                    unique_confirmation_layers += 1
+                    major_groups.add(group)
 
-        # 4. Calculate Contradiction (Negative factors)
-        total_friction = 0.0
-        for group, scores in group_contributions.items():
-            neg_scores = [s for s in scores if s < 0]
-            if neg_scores:
-                total_friction += min(neg_scores) # Most negative per group
-
-        # 5. Final Composite Score
+        total_friction = sum([min(s for s in scores if s < 0) for scores in group_contributions.values() if any(s < 0 for s in scores)])
         composite_score = total_potential + total_friction
+        if "PROMISE" in major_groups and "DASHA" in major_groups and "TRANSIT" in major_groups: composite_score += 0.10
 
-        # 6. Evidence Diversity Bonus (V3.12)
-        # Reward convergence of PROMISE + DASHA + (TRANSIT or VARGA)
-        diversity_bonus = 0.0
-        if "PROMISE" in unique_layer_groups and "DASHA" in unique_layer_groups:
-            if "TRANSIT" in unique_layer_groups or "VARGA" in unique_layer_groups:
-                diversity_bonus = 0.12 # Increased for Recall recovery
-
-        composite_score += diversity_bonus
-
-        # 7. State Determination Model
-        tw = timing_window or {"phase": "SCANNING", "description": "Analyzing triggers..."}
+        tw = timing_window or {"phase": "SCANNING", "proximity_weight": 0.0}
         phase = tw.get("phase")
-
         is_peak = phase == "PEAK_MANIFESTATION"
         is_active = phase in ["NEAR_TERM_ACTIVE", "PEAK_ACTIVE", "PEAK_MANIFESTATION"]
 
-        # 8. Quality Metric
-        density_bonus = min(0.15, len(evidence) * 0.02)
-        anchor_diversity_bonus = min(0.2, len(unique_anchors) * 0.05)
-        layer_diversity_bonus = min(0.15, len(unique_layer_groups) * 0.04)
+        density_bonus = min(0.2, len(evidence) * 0.03)
+        anchor_diversity_bonus = min(0.2, len(unique_anchors) * 0.04)
+        friction_penalty = abs(total_friction) * 1.0
+        q_score = round(max(0, min(1, (composite_score * 0.4) + density_bonus + anchor_diversity_bonus - friction_penalty)) * 100, 2)
 
-        q_score = (composite_score * 0.4) + density_bonus + anchor_diversity_bonus + layer_diversity_bonus - abs(total_friction)
-        q_score = round(max(0, min(1, q_score)) * 100, 2)
+        sources = {e.source for e in evidence if e.strength_score > 0}
+        has_antar = "DASHA_ACTIVATION" in sources
+        has_primary_antar = any(e.source == "DASHA_ACTIVATION" and e.level == "PRIMARY" for e in evidence if e.strength_score > 0)
+        has_primary_natal = "NATAL_PROMISE" in sources
+        has_transit_layer = "TRANSIT_TRIGGER" in sources
 
-        # 9. Scoring Gates (V3.12 Precision Recovery)
-        # PEAK requires high score, peak timing, and full convergence (4+ groups)
-        if composite_score >= 0.65 and is_peak and q_score >= 52 and len(unique_layer_groups) >= 4:
-             strength = "PEAK"
-             confidence = "EXTREME"
-        # ACTIVE requires independent layers convergence
-        elif composite_score >= 0.32 and is_active and q_score >= 30:
-            has_promise = "PROMISE" in unique_layer_groups
-            has_dasha = "DASHA" in unique_layer_groups
-            has_transit = "TRANSIT" in unique_layer_groups
-            has_varga = "VARGA" in unique_layer_groups
+        gate_score = 0.55
+        gate_q = 52
+        temporal_threshold = 0.55
+        if domain in ["Career & Authority", "Education & Knowledge", "Fame & Reputation"]:
+             gate_score = 0.38
+             gate_q = 44
+             temporal_threshold = 0.35
+             if domain == "Fame & Reputation": gate_q = 32
 
-            layers_count = len(unique_layer_groups)
+        is_active_hardened = is_active
+        if phase == "NEAR_TERM_ACTIVE" and tw.get("proximity_weight", 0) < temporal_threshold:
+             is_active_hardened = False
 
-            # Paths to ACTIVE:
-            if layers_count >= 3 and has_promise and (has_dasha or has_transit):
-                 strength = "ACTIVE"
-                 confidence = "HIGH"
-            elif has_dasha and has_transit and q_score >= 48:
-                 strength = "ACTIVE" # Timing-led trigger
-                 confidence = "HIGH"
-            elif has_promise and has_dasha and has_varga:
-                 strength = "ACTIVE" # Soul-path confirm
-                 confidence = "HIGH"
-            elif has_promise and has_transit and q_score >= 50:
-                 strength = "ACTIVE" # Sudden breakthrough
-                 confidence = "HIGH"
+        strength, confidence, status_label = "BACKGROUND", "LOW", "DORMANT"
+        if composite_score >= 0.78 and is_peak and q_score >= 62 and len(unique_anchors) >= 3:
+            if has_primary_natal and (has_antar or has_transit_layer):
+                strength, confidence, status_label = "PEAK", "EXTREME", "PEAK"
             else:
-                strength = "WATCH"
-                confidence = "MEDIUM"
-        # WATCH is more inclusive
-        elif composite_score >= 0.30 or (composite_score >= 0.20 and is_active):
-            strength = "WATCH"
-            confidence = "MEDIUM"
-        elif composite_score > 0:
-            strength = "BACKGROUND"
-            confidence = "LOW"
-        else:
-            strength = "INSUFFICIENT DATA"
-            confidence = "SCANNING"
+                strength, confidence, status_label = "ACTIVE", "HIGH", "ACTIVE"
+        elif composite_score >= gate_score and is_active_hardened and q_score >= gate_q and unique_confirmation_layers >= 2:
+            if has_primary_natal and has_primary_antar and has_transit_layer:
+                strength, confidence, status_label = "ACTIVE", "HIGH", "ACTIVE"
+            elif has_primary_natal and (has_antar or has_transit_layer) and composite_score >= 0.58:
+                strength, confidence, status_label = "ACTIVE", "HIGH", "ACTIVE"
+            elif has_antar and has_transit_layer and q_score >= 50:
+                 if has_primary_antar or composite_score >= 0.65:
+                      strength, confidence, status_label = "ACTIVE", "HIGH", "ACTIVE"
+                 else:
+                      strength, confidence, status_label = "WATCH", "MEDIUM", "BUILDING"
+            elif unique_confirmation_layers >= 3 and composite_score >= 0.52:
+                 strength, confidence, status_label = "ACTIVE", "HIGH", "ACTIVE"
+            else:
+                strength, confidence, status_label = "WATCH", "MEDIUM", "BUILDING"
+        elif composite_score >= 0.15 or (composite_score >= 0.05 and is_active):
+            strength, confidence, status_label = "WATCH", "MEDIUM", "BUILDING"
 
-        # Special Case: Contradiction override
-        if total_friction <= -0.30:
-             strength = "MIXED"
-             confidence = "VARYING"
+        from .taxonomy import EVENT_TAXONOMY, MANIFESTATION_GUIDE
+        taxonomy = EVENT_TAXONOMY.get(domain, ["DEVELOPMENT"])
+        inferred_event = event_type or taxonomy[0]
+        manifestation_hint = MANIFESTATION_GUIDE.get(inferred_event, f"Significant activation in {domain} sector.")
 
-        composite_score = max(0, min(1, composite_score))
+        from .narrative_composer import narrative_composer
+        triggers = [e.planet_involved for e in evidence if e.source == "TRANSIT_TRIGGER" and e.planet_involved]
+        plain_why = narrative_composer.compose_why_now(domain, inferred_event, triggers, len(evidence))
 
-        # 5. Extract Lists
-        supporting = [e.description for e in evidence if e.strength_score > 0]
-        contradicting = [e.description for e in evidence if e.strength_score < 0]
+        final_summary = f"The current signal strength for {domain.lower()} is {int(composite_score*100)}/100. {plain_why}"
 
-        from .data import DOMAIN_STATUS
-        validation = DOMAIN_STATUS.get(domain, "UNDER REVIEW")
-
-        # 6. Build Timing
-        tw = timing_window or {"phase": "SCANNING", "description": "Analyzing triggers..."}
+        # Determine representation magnitude (V3.22 Roadmap logic)
+        rep_magnitude = "LOW"
+        if composite_score >= 0.85: rep_magnitude = "MAJOR"
+        elif composite_score >= 0.65: rep_magnitude = "SIGNIFICANT"
+        elif composite_score >= 0.40: rep_magnitude = "MODERATE"
 
         return DomainPrediction(
             domain=domain,
-            headline=f"{strength}: {domain} Trends",
+            headline=f"{status_label}: {inferred_event.replace('_', ' ')}",
             score=round(composite_score * 100, 2),
             quality_score=q_score,
             confidence=confidence,
             prediction_strength=strength,
-            validation_status=validation,
-            summary=summary_template.format(score=int(composite_score*100), strength=strength, promise=promise_level),
+            event_type=inferred_event,
+            event_magnitude=rep_magnitude,
+            what_may_develop=what_may_develop,
+            summary=final_summary,
             evidence_chain=evidence,
-            supporting_factors=supporting,
-            contradicting_factors=contradicting,
+            supporting_factors=[e.description for e in evidence if e.strength_score > 0],
+            contradicting_factors=[e.description for e in evidence if e.strength_score < 0],
             timing_window=tw,
-            practical_actions=["Evaluate current planetary peak before major shifts."]
+            manifestations=[manifestation_hint],
+            confirmation_criteria=[f"Observable shift in {domain}.", "Peak intensity match.", "Material evidence."],
+            practical_actions=["Monitor peak triggers for alignment."],
+            limitations="Signal scores represent internal strength, not statistical probability. Probability is NOT AVAILABLE."
         )

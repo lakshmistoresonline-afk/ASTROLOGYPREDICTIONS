@@ -17,18 +17,36 @@ class CareerPredictionEngine:
         planets = chart.planets
         d10 = chart.divisional_charts.get("D10", {})
 
-        # 1. NATAL PROMISE (10th Lord & House)
+        # 1. NATAL PROMISE
         l10_name = house_lords[10]
         l10 = planets[l10_name]
 
         promise_level = "MODERATE"
+
+        # Occupancy Promise
+        for p_name, p in planets.items():
+            if p.house == 10 and p_name in ["Jupiter", "Sun", "Mars", "Saturn", "Mercury"]:
+                 promise_level = "STRONG"
+                 evidence.append(CorroborationEngine.create_evidence(
+                    "NATAL_PROMISE",
+                    f"NATAL SIGNAL: Strong presence in the 10th house ({p_name}) supports major career events.",
+                    85.0, source_layer="NATAL", evidence_type="INDEPENDENT"
+                 ))
+
         if l10.house in [1, 4, 7, 10, 5, 9]:
             promise_level = "STRONG"
             evidence.append(CorroborationEngine.create_evidence(
                 "NATAL_PROMISE",
                 f"NATAL PROMISE: High professional status indicated by Kendra/Trikona placement of 10th Lord {l10_name}.",
-                90.0, rationale=f"{l10_name} is in house {l10.house}"
+                90.0, rationale=f"{l10_name} is in house {l10.house}",
+                source_layer="NATAL", evidence_type="INDEPENDENT"
             ))
+        elif l10.house in [6, 8, 12]:
+             evidence.append(CorroborationEngine.create_evidence(
+                "CONFLICTS",
+                f"CAREER FRICTION: 10th Lord {l10_name} in Dusthana ({l10.house}) suggests instability or shifts.",
+                -70.0, source_layer="NATAL", evidence_type="CONFLICT"
+             ))
         elif l10.house in [2, 11]:
             evidence.append(CorroborationEngine.create_evidence(
                 "SECONDARY_PROMISE",
@@ -65,32 +83,26 @@ class CareerPredictionEngine:
         from ...dasha import calculate_vimshottari
         moon_lon = chart.planets["Moon"].longitude
         dasha = calculate_vimshottari(moon_lon, chart.birth_datetime, calculation_date=selected_date)
-        maha_lord = dasha.get("current_maha", {}).get("lord")
-        antar_lord = dasha.get("current_antar", {}).get("lord")
 
-        relevant_lords = [l10_name, house_lords[11]]
-        if antar_lord in relevant_lords:
-            evidence.append(CorroborationEngine.create_evidence(
-                "DASHA_ACTIVATION",
-                f"TEMPORAL ACTIVATION: Current life-period ruled by {antar_lord} triggers major professional themes.",
-                90.0
-            ))
+        relevant_lords = {l10_name, house_lords[11], house_lords[9], "Sun", "Jupiter", "Mars"}
+        # Include major occupants as relevant lords (V3.15)
+        for p_name, p in planets.items():
+            if p.house in [10, 11, 1, 5, 9]:
+                relevant_lords.add(p_name)
+
+        dasha_evidence = CorroborationEngine.audit_dasha_activation(dasha, chart, list(relevant_lords), "professional")
+        if dasha_evidence:
+            evidence.extend(dasha_evidence)
         else:
             evidence.append(CorroborationEngine.create_evidence(
-                "DASHA_ACTIVATION",
-                "STABILITY PHASE: Life-period focuses on maintenance and refinement of current roles.",
-                60.0
-            ))
-
-        if maha_lord in relevant_lords:
-            evidence.append(CorroborationEngine.create_evidence(
                 "DASHA_FOUNDATION",
-                f"DASHA FOUNDATION: Major life-cycle ruled by {maha_lord} provides underlying support for professional growth.",
-                60.0
+                "STABILITY PHASE: Life-period focuses on maintenance and refinement of current roles.",
+                60.0, group="SECONDARY"
             ))
 
         # 5. TIMING GENERATION
-        window = timing_engine.calculate_window(chart, ["Jupiter", "Sun", l10_name], [10, 11, 1], calculation_date=selected_date)
+        window = timing_engine.calculate_window(chart, ["Jupiter", "Mars", l10_name], [10, 11, 1],
+                                                calculation_date=selected_date, domain="Career & Authority")
         if window.get("proximity_weight", 0) > 0:
              evidence.append(CorroborationEngine.create_evidence(
                 "TRANSIT_TRIGGER", f"TEMPORAL TRIGGER: {window.get('description')}",

@@ -1,0 +1,241 @@
+{% extends "base.html" %}
+{% block title %}Presentation Mode — Astro Predictions{% endblock %}
+
+{% block head %}
+<style>
+    #main-content { padding: 0 !important; }
+    .viewport-content { padding: 0 !important; }
+    .master-header { display: none !important; }
+    #sidebar { display: none !important; }
+
+    .presentation-container {
+        height: 100vh;
+        width: 100vw;
+        background: #020205;
+        overflow: hidden;
+        position: relative;
+    }
+    .slide {
+        height: 100%;
+        width: 100%;
+        display: none;
+        padding: 100px;
+        position: absolute;
+        top: 0;
+        left: 0;
+    }
+    .slide.active { display: flex; flex-direction: column; justify-content: center; }
+
+    .slide-number {
+        position: absolute;
+        bottom: 50px;
+        right: 50px;
+        font-family: var(--font-mono);
+        color: var(--gold);
+        opacity: 0.3;
+        letter-spacing: 0.2rem;
+    }
+
+    .nav-controls {
+        position: absolute;
+        bottom: 50px;
+        left: 50px;
+        display: flex;
+        gap: 20px;
+        z-index: 100;
+    }
+
+    .pres-btn {
+        background: rgba(255,255,255,0.03);
+        border: 1px border rgba(255,255,255,0.1);
+        color: white;
+        padding: 15px 30px;
+        border-radius: 50px;
+        font-weight: 900;
+        font-size: 0.7rem;
+        letter-spacing: 0.1rem;
+        cursor: pointer;
+        transition: all 0.3s;
+    }
+    .pres-btn:hover { background: var(--gold); color: black; }
+
+    .exit-pres {
+        position: absolute;
+        top: 50px;
+        right: 50px;
+        background: transparent;
+        border: none;
+        color: white;
+        opacity: 0.3;
+        font-weight: bold;
+        cursor: pointer;
+        z-index: 100;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- V3.22 PREMIUM PRESENTATION MODE -->
+<div class="presentation-container">
+    <button class="exit-pres" onclick="window.location.href='/'">EXIT PRESENTATION [ESC]</button>
+
+    <div class="nav-controls">
+        <button class="pres-btn" onclick="prevSlide()">PREVIOUS</button>
+        <button class="pres-btn" onclick="nextSlide()">NEXT</button>
+    </div>
+
+    <!-- SLIDE 1: INTRO -->
+    <div class="slide active" id="slide-1">
+        <div class="text-center">
+            <span class="text-gold xsmall fw-black tracking-widest mb-4 d-block uppercase">ASTRO PREDICTIONS</span>
+            <h1 class="display-1 fw-black text-white mb-4 font-premium">Personal <span class="text-gold">Life Intelligence</span></h1>
+            <p class="fs-4 text-white opacity-40">Deterministic Lifecycle Analysis Platform</p>
+        </div>
+        <div class="slide-number">01 / 06</div>
+    </div>
+
+    <!-- SLIDE 2: THE PROFILE -->
+    <div class="slide" id="slide-2">
+        <div class="row align-items-center">
+            <div class="col-lg-6">
+                <span class="text-gold xsmall fw-black tracking-widest mb-4 d-block uppercase">WHO IS THE NATIVE?</span>
+                <h1 class="display-3 fw-black text-white mb-5 font-premium">{{ session.get('birth_name', 'Showcase Native') }}</h1>
+                <div class="p-5 rounded-5 bg-glass border border-white border-opacity-5">
+                    <div class="row g-4">
+                        <div class="col-6">
+                            <div class="xxsmall text-dim uppercase">Birth Date</div>
+                            <div class="fs-4 text-white font-mono">{{ session.get('birth_dob', '1990-01-01') }}</div>
+                        </div>
+                        <div class="col-6">
+                            <div class="xxsmall text-dim uppercase">Birth Time</div>
+                            <div class="fs-4 text-white font-mono">{{ session.get('birth_tob', '12:00') }}</div>
+                        </div>
+                        <div class="col-12">
+                            <div class="xxsmall text-dim uppercase">Birth Location</div>
+                            <div class="fs-4 text-white">{{ session.get('birth_place', 'London, UK') }}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6 text-center">
+                <div class="vc-avatar mx-auto" style="width: 300px; height: 300px; font-size: 6rem">
+                    {{ (session.get('birth_name', 'N')[0]).upper() }}
+                </div>
+            </div>
+        </div>
+        <div class="slide-number">02 / 06</div>
+    </div>
+
+    <!-- SLIDE 3: STRONGEST SIGNAL -->
+    <div class="slide" id="slide-3">
+        {% set top = current_intel.top_signals[0] if current_intel else None %}
+        {% if top %}
+        <div class="text-center mb-5">
+            <span class="text-gold xsmall fw-black tracking-widest mb-3 d-block uppercase">CURRENT PRIORITY INSIGHT</span>
+            <h1 class="display-2 fw-black text-white mb-0 font-premium">{{ top.domain }}</h1>
+            <div class="badge-v2 badge-strong mt-4 fs-5 px-4 py-2">{{ top.prediction_strength }}</div>
+        </div>
+        <div class="row g-5 justify-content-center">
+            <div class="col-lg-8">
+                <div class="p-5 rounded-5 bg-gold-glass border border-gold border-opacity-20 shadow-2xl">
+                    <div class="row align-items-center mb-5">
+                        <div class="col-md-6">
+                            <div class="xxsmall text-gold fw-black tracking-widest uppercase mb-2">SIGNAL STRENGTH</div>
+                            <div class="display-4 fw-black text-white font-mono">{{ top.score|int }}%</div>
+                        </div>
+                        <div class="col-md-6 text-md-end">
+                            <div class="xxsmall text-gold fw-black tracking-widest uppercase mb-2">ACTIVE PEAK</div>
+                            <div class="h2 text-white font-mono mb-0">{{ top.timing_window.peak }}</div>
+                        </div>
+                    </div>
+                    <p class="fs-4 text-white leading-relaxed mb-0 opacity-90">{{ top.summary }}</p>
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <div class="text-center py-5 opacity-40">
+            <h1 class="font-premium text-white">No active profile for live demonstration.</h1>
+            <p>Please load a profile from the vault first.</p>
+        </div>
+        {% endif %}
+        <div class="slide-number">03 / 06</div>
+    </div>
+
+    <!-- SLIDE 4: THE TIMELINE -->
+    <div class="slide" id="slide-4">
+        <div class="container">
+            <h1 class="display-4 fw-black text-white mb-5 font-premium">The <span class="text-gold">Lifecycle Roadmap</span></h1>
+            <div class="row g-4">
+                {% if current_intel and current_intel.timeline %}
+                {% for event in current_intel.timeline[:3] %}
+                <div class="col-md-4">
+                    <div class="p-5 rounded-5 bg-glass border border-white border-opacity-5 h-100">
+                        <div class="xxsmall text-gold fw-black uppercase mb-3">{{ event.peak }}</div>
+                        <h3 class="text-white fw-bold mb-4">{{ event.domain }}</h3>
+                        <p class="small text-white opacity-50 mb-0 italic leading-relaxed">{{ event.event|truncate(120) }}</p>
+                    </div>
+                </div>
+                {% endfor %}
+                {% endif %}
+            </div>
+        </div>
+        <div class="slide-number">04 / 06</div>
+    </div>
+
+    <!-- SLIDE 5: HISTORICAL PROOF -->
+    <div class="slide" id="slide-5">
+        <h1 class="display-4 fw-black text-white mb-5 font-premium text-center">Historical <span class="text-gold">Validation Cases</span></h1>
+        <div class="row g-4 justify-content-center">
+            {% for case in demo_cases %}
+            <div class="col-md-3">
+                <div class="card-premium p-4 border-white border-opacity-5 hover-scale-sm cursor-pointer" onclick="window.location.href='/showcase/replay/{{ case.name }}/0'">
+                    <div class="d-flex align-items-center gap-3 mb-3">
+                        <div class="vc-avatar-sm">{{ case.name[0] }}</div>
+                        <h6 class="text-white fw-bold mb-0">{{ case.name }}</h6>
+                    </div>
+                    <div class="xxsmall text-dim uppercase">Case Analysis Available</div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        <div class="slide-number">05 / 06</div>
+    </div>
+
+    <!-- SLIDE 6: CONCLUSION -->
+    <div class="slide" id="slide-6">
+        <div class="text-center">
+            <h1 class="display-1 fw-black text-white mb-4 font-premium">Intelligence <span class="text-gold">Ready</span></h1>
+            <p class="fs-4 text-white opacity-40 mb-5">Astro Predictions V3.22 Architecture</p>
+            <button class="btn btn-vedic py-3 px-5 fw-black fs-5" onclick="window.location.href='/dashboard'">RETURN TO AUDIT</button>
+        </div>
+        <div class="slide-number">06 / 06</div>
+    </div>
+</div>
+
+<script>
+    let currentSlide = 1;
+    const totalSlides = 6;
+
+    function nextSlide() {
+        if(currentSlide < totalSlides) {
+            document.getElementById(`slide-${currentSlide}`).classList.remove('active');
+            currentSlide++;
+            document.getElementById(`slide-${currentSlide}`).classList.add('active');
+        }
+    }
+
+    function prevSlide() {
+        if(currentSlide > 1) {
+            document.getElementById(`slide-${currentSlide}`).classList.remove('active');
+            currentSlide--;
+            document.getElementById(`slide-${currentSlide}`).classList.add('active');
+        }
+    }
+
+    document.addEventListener('keydown', (e) => {
+        if(e.key === 'ArrowRight' || e.key === ' ') nextSlide();
+        if(e.key === 'ArrowLeft') prevSlide();
+        if(e.key === 'Escape') window.location.href = '/';
+    });
+</script>
+{% endblock %}

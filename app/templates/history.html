@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% block title %}Prediction History — Trademind Jyotish OS{% endblock %}
+{% block title %}Prediction History — Astro Predictions{% endblock %}
 
 {% block content %}
 <div class="hero-v2 mb-5 py-4">
@@ -39,7 +39,7 @@
                         <td>
                             <span class="badge-v2 badge-moderate">{{ o.confluence_score|int }}%</span>
                         </td>
-                        <td class="small text-white opacity-80">{{ o.prediction_text[:80] }}...</td>
+                        <td class="small text-white opacity-80">{{ o.prediction_text|truncate(80) }}</td>
                         <td>
                             <span class="badge bg-{{ 'success' if o.status == 'OCCURRED' else 'warning' if o.status == 'PARTIALLY_OCCURRED' else 'danger' if o.status == 'DID_NOT_OCCUR' else 'secondary' }} bg-opacity-10 text-{{ 'success' if o.status == 'OCCURRED' else 'warning' if o.status == 'PARTIALLY_OCCURRED' else 'danger' if o.status == 'DID_NOT_OCCUR' else 'white' }} xxsmall fw-bold px-2 py-1">
                                 {{ o.status }}
@@ -56,4 +56,74 @@
         {% endif %}
     </div>
 </div>
+{% endblock %}
+
+{% block scripts %}
+<!-- OUTCOME MODAL -->
+<div class="modal fade" id="outcomeModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content card-premium p-4 border-gold border-opacity-20">
+            <div class="modal-header border-0 p-0 mb-4">
+                <h5 class="modal-title text-white fw-black">Record Life Event</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body p-0">
+                <div class="mb-4">
+                    <div class="xxsmall text-gold fw-black uppercase mb-1" id="modal-domain">Domain</div>
+                    <div class="small text-dim" id="modal-prediction">Prediction context</div>
+                </div>
+                <div class="mb-4">
+                    <label class="form-label-vedic">Did this occur?</label>
+                    <select id="outcome-status" class="form-control-vedic">
+                        <option value="OCCURRED">YES (Fully)</option>
+                        <option value="PARTIALLY_OCCURRED">PARTIALLY</option>
+                        <option value="DID_NOT_OCCUR">NO</option>
+                        <option value="UNKNOWN">NOT SURE / UNKNOWN</option>
+                    </select>
+                </div>
+                <div class="mb-4">
+                    <label class="form-label-vedic">Actual Date (Approx)</label>
+                    <input type="date" id="actual-date" class="form-control-vedic">
+                </div>
+                <div class="mb-4">
+                    <label class="form-label-vedic">Observation Notes</label>
+                    <textarea id="outcome-notes" class="form-control-vedic" rows="3" placeholder="Briefly describe what happened..."></textarea>
+                </div>
+                <button class="btn btn-vedic w-100 py-3 fw-black" onclick="submitOutcome()">SAVE TO VAULT</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+let activeOrderId = null;
+
+function trackOutcome(id, domain, text) {
+    activeOrderId = id;
+    document.getElementById('modal-domain').innerText = domain;
+    document.getElementById('modal-prediction').innerText = text;
+    new bootstrap.Modal(document.getElementById('outcomeModal')).show();
+}
+
+function submitOutcome() {
+    const status = document.getElementById('outcome-status').value;
+    const date = document.getElementById('actual-date').value;
+    const notes = document.getElementById('outcome-notes').value;
+
+    fetch("/api/v1/outcome/update", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({
+            id: activeOrderId,
+            status: status,
+            actual_date: date,
+            notes: notes,
+            verification_level: "SELF_REPORTED"
+        })
+    }).then(r => r.json()).then(d => {
+        if (d.success) location.reload();
+        else alert(d.error);
+    });
+}
+</script>
 {% endblock %}

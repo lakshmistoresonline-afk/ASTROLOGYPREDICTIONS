@@ -32,25 +32,25 @@
                 <div class="row g-4">
                     <div class="col-12">
                         <label class="form-label-vedic">Full Name</label>
-                        <input type="text" name="name" id="in-name" class="form-control-vedic auto-field-k" placeholder="e.g. John Doe"/>
+                        <input type="text" name="name" id="in-name" class="form-control-vedic auto-field-k" value="{{ session.get('birth_name', '') }}" placeholder="e.g. John Doe"/>
                     </div>
                     <div class="col-md-6">
                         <label class="form-label-vedic">Birth Date</label>
-                        <input type="date" name="dob" id="in-dob" class="form-control-vedic auto-field-k" required/>
+                        <input type="date" name="dob" id="in-dob" class="form-control-vedic auto-field-k" value="{{ session.get('birth_dob', '') }}" required/>
                     </div>
                     <div class="col-md-6">
                         <label class="form-label-vedic">Birth Time</label>
-                        <input type="time" name="tob" id="in-tob" class="form-control-vedic auto-field-k" required step="60"/>
+                        <input type="time" name="tob" id="in-tob" class="form-control-vedic auto-field-k" value="{{ session.get('birth_tob', '') }}" required step="60"/>
                     </div>
                     <div class="col-12">
                         <label class="form-label-vedic">Birth Location</label>
                         <div class="position-relative">
-                            <input type="text" name="place" id="place-input" class="form-control-vedic pe-5 auto-field-k" placeholder="City name..."/>
+                            <input type="text" name="place" id="place-input" class="form-control-vedic pe-5 auto-field-k" value="{{ session.get('birth_place', '') }}" placeholder="City name..."/>
                         </div>
                     </div>
-                    <input type="hidden" name="lat" id="lat-input"/>
-                    <input type="hidden" name="lon" id="lon-input"/>
-                    <input type="hidden" name="timezone" id="tz-input" value="Asia/Kolkata"/>
+                    <input type="hidden" name="lat" id="lat-input" value="{{ session.get('birth_lat', '') }}"/>
+                    <input type="hidden" name="lon" id="lon-input" value="{{ session.get('birth_lon', '') }}"/>
+                    <input type="hidden" name="timezone" id="tz-input" value="{{ session.get('birth_tz', 'Asia/Kolkata') }}"/>
 
                     <div class="col-12 pt-4">
                         <button type="submit" id="submit-btn-k" class="btn-vedic w-100 py-3 fs-6">GENERATE MY BLUEPRINT</button>
@@ -63,9 +63,9 @@
 {% else %}
 
 <div class="row g-5">
-    <!-- Visual Chart -->
+    <!-- Visual Chart (V3.21 Redesign) -->
     <div class="col-xl-5">
-        <div class="card-vedic p-0 overflow-hidden mb-5 shadow-2xl">
+        <div class="card-premium p-0 overflow-hidden mb-5 shadow-2xl">
             <div class="p-4 bg-black bg-opacity-20 d-flex justify-content-between align-items-center border-bottom border-white border-opacity-5">
                 <div class="dropdown">
                     <button class="btn btn-link text-white text-decoration-none xsmall fw-black tracking-widest uppercase p-0 dropdown-toggle" data-bs-toggle="dropdown" id="active-varga-label">
@@ -76,45 +76,45 @@
                         <li><button class="dropdown-item xsmall fw-bold" onclick="switchVarga('Chalit')">Bhava Chalit</button></li>
                         <li><button class="dropdown-item xsmall fw-bold" onclick="switchVarga('D9')">Navamsa (D9)</button></li>
                         <li><button class="dropdown-item xsmall fw-bold" onclick="switchVarga('D10')">Dashamsha (D10)</button></li>
+                        <li><button class="dropdown-item xsmall fw-bold" onclick="switchVarga('D4')">Chaturthamsa (D4)</button></li>
                     </ul>
                 </div>
-                <div class="d-flex gap-2">
-                    <button class="btn btn-outline-secondary btn-xs xsmall py-1 px-3" onclick="toggleChartStyle()">STYLE</button>
+                <div class="mode-tabs p-1">
+                    <button class="kmt-btn active px-3 py-1 xsmall" onclick="setMode('basic')" id="btn-basic">BASIC</button>
+                    <button class="kmt-btn px-3 py-1 xsmall" onclick="setMode('expert')" id="btn-expert">EXPERT</button>
                 </div>
             </div>
-            <div class="p-4 p-md-5 text-center" style="min-height: 480px; background: #0a0a10">
-                <canvas id="kundliCanvas" width="440" height="440" class="kundli-canvas mw-100" data-chart="{{ chart | tojson | e }}"></canvas>
+            <div class="p-4 p-md-5 text-center" style="min-height: 480px; background: #050508">
+                <canvas id="kundliCanvas" width="440" height="440" class="kundli-canvas mw-100" data-chart="{{ chart | tojson }}"></canvas>
             </div>
         </div>
 
-        <div class="card-vedic">
-            <h6 class="text-white fw-bold mb-4 opacity-50 uppercase tracking-widest">Key Markers</h6>
+        <div class="card-premium p-4">
+            <h6 class="nav-group-title mt-0 mb-4">KEY MARKERS</h6>
             <div class="d-flex flex-column gap-3">
                 <div class="d-flex justify-content-between border-bottom border-white border-opacity-5 pb-2">
                     <span class="small text-dim">Ascendant</span>
                     <span class="small fw-bold text-white">{{ chart.lagna.rashi_name }}</span>
                 </div>
                 <div class="d-flex justify-content-between border-bottom border-white border-opacity-5 pb-2">
-                    <span class="small text-dim">Nakshatra</span>
-                    <span class="small fw-bold text-white">{{ chart.lagna.nakshatra.name }}</span>
-                </div>
-                <div class="d-flex justify-content-between border-bottom border-white border-opacity-5 pb-2">
                     <span class="small text-dim">Moon Sign</span>
                     <span class="small fw-bold text-white">{{ chart.planets.Moon.rashi_name }}</span>
                 </div>
-                <div class="d-flex justify-content-between">
-                    <span class="small text-dim">Atmakaraka</span>
-                    <span class="small fw-bold text-gold">{{ chart.jaimini_karakas['Atmakaraka (AK) - Soul'] }}</span>
+                <div class="expert-only" style="display:none">
+                    <div class="d-flex justify-content-between border-bottom border-white border-opacity-5 pb-2">
+                        <span class="small text-dim">Atmakaraka</span>
+                        <span class="small fw-bold text-gold">{{ chart.jaimini_karakas['Atmakaraka (AK) - Soul'] }}</span>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Planet Data -->
+    <!-- Data Panel -->
     <div class="col-xl-7">
-        <div class="card-vedic p-0 overflow-hidden mb-5">
+        <div class="card-premium p-0 overflow-hidden mb-5">
             <div class="p-4 bg-black bg-opacity-20 border-bottom border-white border-opacity-5">
-                <span class="xsmall fw-bold text-white uppercase tracking-widest">Planetary Grid</span>
+                <span class="xsmall fw-bold text-white uppercase tracking-widest">Planetary Configuration</span>
             </div>
             <div class="table-responsive">
                 <table class="table table-vedic mb-0 align-middle">
@@ -124,8 +124,8 @@
                             <th>SIGN</th>
                             <th>DEGREE</th>
                             <th>HOUSE</th>
-                            <th>DIGNITY</th>
-                            <th class="text-end px-4">STRENGTH</th>
+                            <th class="expert-only" style="display:none">DIGNITY</th>
+                            <th class="text-end px-4">SIGNAL</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -140,7 +140,7 @@
                             <td class="small text-dim">{{ p.rashi_name[:3].upper() }}</td>
                             <td class="small text-dim font-mono">{{ p.dms }}</td>
                             <td class="small text-white fw-bold">{{ p.house }}</td>
-                            <td>
+                            <td class="expert-only" style="display:none">
                                 <span class="badge bg-{{ 'success' if 'Exalted' in p.dignity else 'danger' if 'Debilitated' in p.dignity else 'white' }} bg-opacity-10 text-{{ 'success' if 'Exalted' in p.dignity else 'danger' if 'Debilitated' in p.dignity else 'dim' }} border border-white border-opacity-10 xsmall fw-bold px-2 py-1">
                                     {{ p.dignity.upper() }}
                                 </span>
@@ -177,6 +177,17 @@ function triggerRender() {
 // Initial draw
 triggerRender();
 window.onload = triggerRender;
+
+function setMode(m) {
+    const isExpert = m === 'expert';
+    document.getElementById('btn-expert').classList.toggle('active', isExpert);
+    document.getElementById('btn-basic').classList.toggle('active', !isExpert);
+
+    document.querySelectorAll('.expert-only').forEach(el => {
+        el.style.display = isExpert ? 'table-cell' : 'none';
+        if (el.tagName === 'DIV') el.style.display = isExpert ? 'flex' : 'none';
+    });
+}
 
 function switchVarga(v) {
     if (!chartData) return;

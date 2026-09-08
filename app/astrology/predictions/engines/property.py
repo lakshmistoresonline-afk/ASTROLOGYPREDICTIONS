@@ -95,7 +95,10 @@ class PropertyPredictionEngine:
             "Hierarchical synthesis shows a {score}% match for asset acquisition."
         )
 
-        res = CorroborationEngine.synthesize("Property & Assets", promise_level, evidence, summary_template, timing_window=window)
+        event_class = "property purchase, sale, registration, financing, renovation, or significant property decision"
+
+        res = CorroborationEngine.synthesize("Property & Assets", promise_level, evidence, summary_template,
+                                                timing_window=window, what_may_develop=event_class)
 
         res.manifestations = [
             "Opportunities for residential or commercial acquisition.",

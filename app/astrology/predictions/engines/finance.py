@@ -63,33 +63,22 @@ class FinancePredictionEngine:
         from ...dasha import calculate_vimshottari
         moon_lon = chart.planets["Moon"].longitude
         dasha = calculate_vimshottari(moon_lon, chart.birth_datetime, calculation_date=selected_date)
-        maha_lord = dasha.get("current_maha", {}).get("lord")
-        antar_lord = dasha.get("current_antar", {}).get("lord")
 
         relevant_lords = [l2_name, l11_name, "Jupiter", "Venus"]
-        if antar_lord in relevant_lords:
-            evidence.append(CorroborationEngine.create_evidence(
-                "DASHA_ACTIVATION",
-                f"FINANCIAL ACTIVATION: Life-period of {antar_lord} triggers major wealth generation cycles.",
-                90.0
-            ))
+        dasha_evidence = CorroborationEngine.audit_dasha_activation(dasha, chart, relevant_lords, "financial")
+        if dasha_evidence:
+            evidence.extend(dasha_evidence)
         else:
             evidence.append(CorroborationEngine.create_evidence(
-                "DASHA_ACTIVATION",
+                "DASHA_FOUNDATION", # Changed from ACTIVATION for fallback
                 "RESOURCE STABILITY: Current life-period favors consolidation over high-risk expansion.",
-                60.0
-            ))
-
-        if maha_lord in relevant_lords:
-            evidence.append(CorroborationEngine.create_evidence(
-                "DASHA_FOUNDATION",
-                f"DASHA FOUNDATION: Major life-cycle ruled by {maha_lord} provides underlying support for wealth accumulation.",
-                60.0
+                60.0, group="SECONDARY"
             ))
 
         # 4. TIMING
         l11_name = house_lords[11]
-        window = timing_engine.calculate_window(chart, ["Jupiter", "Venus", l2_name, l11_name], [2, 11, 1], calculation_date=selected_date)
+        window = timing_engine.calculate_window(chart, ["Jupiter", l2_name, l11_name], [2, 11, 1],
+                                                calculation_date=selected_date, domain="Finance & Wealth")
         if window.get("proximity_weight", 0) > 0:
              evidence.append(CorroborationEngine.create_evidence(
                 "TRANSIT_TRIGGER", f"TEMPORAL TRIGGER: {window.get('description')}",
@@ -102,7 +91,10 @@ class FinancePredictionEngine:
             "Hierarchical synthesis results in a {score}% confidence score for fiscal security."
         )
 
-        res = CorroborationEngine.synthesize("Finance & Wealth", promise_level, evidence, summary_template, timing_window=window)
+        event_class = "income/resource restructuring, significant financial decision, asset/liability adjustment, or financial planning activity"
+
+        res = CorroborationEngine.synthesize("Finance & Wealth", promise_level, evidence, summary_template,
+                                                timing_window=window, what_may_develop=event_class)
 
         res.manifestations = [
             "Steady increase in liquid assets or savings.",

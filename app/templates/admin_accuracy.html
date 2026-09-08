@@ -1,0 +1,158 @@
+{% extends "base.html" %}
+{% block title %}Validation Dashboard — Jyotish OS{% endblock %}
+
+{% block content %}
+<div class="mb-5 d-flex justify-content-between align-items-end">
+    <div>
+        <h2 class="fw-black text-white mb-1">V3.22 <span class="text-gold">Validation</span> Audit</h2>
+        <p class="text-dim small mb-0">Empirical integrity and prospective learning. (Research Mode Active)</p>
+    </div>
+    <div class="mode-tabs p-1">
+        <button class="kmt-btn active px-3 py-1 xsmall">REAL-WORLD</button>
+        <button class="kmt-btn px-3 py-1 xsmall">SIMULATED</button>
+        <button class="kmt-btn px-3 py-1 xsmall">HISTORICAL</button>
+    </div>
+</div>
+
+<!-- TOP METRIC BAR -->
+<div class="row g-4 mb-5">
+    <div class="col-lg-3">
+        <div class="card-premium p-4 h-100 text-center">
+            <div class="xxsmall text-gold fw-black uppercase mb-3">Prospective Precision</div>
+            <div class="h2 fw-black text-white mb-1">{{ real_world.precision }}%</div>
+            <div class="xxsmall text-dim">{{ real_world.status }}</div>
+            <div class="mt-3 pt-3 border-top border-white border-opacity-5 d-flex justify-content-between xxsmall text-dim uppercase">
+                <span>N Pred: {{ real_world.n_predictions }}</span>
+                <span>Matches: {{ real_world.n_success }}</span>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-3">
+        <div class="card-premium p-4 h-100 text-center">
+            <div class="xxsmall text-gold fw-black uppercase mb-3">Real-World Flow</div>
+            <div class="h2 fw-black text-white mb-1">{{ real_world.n_verified }}</div>
+            <div class="xxsmall text-dim">Verified Outcomes</div>
+            <div class="mt-3 pt-3 border-top border-white border-opacity-5 d-flex justify-content-between xxsmall text-dim uppercase">
+                <span>Resolved: {{ real_world.n_resolved }}</span>
+                <span>Source: REAL_WORLD</span>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-6">
+        <div class="card-premium p-4 h-100">
+            <div class="xxsmall text-gold fw-black uppercase mb-4">Horizon Performance (Decay Analysis)</div>
+            <div class="d-flex justify-content-between gap-2">
+                {% for h, rate in real_world.horizon_performance.items() %}
+                <div class="text-center flex-grow-1">
+                    <div class="xsmall fw-black text-white mb-2">{{ rate }}%</div>
+                    <div class="progress mb-2" style="height: 4px; background: rgba(255,255,255,0.05)">
+                        <div class="progress-bar bg-gold" style="width: {{ rate }}%"></div>
+                    </div>
+                    <div class="xxsmall text-dim">{{ h }}</div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-5">
+    <!-- EVIDENCE & CLUSTERS -->
+    <div class="col-lg-7">
+        <h6 class="nav-group-title mt-0 mb-4">EVIDENCE CORRELATION (WHY NOW?)</h6>
+        <div class="card-premium p-0 overflow-hidden mb-5">
+            <div class="table-responsive">
+                <table class="table table-vedic mb-0 align-middle">
+                    <thead>
+                        <tr class="xsmall text-dim border-bottom border-white border-opacity-5">
+                            <th class="px-4 py-3">COMBINATION PATTERN</th>
+                            <th>SUCCESS RATE</th>
+                            <th class="text-end px-4">SAMPLES</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in evidence.evidence_correlations[:8] %}
+                        <tr class="border-bottom border-white border-opacity-5">
+                            <td class="px-4 py-4">
+                                <div class="d-flex flex-wrap gap-1">
+                                    {% for src in item.pattern.split('+') %}
+                                    <span class="badge bg-glass-subtle text-white xxsmall px-2" style="font-size: 0.55rem">{{ src }}</span>
+                                    {% endfor %}
+                                </div>
+                            </td>
+                            <td class="fw-bold text-gold small">{{ item.success_rate }}%</td>
+                            <td class="text-end px-4 text-dim xsmall">N={{ item.n }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <h6 class="nav-group-title mt-0 mb-4">DOMAIN PERFORMANCE MATRIX</h6>
+        <div class="card-premium p-4">
+            <div class="row g-3">
+                {% for d, stats in real_world.domain_performance.items() %}
+                <div class="col-md-6 col-xl-4">
+                    <div class="p-3 rounded-4 bg-black bg-opacity-20 border border-white border-opacity-5">
+                        <div class="xxsmall text-dim uppercase mb-1">{{ d.split(' & ')[0] }}</div>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="small fw-bold text-white">{{ ((stats.tp / stats.n)*100)|round(1) if stats.n > 0 else 0 }}%</span>
+                            <span class="xxsmall text-gold">N={{ stats.n }}</span>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <!-- CALIBRATION -->
+    <div class="col-lg-5">
+        <h6 class="nav-group-title mt-0 mb-4">CONFIDENCE CALIBRATION</h6>
+        <div class="card-premium p-4 mb-4">
+            <div class="d-flex flex-column gap-4">
+                {% if calibration.status == 'ACTIVE' %}
+                    {% for item in calibration.curve %}
+                    <div class="calibration-row">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span class="xsmall fw-black text-white">{{ item.bucket }}</span>
+                            <span class="xxsmall text-dim">{{ item.n }} samples</span>
+                        </div>
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="progress flex-grow-1" style="height: 6px">
+                                <div class="progress-bar" style="width: {{ item.observed_rate }}%"></div>
+                            </div>
+                            <span class="font-mono xsmall text-gold fw-bold" style="min-width: 45px">{{ item.observed_rate }}%</span>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="py-5 text-center opacity-40">
+                        <i class="bi bi-graph-up-arrow fs-3 mb-3 d-block"></i>
+                        <div class="small fw-bold">CALIBRATION PENDING</div>
+                        <div class="xxsmall">Insufficient prospective data to build curve.</div>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <h6 class="nav-group-title mt-0 mb-4">OPTIMAL FORECAST HORIZONS</h6>
+        <div class="card-premium p-4">
+             <div class="d-flex flex-column gap-3">
+                {% for domain, horizon in optimal.items() %}
+                <div class="d-flex justify-content-between align-items-center">
+                    <span class="xxsmall text-white">{{ domain }}</span>
+                    <span class="badge bg-gold text-dark xxsmall">{{ horizon }}</span>
+                </div>
+                {% endfor %}
+             </div>
+        </div>
+    </div>
+</div>
+
+<div class="mt-5 p-5 bg-black bg-opacity-20 rounded-5 border border-white border-opacity-5 text-center">
+    <h5 class="text-white fw-bold mb-2">V3.22 Governance Layer</h5>
+    <p class="small text-dim mb-0">Astro Predictions provides deterministic signal confluence. Statistical probability mapping is currently in EARLY DATA collection phase.</p>
+</div>
+{% endblock %}

@@ -80,3 +80,20 @@ def calculate_dasha(moon_lon: float, birth_year: int, birth_month: int, birth_da
     nak_idx = int(moon_lon / NAK_SPAN)
     rem_deg = NAK_SPAN - (moon_lon % NAK_SPAN)
     return {"moon_nakshatra_index": nak_idx, "remaining_degrees": rem_deg, "nak_span": NAK_SPAN}
+
+def calculate_sky_events(jd_ut: float, lat: float, lon: float):
+    """
+    Calculate Sunrise and Sunset for a given JD and location.
+    Using standard astronomical definitions (pyswisseph).
+    """
+    atpress = 1013.25
+    attemp = 15.0
+
+    # Rise = 1, Set = 2
+    res_rise = swe.rise_trans(jd_ut, swe.SUN, 1, (lon, lat, 0.0), atpress, attemp, 0)
+    res_set = swe.rise_trans(jd_ut, swe.SUN, 2, (lon, lat, 0.0), atpress, attemp, 0)
+
+    sr_jd = res_rise[1][0] if res_rise[0] == 0 else None
+    ss_jd = res_set[1][0] if res_set[0] == 0 else None
+
+    return {"sunrise_jd": sr_jd, "sunset_jd": ss_jd}

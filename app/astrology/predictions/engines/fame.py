@@ -21,6 +21,24 @@ class FamePredictionEngine:
         l1_name = house_lords[1]
 
         promise_level = "MODERATE"
+
+        # Occupancy Promise (V3.14/V3.15)
+        for p_name, p in planets.items():
+            if p.house == 10 and p_name in ["Sun", "Jupiter", "Mars", "Moon"]:
+                promise_level = "STRONG"
+                evidence.append(CorroborationEngine.create_evidence(
+                    "NATAL_PROMISE",
+                    f"NATAL SIGNAL: Strong presence in the 10th house ({p_name}) indicates public role.",
+                    85.0
+                ))
+            elif p.house == 5 and p_name in ["Sun", "Jupiter", "Venus", "Moon"]:
+                 promise_level = "STRONG"
+                 evidence.append(CorroborationEngine.create_evidence(
+                    "NATAL_PROMISE",
+                    f"RECOGNITION POTENTIAL: Presence of {p_name} in 5th house indicates creative/public acclaim.",
+                    80.0
+                 ))
+
         # Dig-Bala (Directional Strength) for Sun or Jupiter in 10th
         if planets["Sun"].house == 10 or planets["Jupiter"].house == 10:
             promise_level = "STRONG"
@@ -38,6 +56,12 @@ class FamePredictionEngine:
                 f"NATAL PROMISE: High status potential indicated by Kendra/Trikona placement of 10th Lord {l10_name}.",
                 90.0, rationale=f"{l10_name} is in house {l10_house}"
             ))
+        elif l10_house in [6, 8, 12]:
+            evidence.append(CorroborationEngine.create_evidence(
+                "CONFLICTS",
+                f"STATUS LIMITATION: 10th Lord {l10_name} in challenging house {l10_house} may delay public recognition.",
+                -70.0
+            ))
         elif l10_house in [2, 11]:
             evidence.append(CorroborationEngine.create_evidence(
                 "SECONDARY_PROMISE",
@@ -49,32 +73,28 @@ class FamePredictionEngine:
         from ...dasha import calculate_vimshottari
         moon_lon = planets["Moon"].longitude
         dasha = calculate_vimshottari(moon_lon, chart.birth_datetime, calculation_date=selected_date)
-        maha_lord = dasha.get("current_maha", {}).get("lord")
-        antar_lord = dasha.get("current_antar", {}).get("lord")
 
-        relevant_lords = [l10_name, l1_name, "Sun"]
-        if antar_lord in relevant_lords:
-            evidence.append(CorroborationEngine.create_evidence(
-                "DASHA_ACTIVATION",
-                f"RECOGNITION ACTIVATION: Period of {antar_lord} triggers expansion of public identity.",
-                90.0
-            ))
+        l11_name = house_lords[11]
+        relevant_lords = {l10_name, l1_name, l11_name, house_lords[5], house_lords[9], "Sun", "Jupiter"}
+        # Include major occupants as relevant lords (V3.15)
+        for p_name, p in planets.items():
+            if p.house in [10, 5, 1, 11]:
+                relevant_lords.add(p_name)
+
+        dasha_evidence = CorroborationEngine.audit_dasha_activation(dasha, chart, list(relevant_lords), "recognition")
+        if dasha_evidence:
+            evidence.extend(dasha_evidence)
         else:
             evidence.append(CorroborationEngine.create_evidence(
-                "DASHA_ACTIVATION",
-                "STABILITY PHASE: Life-period favors maintenance of existing status.",
-                60.0
-            ))
-
-        if maha_lord in relevant_lords:
-            evidence.append(CorroborationEngine.create_evidence(
                 "DASHA_FOUNDATION",
-                f"DASHA FOUNDATION: Major life-cycle ruled by {maha_lord} provides underlying support for public recognition.",
-                60.0
+                "STABILITY PHASE: Life-period favors maintenance of existing status.",
+                60.0, group="SECONDARY"
             ))
 
         # 3. TIMING
-        window = timing_engine.calculate_window(chart, ["Jupiter", "Sun", l10_name], [10, 1, 5], calculation_date=selected_date)
+        l11_name = house_lords[11]
+        window = timing_engine.calculate_window(chart, ["Sun", "Saturn", l1_name, l10_name, l11_name], [10, 1, 5, 11],
+                                                calculation_date=selected_date, domain="Fame & Reputation")
         if window.get("proximity_weight", 0) > 0:
              evidence.append(CorroborationEngine.create_evidence(
                 "TRANSIT_TRIGGER", f"TEMPORAL TRIGGER: {window.get('description')}",

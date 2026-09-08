@@ -20,12 +20,21 @@ from .engines.fame import FamePredictionEngine
 
 from concurrent.futures import ThreadPoolExecutor
 
+_prediction_cache = {}
+
 def generate_evidence_based_predictions(chart: CanonicalChart, selected_date: datetime = None, limit_domains: List[str] = None) -> Dict[str, Any]:
     """
-    Master Engine (V3): Orchestrates specialized domain engines using hierarchical corroboration.
+    Master Engine (V3): Orchestrates specialized domain engines using hierarchical confluence.
+    V3.22: Re-enabled cache with profile-specific keys to ensure performance.
     """
     if selected_date is None:
         selected_date = datetime.now()
+
+    # 0. Cache Check (V3.20/V3.22 Performance Hardening)
+    ld_key = "-".join(sorted(limit_domains)) if limit_domains else "ALL"
+    cache_key = f"{chart.birth_datetime.isoformat()}_{chart.latitude}_{chart.longitude}_{selected_date.strftime('%Y-%m')}_{ld_key}"
+    if cache_key in _prediction_cache:
+        return _prediction_cache[cache_key]
 
     domain_tasks = {
         "Career": CareerPredictionEngine.get_prediction,
@@ -87,7 +96,7 @@ def generate_evidence_based_predictions(chart: CanonicalChart, selected_date: da
             return None
 
     # V3.5 Optimization: Parallel synthesis for speed
-    with ThreadPoolExecutor(max_workers=4) as executor:
+    with ThreadPoolExecutor(max_workers=8) as executor:
         future_to_domain = {executor.submit(process_domain, name, func): name for name, func in domain_tasks.items()}
         for future in future_to_domain:
             res = future.result()
@@ -98,13 +107,45 @@ def generate_evidence_based_predictions(chart: CanonicalChart, selected_date: da
     for p in results:
         categorized[p["category"]].append(p)
 
-    return {
-        "overall_status": "V3 High-Precision Report Generated",
-        "predictions": results,
+    # V3.15 Intelligence Enhancement: Sorting & Chronology
+    # 1. Sort by Signal Score (Descending)
+    results_sorted = sorted(results, key=lambda x: x['score'], reverse=True)
+
+    # 2. Extract Timeline
+    timeline = []
+    for p in results:
+        if p.get('timing_window', {}).get('peak'):
+             timeline.append({
+                 "domain": p['domain'],
+                 "peak": p['timing_window']['peak'],
+                 "strength": p['prediction_strength'],
+                 "event": p.get('what_may_develop', 'Development')
+             })
+    timeline_sorted = sorted(timeline, key=lambda x: x['peak'] or '9999')
+
+    # 3. Clustering (V3.21)
+    from .clustering import clustering_engine
+    clusters = clustering_engine.cluster_predictions(results)
+
+    # 4. Roadmap Filtering (V3.22.1 Presentation Layer)
+    today_str = datetime.now().strftime('%Y-%m-%d')
+    upcoming_roadmap = [e for e in timeline_sorted if (e['peak'] or '0000') >= today_str]
+
+    res_payload = {
+        "overall_status": "V3.22 Intelligence Report Generated",
+        "predictions": results_sorted,
         "categorized_domains": categorized,
+        "timeline": timeline_sorted,
+        "upcoming_roadmap": upcoming_roadmap,
+        "clusters": clusters,
         "calculation_confidence": "HIGH (Swiss Ephemeris)",
         "evidence_strength": "HIERARCHICAL",
         "timing_confidence": "TRANSIT_VERIFIED",
         "historical_match_rate": "85.7% (Backtest)",
         "generated_at": datetime.now().isoformat()
     }
+
+    if not limit_domains or len(limit_domains) > 0:
+        _prediction_cache[cache_key] = res_payload
+
+    return res_payload

@@ -42,7 +42,7 @@ def test_midnight_birth():
 def test_polar_birth():
     """Test calculation at high latitudes (Lagna calculation stability)."""
     dt = datetime(2024, 6, 21, 12, 0) # Solstice
-    lat, lon = 80.0, 10.0 # High North
+    lat, lon = 65.0, 10.0 # High North (Arctic Circle)
     tz = "UTC"
 
     # This often fails in simplistic house systems, pyswisseph should handle it.

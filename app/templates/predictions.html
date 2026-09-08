@@ -1,213 +1,152 @@
 {% extends "base.html" %}
-{% block title %}Life Predictions — Trademind Jyotish OS{% endblock %}
+{% block title %}Audit — Astro Predictions{% endblock %}
 
 {% block content %}
+<div class="mb-5 d-flex justify-content-between align-items-end">
+    <div>
+        <span class="text-gold xsmall fw-black tracking-widest mb-2 d-block uppercase">Personal Intelligence Audit</span>
+        <h1 class="display-5 fw-black text-white mb-0 font-premium">Evidence <span class="text-gold">Confluence</span></h1>
+    </div>
+    <div class="mode-tabs p-1">
+        <button class="kmt-btn active px-3 py-1 xsmall" onclick="setAuditMode('basic')" id="btn-basic">BASIC</button>
+        <button class="kmt-btn px-3 py-1 xsmall" onclick="setAuditMode('expert')" id="btn-expert">EXPERT</button>
+    </div>
+</div>
+
 <div class="row g-5">
-    <!-- Audit Sectors Sidebar -->
-    <div class="col-lg-3 col-xl-2">
-        <div class="sticky-top" style="top: 100px; z-index: 10">
-            <h6 class="text-gold xsmall fw-black tracking-widest mb-4 opacity-50 uppercase">AUDIT SECTORS</h6>
-            <nav class="nav flex-column gap-2 prediction-nav">
-                <button class="nav-link active" onclick="showCategory('all', this)">
-                    <i class="bi bi-grid-fill"></i> <span>Complete Audit</span>
+    <!-- Audit Navigation -->
+    <div class="col-lg-3">
+        <div class="sticky-top" style="top: 100px">
+            <div class="d-flex flex-column gap-2" id="audit-nav">
+                {% for cat, domains in preds.categorized_domains.items() %}
+                <button class="nav-item-v2 w-100 text-start border-0 bg-transparent mb-1" onclick="scrollToCategory('{{ cat }}')">
+                    <i class="bi bi-circle-fill xsmall text-gold opacity-50 me-3"></i>
+                    <span class="uppercase xsmall fw-bold">{{ cat }} SECTOR</span>
                 </button>
-                <button class="nav-link" onclick="showCategory('essence', this)">
-                    <i class="bi bi-stars"></i> <span>Personality</span>
-                </button>
-                <button class="nav-link" onclick="showCategory('material', this)">
-                    <i class="bi bi-bank"></i> <span>Wealth & Career</span>
-                </button>
-                <button class="nav-link" onclick="showCategory('social', this)">
-                    <i class="bi bi-people"></i> <span>Relationships</span>
-                </button>
-                <button class="nav-link" onclick="showCategory('survival', this)">
-                    <i class="bi bi-shield-pulse"></i> <span>Health & Travel</span>
-                </button>
-            </nav>
+                {% endfor %}
+                <div class="mt-5 pt-4 border-top border-white border-opacity-5">
+                    <a href="{{ url_for('main.download_complete_report') }}" class="btn btn-vedic w-100 py-3 xsmall fw-black">
+                        <i class="bi bi-download me-2"></i> DOWNLOAD FULL PDF
+                    </a>
+                </div>
+            </div>
         </div>
     </div>
 
-    <!-- Main Content -->
-    <div class="col-lg-9 col-xl-10">
-        <!-- GLOBAL STATUS BAR -->
-        <div class="card-vedic p-5 mb-5 bg-gold-gradient text-dark border-0">
-            <div class="row align-items-center">
-                <div class="col-md">
-                    <h2 class="fw-black mb-1">Celestial Life Audit</h2>
-                    <p class="mb-0 opacity-70">Hierarchical evidence synthesis for {{ session.get('birth_name', 'Native') }}</p>
-                </div>
-                <div class="col-md-auto text-end">
-                    <div class="d-flex align-items-center gap-3">
-                        <div class="text-end">
-                            <div class="xxsmall fw-black tracking-widest opacity-50">CALCULATION CONFIDENCE</div>
-                            <div class="small fw-black mb-0">HIGH (Swiss Ephemeris)</div>
-                        </div>
-                        <div class="vc-avatar bg-dark text-gold" style="width: 48px; height: 48px">
-                            <i class="bi bi-shield-check"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- PREDICTION FEED -->
-        {% if not preds.predictions %}
-        <div class="card-premium p-5 text-center border-dashed opacity-50">
-            <h4 class="text-white fw-bold mb-3 font-premium">Scanning Deterministic Blueprint</h4>
-            <p class="text-dim mb-0">The V2 engine is calculating hierarchical confluence. Please ensure your birth profile is correctly loaded.</p>
-        </div>
-        {% endif %}
-
+    <!-- Domain Feed -->
+    <div class="col-lg-9">
         {% for cat, domains in preds.categorized_domains.items() %}
-        <div id="section-{{ cat|lower }}" class="cat-content-block mb-5">
-            <div class="nav-group-title mb-4">{{ cat }} Indicators</div>
-            <div class="row g-4">
-                {% for domain in domains %}
-                <div class="col-12">
-                    <div class="card-premium p-0 overflow-hidden">
-                        <div class="row g-0">
-                            <!-- Left: Summary Info -->
-                            <div class="col-lg-8 p-4 p-md-5 border-end border-white border-opacity-5">
-                                <div class="d-flex justify-content-between align-items-start mb-4">
-                                    <div>
-                                        <h3 class="font-premium text-white mb-1">{{ domain.domain }}</h3>
-                                        <div class="d-flex align-items-center gap-2 mt-2">
-                                            {% set s_cls = 'badge-strong' if domain.prediction_strength in ['PEAK', 'ACTIVE'] else 'badge-moderate' %}
-                                            <span class="badge-v2 {{ s_cls }}">{{ domain.prediction_strength }}</span>
-                                            <span class="badge-v2 bg-glass-subtle text-dim">SUPPORT: {{ domain.confidence }}</span>
-                                        </div>
-                                    </div>
-                                    <div class="text-end">
-                                        <div class="score-circle">{{ domain.score|int }}</div>
-                                        <div class="xxsmall text-dim fw-bold mt-1 uppercase tracking-widest">CONFLUENCE</div>
-                                    </div>
-                                </div>
+        <div id="cat-{{ cat }}" class="mb-5 pb-5">
+            <h6 class="nav-group-title mt-0 mb-4 opacity-40">{{ cat }} Intelligence</h6>
 
-                                <h5 class="text-white opacity-90 mb-3">{{ domain.headline }}</h5>
-                                <p class="small text-white-50 leading-relaxed mb-5">{{ domain.summary }}</p>
-
-                                <div class="row g-5">
-                                    <div class="col-md-6">
-                                        <h6 class="nav-group-title mt-0 uppercase">TIMING INTEL (V3.3)</h6>
-                                        <div class="p-3 rounded-4 bg-glass-subtle border border-white border-opacity-5">
-                                            <div class="d-flex justify-content-between align-items-center mb-1">
-                                                <span class="xxsmall text-dim">PEAK POTENTIAL</span>
-                                                <span class="xxsmall text-white fw-bold">{{ domain.timing_window.peak }}</span>
-                                            </div>
-                                            <div class="xxsmall text-gold italic mb-2">"{{ domain.timing_window.description }}"</div>
-                                            <div class="d-flex justify-content-between align-items-center pt-2 border-top border-white border-opacity-5">
-                                                <span class="xxsmall text-dim uppercase">Current Phase:</span>
-                                                <span class="badge bg-gold text-dark xxsmall">{{ domain.timing_window.phase }}</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <h6 class="nav-group-title mt-0">PRACTICAL ACTIONS</h6>
-                                        <ul class="ps-3 mb-0">
-                                            {% for action in domain.practical_actions %}
-                                            <li class="small text-gold opacity-80 mb-2">{{ action }}</li>
-                                            {% endfor %}
-                                        </ul>
-                                    </div>
-                                </div>
-
-                                {% if session.get('expert_mode') %}
-                                <div class="mt-5 p-4 rounded-4 bg-gold-glass border border-gold border-opacity-10">
-                                    <h6 class="xxsmall text-gold fw-black mb-3 uppercase tracking-widest">Expert Metrics</h6>
-                                    <div class="row g-4">
-                                        <div class="col-6 col-md-3">
-                                            <div class="xxsmall text-dim mb-1">Quality Score</div>
-                                            <div class="small fw-bold text-white">{{ domain.quality_score }}%</div>
-                                        </div>
-                                        <div class="col-6 col-md-3">
-                                            <div class="xxsmall text-dim mb-1">Nodes Count</div>
-                                            <div class="small fw-bold text-white">{{ domain.evidence_chain|length }}</div>
-                                        </div>
-                                        <div class="col-6 col-md-3">
-                                            <div class="xxsmall text-dim mb-1">Validation</div>
-                                            <div class="small fw-bold text-white">{{ domain.validation_status }}</div>
-                                        </div>
-                                    </div>
-                                </div>
-                                {% endif %}
-                            </div>
-
-                            <!-- Right: Hierarchical Evidence -->
-                            <div class="col-lg-4 p-4 p-md-5 bg-black bg-opacity-20">
-                                <h6 class="nav-group-title mt-0 d-flex justify-content-between">
-                                    <span>EVIDENCE CONFLUENCE</span>
-                                    {% if session.get('expert_mode') %}
-                                    <span class="badge bg-gold text-dark xxsmall">EXPERT</span>
-                                    {% endif %}
-                                </h6>
-                                <div class="d-flex flex-column gap-3">
-                                    {% for ev in domain.evidence_chain %}
-                                    <div class="evidence-node">
-                                        <div class="d-flex justify-content-between align-items-center mb-1">
-                                            <span class="evidence-title">{{ ev.source|replace('_', ' ') }}</span>
-                                            <span class="small fw-bold text-{{ 'success' if ev.strength_score > 0 else 'danger' }}">
-                                                {{ '+' if ev.strength_score > 0 }}{{ (ev.strength_score * 100)|round|int }}
-                                            </span>
-                                        </div>
-                                        <p class="xxsmall text-white opacity-70 mb-0">{{ ev.description }}</p>
-
-                                        {% if session.get('expert_mode') and ev.rationale %}
-                                        <div class="mt-2 pt-2 border-top border-white border-opacity-5 xxsmall text-gold opacity-50 italic">
-                                            Astrological Rationale: {{ ev.rationale }}
-                                        </div>
-                                        {% endif %}
-                                    </div>
-                                    {% endfor %}
-                                </div>
-
-                                {% if domain.conflicting_signals %}
-                                <div class="mt-5 p-4 rounded-4 border border-danger border-opacity-10 bg-danger bg-opacity-5">
-                                    <h6 class="xxsmall text-danger fw-black mb-3 uppercase tracking-widest">CONTRADICTIONS</h6>
-                                    {% for conflict in domain.conflicting_signals %}
-                                    <div class="xxsmall text-white opacity-50 mb-2">• {{ conflict }}</div>
-                                    {% endfor %}
-                                </div>
-                                {% endif %}
+            {% for p in domains %}
+            <div class="card-premium p-0 overflow-hidden mb-4 shadow-xl border-white border-opacity-5">
+                <div class="p-4 p-md-5">
+                    <div class="d-flex justify-content-between align-items-start mb-4">
+                        <div>
+                            <div class="xxsmall text-gold fw-black tracking-widest uppercase mb-1">{{ p.domain }}</div>
+                            <h2 class="text-white fw-black mb-3">{{ p.event_type|replace('_', ' ') }}</h2>
+                            <div class="d-flex align-items-center gap-2">
+                                <span class="badge-v2 {{ 'badge-strong' if p.prediction_strength in ['PEAK', 'ACTIVE'] else 'badge-moderate' }}">
+                                    {{ p.prediction_strength }}
+                                </span>
+                                <span class="badge bg-glass-subtle text-dim xxsmall font-mono uppercase">Confidence: {{ p.confidence }}</span>
                             </div>
                         </div>
+                        <div class="text-end">
+                            <div class="score-circle" style="width: 80px; height: 80px; font-size: 1.5rem">{{ p.score|int }}</div>
+                            <div class="xxsmall text-dim fw-bold mt-2 uppercase tracking-widest">SIGNAL</div>
+                        </div>
+                    </div>
 
-                        <!-- Footer: Correction Suite -->
-                        <div class="p-4 bg-glass border-top border-white border-opacity-5 d-flex justify-content-between align-items-center">
-                            <div class="xsmall text-dim">Engine: <span class="text-gold">PREDICT-V2-CONFLUENCE</span></div>
-                            <button class="btn btn-vedic py-2 px-5 xsmall fw-black">VIEW REMEDIES <i class="bi bi-shield-check ms-2"></i></button>
+                    <div class="row g-5 mb-5">
+                        <div class="col-md-7">
+                            <h6 class="xxsmall text-gold fw-black uppercase mb-3">Intelligence Narrative</h6>
+                            <p class="small text-white opacity-90 leading-relaxed mb-4">{{ p.summary }}</p>
+
+                            <h6 class="xxsmall text-gold fw-black uppercase mb-3">Potential Manifestations</h6>
+                            <ul class="ps-3 mb-0">
+                                {% for m in p.manifestations %}
+                                <li class="small text-white-50 mb-2">{{ m }}</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                        <div class="col-md-5">
+                            <div class="p-4 rounded-5 bg-black bg-opacity-20 border border-white border-opacity-5 h-100">
+                                <h6 class="xxsmall text-gold fw-black uppercase mb-4">Timing Resolution</h6>
+                                <div class="mb-4">
+                                    <div class="xxsmall text-dim uppercase">Strongest Cycle</div>
+                                    <div class="small fw-bold text-white font-mono">{{ p.timing_window.build }} — {{ p.timing_window.decline }}</div>
+                                </div>
+                                <div class="mb-4">
+                                    <div class="xxsmall text-dim uppercase">Deterministic Peak</div>
+                                    <div class="small fw-bold text-gold font-mono">{{ p.timing_window.peak }}</div>
+                                </div>
+                                <div>
+                                    <div class="xxsmall text-dim uppercase">Temporal Precision</div>
+                                    <div class="badge bg-glass-subtle text-dim xxsmall font-mono">{{ p.timing_window.timing_confidence }}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- EXPERT DRAWERS (PHASE 13) -->
+                    <div class="expert-only mt-4 pt-4 border-top border-white border-opacity-5" style="display:none">
+                        <h6 class="xxsmall text-gold fw-black uppercase mb-4">Technical Evidence Audit</h6>
+                        <div class="d-flex flex-column gap-3">
+                            {% for ev in p.evidence_chain %}
+                            <div class="p-3 rounded-4 bg-glass border border-white border-opacity-5">
+                                <div class="d-flex justify-content-between align-items-center mb-1">
+                                    <span class="xsmall fw-black text-white uppercase">{{ ev.source|replace('_', ' ') }}</span>
+                                    <span class="small fw-bold text-{{ 'success' if ev.strength_score > 0 else 'danger' }}">
+                                        {{ '+' if ev.strength_score > 0 }}{{ (ev.strength_score * 100)|round|int }}
+                                    </span>
+                                </div>
+                                <p class="xxsmall text-dim mb-0">{{ ev.description }}</p>
+                                {% if ev.rationale %}<p class="xxsmall text-gold mt-2 mb-0 opacity-50 font-mono">Rationale: {{ ev.rationale }}</p>{% endif %}
+                            </div>
+                            {% endfor %}
                         </div>
                     </div>
                 </div>
-                {% endfor %}
+
+                <div class="p-4 bg-glass border-top border-white border-opacity-5 d-flex justify-content-between align-items-center">
+                    <button class="btn btn-link text-gold p-0 xsmall fw-bold text-decoration-none" onclick="toggleDetails(this)">
+                        VIEW TECHNICAL AUDIT <i class="bi bi-chevron-down ms-2"></i>
+                    </button>
+                    <div class="xxsmall text-dim italic">Frozen Baseline: V3.15 Engine</div>
+                </div>
             </div>
+            {% endfor %}
         </div>
         {% endfor %}
     </div>
 </div>
+{% endblock %}
 
-<style>
-.prediction-nav .nav-link.active {
-    background: var(--bg-card);
-    border-color: var(--border);
-    color: var(--gold) !important;
-}
-.xxsmall { font-size: 0.65rem; }
-.bg-gold-gradient { background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%); }
-</style>
-
+{% block scripts %}
 <script>
-function showCategory(cat, btn) {
-    if (btn) {
-        document.querySelectorAll('.prediction-nav .nav-link').forEach(l => l.classList.remove('active'));
-        btn.classList.add('active');
-    }
-    document.querySelectorAll('.cat-content-block').forEach(b => b.style.display = 'none');
-    if (cat === 'all') {
-        document.querySelectorAll('.cat-content-block').forEach(b => b.style.display = 'block');
-    } else {
-        document.getElementById('section-' + cat).style.display = 'block';
-    }
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+function setAuditMode(m) {
+    const isExpert = m === 'expert';
+    document.getElementById('btn-expert').classList.toggle('active', isExpert);
+    document.getElementById('btn-basic').classList.toggle('active', !isExpert);
+
+    document.querySelectorAll('.expert-only').forEach(el => {
+        el.style.display = isExpert ? 'block' : 'none';
+    });
+}
+
+function toggleDetails(btn) {
+    const card = btn.closest('.card-premium');
+    const expert = card.querySelector('.expert-only');
+    const isHidden = expert.style.display === 'none';
+    expert.style.display = isHidden ? 'block' : 'none';
+    btn.innerHTML = isHidden ? 'HIDE TECHNICAL AUDIT <i class="bi bi-chevron-up ms-2"></i>' : 'VIEW TECHNICAL AUDIT <i class="bi bi-chevron-down ms-2"></i>';
+}
+
+function scrollToCategory(cat) {
+    const el = document.getElementById('cat-' + cat);
+    if (el) window.scrollTo({ top: el.offsetTop - 120, behavior: 'smooth' });
 }
 </script>
 {% endblock %}

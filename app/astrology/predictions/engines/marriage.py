@@ -104,7 +104,10 @@ class MarriagePredictionEngine:
             "Hierarchical synthesis shows a {score}% match for union themes."
         )
 
-        res = CorroborationEngine.synthesize("Marriage & Relationships", promise_level, evidence, summary_template, timing_window=window)
+        event_class = "relationship progression, partnership discussion, commitment development, or relationship-status decision"
+
+        res = CorroborationEngine.synthesize("Marriage & Relationships", promise_level, evidence, summary_template,
+                                                timing_window=window, what_may_develop=event_class)
 
         res.manifestations = [
             "Formalization of existing commitments.",

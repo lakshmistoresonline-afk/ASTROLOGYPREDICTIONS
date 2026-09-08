@@ -1,0 +1,146 @@
+{% extends "base.html" %}
+{% block title %}Lifetime Intelligence Map — Astro Predictions{% endblock %}
+
+{% block head %}
+<style>
+    .timeline-track { position: relative; padding: 60px 0; }
+    .timeline-spine { position: absolute; left: 40px; top: 0; bottom: 0; width: 2px; background: rgba(251, 191, 36, 0.1); }
+    .timeline-node { position: relative; padding-left: 100px; margin-bottom: 80px; }
+    .node-marker { position: absolute; left: 30px; top: 0; width: 24px; height: 24px; border-radius: 50%; background: var(--bg-card); border: 3px solid var(--gold); z-index: 2; transition: all 0.3s; }
+    .node-marker.node-past { border-color: #64748b; }
+    .node-marker.node-present { background: var(--gold); box-shadow: 0 0 25px var(--gold-glow); }
+    .node-marker.node-future { border-color: #3b82f6; }
+    .age-pill { position: absolute; left: -60px; top: -5px; width: 70px; text-align: right; font-family: var(--font-mono); font-weight: 900; color: var(--gold); opacity: 0.5; font-size: 1rem; }
+    .event-card { transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1); cursor: pointer; }
+    .event-card:hover { transform: translateX(15px); border-color: rgba(251, 191, 36, 0.4) !important; background: rgba(251, 191, 36, 0.03); }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="mb-5 d-flex justify-content-between align-items-end flex-wrap gap-4">
+    <div>
+        <span class="text-gold xsmall fw-black tracking-widest mb-2 d-block uppercase">DETERMINISTIC LIFECYCLE ROADMAP</span>
+        <h1 class="display-3 fw-black text-white mb-0 font-premium">Lifetime <span class="text-gold">Intelligence</span></h1>
+    </div>
+    <div class="d-flex align-items-center gap-4">
+        <div class="mode-tabs p-1">
+            <button class="kmt-btn active px-4 py-2 xsmall" onclick="filterTimeline('all')">LIFETIME</button>
+            <button class="kmt-btn px-4 py-2 xsmall" onclick="filterTimeline('90d')">NEXT 90 DAYS</button>
+            <button class="kmt-btn px-4 py-2 xsmall" onclick="filterTimeline('3y')">3 YEAR FOCUS</button>
+        </div>
+    </div>
+</div>
+
+<div class="row g-5">
+    <!-- Main Timeline Track -->
+    <div class="col-lg-9">
+        <div class="timeline-track ps-5" id="timeline-list">
+            <div class="timeline-spine"></div>
+
+            {% for event in timeline.events %}
+            {% set is_past = 'RECONSTRUCTED' in event.status %}
+            {% set is_curr = 'CURRENT' in event.status %}
+            <div class="timeline-node" data-age="{{ event.age_at_peak }}" data-status="{{ event.status }}" onclick="showEventDetails('{{ event.event_id }}')">
+                <div class="age-pill">Age {{ event.age_at_peak|int }}</div>
+                <div class="node-marker {{ 'node-past' if is_past else 'node-present' if is_curr else 'node-future' }}"></div>
+
+                <div class="card-premium event-card p-5 border-white border-opacity-5">
+                    <div class="row align-items-start">
+                        <div class="col-md-8">
+                            <div class="xxsmall text-gold fw-black tracking-widest uppercase mb-2">{{ event.domain }}</div>
+                            <h2 class="text-white fw-black mb-3 font-premium">{{ event.event_type|replace('_', ' ') }}</h2>
+                            <div class="d-flex align-items-center gap-3">
+                                <span class="badge bg-glass-subtle text-white xxsmall fw-bold px-3 py-2 uppercase border border-white border-opacity-10">{{ event.status }}</span>
+                                <span class="xxsmall text-dim font-mono">TEMPORAL PRECISION: {{ event.timing_precision }}</span>
+                            </div>
+                        </div>
+                        <div class="col-md-4 text-md-end mt-4 mt-md-0">
+                            <div class="display-6 text-white font-mono mb-1">{{ event.peak_date }}</div>
+                            <div class="xxsmall text-dim uppercase tracking-widest">DETERMINISTIC PEAK</div>
+                        </div>
+                    </div>
+
+                    <div class="mt-5 pt-4 border-top border-white border-opacity-5">
+                        <p class="fs-5 text-white opacity-60 mb-0 leading-relaxed">{{ event.why_now }}</p>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Contextual Sidebar -->
+    <div class="col-lg-3">
+        <div class="sticky-top" style="top: 100px">
+            <h6 class="nav-group-title mt-0 mb-4 opacity-40">Intelligence Legend</h6>
+            <div class="d-flex flex-column gap-4 mb-5">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="node-marker node-past position-static" style="width: 12px; height: 12px"></div>
+                    <div class="xxsmall text-dim uppercase">Historical Reconstruction</div>
+                </div>
+                <div class="d-flex align-items-center gap-3">
+                    <div class="node-marker node-present position-static" style="width: 12px; height: 12px"></div>
+                    <div class="xxsmall text-gold uppercase">Current Active Window</div>
+                </div>
+                <div class="d-flex align-items-center gap-3">
+                    <div class="node-marker node-future position-static" style="width: 12px; height: 12px"></div>
+                    <div class="xxsmall text-dim uppercase">Prospective Forecast</div>
+                </div>
+            </div>
+
+            <div class="p-4 rounded-5 bg-glass border border-white border-opacity-5">
+                <h6 class="text-white fw-bold mb-3 small">Timeline Controls</h6>
+                <div class="d-grid gap-2">
+                    <button class="btn btn-outline-secondary btn-sm text-start" onclick="scrollToTop()">
+                        <i class="bi bi-arrow-up me-2"></i> SCROLL TO BIRTH
+                    </button>
+                    <button class="btn btn-outline-secondary btn-sm text-start" onclick="scrollToPresent()">
+                        <i class="bi bi-geo-alt me-2"></i> JUMP TO PRESENT
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- EVENT DETAIL MODAL -->
+<div class="modal fade" id="eventDetailModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content card-premium p-0 border-gold border-opacity-20 shadow-2xl overflow-hidden">
+            <div id="event-detail-content"></div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+function filterTimeline(horizon) {
+    const nodes = document.querySelectorAll('.timeline-node');
+    const currentAge = {{ current_age }};
+
+    nodes.forEach(n => {
+        const age = parseFloat(n.dataset.age);
+        let show = true;
+        if (horizon === '90d') show = (age >= currentAge && age <= currentAge + 0.25);
+        if (horizon === '3y') show = (age >= currentAge && age <= currentAge + 3);
+        n.style.display = show ? 'block' : 'none';
+    });
+}
+
+function showEventDetails(id) {
+    // Reusing Why Now logic or showing event summary
+    // ...
+}
+
+function scrollToPresent() {
+    const curr = document.querySelector('.node-marker.node-present');
+    if (curr) curr.scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+function scrollToTop() {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+</script>
+{% endblock %}

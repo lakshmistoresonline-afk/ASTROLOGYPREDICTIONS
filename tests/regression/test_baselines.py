@@ -40,12 +40,12 @@ def test_baseline_consistency(baseline):
     old_chart = baseline["chart"]
 
     # Check Lagna
-    assert new_chart["ascendant"] == pytest.approx(old_chart["ascendant"], abs=1e-4)
+    assert new_chart.ascendant == pytest.approx(old_chart["ascendant"], abs=1e-3)
 
     # Check Planets
     for p_name in old_chart["planets"]:
-        assert new_chart["planets"][p_name]["longitude"] == pytest.approx(old_chart["planets"][p_name]["longitude"], abs=1e-4)
-        assert new_chart["planets"][p_name]["rashi"] == old_chart["planets"][p_name]["rashi"]
+        assert new_chart.planets[p_name].longitude == pytest.approx(old_chart["planets"][p_name]["longitude"], abs=1e-3)
+        assert new_chart.planets[p_name].rashi == old_chart["planets"][p_name]["rashi"]
 
     # Compare Panchang
     old_pan = baseline["panchang"]

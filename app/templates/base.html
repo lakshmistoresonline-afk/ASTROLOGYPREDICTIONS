@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>{% block title %}Jyotish — Celestial OS{% endblock %}</title>
+  <title>{% block title %}Astro Predictions{% endblock %}</title>
   <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='img/icon.svg') }}"/>
 
   <!-- Next-Gen UI Stack -->
@@ -23,49 +23,47 @@
 <div id="layout-wrapper">
     <!-- Sidebar -->
     <aside id="sidebar">
-        <div class="sidebar-header">
+        <div class="sidebar-header mb-5">
             <div class="d-flex align-items-center gap-3">
-                <div class="vc-avatar" style="width: 36px; height: 36px; font-size: 0.9rem">ॐ</div>
+                <div class="vc-avatar bg-gold text-dark fw-black" style="width: 40px; height: 40px; font-size: 1.1rem; box-shadow: 0 0 15px var(--gold-glow)">ॐ</div>
                 <div>
-                    <div class="app-brand fs-5 font-premium">JYOTISH</div>
-                    <div class="xxsmall text-gold fw-black tracking-widest opacity-50 uppercase">V2 Intelligence</div>
+                    <div class="app-brand fs-4 font-premium tracking-widest text-white mb-0">ASTRO PREDICTIONS</div>
+                    <div class="xxsmall text-gold fw-black tracking-widest opacity-50 uppercase">Intelligence Audit</div>
                 </div>
             </div>
         </div>
 
-        <nav class="nav-list px-3">
-            <div class="nav-group-title">MY BLUEPRINT</div>
-            <a href="{{ url_for('main.index') }}" class="nav-item-v2 {% if request.endpoint == 'main.index' %}active{% endif %}">
-                <i class="bi bi-house"></i> <span>Home</span>
-            </a>
-            <a href="{{ url_for('main.kundli') }}" class="nav-item-v2 {% if request.endpoint == 'main.kundli' %}active{% endif %}">
-                <i class="bi bi-compass"></i> <span>Birth Chart</span>
-            </a>
-
+        <nav class="nav-list">
             <div class="nav-group-title">INTELLIGENCE</div>
             <a href="{{ url_for('main.dashboard') }}" class="nav-item-v2 {% if request.endpoint == 'main.dashboard' %}active{% endif %}">
-                <i class="bi bi-grid-1x2"></i> <span>Today's Flow</span>
+                <i class="bi bi-grid-1x2"></i> <span>Dashboard</span>
+            </a>
+            <a href="{{ url_for('main.timeline') }}" class="nav-item-v2 {% if request.endpoint == 'main.timeline' %}active{% endif %}">
+                <i class="bi bi-calendar3"></i> <span>Lifecycle Map</span>
             </a>
             <a href="{{ url_for('main.predictions') }}" class="nav-item-v2 {% if request.endpoint == 'main.predictions' %}active{% endif %}">
-                <i class="bi bi-stars"></i> <span>Life Predictions</span>
+                <i class="bi bi-stars"></i> <span>Domain Audit</span>
             </a>
-            <a href="{{ url_for('main.varshaphala') }}" class="nav-item-v2 {% if request.endpoint == 'main.varshaphala' %}active{% endif %}">
-                <i class="bi bi-calendar-event"></i> <span>Yearly Outlook</span>
+            <a href="{{ url_for('main.showcase') }}" class="nav-item-v2 {% if request.endpoint == 'main.showcase' %}active{% endif %}">
+                <i class="bi bi-display"></i> <span>Presentation</span>
             </a>
 
-            <div class="nav-group-title">TOOLS & GUIDANCE</div>
+            <div class="nav-group-title">GOVERNANCE</div>
             <a href="{{ url_for('main.history') }}" class="nav-item-v2 {% if request.endpoint == 'main.history' %}active{% endif %}">
-                <i class="bi bi-clock-history"></i> <span>Temporal Vault</span>
+                <i class="bi bi-check2-square"></i> <span>Verification</span>
             </a>
-            <a href="{{ url_for('main.transit') }}" class="nav-item-v2 {% if request.endpoint == 'main.transit' %}active{% endif %}">
-                <i class="bi bi-clock-history"></i> <span>Transit Live</span>
+
+            <div class="nav-group-title">SYSTEM</div>
+            <a href="{{ url_for('main.index') }}" class="nav-item-v2 {% if request.endpoint == 'main.index' %}active{% endif %}">
+                <i class="bi bi-person-lines-fill"></i> <span>Chart Vault</span>
             </a>
-            <a href="{{ url_for('main.prashna') }}" class="nav-item-v2 {% if request.endpoint == 'main.prashna' %}active{% endif %}">
-                <i class="bi bi-question-circle"></i> <span>Ask the Oracle</span>
+
+            {% if session.get('is_beta_session') or session.get('is_admin') %}
+            <div class="nav-group-title">EXPERT</div>
+            <a href="{{ url_for('main.admin_accuracy') }}" class="nav-item-v2">
+                <i class="bi bi-bar-chart"></i> <span>Validation</span>
             </a>
-            <a href="{{ url_for('main.admin_quality') }}" class="nav-item-v2">
-                <i class="bi bi-speedometer2"></i> <span>Calibration</span>
-            </a>
+            {% endif %}
         </nav>
 
         <div class="p-4 mt-auto border-top border-white border-opacity-5">
@@ -73,7 +71,7 @@
                 <span class="xxsmall text-gold fw-black tracking-widest uppercase opacity-40">Expert Mode</span>
                 <div class="form-check form-switch p-0 m-0">
                     <input class="form-check-input ms-0" type="checkbox" role="switch" id="expertToggle"
-                           {% if session.get('expert_mode') %}checked{% endif %} onchange="toggleExpertMode(this)">
+                           {% if session.get('expert_mode') %}checked{% endif %} onchange="toggleExpertMode(this.checked)">
                 </div>
             </div>
             <div class="d-flex align-items-center justify-content-between">
@@ -93,9 +91,6 @@
             </div>
 
             <div class="d-flex align-items-center gap-4">
-                <button class="btn btn-sm btn-vedic py-1 px-3 xsmall" onclick="toggleAstroChat()">
-                    <i class="bi bi-chat-dots-fill me-2"></i> ASTRO CHAT
-                </button>
                 <div class="d-flex align-items-center gap-2">
                     <span class="xsmall text-dim">{{ session.get('birth_name', 'Visitor') }}</span>
                     <div style="width: 32px; height: 32px; border-radius: 50%; background: var(--gold-glow); display: flex; align-items: center; justify-content: center">
@@ -139,6 +134,14 @@ if (sidebarToggle) {
     });
 }
 
+function toggleExpertMode(enabled) {
+    fetch("/api/v1/user/settings", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({expert_mode: enabled})
+    }).then(() => location.reload());
+}
+
 function toggleTheme() {
   const html = document.documentElement;
   const current = html.getAttribute("data-bs-theme");
@@ -148,104 +151,6 @@ function toggleTheme() {
 }
 const savedTheme = localStorage.getItem("theme") || "dark";
 document.documentElement.setAttribute("data-bs-theme", savedTheme);
-
-function toggleExpertMode(el) {
-  fetch("/api/v1/user/settings", {
-    method: "POST",
-    headers: {"Content-Type": "application/json"},
-    body: JSON.stringify({expert_mode: el.checked})
-  }).then(() => window.location.reload());
-}
-</script>
-
-<!-- AstroChat Floating Interface -->
-<div id="astrochat-container" class="astrochat-collapsed">
-    <div class="astrochat-header">
-        <div class="d-flex align-items-center gap-3">
-            <div class="vc-avatar bg-gold text-dark" style="width: 32px; height: 32px; font-size: 0.8rem">ॐ</div>
-            <div>
-                <div class="xsmall fw-black text-white">JYOTISHI AI</div>
-                <div class="xxsmall text-success fw-bold">ONLINE</div>
-            </div>
-        </div>
-        <button class="btn-close btn-close-white" onclick="toggleAstroChat()"></button>
-    </div>
-    <div id="astrochat-messages" class="astrochat-body">
-        <div class="chat-msg system">Namaste! I am your AI Jyotishi. How can I help you decode your blueprint today?</div>
-    </div>
-    <div class="astrochat-footer">
-        <input type="text" id="chat-input" placeholder="Ask about your career, marriage..." onkeypress="handleChatKey(event)">
-        <button onclick="sendChatMessage()"><i class="bi bi-send-fill"></i></button>
-    </div>
-</div>
-
-<style>
-#astrochat-container {
-    position: fixed;
-    bottom: 30px;
-    right: 30px;
-    width: 380px;
-    height: 550px;
-    background: var(--bg-card);
-    border: 1px solid var(--border);
-    border-radius: 24px;
-    display: flex;
-    flex-direction: column;
-    z-index: 1000;
-    box-shadow: 0 20px 60px rgba(0,0,0,0.8);
-    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s;
-}
-#astrochat-container.astrochat-collapsed {
-    transform: translateY(120%) scale(0.8);
-    opacity: 0;
-    pointer-events: none;
-}
-.astrochat-header { padding: 20px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
-.astrochat-body { flex-grow: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 15px; }
-.astrochat-footer { padding: 15px; border-top: 1px solid var(--border); display: flex; gap: 10px; }
-.astrochat-footer input { flex-grow: 1; background: rgba(255,255,255,0.03); border: 1px solid var(--border); border-radius: 12px; padding: 10px 15px; color: #fff; font-size: 0.85rem; outline: none; }
-.astrochat-footer button { width: 42px; height: 42px; background: var(--gold); border: none; border-radius: 12px; display: flex; align-items: center; justify-content: center; color: #000; }
-
-.chat-msg { padding: 12px 18px; border-radius: 18px; font-size: 0.85rem; max-width: 85%; line-height: 1.5; }
-.chat-msg.system { background: rgba(255,255,255,0.04); color: var(--text-dim); align-self: flex-start; border-bottom-left-radius: 4px; }
-.chat-msg.user { background: var(--gold-glow); color: var(--gold); align-self: flex-end; border-bottom-right-radius: 4px; border: 1px solid rgba(251,191,36,0.1); }
-.chat-msg.ai { background: rgba(167, 139, 250, 0.05); color: var(--accent-soft); align-self: flex-start; border-bottom-left-radius: 4px; border: 1px solid rgba(167, 139, 250, 0.1); }
-
-.xxsmall { font-size: 0.6rem; }
-</style>
-
-<script>
-function toggleAstroChat() {
-    document.getElementById("astrochat-container").classList.toggle("astrochat-collapsed");
-}
-
-function handleChatKey(e) { if(e.key === 'Enter') sendChatMessage(); }
-
-function sendChatMessage() {
-    const input = document.getElementById("chat-input");
-    const msg = input.value.trim();
-    if(!msg) return;
-
-    appendChatMsg('user', msg);
-    input.value = "";
-
-    fetch("/api/chat", {
-        method: "POST",
-        headers: {"Content-Type": "application/json"},
-        body: JSON.stringify({message: msg})
-    }).then(r => r.json()).then(data => {
-        appendChatMsg('ai', data.response);
-    });
-}
-
-function appendChatMsg(type, text) {
-    const container = document.getElementById("astrochat-messages");
-    const div = document.createElement("div");
-    div.className = `chat-msg ${type}`;
-    div.innerText = text;
-    container.appendChild(div);
-    container.scrollTop = container.scrollHeight;
-}
 </script>
 
 {% block scripts %}{% endblock %}

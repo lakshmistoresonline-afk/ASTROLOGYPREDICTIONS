@@ -21,6 +21,17 @@ class EducationPredictionEngine:
         l5_name = house_lords[5]
 
         promise_level = "MODERATE"
+
+        # Occupancy Promise (V3.14)
+        for p_name, p in planets.items():
+            if p.house in [4, 5] and p_name in ["Mercury", "Jupiter", "Sun"]:
+                 promise_level = "STRONG"
+                 evidence.append(CorroborationEngine.create_evidence(
+                    "NATAL_PROMISE",
+                    f"NATAL SIGNAL: Strong presence in academic houses (H{p.house}) indicates learning focus.",
+                    85.0
+                 ))
+
         l4_house = planets[l4_name].house
         if l4_house in [1, 4, 7, 10, 5, 9]:
             promise_level = "STRONG"
@@ -52,32 +63,22 @@ class EducationPredictionEngine:
         from ...dasha import calculate_vimshottari
         moon_lon = chart.planets["Moon"].longitude
         dasha = calculate_vimshottari(moon_lon, chart.birth_datetime, calculation_date=selected_date)
-        maha_lord = dasha.get("current_maha", {}).get("lord")
-        antar_lord = dasha.get("current_antar", {}).get("lord")
 
-        relevant_lords = [l4_name, l5_name, "Mercury", "Jupiter"]
-        if antar_lord in relevant_lords:
-            evidence.append(CorroborationEngine.create_evidence(
-                "DASHA_ACTIVATION",
-                f"KNOWLEDGE ACTIVATION: Period of {antar_lord} triggers intellectual and learning sectors.",
-                90.0
-            ))
+        l9_name = house_lords[9]
+        relevant_lords = [l4_name, l5_name, l9_name, "Mercury", "Jupiter"]
+        dasha_evidence = CorroborationEngine.audit_dasha_activation(dasha, chart, relevant_lords, "educational")
+        if dasha_evidence:
+            evidence.extend(dasha_evidence)
         else:
             evidence.append(CorroborationEngine.create_evidence(
-                "DASHA_ACTIVATION",
+                "DASHA_FOUNDATION", # Changed from ACTIVATION to FOUNDATION for fallback
                 "STABILITY PHASE: Life-period favors maintenance of existing knowledge base.",
-                65.0
-            ))
-
-        if maha_lord in relevant_lords:
-            evidence.append(CorroborationEngine.create_evidence(
-                "DASHA_FOUNDATION",
-                f"DASHA FOUNDATION: Major life-cycle ruled by {maha_lord} provides underlying support for educational growth.",
-                60.0
+                65.0, group="SECONDARY"
             ))
 
         # 3. TIMING
-        window = timing_engine.calculate_window(chart, ["Mercury", "Jupiter", l4_name, l5_name], [4, 5, 2], calculation_date=selected_date)
+        window = timing_engine.calculate_window(chart, ["Mercury", "Jupiter", "Sun", l4_name, l5_name, l9_name], [4, 5, 9],
+                                                calculation_date=selected_date, domain="Education & Knowledge")
         if window.get("proximity_weight", 0) > 0:
              evidence.append(CorroborationEngine.create_evidence(
                 "TRANSIT_TRIGGER", f"TEMPORAL TRIGGER: {window.get('description')}",
@@ -89,7 +90,10 @@ class EducationPredictionEngine:
             "Timing alignment is {strength} with a {score}% match based on hierarchical factors."
         )
 
-        res = CorroborationEngine.synthesize("Education & Knowledge", promise_level, evidence, summary_template, timing_window=window)
+        event_class = "educational advancement, certification, formal study, skill acquisition, or intellectual project milestones"
+
+        res = CorroborationEngine.synthesize("Education & Knowledge", promise_level, evidence, summary_template,
+                                                timing_window=window, what_may_develop=event_class)
         res.practical_actions = [
             "Maintain disciplined study habits during energetic peaks.",
             "Jupiter-based wisdom practices support deep acquisition of knowledge.",
