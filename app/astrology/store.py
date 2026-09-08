@@ -77,13 +77,27 @@ else:
                 data["birth_dob"] = c.dob
                 data["birth_tob"] = c.tob
             elif data.get("birth_datetime"):
-                dt = datetime.fromisoformat(data["birth_datetime"])
-                data["birth_dob"] = dt.strftime("%Y-%m-%d")
-                data["birth_tob"] = dt.strftime("%H:%M")
+                try:
+                    dt = datetime.fromisoformat(str(data.get("birth_datetime")))
+                    data["birth_dob"] = dt.strftime("%Y-%m-%d")
+                    data["birth_tob"] = dt.strftime("%H:%M")
+                except:
+                    pass
+            elif not data.get("birth_dob") and data.get("birth_datetime"):
+                try:
+                    dt = datetime.fromisoformat(str(data.get("birth_datetime")))
+                    data["birth_dob"] = dt.strftime("%Y-%m-%d")
+                    data["birth_tob"] = dt.strftime("%H:%M")
+                except:
+                    pass
 
-            data["latitude"] = c.lat or data.get("latitude")
-            data["longitude_coord"] = c.lon or data.get("longitude")
-            data["timezone"] = c.tz or data.get("timezone")
+            if not data.get("birth_dob") and c.saved_at:
+                data["birth_dob"] = c.saved_at.strftime("%Y-%m-%d")
+                data["birth_tob"] = "12:00"
+
+            data["latitude"] = c.lat if c.lat is not None else data.get("latitude")
+            data["longitude_coord"] = c.lon if c.lon is not None else data.get("longitude")
+            data["timezone"] = c.tz or data.get("timezone") or "Asia/Kolkata"
             return data
         return None
 

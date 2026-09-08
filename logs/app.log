@@ -791,3 +791,78 @@
 2026-09-08 18:59:24,194 INFO [_internal.py:97]:  * Debugger PIN: 644-143-807
 2026-09-08 19:04:03,505 INFO [__init__.py:51]: Astro Predictions V3.22.1 starting with debug logging enabled...
 2026-09-08 19:04:11,142 INFO [__init__.py:51]: Astro Predictions V3.22.1 starting with debug logging enabled...
+2026-09-08 20:17:46,166 INFO [__init__.py:51]: Astro Predictions V3.22.1 starting with debug logging enabled...
+2026-09-08 20:17:53,504 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): 127.0.0.1:8000
+2026-09-08 20:17:53,514 DEBUG [connectionpool.py:544]: http://127.0.0.1:8000 "GET /health HTTP/1.1" 200 42
+2026-09-08 20:17:53,629 INFO [_internal.py:97]: [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5001
+ * Running on http://192.168.1.11:5001
+2026-09-08 20:17:53,632 INFO [_internal.py:97]: [33mPress CTRL+C to quit[0m
+2026-09-08 20:17:53,639 INFO [_internal.py:97]:  * Restarting with stat
+2026-09-08 20:18:02,941 INFO [__init__.py:51]: Astro Predictions V3.22.1 starting with debug logging enabled...
+2026-09-08 20:18:04,717 INFO [_internal.py:97]: 127.0.0.1 - - [08/Sep/2026 20:18:04] "[32mGET / HTTP/1.1[0m" 302 -
+2026-09-08 20:18:07,393 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): 127.0.0.1:8000
+2026-09-08 20:18:07,479 DEBUG [connectionpool.py:544]: http://127.0.0.1:8000 "POST /v1/natal-chart HTTP/1.1" 200 1387
+2026-09-08 20:18:07,513 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): 127.0.0.1:8000
+2026-09-08 20:18:07,579 DEBUG [connectionpool.py:544]: http://127.0.0.1:8000 "POST /v1/sky-events HTTP/1.1" 200 62
+2026-09-08 20:18:07,635 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): 127.0.0.1:8000
+2026-09-08 20:18:07,657 DEBUG [connectionpool.py:544]: http://127.0.0.1:8000 "POST /v1/sky-events HTTP/1.1" 200 62
+2026-09-08 20:18:07,713 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): 127.0.0.1:8000
+2026-09-08 20:18:07,729 DEBUG [connectionpool.py:544]: http://127.0.0.1:8000 "POST /v1/sky-events HTTP/1.1" 200 63
+2026-09-08 20:18:17,397 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): 127.0.0.1:8000
+2026-09-08 20:18:17,416 DEBUG [connectionpool.py:544]: http://127.0.0.1:8000 "GET /health HTTP/1.1" 200 42
+2026-09-08 20:18:17,508 WARNING [_internal.py:97]:  * Debugger is active!
+2026-09-08 20:18:17,529 INFO [_internal.py:97]:  * Debugger PIN: 644-143-807
+2026-09-08 20:18:17,808 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): 127.0.0.1:8000
+2026-09-08 20:18:18,356 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): 127.0.0.1:8000
+2026-09-08 20:18:19,261 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): 127.0.0.1:8000
+2026-09-08 20:18:19,265 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): 127.0.0.1:8000
+2026-09-08 20:18:19,316 DEBUG [connectionpool.py:544]: http://127.0.0.1:8000 "POST /v1/transits/range HTTP/1.1" 200 29507
+2026-09-08 20:18:19,471 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): 127.0.0.1:8000
+2026-09-08 20:18:21,426 DEBUG [connectionpool.py:544]: http://127.0.0.1:8000 "POST /v1/transits/range HTTP/1.1" 200 29507
+2026-09-08 20:18:22,188 DEBUG [connectionpool.py:544]: http://127.0.0.1:8000 "POST /v1/transits/range HTTP/1.1" 200 29507
+2026-09-08 20:18:22,449 DEBUG [connectionpool.py:544]: http://127.0.0.1:8000 "POST /v1/transits/range HTTP/1.1" 200 29507
+2026-09-08 20:18:23,420 DEBUG [connectionpool.py:544]: http://127.0.0.1:8000 "POST /v1/transits/range HTTP/1.1" 200 29507
+2026-09-08 20:18:37,141 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): 127.0.0.1:8000
+2026-09-08 20:18:37,167 DEBUG [connectionpool.py:544]: http://127.0.0.1:8000 "POST /v1/natal-chart HTTP/1.1" 200 1380
+2026-09-08 20:18:37,508 INFO [_internal.py:97]: 127.0.0.1 - - [08/Sep/2026 20:18:37] "GET /dashboard HTTP/1.1" 200 -
+2026-09-08 20:18:38,671 INFO [_internal.py:97]: 127.0.0.1 - - [08/Sep/2026 20:18:38] "[36mGET /static/css/style_v2.css HTTP/1.1[0m" 304 -
+2026-09-08 20:18:38,858 INFO [_internal.py:97]: 127.0.0.1 - - [08/Sep/2026 20:18:38] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+2026-09-08 20:18:38,963 INFO [_internal.py:97]: 127.0.0.1 - - [08/Sep/2026 20:18:38] "[36mGET /static/manifest.json HTTP/1.1[0m" 304 -
+2026-09-08 20:18:40,283 INFO [_internal.py:97]: 127.0.0.1 - - [08/Sep/2026 20:18:40] "[36mGET /static/img/icon.svg HTTP/1.1[0m" 304 -
+2026-09-08 20:28:30,333 DEBUG [connectionpool.py:1062]: Starting new HTTPS connection (1): freeipapi.com:443
+2026-09-08 20:28:31,464 DEBUG [connectionpool.py:544]: https://freeipapi.com:443 "GET /api/json HTTP/1.1" 302 None
+2026-09-08 20:28:31,469 DEBUG [connectionpool.py:1062]: Starting new HTTPS connection (1): free.freeipapi.com:443
+2026-09-08 20:28:34,662 DEBUG [connectionpool.py:544]: https://free.freeipapi.com:443 "GET /api/json HTTP/1.1" 200 None
+2026-09-08 20:28:34,701 INFO [_internal.py:97]: 127.0.0.1 - - [08/Sep/2026 20:28:34] "GET /?action=new HTTP/1.1" 200 -
+2026-09-08 20:28:34,904 INFO [_internal.py:97]: 127.0.0.1 - - [08/Sep/2026 20:28:34] "[36mGET /static/css/style_v2.css HTTP/1.1[0m" 304 -
+2026-09-08 20:28:34,913 INFO [_internal.py:97]: 127.0.0.1 - - [08/Sep/2026 20:28:34] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+2026-09-08 20:28:35,329 INFO [_internal.py:97]: 127.0.0.1 - - [08/Sep/2026 20:28:35] "[36mGET /static/manifest.json HTTP/1.1[0m" 304 -
+2026-09-08 20:28:35,842 INFO [_internal.py:97]: 127.0.0.1 - - [08/Sep/2026 20:28:35] "[36mGET /static/img/icon.svg HTTP/1.1[0m" 304 -
+2026-09-08 20:28:51,074 INFO [_internal.py:97]: 127.0.0.1 - - [08/Sep/2026 20:28:51] "GET /api/geocode?q=palakkad HTTP/1.1" 200 -
+2026-09-08 20:28:51,629 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): 127.0.0.1:8000
+2026-09-08 20:28:51,669 DEBUG [connectionpool.py:544]: http://127.0.0.1:8000 "GET /health HTTP/1.1" 200 42
+2026-09-08 20:28:51,684 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): 127.0.0.1:8000
+2026-09-08 20:28:51,701 DEBUG [connectionpool.py:544]: http://127.0.0.1:8000 "POST /v1/sky-events HTTP/1.1" 200 62
+2026-09-08 20:28:51,712 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): 127.0.0.1:8000
+2026-09-08 20:28:51,738 DEBUG [connectionpool.py:544]: http://127.0.0.1:8000 "POST /v1/sky-events HTTP/1.1" 200 62
+2026-09-08 20:28:51,746 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): 127.0.0.1:8000
+2026-09-08 20:28:51,762 DEBUG [connectionpool.py:544]: http://127.0.0.1:8000 "POST /v1/sky-events HTTP/1.1" 200 63
+2026-09-08 20:28:51,805 INFO [_internal.py:97]: 127.0.0.1 - - [08/Sep/2026 20:28:51] "[32mPOST /kundli HTTP/1.1[0m" 302 -
+2026-09-08 20:28:53,304 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): 127.0.0.1:8000
+2026-09-08 20:28:53,368 DEBUG [connectionpool.py:544]: http://127.0.0.1:8000 "POST /v1/natal-chart HTTP/1.1" 200 1389
+2026-09-08 20:28:53,388 INFO [_internal.py:97]: 127.0.0.1 - - [08/Sep/2026 20:28:53] "GET /dashboard HTTP/1.1" 200 -
+2026-09-08 20:28:53,564 INFO [_internal.py:97]: 127.0.0.1 - - [08/Sep/2026 20:28:53] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+2026-09-08 20:28:53,566 INFO [_internal.py:97]: 127.0.0.1 - - [08/Sep/2026 20:28:53] "[36mGET /static/manifest.json HTTP/1.1[0m" 304 -
+2026-09-08 20:28:53,869 INFO [_internal.py:97]: 127.0.0.1 - - [08/Sep/2026 20:28:53] "[36mGET /static/css/style_v2.css HTTP/1.1[0m" 304 -
+2026-09-08 20:28:54,509 INFO [_internal.py:97]: 127.0.0.1 - - [08/Sep/2026 20:28:54] "[36mGET /static/img/icon.svg HTTP/1.1[0m" 304 -
+2026-09-08 20:33:28,506 INFO [_internal.py:97]:  * Detected change in 'D:\\ASTROLOGYPREDICTIONS\\app\\astrology\\store.py', reloading
+2026-09-08 20:33:29,976 INFO [_internal.py:97]:  * Detected change in 'D:\\ASTROLOGYPREDICTIONS\\app\\astrology\\store.py', reloading
+2026-09-08 20:33:31,837 INFO [_internal.py:97]:  * Restarting with stat
+2026-09-08 20:33:40,399 INFO [__init__.py:51]: Astro Predictions V3.22.1 starting with debug logging enabled...
+2026-09-08 20:33:59,070 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): 127.0.0.1:8000
+2026-09-08 20:33:59,109 DEBUG [connectionpool.py:544]: http://127.0.0.1:8000 "GET /health HTTP/1.1" 200 42
+2026-09-08 20:33:59,263 WARNING [_internal.py:97]:  * Debugger is active!
+2026-09-08 20:33:59,283 INFO [_internal.py:97]:  * Debugger PIN: 644-143-807
+2026-09-08 20:34:45,987 INFO [_internal.py:97]:  * Detected change in 'D:\\ASTROLOGYPREDICTIONS\\app\\routes.py', reloading
