@@ -63,6 +63,9 @@
             <a href="{{ url_for('main.admin_accuracy') }}" class="nav-item-v2">
                 <i class="bi bi-bar-chart"></i> <span>Validation</span>
             </a>
+            <a href="{{ url_for('main.prediction_lab') }}" class="nav-item-v2 {% if request.endpoint == 'main.prediction_lab' %}active{% endif %}">
+                <i class="bi bi-cpu"></i> <span>Prediction Lab</span>
+            </a>
             {% endif %}
         </nav>
 

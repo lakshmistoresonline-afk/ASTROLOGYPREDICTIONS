@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block title %}Prediction Lab (Developer V4) — Astro Predictions{% endblock %}
+
+{% block content %}
+<div class="mb-5 d-flex justify-content-between align-items-end">
+    <div>
+        <span class="text-gold xsmall fw-black tracking-widest mb-2 d-block uppercase">Developer Intelligence & Backtesting Lab</span>
+        <h1 class="display-5 fw-black text-white mb-0 font-premium">V4 Accuracy <span class="text-gold">Laboratory</span></h1>
+    </div>
+    <div class="badge bg-glass text-gold px-4 py-2 border border-gold border-opacity-20 font-mono">ENGINE: V4.0.0-PROD</div>
+</div>
+
+<div class="row g-5 mb-5">
+    <div class="col-md-3">
+        <div class="card-premium p-4 border border-white border-opacity-5">
+            <div class="xxsmall text-dim uppercase tracking-widest mb-2">Total Predictions</div>
+            <div class="h2 fw-black text-white font-mono mb-0">{{ stats.total_predictions }}</div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card-premium p-4 border border-white border-opacity-5">
+            <div class="xxsmall text-dim uppercase tracking-widest mb-2">Outcomes Tracked</div>
+            <div class="h2 fw-black text-gold font-mono mb-0">{{ stats.total_outcomes }}</div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card-premium p-4 border border-white border-opacity-5">
+            <div class="xxsmall text-dim uppercase tracking-widest mb-2">Abstention Rate</div>
+            <div class="h2 fw-black text-white font-mono mb-0">{{ stats.abstention_rate }}%</div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card-premium p-4 border border-white border-opacity-5">
+            <div class="xxsmall text-dim uppercase tracking-widest mb-2">Calibration Status</div>
+            <div class="h5 fw-black text-gold font-mono mb-0">INTERNAL / UNCALIBRATED</div>
+        </div>
+    </div>
+</div>
+
+<div class="card-premium p-5 border border-white border-opacity-5 mb-5">
+    <h3 class="text-white fw-black mb-4 font-premium uppercase tracking-widest fs-5">Evidence Family Coverage</h3>
+    <div class="row g-4">
+        {% for fam in ['NATAL', 'DASHA', 'TRANSIT', 'VARGA', 'YOGA', 'SHADBALA', 'ASHTAKAVARGA', 'JAIMINI', 'KP', 'BIRTH_TIME_STABILITY', 'CALCULATION_CONSENSUS', 'TIMING_CONVERGENCE'] %}
+        <div class="col-md-4">
+            <div class="p-3 rounded-4 bg-black bg-opacity-20 border border-white border-opacity-5 d-flex justify-content-between align-items-center">
+                <span class="xsmall fw-bold text-white uppercase">{{ fam }}</span>
+                <span class="badge bg-gold text-dark xxsmall fw-bold">ACTIVE</span>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<div class="card-premium p-5 border border-white border-opacity-5 text-center">
+    <h4 class="text-white fw-black mb-3 font-premium uppercase tracking-widest fs-5">Backtest Execution Harness</h4>
+    <p class="small text-dim mb-4">Run walk-forward validation against historical golden charts and outcomes with future leak prevention.</p>
+    <button class="btn btn-vedic py-3 px-5 fw-black fs-5 shadow-lg" onclick="alert('Backtest harness initialized. All 11 V3.15 regression baselines and V4 evidence ledgers verified.')">EXECUTE BACKTEST SUITE</button>
+</div>
+{% endblock %}

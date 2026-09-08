@@ -1,11 +1,26 @@
 from typing import List, Dict, Any, Optional
 from dataclasses import dataclass, field
 
+VALID_EVIDENCE_FAMILIES = {
+    "NATAL",
+    "DASHA",
+    "TRANSIT",
+    "VARGA",
+    "YOGA",
+    "SHADBALA",
+    "ASHTAKAVARGA",
+    "JAIMINI",
+    "KP",
+    "BIRTH_TIME_STABILITY",
+    "CALCULATION_CONSENSUS",
+    "TIMING_CONVERGENCE"
+}
+
 @dataclass
 class EvidenceItem:
     evidence_id: str
     domain: str
-    source_family: str  # NATAL, DASHA, TRANSIT, VARGA, YOGA, ASHTAKAVARGA, JAIMINI, KP
+    source_family: str  # Must be one of VALID_EVIDENCE_FAMILIES
     rule_id: str
     description: str
     support_score: float = 0.0
@@ -14,10 +29,14 @@ class EvidenceItem:
     confidence: float = 0.8
     metadata: Dict[str, Any] = field(default_factory=dict)
 
+    def __post_init__(self):
+        if self.source_family not in VALID_EVIDENCE_FAMILIES:
+            raise ValueError(f"Invalid evidence family: {self.source_family}. Must be in {VALID_EVIDENCE_FAMILIES}")
+
 class EvidenceLedger:
     """
     V4 Machine-Readable Evidence Ledger & Contradiction Engine.
-    Ensures independent evidence convergence and explicit contradiction weighting.
+    Ensures independent evidence convergence across all 12 families and explicit contradiction weighting.
     """
     def __init__(self, domain: str):
         self.domain = domain
@@ -40,7 +59,7 @@ class EvidenceLedger:
         total_contradiction = sum(item.contradiction_score for item in self.items)
         net_score = total_support - total_contradiction
 
-        # Confirmation Gate: Requires at least 2 independent families (e.g. Natal + Dasha or Transit)
+        # Confirmation Gate: Requires at least 2 independent families
         min_families_required = 2
         has_sufficient_families = len(families) >= min_families_required
 
