@@ -229,7 +229,7 @@
         },
         "dispositor": "Mars",
         "functional_status": "Functional Malefic",
-        "shadbala_score": 332.07,
+        "shadbala_score": 377.07,
         "baladi_avastha": "Vriddha (Old)",
         "deeptadi_avastha": "Deena (Sad/Neutral)",
         "navamsa_rashi": 4
@@ -262,7 +262,7 @@
         },
         "dispositor": "Mars",
         "functional_status": "Functional Malefic",
-        "shadbala_score": 291.97,
+        "shadbala_score": 246.97,
         "baladi_avastha": "Yuva (Adult)",
         "deeptadi_avastha": "Kopita (Angry/Debilitated)",
         "navamsa_rashi": 4
@@ -335,69 +335,69 @@
       },
       "Gulika": {
         "name": "Gulika",
-        "longitude": 47.56032054187958,
+        "longitude": 118.85926304205495,
         "latitude": 0.0,
         "speed": 1.0,
         "is_retrograde": false,
         "is_combust": false,
-        "rashi": 1,
-        "degree": 17.560320541879577,
-        "house": 10,
+        "rashi": 3,
+        "degree": 28.85926304205495,
+        "house": 12,
         "dignity": "Neutral",
         "nakshatra": {
-          "name": "Rohini",
-          "index": 3,
-          "pada": 3,
-          "lord": "Moon",
-          "deity": "Brahma",
-          "symbol": "Chariot/Temple",
-          "gana": "Manushya",
-          "yoni": "Serpent",
+          "name": "Ashlesha",
+          "index": 8,
+          "pada": 4,
+          "lord": "Mercury",
+          "deity": "Sarpa",
+          "symbol": "Coiled Serpent",
+          "gana": "Rakshasa",
+          "yoni": "Cat",
           "nadi": 2,
           "degree_range": [
-            40.0,
-            53.333333333333336
+            106.66666666666667,
+            120.0
           ]
         },
-        "dispositor": "Venus",
+        "dispositor": "Moon",
         "functional_status": "Functional Malefic",
         "shadbala_score": 0.0,
-        "baladi_avastha": "Yuva (Adult)",
+        "baladi_avastha": "Bala (Infant)",
         "deeptadi_avastha": "Deena (Sad/Neutral)",
-        "navamsa_rashi": 2
+        "navamsa_rashi": 11
       },
       "Mandi": {
         "name": "Mandi",
-        "longitude": 48.06032054187958,
+        "longitude": 119.35926304205495,
         "latitude": 0.0,
         "speed": 1.0,
         "is_retrograde": false,
         "is_combust": false,
-        "rashi": 1,
-        "degree": 18.060320541879577,
-        "house": 10,
+        "rashi": 3,
+        "degree": 29.35926304205495,
+        "house": 12,
         "dignity": "Neutral",
         "nakshatra": {
-          "name": "Rohini",
-          "index": 3,
-          "pada": 3,
-          "lord": "Moon",
-          "deity": "Brahma",
-          "symbol": "Chariot/Temple",
-          "gana": "Manushya",
-          "yoni": "Serpent",
+          "name": "Ashlesha",
+          "index": 8,
+          "pada": 4,
+          "lord": "Mercury",
+          "deity": "Sarpa",
+          "symbol": "Coiled Serpent",
+          "gana": "Rakshasa",
+          "yoni": "Cat",
           "nadi": 2,
           "degree_range": [
-            40.0,
-            53.333333333333336
+            106.66666666666667,
+            120.0
           ]
         },
-        "dispositor": "Venus",
+        "dispositor": "Moon",
         "functional_status": "Functional Malefic",
         "shadbala_score": 0.0,
-        "baladi_avastha": "Kumara (Youth)",
+        "baladi_avastha": "Bala (Infant)",
         "deeptadi_avastha": "Deena (Sad/Neutral)",
-        "navamsa_rashi": 2
+        "navamsa_rashi": 11
       }
     },
     "houses": [
@@ -440,8 +440,8 @@
         "Saturn": 0,
         "Rahu": 3,
         "Ketu": 9,
-        "Gulika": 1,
-        "Mandi": 1
+        "Gulika": 3,
+        "Mandi": 3
       },
       "D2": {
         "Lagna": 3,
@@ -468,8 +468,8 @@
         "Saturn": 4,
         "Rahu": 7,
         "Ketu": 1,
-        "Gulika": 5,
-        "Mandi": 5
+        "Gulika": 11,
+        "Mandi": 11
       },
       "D4": {
         "Lagna": 1,
@@ -482,8 +482,8 @@
         "Saturn": 6,
         "Rahu": 6,
         "Ketu": 0,
-        "Gulika": 7,
-        "Mandi": 7
+        "Gulika": 0,
+        "Mandi": 0
       },
       "D7": {
         "Lagna": 10,
@@ -496,8 +496,8 @@
         "Saturn": 3,
         "Rahu": 11,
         "Ketu": 5,
-        "Gulika": 11,
-        "Mandi": 11
+        "Gulika": 3,
+        "Mandi": 3
       },
       "D9": {
         "Lagna": 8,
@@ -510,8 +510,8 @@
         "Saturn": 4,
         "Rahu": 6,
         "Ketu": 0,
-        "Gulika": 2,
-        "Mandi": 2
+        "Gulika": 11,
+        "Mandi": 11
       },
       "D10": {
         "Lagna": 1,
@@ -524,8 +524,8 @@
         "Saturn": 5,
         "Rahu": 2,
         "Ketu": 8,
-        "Gulika": 2,
-        "Mandi": 3
+        "Gulika": 8,
+        "Mandi": 8
       },
       "D12": {
         "Lagna": 3,
@@ -538,8 +538,8 @@
         "Saturn": 6,
         "Rahu": 7,
         "Ketu": 1,
-        "Gulika": 8,
-        "Mandi": 8
+        "Gulika": 2,
+        "Mandi": 2
       },
       "D16": {
         "Lagna": 7,
@@ -552,8 +552,8 @@
         "Saturn": 8,
         "Rahu": 5,
         "Ketu": 5,
-        "Gulika": 1,
-        "Mandi": 1
+        "Gulika": 3,
+        "Mandi": 3
       },
       "D20": {
         "Lagna": 3,
@@ -567,7 +567,7 @@
         "Rahu": 7,
         "Ketu": 7,
         "Gulika": 7,
-        "Mandi": 8
+        "Mandi": 7
       },
       "D24": {
         "Lagna": 3,
@@ -580,8 +580,8 @@
         "Saturn": 5,
         "Rahu": 11,
         "Ketu": 11,
-        "Gulika": 5,
-        "Mandi": 5
+        "Gulika": 2,
+        "Mandi": 2
       },
       "D27": {
         "Lagna": 2,
@@ -594,8 +594,8 @@
         "Saturn": 2,
         "Rahu": 7,
         "Ketu": 1,
-        "Gulika": 6,
-        "Mandi": 7
+        "Gulika": 10,
+        "Mandi": 11
       },
       "D30": {
         "Lagna": 6,
@@ -608,8 +608,8 @@
         "Saturn": 8,
         "Rahu": 5,
         "Ketu": 5,
-        "Gulika": 11,
-        "Mandi": 11
+        "Gulika": 7,
+        "Mandi": 7
       },
       "D40": {
         "Lagna": 3,
@@ -622,8 +622,8 @@
         "Saturn": 10,
         "Rahu": 8,
         "Ketu": 8,
-        "Gulika": 5,
-        "Mandi": 6
+        "Gulika": 8,
+        "Mandi": 9
       },
       "D45": {
         "Lagna": 0,
@@ -636,8 +636,8 @@
         "Saturn": 0,
         "Rahu": 4,
         "Ketu": 4,
-        "Gulika": 6,
-        "Mandi": 7
+        "Gulika": 7,
+        "Mandi": 8
       },
       "D60": {
         "Lagna": 11,
@@ -650,8 +650,8 @@
         "Saturn": 9,
         "Rahu": 4,
         "Ketu": 4,
-        "Gulika": 5,
-        "Mandi": 6
+        "Gulika": 3,
+        "Mandi": 4
       }
     },
     "ashtakavarga": {
@@ -771,12 +771,12 @@
       ],
       "ShodhyaPinda": {
         "Sun": 154,
-        "Moon": 35,
-        "Mars": 103,
-        "Mercury": 141,
+        "Moon": 45,
+        "Mars": 113,
+        "Mercury": 121,
         "Jupiter": 76,
         "Venus": 176,
-        "Saturn": 96
+        "Saturn": 116
       }
     },
     "yogas": [
@@ -845,10 +845,10 @@
       "Darakaraka": "Jupiter"
     },
     "special_lagnas": {
-      "Hora Lagna": 75.53909613949395,
-      "Ghati Lagna": 345.53909613949395,
-      "Bhava Lagna": 345.53909613949395,
-      "Pranapada Lagna": 255.53909613949395
+      "Hora Lagna": 82.50691524905298,
+      "Ghati Lagna": 182.95864391339157,
+      "Bhava Lagna": 169.02300569427345,
+      "Pranapada Lagna": 283.4103725777302
     },
     "arudha_padas": {
       "AL": 0,
