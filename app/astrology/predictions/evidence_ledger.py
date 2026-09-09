@@ -16,27 +16,36 @@ VALID_EVIDENCE_FAMILIES = {
     "TIMING_CONVERGENCE"
 }
 
+VALID_CORRELATION_TYPES = {
+    "INDEPENDENT",
+    "DERIVED",
+    "CORRELATED",
+    "DUPLICATE"
+}
+
 @dataclass
 class EvidenceItem:
     evidence_id: str
     domain: str
-    source_family: str  # Must be one of VALID_EVIDENCE_FAMILIES
+    source_family: str
     rule_id: str
     description: str
     support_score: float = 0.0
     contradiction_score: float = 0.0
     strength: str = "MODERATE"
     confidence: float = 0.8
+    correlation_type: str = "INDEPENDENT"  # Track A2: INDEPENDENT, DERIVED, CORRELATED, DUPLICATE
     metadata: Dict[str, Any] = field(default_factory=dict)
 
     def __post_init__(self):
         if self.source_family not in VALID_EVIDENCE_FAMILIES:
-            raise ValueError(f"Invalid evidence family: {self.source_family}. Must be in {VALID_EVIDENCE_FAMILIES}")
+            raise ValueError(f"Invalid evidence family: {self.source_family}")
+        if self.correlation_type not in VALID_CORRELATION_TYPES:
+            raise ValueError(f"Invalid correlation type: {self.correlation_type}")
 
 class EvidenceLedger:
     """
-    V4 Machine-Readable Evidence Ledger & Contradiction Engine.
-    Ensures independent evidence convergence across all 12 families and explicit contradiction weighting.
+    V4.3 Machine-Readable Evidence Ledger & Contradiction Engine with Double-Counting Elimination.
     """
     def __init__(self, domain: str):
         self.domain = domain
@@ -55,8 +64,23 @@ class EvidenceLedger:
             }
 
         families = set(item.source_family for item in self.items)
-        total_support = sum(item.support_score for item in self.items)
-        total_contradiction = sum(item.contradiction_score for item in self.items)
+
+        # Track A2: Apply correlation weights to eliminate double counting
+        total_support = 0.0
+        total_contradiction = 0.0
+
+        for item in self.items:
+            weight = 1.0
+            if item.correlation_type == "DUPLICATE":
+                weight = 0.0
+            elif item.correlation_type == "CORRELATED":
+                weight = 0.5
+            elif item.correlation_type == "DERIVED":
+                weight = 0.8
+
+            total_support += item.support_score * weight
+            total_contradiction += item.contradiction_score * weight
+
         net_score = total_support - total_contradiction
 
         # Confirmation Gate: Requires at least 2 independent families
