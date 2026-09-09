@@ -9,7 +9,7 @@ class V57ProspectiveLedgerRecord:
     V5.7 Immutable Prospective Prediction Ledger & Cryptographic Snapshot Hashing.
     Ensures that prediction state, evidence ledger, and version metadata remain tamper-proof.
     """
-    def __init__(self, person_id: str, domain: str, event_type: str, prediction_text: str, evidence_snapshot: Dict[str, Any], engine_version: str = "V5.7"):
+    def __init__(self, person_id: str, domain: str, event_type: str, prediction_text: str, evidence_snapshot: Dict[str, Any], engine_version: str = "V5.7.2"):
         self.prediction_id = str(uuid.uuid4())[:8]
         self.person_id = person_id
         self.created_at = datetime.utcnow().isoformat()
@@ -37,3 +37,17 @@ class V57ProspectiveLedgerRecord:
     def verify_integrity(self) -> bool:
         current_hash = self._generate_hash()
         return current_hash == self.snapshot_hash
+
+def check_prospective_pipeline_health() -> str:
+    """
+    V5.7.2 Prospective Pipeline Health Check.
+    Returns 'PASS' if ledger generation, hashing, and integrity checks are operational.
+    """
+    try:
+        rec = V57ProspectiveLedgerRecord("health_check_user", "CAREER", "promotion", "test", {"test": True})
+        assert rec.prediction_id is not None
+        assert rec.snapshot_hash is not None
+        assert rec.verify_integrity() is True
+        return "PASS"
+    except Exception:
+        return "FAIL"
