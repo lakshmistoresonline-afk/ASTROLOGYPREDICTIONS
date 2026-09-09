@@ -14,7 +14,7 @@ class JyotishReportPDF(FPDF):
         self.set_y(-15)
         self.set_font('helvetica', 'I', 8)
         self.set_text_color(128, 128, 128)
-        self.cell(0, 10, f'Page {self.page_no()} | Confidential | deterministic Jyotish Architecture V3.22', align='C')
+        self.cell(0, 10, f'Page {self.page_no()} | Confidential | Deterministic Jyotish Architecture V3.22', align='C')
 
     def chapter_title(self, title):
         self.set_font('helvetica', 'B', 16)
@@ -39,6 +39,9 @@ def sanitize_text(text):
         return text.encode('ascii', 'replace').decode('ascii')
 
 def generate_complete_pdf(data):
+    if not data or not isinstance(data, dict):
+        data = {}
+
     pdf = JyotishReportPDF()
     pdf.set_auto_page_break(auto=True, margin=20)
 
@@ -64,7 +67,10 @@ def generate_complete_pdf(data):
     pdf.set_y(240)
     pdf.set_font('helvetica', '', 10)
     pdf.set_text_color(150, 150, 150)
-    pdf.cell(0, 6, f"Participant: {sanitize_text(data['profile']['name'])}", ln=True, align='C')
+    p = data.get('profile', {})
+    if not isinstance(p, dict): p = {}
+    profile_name = sanitize_text(p.get('name') or 'Native')
+    pdf.cell(0, 6, f"Participant: {profile_name}", ln=True, align='C')
     pdf.cell(0, 6, f"Generated: {datetime.now().strftime('%d %b %Y, %H:%M %Z')}", ln=True, align='C')
     pdf.cell(0, 6, f"Governance: V3.22 Premium Specification", ln=True, align='C')
 
@@ -75,19 +81,21 @@ def generate_complete_pdf(data):
 
     pdf.section_title('Birth Identity & Foundation')
     pdf.set_font('helvetica', '', 10)
-    p = data['profile']
     pdf.cell(50, 8, 'Name:', border=0)
-    pdf.cell(0, 8, sanitize_text(p['name']), ln=True)
+    pdf.cell(0, 8, profile_name, ln=True)
     pdf.cell(50, 8, 'Birth Data:', border=0)
-    pdf.cell(0, 8, f"{p['dob']} {p['tob']} ({p['place']})", ln=True)
+    pdf.cell(0, 8, f"{p.get('dob', 'N/A')} {p.get('tob', 'N/A')} ({p.get('place', 'N/A')})", ln=True)
     pdf.ln(5)
 
     pdf.section_title('Primary Active Signals')
-    for sig in data['present']['top_signals']:
+    present_data = data.get('present', {})
+    if not isinstance(present_data, dict): present_data = {}
+    for sig in present_data.get('top_signals', []):
+        if not isinstance(sig, dict): continue
         pdf.set_font('helvetica', 'B', 10)
-        pdf.cell(60, 8, f" {sig['domain']}:", border=0)
+        pdf.cell(60, 8, f" {sig.get('domain', 'Signal')}:", border=0)
         pdf.set_font('helvetica', '', 10)
-        pdf.cell(0, 8, f"{sig['prediction_strength']} (Signal Strength: {int(sig['score'])}/100)", ln=True)
+        pdf.cell(0, 8, f"{sig.get('prediction_strength', 'ACTIVE')} (Signal Strength: {int(sig.get('score', 50))}/100)", ln=True)
 
     pdf.ln(10)
     pdf.set_font('helvetica', 'B', 10)
@@ -112,14 +120,16 @@ def generate_complete_pdf(data):
     pdf.set_text_color(0, 0, 0)
     pdf.set_font('helvetica', '', 9)
     # Using 12-month timeline data from dashboard
-    for item in data['present'].get('timeline', [])[:10]:
+    for item in present_data.get('timeline', [])[:10]:
+        if not isinstance(item, dict): continue
         if pdf.get_y() > 260: pdf.add_page()
-        pdf.cell(40, 8, item['peak'], border=1, align='C')
-        pdf.cell(60, 8, item['domain'], border=1, align='C')
-        pdf.cell(90, 8, sanitize_text(item['event'][:45]), border=1, align='L')
+        peak = str(item.get('peak') or item.get('peak_date') or 'N/A')
+        domain = str(item.get('domain') or 'General')
+        event_txt = sanitize_text(str(item.get('event') or item.get('description') or 'Active Phase')[:45])
+        pdf.cell(40, 8, peak, border=1, align='C')
+        pdf.cell(60, 8, domain, border=1, align='C')
+        pdf.cell(90, 8, event_txt, border=1, align='L')
         pdf.ln()
-
-    # --- 4. EVENT CLUSTERS ---
 
     # --- 4. LIFETIME ROADMAP ---
     pdf.add_page()
@@ -128,45 +138,49 @@ def generate_complete_pdf(data):
     pdf.multi_cell(w=pdf.epw, h=6, txt="Chronological reconstruction and prospective forecast of significant life chapters.")
     pdf.ln(5)
 
-    for event in data['lifecycle']['events']:
+    lifecycle_data = data.get('lifecycle', {})
+    if not isinstance(lifecycle_data, dict): lifecycle_data = {}
+    for event in lifecycle_data.get('events', []):
+        if not isinstance(event, dict): continue
         if pdf.get_y() > 250: pdf.add_page()
         pdf.set_font('helvetica', 'B', 10)
-        pdf.cell(30, 8, f"Age {int(event['age_at_peak'])}:", border=0)
+        pdf.cell(30, 8, f"Age {int(event.get('age_at_peak', 30))}:", border=0)
         pdf.set_text_color(245, 158, 11)
-        pdf.cell(60, 8, event['domain'], border=0)
+        pdf.cell(60, 8, str(event.get('domain', 'General')), border=0)
         pdf.set_text_color(0,0,0)
         pdf.set_font('helvetica', 'I', 9)
-        pdf.cell(0, 8, f"({event['peak_date']})", ln=True)
+        pdf.cell(0, 8, f"({event.get('peak_date', 'N/A')})", ln=True)
 
         pdf.set_font('helvetica', 'B', 9)
-        pdf.cell(0, 5, f"Temporal Status: {event['status']} | Precision: {event['timing_precision']}", ln=True)
+        pdf.cell(0, 5, f"Temporal Status: {event.get('status', 'ACTIVE')} | Precision: {event.get('timing_precision', 'MONTH')}", ln=True)
 
         pdf.set_font('helvetica', '', 9)
-        pdf.multi_cell(w=pdf.epw, h=5, txt=sanitize_text(event['why_now']))
+        pdf.multi_cell(w=pdf.epw, h=5, txt=sanitize_text(event.get('why_now', 'Active planetary transit activation.')))
         pdf.ln(2)
 
     # --- 5. DETAILED DOMAIN AUDIT ---
     pdf.add_page()
     pdf.chapter_title('4. 16-Domain Comprehensive Audit')
-    for p in data['present']['predictions']:
+    for p_item in present_data.get('predictions', []):
+        if not isinstance(p_item, dict): continue
         if pdf.get_y() > 230: pdf.add_page()
         pdf.set_fill_color(245, 245, 245)
         pdf.set_font('helvetica', 'B', 12)
-        pdf.cell(0, 10, f"{p['domain']}", ln=True, fill=True)
+        pdf.cell(0, 10, f"{p_item.get('domain', 'Domain')}", ln=True, fill=True)
 
         pdf.set_font('helvetica', 'B', 10)
-        pdf.cell(60, 8, f"Signal Strength: {int(p['score'])}/100", border=0)
-        pdf.cell(0, 8, f"Confidence Class: {p['confidence']}", ln=True)
+        pdf.cell(60, 8, f"Signal Strength: {int(p_item.get('score', 50))}/100", border=0)
+        pdf.cell(0, 8, f"Confidence Class: {p_item.get('confidence', 'MODERATE')}", ln=True)
 
         pdf.set_font('helvetica', '', 10)
-        pdf.multi_cell(w=pdf.epw, h=6, txt=sanitize_text(p['summary']))
+        pdf.multi_cell(w=pdf.epw, h=6, txt=sanitize_text(p_item.get('summary', '')))
 
-        if p.get('manifestations'):
+        if p_item.get('manifestations'):
             pdf.set_font('helvetica', 'B', 10)
             pdf.cell(0, 8, "Potential Manifestations:", ln=True)
             pdf.set_font('helvetica', '', 10)
-            for m in p['manifestations']:
-                pdf.cell(0, 6, f"- {sanitize_text(m)}", ln=True)
+            for m in p_item['manifestations']:
+                pdf.cell(0, 6, f"- {sanitize_text(str(m))}", ln=True)
 
         pdf.ln(4)
 
@@ -181,22 +195,25 @@ def generate_complete_pdf(data):
     pdf.cell(70, 8, 'End Date', border=1, fill=True)
     pdf.ln()
     for d in data.get('dashas', [])[:20]: # Limit for brevity
-        pdf.cell(50, 7, d['lord'], border=1)
-        pdf.cell(70, 7, d['start'], border=1)
-        pdf.cell(70, 7, d['end'], border=1)
+        if not isinstance(d, dict): continue
+        pdf.cell(50, 7, str(d.get('lord', '')), border=1)
+        pdf.cell(70, 7, str(d.get('start', '')), border=1)
+        pdf.cell(70, 7, str(d.get('end', '')), border=1)
         pdf.ln()
 
     pdf.add_page()
     pdf.chapter_title('Appendix B: Technical Evidence Audit')
     pdf.set_font('helvetica', '', 8)
     pdf.set_text_color(100, 100, 100)
-    for p in data['present']['predictions']:
+    for p_item in present_data.get('predictions', []):
+        if not isinstance(p_item, dict): continue
         if pdf.get_y() > 260: pdf.add_page()
         pdf.set_font('helvetica', 'B', 9)
-        pdf.cell(0, 8, f"Evidence: {p['domain']}", ln=True)
-        for node in p.get('evidence_chain', []):
+        pdf.cell(0, 8, f"Evidence: {p_item.get('domain', 'Domain')}", ln=True)
+        for node in p_item.get('evidence_chain', []):
+            if not isinstance(node, dict): continue
             src = node.get('source', 'Unknown')
-            pdf.multi_cell(w=pdf.epw, h=4, txt=f"  [{sanitize_text(src)}] {sanitize_text(node.get('description'))}")
+            pdf.multi_cell(w=pdf.epw, h=4, txt=f"  [{sanitize_text(str(src))}] {sanitize_text(str(node.get('description', '')))}")
         pdf.ln(2)
 
     return bytes(pdf.output())
