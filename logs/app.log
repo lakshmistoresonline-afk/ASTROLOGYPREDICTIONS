@@ -1560,3 +1560,79 @@
 2026-09-09 22:17:38,632 DEBUG [output.py:956]: - pages: 14.6KiB
 2026-09-09 22:17:38,633 DEBUG [output.py:956]: - fonts: 307.0B
 2026-09-09 22:17:38,670 INFO [_internal.py:97]: 127.0.0.1 - - [09/Sep/2026 22:17:38] "GET /report/download HTTP/1.1" 200 -
+2026-09-10 08:02:00,061 INFO [__init__.py:51]: Astro Predictions V3.22.1 starting with debug logging enabled...
+2026-09-10 08:02:10,278 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): 127.0.0.1:8000
+2026-09-10 08:02:10,327 DEBUG [connectionpool.py:544]: http://127.0.0.1:8000 "GET /health HTTP/1.1" 200 42
+2026-09-10 08:02:10,465 INFO [_internal.py:97]: [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5001
+ * Running on http://192.168.1.11:5001
+2026-09-10 08:02:10,467 INFO [_internal.py:97]: [33mPress CTRL+C to quit[0m
+2026-09-10 08:02:10,474 INFO [_internal.py:97]:  * Restarting with stat
+2026-09-10 08:02:22,056 INFO [__init__.py:51]: Astro Predictions V3.22.1 starting with debug logging enabled...
+2026-09-10 08:02:39,389 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): 127.0.0.1:8000
+2026-09-10 08:02:39,400 DEBUG [connectionpool.py:544]: http://127.0.0.1:8000 "GET /health HTTP/1.1" 200 42
+2026-09-10 08:02:39,502 WARNING [_internal.py:97]:  * Debugger is active!
+2026-09-10 08:02:39,538 INFO [_internal.py:97]:  * Debugger PIN: 644-143-807
+2026-09-10 08:02:41,635 DEBUG [connectionpool.py:1062]: Starting new HTTPS connection (1): freeipapi.com:443
+2026-09-10 08:02:42,077 DEBUG [connectionpool.py:544]: https://freeipapi.com:443 "GET /api/json HTTP/1.1" 302 None
+2026-09-10 08:02:42,083 DEBUG [connectionpool.py:1062]: Starting new HTTPS connection (1): free.freeipapi.com:443
+2026-09-10 08:02:42,602 DEBUG [connectionpool.py:544]: https://free.freeipapi.com:443 "GET /api/json HTTP/1.1" 200 None
+2026-09-10 08:02:42,710 INFO [_internal.py:97]: 127.0.0.1 - - [10/Sep/2026 08:02:42] "GET / HTTP/1.1" 200 -
+2026-09-10 08:02:44,527 INFO [_internal.py:97]: 127.0.0.1 - - [10/Sep/2026 08:02:44] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+2026-09-10 08:02:44,626 INFO [_internal.py:97]: 127.0.0.1 - - [10/Sep/2026 08:02:44] "[36mGET /static/css/style_v2.css HTTP/1.1[0m" 304 -
+2026-09-10 08:02:44,798 INFO [_internal.py:97]: 127.0.0.1 - - [10/Sep/2026 08:02:44] "[36mGET /static/manifest.json HTTP/1.1[0m" 304 -
+2026-09-10 08:02:50,853 INFO [_internal.py:97]: 127.0.0.1 - - [10/Sep/2026 08:02:50] "[36mGET /static/img/icon.svg HTTP/1.1[0m" 304 -
+2026-09-10 08:03:31,563 INFO [_internal.py:97]: 127.0.0.1 - - [10/Sep/2026 08:03:31] "GET /dashboard HTTP/1.1" 200 -
+2026-09-10 08:03:31,758 INFO [_internal.py:97]: 127.0.0.1 - - [10/Sep/2026 08:03:31] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+2026-09-10 08:03:31,761 INFO [_internal.py:97]: 127.0.0.1 - - [10/Sep/2026 08:03:31] "[36mGET /static/css/style_v2.css HTTP/1.1[0m" 304 -
+2026-09-10 08:03:32,075 INFO [_internal.py:97]: 127.0.0.1 - - [10/Sep/2026 08:03:32] "[36mGET /static/manifest.json HTTP/1.1[0m" 304 -
+2026-09-10 08:03:32,431 INFO [_internal.py:97]: 127.0.0.1 - - [10/Sep/2026 08:03:32] "[36mGET /static/img/icon.svg HTTP/1.1[0m" 304 -
+2026-09-10 08:03:33,964 DEBUG [connectionpool.py:1062]: Starting new HTTPS connection (1): freeipapi.com:443
+2026-09-10 08:03:34,300 DEBUG [connectionpool.py:544]: https://freeipapi.com:443 "GET /api/json HTTP/1.1" 302 None
+2026-09-10 08:03:34,306 DEBUG [connectionpool.py:1062]: Starting new HTTPS connection (1): free.freeipapi.com:443
+2026-09-10 08:03:34,811 DEBUG [connectionpool.py:544]: https://free.freeipapi.com:443 "GET /api/json HTTP/1.1" 200 None
+2026-09-10 08:03:34,821 INFO [_internal.py:97]: 127.0.0.1 - - [10/Sep/2026 08:03:34] "GET /?vault=1 HTTP/1.1" 200 -
+2026-09-10 08:03:35,017 INFO [_internal.py:97]: 127.0.0.1 - - [10/Sep/2026 08:03:35] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+2026-09-10 08:03:35,040 INFO [_internal.py:97]: 127.0.0.1 - - [10/Sep/2026 08:03:35] "[36mGET /static/manifest.json HTTP/1.1[0m" 304 -
+2026-09-10 08:03:35,345 INFO [_internal.py:97]: 127.0.0.1 - - [10/Sep/2026 08:03:35] "[36mGET /static/css/style_v2.css HTTP/1.1[0m" 304 -
+2026-09-10 08:03:36,235 INFO [_internal.py:97]: 127.0.0.1 - - [10/Sep/2026 08:03:36] "[36mGET /static/img/icon.svg HTTP/1.1[0m" 304 -
+2026-09-10 08:03:49,075 INFO [_internal.py:97]: 127.0.0.1 - - [10/Sep/2026 08:03:49] "GET /api/geocode?q=pala HTTP/1.1" 200 -
+2026-09-10 08:03:49,860 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): 127.0.0.1:8000
+2026-09-10 08:03:49,995 DEBUG [connectionpool.py:544]: http://127.0.0.1:8000 "GET /health HTTP/1.1" 200 42
+2026-09-10 08:03:50,208 INFO [_internal.py:97]: 127.0.0.1 - - [10/Sep/2026 08:03:50] "GET /api/geocode?q=palakkad HTTP/1.1" 200 -
+2026-09-10 08:03:51,353 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): 127.0.0.1:8000
+2026-09-10 08:03:51,393 DEBUG [connectionpool.py:544]: http://127.0.0.1:8000 "POST /v1/natal-chart HTTP/1.1" 200 1387
+2026-09-10 08:03:51,399 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): 127.0.0.1:8000
+2026-09-10 08:03:51,427 DEBUG [connectionpool.py:544]: http://127.0.0.1:8000 "POST /v1/sky-events HTTP/1.1" 200 62
+2026-09-10 08:03:51,433 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): 127.0.0.1:8000
+2026-09-10 08:03:51,449 DEBUG [connectionpool.py:544]: http://127.0.0.1:8000 "POST /v1/sky-events HTTP/1.1" 200 62
+2026-09-10 08:03:51,459 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): 127.0.0.1:8000
+2026-09-10 08:03:51,478 DEBUG [connectionpool.py:544]: http://127.0.0.1:8000 "POST /v1/sky-events HTTP/1.1" 200 63
+2026-09-10 08:03:51,598 INFO [_internal.py:97]: 127.0.0.1 - - [10/Sep/2026 08:03:51] "[32mPOST /kundli HTTP/1.1[0m" 302 -
+2026-09-10 08:03:51,963 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): 127.0.0.1:8000
+2026-09-10 08:03:51,980 DEBUG [connectionpool.py:544]: http://127.0.0.1:8000 "POST /v1/sky-events HTTP/1.1" 200 62
+2026-09-10 08:03:51,995 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): 127.0.0.1:8000
+2026-09-10 08:03:52,017 DEBUG [connectionpool.py:544]: http://127.0.0.1:8000 "POST /v1/sky-events HTTP/1.1" 200 62
+2026-09-10 08:03:52,032 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): 127.0.0.1:8000
+2026-09-10 08:03:52,048 DEBUG [connectionpool.py:544]: http://127.0.0.1:8000 "POST /v1/sky-events HTTP/1.1" 200 63
+2026-09-10 08:04:06,063 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): 127.0.0.1:8000
+2026-09-10 08:04:06,435 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): 127.0.0.1:8000
+2026-09-10 08:04:07,713 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): 127.0.0.1:8000
+2026-09-10 08:04:09,104 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): 127.0.0.1:8000
+2026-09-10 08:04:09,332 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): 127.0.0.1:8000
+2026-09-10 08:04:09,412 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): 127.0.0.1:8000
+2026-09-10 08:04:09,451 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): 127.0.0.1:8000
+2026-09-10 08:04:09,537 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): 127.0.0.1:8000
+2026-09-10 08:04:39,573 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): 127.0.0.1:8000
+2026-09-10 08:04:39,675 DEBUG [connectionpool.py:544]: http://127.0.0.1:8000 "POST /v1/natal-chart HTTP/1.1" 200 1427
+2026-09-10 08:04:39,763 INFO [_internal.py:97]: 127.0.0.1 - - [10/Sep/2026 08:04:39] "GET /dashboard HTTP/1.1" 200 -
+2026-09-10 08:04:40,410 INFO [_internal.py:97]: 127.0.0.1 - - [10/Sep/2026 08:04:40] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+2026-09-10 08:04:40,729 INFO [_internal.py:97]: 127.0.0.1 - - [10/Sep/2026 08:04:40] "[36mGET /static/css/style_v2.css HTTP/1.1[0m" 304 -
+2026-09-10 08:04:40,739 INFO [_internal.py:97]: 127.0.0.1 - - [10/Sep/2026 08:04:40] "[36mGET /static/manifest.json HTTP/1.1[0m" 304 -
+2026-09-10 08:04:41,392 INFO [_internal.py:97]: 127.0.0.1 - - [10/Sep/2026 08:04:41] "[36mGET /static/img/icon.svg HTTP/1.1[0m" 304 -
+2026-09-10 08:10:17,902 INFO [_internal.py:97]: 127.0.0.1 - - [10/Sep/2026 08:10:17] "[35m[1mGET /history HTTP/1.1[0m" 500 -
+2026-09-10 08:10:18,035 INFO [_internal.py:97]: 127.0.0.1 - - [10/Sep/2026 08:10:18] "GET /history?__debugger__=yes&cmd=resource&f=style.css HTTP/1.1" 200 -
+2026-09-10 08:10:18,106 INFO [_internal.py:97]: 127.0.0.1 - - [10/Sep/2026 08:10:18] "GET /history?__debugger__=yes&cmd=resource&f=debugger.js HTTP/1.1" 200 -
+2026-09-10 08:10:18,841 INFO [_internal.py:97]: 127.0.0.1 - - [10/Sep/2026 08:10:18] "GET /history?__debugger__=yes&cmd=resource&f=console.png&s=afoDFUKeFxrker6byYiV HTTP/1.1" 200 -
+2026-09-10 08:10:19,136 INFO [_internal.py:97]: 127.0.0.1 - - [10/Sep/2026 08:10:19] "GET /history?__debugger__=yes&cmd=resource&f=console.png HTTP/1.1" 200 -

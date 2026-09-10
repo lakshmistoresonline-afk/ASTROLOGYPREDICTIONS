@@ -52,8 +52,10 @@ def create_app():
 
     from .routes import main
     from .api.tracking import tracking_bp
+    from .api.v6_intelligence import v6_bp
 
     app.register_blueprint(main)
     app.register_blueprint(tracking_bp)
+    app.register_blueprint(v6_bp)
 
     return app
