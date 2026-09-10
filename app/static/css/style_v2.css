@@ -37,6 +37,14 @@ body {
                 var(--bg-main);
 }
 
+.max-w-7xl {
+    max-width: 1320px;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 24px;
+    padding-right: 24px;
+}
+
 /* --- Navigation & Header --- */
 .navbar-brand .font-premium {
     color: #FFFFFF !important;
