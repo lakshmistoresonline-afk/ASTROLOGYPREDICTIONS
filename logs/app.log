@@ -238,3 +238,13 @@
 2026-09-10 22:14:18,984 INFO [_internal.py:97]: 127.0.0.1 - - [10/Sep/2026 22:14:18] "[36mGET /static/manifest.json HTTP/1.1[0m" 304 -
 2026-09-10 22:14:19,187 INFO [_internal.py:97]: 127.0.0.1 - - [10/Sep/2026 22:14:19] "[36mGET /static/img/icon.svg HTTP/1.1[0m" 304 -
 2026-09-10 22:14:19,452 INFO [_internal.py:97]: 127.0.0.1 - - [10/Sep/2026 22:14:19] "[36mGET /static/img/icon.svg HTTP/1.1[0m" 304 -
+2026-09-10 22:20:36,975 DEBUG [connectionpool.py:1062]: Starting new HTTPS connection (1): freeipapi.com:443
+2026-09-10 22:20:37,719 DEBUG [connectionpool.py:544]: https://freeipapi.com:443 "GET /api/json HTTP/1.1" 302 None
+2026-09-10 22:20:37,723 DEBUG [connectionpool.py:1062]: Starting new HTTPS connection (1): free.freeipapi.com:443
+2026-09-10 22:20:38,435 DEBUG [connectionpool.py:544]: https://free.freeipapi.com:443 "GET /api/json HTTP/1.1" 200 None
+2026-09-10 22:20:38,507 INFO [_internal.py:97]: 127.0.0.1 - - [10/Sep/2026 22:20:38] "GET / HTTP/1.1" 200 -
+2026-09-10 22:20:38,654 INFO [_internal.py:97]: 127.0.0.1 - - [10/Sep/2026 22:20:38] "[36mGET /static/css/style.css?v=6.0 HTTP/1.1[0m" 304 -
+2026-09-10 22:20:38,665 INFO [_internal.py:97]: 127.0.0.1 - - [10/Sep/2026 22:20:38] "[36mGET /static/css/style_v2.css?v=6.0 HTTP/1.1[0m" 304 -
+2026-09-10 22:20:39,306 INFO [_internal.py:97]: 127.0.0.1 - - [10/Sep/2026 22:20:39] "[36mGET /static/manifest.json HTTP/1.1[0m" 304 -
+2026-09-10 22:20:39,461 INFO [_internal.py:97]: 127.0.0.1 - - [10/Sep/2026 22:20:39] "[36mGET /static/img/icon.svg HTTP/1.1[0m" 304 -
+2026-09-10 22:20:39,718 INFO [_internal.py:97]: 127.0.0.1 - - [10/Sep/2026 22:20:39] "[36mGET /static/img/icon.svg HTTP/1.1[0m" 304 -
