@@ -3,160 +3,120 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>{% block title %}Astro Predictions{% endblock %}</title>
+  <title>{% block title %}Astro Predictions — Premium Vedic Intelligence{% endblock %}</title>
   <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='img/icon.svg') }}"/>
 
   <!-- Next-Gen UI Stack -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"/>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"/>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap"/>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap"/>
 
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}"/>
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/style_v2.css') }}"/>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}?v=6.0"/>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style_v2.css') }}?v=6.0"/>
   <link rel="manifest" href="/static/manifest.json">
-  <meta name="theme-color" content="#fbbf24">
+  <meta name="theme-color" content="#08090E">
   {% block head %}{% endblock %}
 </head>
-<body class="ethereal-bg">
+<body class="ethereal-bg text-white min-vh-100 d-flex flex-column">
 
-<div id="layout-wrapper">
-    <!-- Sidebar -->
-    <aside id="sidebar">
-        <div class="sidebar-header mb-5">
-            <div class="d-flex align-items-center gap-3">
-                <div class="vc-avatar bg-gold text-dark fw-black" style="width: 40px; height: 40px; font-size: 1.1rem; box-shadow: 0 0 15px var(--gold-glow)">ॐ</div>
+    <!-- Top Celestial Navigation Bar (Co-Star / Chani Editorial Standard) -->
+    <header class="navbar navbar-expand-lg navbar-dark bg-glass border-bottom border-white border-opacity-10 sticky-top py-3 px-4 shadow-lg">
+        <div class="container-fluid max-w-7xl">
+            <a class="navbar-brand d-flex align-items-center gap-3 text-decoration-none" href="{{ url_for('main.dashboard') }}">
+                <div class="rounded-circle bg-gold text-dark d-flex align-items-center justify-content-center fw-black shadow-gold" style="width: 42px; height: 42px; font-size: 1.2rem; background: linear-gradient(135deg, #FBBF24 0%, #D97706 100%);">ॐ</div>
                 <div>
-                    <div class="app-brand fs-4 font-premium tracking-widest text-white mb-0">ASTRO PREDICTIONS</div>
-                    <div class="xxsmall text-gold fw-black tracking-widest opacity-50 uppercase">Intelligence Audit</div>
+                    <div class="font-premium fs-5 tracking-widest text-white mb-0 fw-bold">ASTRO PREDICTIONS</div>
+                    <div class="xxsmall text-gold fw-black tracking-widest opacity-60 uppercase font-mono" style="font-size: 0.65rem;">V6.0 Vedic Intelligence</div>
                 </div>
+            </a>
+
+            <button class="navbar-toggler border-0 text-white" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <i class="bi bi-list fs-2"></i>
+            </button>
+
+            <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+                <ul class="navbar-nav align-items-center gap-2 my-2 my-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link px-3 py-2 rounded-pill {% if request.endpoint == 'main.dashboard' %}active-pill{% endif %}" href="{{ url_for('main.dashboard') }}">
+                            <i class="bi bi-house-door me-1"></i> Home
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link px-3 py-2 rounded-pill {% if request.endpoint == 'main.predictions' %}active-pill{% endif %}" href="{{ url_for('main.predictions') }}">
+                            <i class="bi bi-compass me-1"></i> Forecast
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link px-3 py-2 rounded-pill {% if request.endpoint == 'main.timeline' %}active-pill{% endif %}" href="{{ url_for('main.timeline') }}">
+                            <i class="bi bi-calendar3 me-1"></i> Life Atlas
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link px-3 py-2 rounded-pill {% if request.endpoint == 'main.index' %}active-pill{% endif %}" href="{{ url_for('main.index') }}">
+                            <i class="bi bi-circle-square me-1"></i> My Chart & Vault
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link px-3 py-2 rounded-pill {% if request.endpoint == 'main.history' %}active-pill{% endif %}" href="{{ url_for('main.history') }}">
+                            <i class="bi bi-check2-square me-1"></i> Outcomes
+                        </a>
+                    </li>
+                    {% if session.get('is_beta_session') or session.get('is_admin') %}
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle px-3 py-2 rounded-pill text-gold" href="#" role="button" data-bs-toggle="dropdown">
+                            <i class="bi bi-cpu me-1"></i> Expert Mode
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-dark bg-glass border border-white border-opacity-10 shadow-2xl rounded-4 p-2">
+                            <li><a class="dropdown-item rounded-3 py-2" href="{{ url_for('main.admin_accuracy') }}"><i class="bi bi-bar-chart me-2"></i> Validation</a></li>
+                            <li><a class="dropdown-item rounded-3 py-2" href="{{ url_for('main.prediction_lab') }}"><i class="bi bi-cpu me-2"></i> Prediction Lab</a></li>
+                        </ul>
+                    </li>
+                    {% endif %}
+                </ul>
             </div>
         </div>
+    </header>
 
-        <nav class="nav-list">
-            <div class="nav-group-title">NAVIGATION</div>
-            <a href="{{ url_for('main.dashboard') }}" class="nav-item-v2 {% if request.endpoint == 'main.dashboard' %}active{% endif %}">
-                <i class="bi bi-house-door"></i> <span>Home</span>
-            </a>
-            <a href="{{ url_for('main.predictions') }}" class="nav-item-v2 {% if request.endpoint == 'main.predictions' %}active{% endif %}">
-                <i class="bi bi-compass"></i> <span>Forecast</span>
-            </a>
-            <a href="{{ url_for('main.timeline') }}" class="nav-item-v2 {% if request.endpoint == 'main.timeline' %}active{% endif %}">
-                <i class="bi bi-calendar3"></i> <span>Life Atlas</span>
-            </a>
-            <a href="{{ url_for('main.index') }}" class="nav-item-v2 {% if request.endpoint == 'main.index' %}active{% endif %}">
-                <i class="bi bi-circle-square"></i> <span>My Chart & Vault</span>
-            </a>
-            <a href="{{ url_for('main.predictions') }}" class="nav-item-v2">
-                <i class="bi bi-lightbulb"></i> <span>Insights</span>
-            </a>
+    <!-- Main Content Container -->
+    <main class="container py-5 flex-grow-1 max-w-7xl">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            {% for category, message in messages %}
+              <div class="alert alert-{{ 'danger' if category == 'error' else 'warning' if category == 'warning' else 'success' }} alert-dismissible fade show rounded-4 border-0 shadow-lg mb-4" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+              </div>
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
 
-            <div class="nav-group-title">GOVERNANCE</div>
-            <a href="{{ url_for('main.history') }}" class="nav-item-v2 {% if request.endpoint == 'main.history' %}active{% endif %}">
-                <i class="bi bi-check2-square"></i> <span>Outcomes</span>
-            </a>
-            <a href="{{ url_for('main.showcase') }}" class="nav-item-v2 {% if request.endpoint == 'main.showcase' %}active{% endif %}">
-                <i class="bi bi-display"></i> <span>Presentation</span>
-            </a>
+        {% block content %}{% endblock %}
+    </main>
 
-            {% if session.get('is_beta_session') or session.get('is_admin') %}
-            <div class="nav-group-title">EXPERT MODE</div>
-            <a href="{{ url_for('main.admin_accuracy') }}" class="nav-item-v2">
-                <i class="bi bi-bar-chart"></i> <span>Validation</span>
-            </a>
-            <a href="{{ url_for('main.prediction_lab') }}" class="nav-item-v2 {% if request.endpoint == 'main.prediction_lab' %}active{% endif %}">
-                <i class="bi bi-cpu"></i> <span>Prediction Lab</span>
-            </a>
-            {% endif %}
-        </nav>
-
-        <div class="p-4 mt-auto border-top border-white border-opacity-5">
-            <div class="d-flex align-items-center justify-content-between mb-3">
-                <span class="xxsmall text-gold fw-black tracking-widest uppercase opacity-40">Expert Mode</span>
-                <div class="form-check form-switch p-0 m-0">
-                    <input class="form-check-input ms-0" type="checkbox" role="switch" id="expertToggle"
-                           {% if session.get('expert_mode') %}checked{% endif %} onchange="toggleExpertMode(this.checked)">
-                </div>
-            </div>
-            <div class="d-flex align-items-center justify-content-between">
-                <span class="xsmall text-dim">Night Mode</span>
-                <button class="btn btn-sm p-0 text-gold" onclick="toggleTheme()">
-                    <i class="bi bi-moon-stars"></i>
-                </button>
-            </div>
+    <!-- Footer -->
+    <footer class="py-4 text-center border-top border-white border-opacity-10 bg-glass text-dim xsmall">
+        <div class="container max-w-7xl">
+            <span class="opacity-60">Astro Predictions V6.0 — Premium Vedic Intelligence Architecture. V3.15 Calculation Core Preserved.</span>
         </div>
-    </aside>
+    </footer>
 
-    <!-- Main Content -->
-    <div id="main-content">
-        <header class="master-header">
-            <div class="d-flex align-items-center gap-4">
-                <div id="live-clock" class="small text-gold fw-bold font-mono">00:00:00</div>
-            </div>
-
-            <div class="d-flex align-items-center gap-4">
-                <div class="d-flex align-items-center gap-2">
-                    <span class="xsmall text-dim">{{ session.get('birth_name', 'Visitor') }}</span>
-                    <div style="width: 32px; height: 32px; border-radius: 50%; background: var(--gold-glow); display: flex; align-items: center; justify-content: center">
-                        <i class="bi bi-person text-gold opacity-50"></i>
-                    </div>
-                </div>
-            </div>
-        </header>
-
-        <main class="viewport-content">
-            {% with messages = get_flashed_messages(with_categories=true) %}
-              {% for cat, msg in messages %}
-                <div class="alert alert-{{ cat }} border-0 rounded-4 shadow-sm mb-4">
-                   <i class="bi bi-info-circle me-2"></i> {{ msg }}
-                </div>
-              {% endfor %}
-            {% endwith %}
-
-            {% block content %}{% endblock %}
-        </main>
-    </div>
-</div>
-
-<!-- Essential Scripts -->
+<!-- Bootstrap JS Bundle -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-
 <script>
-function updateClock() {
-  const now = new Date();
-  document.getElementById("live-clock").textContent = now.toLocaleTimeString("en-IN", {hour12: false});
+function toggleExpertMode(val) {
+    fetch('/api/v1/session/expert', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({expert: val})
+    }).then(() => window.location.reload());
 }
-setInterval(updateClock, 1000); updateClock();
-
-const sidebarToggle = document.getElementById("sidebar-toggle");
-if (sidebarToggle) {
-    sidebarToggle.addEventListener("click", () => {
-      const sidebar = document.getElementById("sidebar");
-      const mainContent = document.getElementById("main-content");
-      if (sidebar) sidebar.classList.toggle("collapsed");
-      if (mainContent) mainContent.classList.toggle("expanded");
-    });
-}
-
-function toggleExpertMode(enabled) {
-    fetch("/api/v1/user/settings", {
-        method: "POST",
-        headers: {"Content-Type": "application/json"},
-        body: JSON.stringify({expert_mode: enabled})
-    }).then(() => location.reload());
-}
-
 function toggleTheme() {
-  const html = document.documentElement;
-  const current = html.getAttribute("data-bs-theme");
-  const next = current === "dark" ? "light" : "dark";
-  html.setAttribute("data-bs-theme", next);
-  localStorage.setItem("theme", next);
+    const html = document.documentElement;
+    const current = html.getAttribute('data-bs-theme');
+    html.setAttribute('data-bs-theme', current === 'dark' ? 'light' : 'dark');
 }
-const savedTheme = localStorage.getItem("theme") || "dark";
-document.documentElement.setAttribute("data-bs-theme", savedTheme);
 </script>
-
 {% block scripts %}{% endblock %}
 </body>
 </html>
