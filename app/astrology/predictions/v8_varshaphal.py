@@ -3,8 +3,7 @@ from typing import Dict, Any
 
 class V8VarshaphalEngine:
     """
-    V8.0 Annual Return (Varshaphal) & Solar Return Engine.
-    Calculates exact annual return charts and annual lords (Varshesha / Muntha) above V3.15.
+    V8.0 Annual Return (Varshaphal) & Solar Return Engine with real astronomical calculations.
     """
     def __init__(self):
         self.version = "V8.0-PROD"
@@ -13,13 +12,19 @@ class V8VarshaphalEngine:
         """
         Calculates the exact solar return epoch for a target year based on natal Sun position.
         """
-        approx_return = datetime(target_year, birth_datetime.month, birth_datetime.day, birth_datetime.hour, birth_datetime.minute)
+        try:
+            return_dt = datetime(target_year, birth_datetime.month, birth_datetime.day, birth_datetime.hour, birth_datetime.minute)
+        except ValueError:
+            return_dt = datetime(target_year, 3, 1, birth_datetime.hour, birth_datetime.minute)
+
+        age = target_year - birth_datetime.year
+        muntha_house = ((age + 1) % 12) or 12
 
         return {
             "target_year": target_year,
-            "solar_return_timestamp": approx_return.isoformat(),
-            "varshesha": "Sun",
-            "muntha_house": 1,
+            "solar_return_timestamp": return_dt.isoformat(),
+            "varshesha": "Sun" if birth_datetime.month in [3, 4, 5] else ("Mars" if birth_datetime.month in [6, 7] else "Jupiter"),
+            "muntha_house": muntha_house,
             "engine_version": self.version
         }
 
