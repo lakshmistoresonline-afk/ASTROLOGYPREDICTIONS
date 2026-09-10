@@ -43,6 +43,12 @@
                         </a>
                     </li>
                     <li class="nav-item">
+                        <a class="nav-link px-3 py-2 rounded-pill {% if request.endpoint == 'main.index' %}active-pill{% endif %}" href="{{ url_for('main.index') }}">
+                            <i class="bi bi-circle-square me-1"></i> My Chart & Vault
+                        </a>
+                    </li>
+                    {% if session.get('active_chart_id') %}
+                    <li class="nav-item">
                         <a class="nav-link px-3 py-2 rounded-pill {% if request.endpoint == 'main.predictions' %}active-pill{% endif %}" href="{{ url_for('main.predictions') }}">
                             <i class="bi bi-compass me-1"></i> Forecast
                         </a>
@@ -53,8 +59,8 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link px-3 py-2 rounded-pill {% if request.endpoint == 'main.index' %}active-pill{% endif %}" href="{{ url_for('main.index') }}">
-                            <i class="bi bi-circle-square me-1"></i> My Chart & Vault
+                        <a class="nav-link px-3 py-2 rounded-pill" href="{{ url_for('main.predictions') }}">
+                            <i class="bi bi-lightbulb me-1"></i> Insights
                         </a>
                     </li>
                     <li class="nav-item">
@@ -62,6 +68,7 @@
                             <i class="bi bi-check2-square me-1"></i> Outcomes
                         </a>
                     </li>
+                    {% endif %}
                     {% if session.get('is_beta_session') or session.get('is_admin') %}
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle px-3 py-2 rounded-pill text-gold" href="#" role="button" data-bs-toggle="dropdown">
