@@ -15,8 +15,8 @@
             </div>
         </div>
         <div class="d-flex gap-2">
-            <a href="{{ url_for('main.index', vault=1) }}" class="btn btn-outline-gold btn-sm xsmall fw-black px-3 py-2 uppercase tracking-widest">SELECT PROFILE</a>
-            <a href="{{ url_for('main.index', action='new') }}" class="btn btn-vedic btn-sm xsmall fw-black px-3 py-2 uppercase tracking-widest">+ CREATE PROFILE</a>
+            <a href="{{ url_for('main.index') }}" class="btn btn-outline-gold btn-sm xsmall fw-black px-3 py-2 uppercase tracking-widest">SELECT PROFILE</a>
+            <a href="{{ url_for('main.new_profile') }}" class="btn btn-vedic btn-sm xsmall fw-black px-3 py-2 uppercase tracking-widest">+ CREATE PROFILE</a>
         </div>
     </header>
 
@@ -27,8 +27,8 @@
         <h2 class="text-white fw-black mb-3 font-premium uppercase tracking-widest">NO ACTIVE PROFILE</h2>
         <p class="fs-5 text-dim mb-5 opacity-70">Create or select a profile to begin your intelligence briefing.</p>
         <div class="d-flex justify-content-center gap-4">
-            <a href="{{ url_for('main.index', action='new') }}" class="btn btn-vedic py-3 px-5 fw-black fs-5 shadow-2xl">CREATE PROFILE</a>
-            <a href="{{ url_for('main.index', vault=1) }}" class="btn btn-outline-gold py-3 px-5 fw-black fs-5 shadow-2xl">SELECT PROFILE</a>
+            <a href="{{ url_for('main.new_profile') }}" class="btn btn-vedic py-3 px-5 fw-black fs-5 shadow-2xl">CREATE PROFILE</a>
+            <a href="{{ url_for('main.index') }}" class="btn btn-outline-gold py-3 px-5 fw-black fs-5 shadow-2xl">SELECT PROFILE</a>
         </div>
     </div>
 </div>
@@ -49,8 +49,8 @@
                 <div class="small fw-bold text-gold font-mono">{{ daily.current_dasha if daily and daily.current_dasha else 'DETERMINISTIC_SCAN' }}</div>
             </div>
             <div class="d-flex gap-2">
-                <a href="{{ url_for('main.index', vault=1) }}" class="btn btn-outline-gold btn-sm xsmall fw-black px-3 py-2 uppercase tracking-widest">SWITCH PROFILE</a>
-                <a href="{{ url_for('main.index', action='new') }}" class="btn btn-vedic btn-sm xsmall fw-black px-3 py-2 uppercase tracking-widest">+ CREATE PROFILE</a>
+                <a href="{{ url_for('main.index') }}" class="btn btn-outline-gold btn-sm xsmall fw-black px-3 py-2 uppercase tracking-widest">SWITCH PROFILE</a>
+                <a href="{{ url_for('main.new_profile') }}" class="btn btn-vedic btn-sm xsmall fw-black px-3 py-2 uppercase tracking-widest">+ CREATE PROFILE</a>
             </div>
         </div>
     </header>
