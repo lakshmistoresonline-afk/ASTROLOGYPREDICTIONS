@@ -2,15 +2,15 @@
 {% block title %}Astro Predictions — Premium Vedic Intelligence{% endblock %}
 
 {% block content %}
-<div class="row align-items-center justify-content-center min-vh-75 py-5">
+<div class="row align-items-center justify-content-center py-3">
     <div class="col-lg-8 text-center">
-        <div class="badge bg-gold text-dark mb-4 fw-black px-4 py-2 xsmall tracking-widest shadow-lg rounded-pill">V8.0 VEDIC INTELLIGENCE ENGINE</div>
-        <h1 class="display-2 fw-black text-white mb-4 font-premium tracking-tight" style="font-family: 'Cinzel', serif;">Cosmic Intelligence <br/><span class="text-gold font-italic">& Life Forecasting</span></h1>
-        <p class="fs-4 text-white opacity-80 leading-relaxed mb-5 mx-auto" style="max-width: 700px; font-weight: 300;">
+        <div class="badge bg-gold text-dark mb-3 fw-black px-4 py-2 xsmall tracking-widest shadow-lg rounded-pill" style="font-size: 0.7rem;">V8.0 VEDIC INTELLIGENCE ENGINE</div>
+        <h1 class="display-4 fw-black text-white mb-3 font-premium tracking-tight" style="font-family: 'Cinzel', serif;">Cosmic Intelligence & Life Forecasting</h1>
+        <p class="fs-5 text-white opacity-80 leading-relaxed mb-4 mx-auto" style="max-width: 650px; font-weight: 300;">
             Navigate your life chapters with precision timing, evidence-driven event forecasts, and verified deterministic Swiss Ephemeris astrology.
         </p>
 
-        <div class="d-flex justify-content-center gap-4 flex-wrap mb-5">
+        <div class="d-flex justify-content-center gap-3 flex-wrap mb-4">
             <a href="{{ url_for('main.new_profile') }}" class="btn btn-vedic py-3 px-5 fw-black fs-5 shadow-lg rounded-pill text-decoration-none">
                 <i class="bi bi-person-plus me-2"></i> CREATE NEW PROFILE
             </a>
@@ -21,23 +21,23 @@
             {% endif %}
         </div>
 
-        <div class="row g-4 mt-4 text-start">
+        <div class="row g-3 mt-2 text-start">
             <div class="col-md-6">
-                <div class="p-4 rounded-5 border border-white border-opacity-10 bg-glass h-100 shadow-sm">
-                    <div class="d-flex align-items-center gap-3 mb-2">
-                        <i class="bi bi-compass text-gold fs-4"></i>
+                <div class="p-3 rounded-4 border border-white border-opacity-10 bg-glass h-100 shadow-sm">
+                    <div class="d-flex align-items-center gap-2 mb-1">
+                        <i class="bi bi-compass text-gold fs-5"></i>
                         <h6 class="xxsmall text-gold fw-black uppercase tracking-widest mb-0">Timing & Horizons</h6>
                     </div>
-                    <p class="xsmall text-white leading-relaxed opacity-80">Precise life phase tracking through active Mahadasha and Antardasha cycles.</p>
+                    <p class="xsmall text-white leading-relaxed opacity-80 mb-0">Precise life phase tracking through active Mahadasha cycles.</p>
                 </div>
             </div>
             <div class="col-md-6">
-                <div class="p-4 rounded-5 border border-white border-opacity-10 bg-glass h-100 shadow-sm">
-                    <div class="d-flex align-items-center gap-3 mb-2">
-                        <i class="bi bi-shield-check text-gold fs-4"></i>
+                <div class="p-3 rounded-4 border border-white border-opacity-10 bg-glass h-100 shadow-sm">
+                    <div class="d-flex align-items-center gap-2 mb-1">
+                        <i class="bi bi-shield-check text-gold fs-5"></i>
                         <h6 class="xxsmall text-gold fw-black uppercase tracking-widest mb-0">Evidence-Backed</h6>
                     </div>
-                    <p class="xsmall text-white leading-relaxed opacity-80">Rigorous confirmation gates, contradiction controls, and immutable prediction ledgers.</p>
+                    <p class="xsmall text-white leading-relaxed opacity-80 mb-0">Rigorous confirmation gates and immutable prediction ledgers.</p>
                 </div>
             </div>
         </div>
@@ -45,20 +45,20 @@
 </div>
 
 {% if saved_charts %}
-<div id="vault-section" class="row justify-content-center py-5 border-top border-white border-opacity-10">
+<div id="vault-section" class="row justify-content-center py-4 border-top border-white border-opacity-10 mt-4">
     <div class="col-lg-8">
-        <h3 class="text-white fw-black font-premium mb-4 text-center">Your Saved Chart Vault</h3>
+        <h3 class="text-white fw-black font-premium mb-3 text-center fs-5">Your Saved Chart Vault</h3>
         <div class="row g-3">
             {% for c in saved_charts %}
             <div class="col-md-6">
-                <div class="p-4 rounded-4 bg-glass border border-white border-opacity-10 hover-scale-sm cursor-pointer transition-all" onclick="window.location.href='{{ url_for('main.load_kundli', cid=c.id) }}?next=dashboard'">
+                <div class="p-3 rounded-4 bg-glass border border-white border-opacity-10 hover-scale-sm cursor-pointer transition-all" onclick="window.location.href='{{ url_for('main.load_kundli', cid=c.id) }}?next=dashboard'">
                     <div class="d-flex justify-content-between align-items-center">
                         <div class="d-flex align-items-center gap-3">
-                            <div class="vc-avatar bg-gold text-dark fw-bold rounded-circle d-flex align-items-center justify-content-center" style="width: 45px; height: 45px; font-size: 1.1rem;">
+                            <div class="vc-avatar bg-gold text-dark fw-bold rounded-circle d-flex align-items-center justify-content-center" style="width: 40px; height: 40px; font-size: 1rem;">
                                 {{ (c.name or 'N')[0].upper() }}
                             </div>
                             <div>
-                                <h6 class="text-white fw-bold mb-1">{{ c.name or 'Unknown' }}</h6>
+                                <h6 class="text-white fw-bold mb-1 fs-6">{{ c.name or 'Unknown' }}</h6>
                                 <div class="xxsmall text-gold uppercase font-mono tracking-widest opacity-80">Active Blueprint</div>
                             </div>
                         </div>
