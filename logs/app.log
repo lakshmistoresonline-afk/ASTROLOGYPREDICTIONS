@@ -172,3 +172,40 @@
 2026-09-10 19:01:44,873 INFO [_internal.py:97]: 127.0.0.1 - - [10/Sep/2026 19:01:44] "[36mGET /static/manifest.json HTTP/1.1[0m" 304 -
 2026-09-10 19:01:45,204 INFO [_internal.py:97]: 127.0.0.1 - - [10/Sep/2026 19:01:45] "[36mGET /static/img/icon.svg HTTP/1.1[0m" 304 -
 2026-09-10 19:01:45,385 INFO [_internal.py:97]: 127.0.0.1 - - [10/Sep/2026 19:01:45] "[36mGET /static/img/icon.svg HTTP/1.1[0m" 304 -
+2026-09-10 20:27:46,579 DEBUG [connectionpool.py:1062]: Starting new HTTPS connection (1): freeipapi.com:443
+2026-09-10 20:27:47,860 DEBUG [connectionpool.py:544]: https://freeipapi.com:443 "GET /api/json HTTP/1.1" 302 None
+2026-09-10 20:27:47,864 DEBUG [connectionpool.py:1062]: Starting new HTTPS connection (1): free.freeipapi.com:443
+2026-09-10 20:27:48,733 DEBUG [connectionpool.py:544]: https://free.freeipapi.com:443 "GET /api/json HTTP/1.1" 200 None
+2026-09-10 20:27:48,847 INFO [_internal.py:97]: 127.0.0.1 - - [10/Sep/2026 20:27:48] "GET / HTTP/1.1" 200 -
+2026-09-10 20:27:49,180 INFO [_internal.py:97]: 127.0.0.1 - - [10/Sep/2026 20:27:49] "[36mGET /static/css/style.css?v=6.0 HTTP/1.1[0m" 304 -
+2026-09-10 20:27:49,336 INFO [_internal.py:97]: 127.0.0.1 - - [10/Sep/2026 20:27:49] "[36mGET /static/css/style_v2.css?v=6.0 HTTP/1.1[0m" 304 -
+2026-09-10 20:27:49,345 INFO [_internal.py:97]: 127.0.0.1 - - [10/Sep/2026 20:27:49] "[36mGET /static/manifest.json HTTP/1.1[0m" 304 -
+2026-09-10 20:27:49,810 INFO [_internal.py:97]: 127.0.0.1 - - [10/Sep/2026 20:27:49] "[36mGET /static/img/icon.svg HTTP/1.1[0m" 304 -
+2026-09-10 20:27:49,984 INFO [_internal.py:97]: 127.0.0.1 - - [10/Sep/2026 20:27:49] "[36mGET /static/img/icon.svg HTTP/1.1[0m" 304 -
+2026-09-10 21:06:40,627 INFO [__init__.py:51]: Astro Predictions V3.22.1 starting with debug logging enabled...
+2026-09-10 21:06:48,396 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): 127.0.0.1:8000
+2026-09-10 21:06:48,498 DEBUG [connectionpool.py:544]: http://127.0.0.1:8000 "GET /health HTTP/1.1" 200 42
+2026-09-10 21:06:48,637 INFO [_internal.py:97]: [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5001
+ * Running on http://192.168.1.11:5001
+2026-09-10 21:06:48,638 INFO [_internal.py:97]: [33mPress CTRL+C to quit[0m
+2026-09-10 21:06:48,645 INFO [_internal.py:97]:  * Restarting with stat
+2026-09-10 21:06:56,710 INFO [__init__.py:51]: Astro Predictions V3.22.1 starting with debug logging enabled...
+2026-09-10 21:07:08,751 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): 127.0.0.1:8000
+2026-09-10 21:07:08,787 DEBUG [connectionpool.py:544]: http://127.0.0.1:8000 "GET /health HTTP/1.1" 200 42
+2026-09-10 21:07:08,877 WARNING [_internal.py:97]:  * Debugger is active!
+2026-09-10 21:07:08,893 INFO [_internal.py:97]:  * Debugger PIN: 644-143-807
+2026-09-10 21:07:09,561 DEBUG [connectionpool.py:1062]: Starting new HTTPS connection (1): freeipapi.com:443
+2026-09-10 21:07:09,903 DEBUG [connectionpool.py:544]: https://freeipapi.com:443 "GET /api/json HTTP/1.1" 302 None
+2026-09-10 21:07:09,913 DEBUG [connectionpool.py:1062]: Starting new HTTPS connection (1): free.freeipapi.com:443
+2026-09-10 21:07:10,706 DEBUG [connectionpool.py:544]: https://free.freeipapi.com:443 "GET /api/json HTTP/1.1" 200 None
+2026-09-10 21:07:10,850 INFO [_internal.py:97]: 127.0.0.1 - - [10/Sep/2026 21:07:10] "GET / HTTP/1.1" 200 -
+2026-09-10 21:07:12,222 INFO [_internal.py:97]: 127.0.0.1 - - [10/Sep/2026 21:07:12] "[36mGET /static/css/style.css?v=6.0 HTTP/1.1[0m" 304 -
+2026-09-10 21:07:12,388 INFO [_internal.py:97]: 127.0.0.1 - - [10/Sep/2026 21:07:12] "[36mGET /static/css/style_v2.css?v=6.0 HTTP/1.1[0m" 304 -
+2026-09-10 21:07:12,548 INFO [_internal.py:97]: 127.0.0.1 - - [10/Sep/2026 21:07:12] "[36mGET /static/manifest.json HTTP/1.1[0m" 304 -
+2026-09-10 21:07:14,002 INFO [_internal.py:97]: 127.0.0.1 - - [10/Sep/2026 21:07:14] "[36mGET /static/img/icon.svg HTTP/1.1[0m" 304 -
+2026-09-10 21:25:04,496 ERROR [_internal.py:97]: 192.168.1.11 - - [10/Sep/2026 21:25:04] code 400, message Bad request version ("J\x86¶Ê×\x8dvï\x7fíW[\x9aí\x00\x00*À,À+À0À/\x00\x9f\x00\x9eÀ$À#À(À'À")
+2026-09-10 21:25:04,513 INFO [_internal.py:97]: 192.168.1.11 - - [10/Sep/2026 21:25:04] "[31m[1m\x16\x03\x03\x00 \x01\x00\x00\x9c\x03\x03j¢ÒØXÞhnÊh\x8b\x1f\x120èÙJ\x09J\x86¶Ê×\x8dvï\x7fíW[\x9aí\x00\x00*À,À+À0À/\x00\x9f\x00\x9eÀ$À#À(À'À[0m" 400 -
+2026-09-10 21:25:04,545 ERROR [_internal.py:97]: 192.168.1.11 - - [10/Sep/2026 21:25:04] code 400, message Bad request version ("iÍ\x8d÷=äçO\x8c4´ËÐ\x10\x00\x00*À,À+À0À/\x00\x9f\x00\x9eÀ$À#À(À'À")
+2026-09-10 21:25:04,550 INFO [_internal.py:97]: 192.168.1.11 - - [10/Sep/2026 21:25:04] "[31m[1m\x16\x03\x03\x00 \x01\x00\x00\x9c\x03\x03j¢ÒØ-\x08Ü ¦\x0c¦²\x00\x0fh¢\x9b\x0diÍ\x8d÷=äçO\x8c4´ËÐ\x10\x00\x00*À,À+À0À/\x00\x9f\x00\x9eÀ$À#À(À'À[0m" 400 -
