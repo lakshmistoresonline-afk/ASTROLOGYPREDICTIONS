@@ -4,13 +4,13 @@ External API integrations:
   - TimeZoneDB         → (lat, lon) → IANA timezone string
 
 Strict deterministic handling of birth coordinates and timezones.
+Zero tolerance for New Delhi fallback on geocode failure.
 """
 import os
 import requests
 from typing import Optional
 from timezonefinder import TimezoneFinder
 from geopy.geocoders import Nominatim, OpenCage
-from geopy.exc import GeocoderTimedOut, GeocoderServiceError
 import pytz
 from functools import lru_cache
 
@@ -23,12 +23,29 @@ _tf = TimezoneFinder()
 def geocode_place(place_name: str) -> dict:
     """
     Convert a place name to lat/lon/timezone.
-    Priority: Local Offline Database → OpenCage API → Nominatim
+    Priority: Canonical Location Database → OpenCage API → Nominatim
+    ZERO TOLERANCE FOR NEW DELHI FALLBACK. Returns error dict on failure.
     """
-    from ..astrology.core.cities import search_offline_city
-    local_results = search_offline_city(place_name)
+    if not place_name or not place_name.strip():
+        return {"error": "LOCATION_RESOLUTION_FAILED", "message": "Birthplace is mandatory."}
+
+    from ..astrology.core.location_db import search_canonical_locations
+    local_results = search_canonical_locations(place_name)
     if local_results:
-        return local_results[0]
+        loc = local_results[0]
+        return {
+            "lat": loc["latitude"], "lon": loc["longitude"], "timezone": loc["timezone"],
+            "display_name": loc["display_name"], "source": loc["source"], "location_id": loc["location_id"]
+        }
+
+    from ..astrology.core.cities import search_offline_city
+    legacy_results = search_offline_city(place_name)
+    if legacy_results:
+        res = legacy_results[0]
+        return {
+            "lat": res["lat"], "lon": res["lon"], "timezone": res["timezone"],
+            "display_name": res["display_name"], "source": "OFFLINE_CITIES"
+        }
 
     if OPENCAGE_KEY:
         try:
@@ -57,11 +74,8 @@ def geocode_place(place_name: str) -> dict:
                 }
     except Exception: pass
 
-    # Robust Fallback: Default to New Delhi coordinates with Asia/Kolkata timezone if service unavailable
-    return {
-        "lat": 28.6139, "lon": 77.2090, "timezone": "Asia/Kolkata",
-        "display_name": f"{place_name} (New Delhi Baseline)", "source": "Fallback"
-    }
+    # ZERO NEW DELHI FALLBACK MANDATE
+    return {"error": "LOCATION_RESOLUTION_FAILED", "message": "Birthplace could not be verified. Please select a location from the search results."}
 
 def _tz_from_coords(lat: float, lon: float) -> Optional[str]:
     """
@@ -91,10 +105,10 @@ def get_ip_location() -> dict:
         if resp.status_code == 200:
             data = resp.json()
             return {
-                "lat": data.get("latitude", 20.5937),
-                "lon": data.get("longitude", 78.9629),
-                "city": data.get("cityName", "India"),
+                "lat": data.get("latitude", 28.6139),
+                "lon": data.get("longitude", 77.2090),
+                "city": data.get("cityName", "New Delhi"),
                 "timezone": data.get("timeZone", "Asia/Kolkata"),
             }
     except Exception: pass
-    return {"lat": 20.5937, "lon": 78.9629, "city": "Delhi", "timezone": "Asia/Kolkata"}
+    return {"lat": 28.6139, "lon": 77.2090, "city": "New Delhi", "timezone": "Asia/Kolkata"}
