@@ -5,7 +5,7 @@ from typing import Dict, Any, List, Optional
 class CalculationClient:
     def __init__(self):
         self.base_url = os.getenv("CALC_SERVICE_URL", "http://127.0.0.1:8000")
-        self.timeout = 10.0 # Robust timeout
+        self.timeout = 0.8 # Ultra-fast timeout for instant in-process fallback
         self._cache = {}
 
     def get_natal_chart(self, year: int, month: int, day: int, hour: float, lat: float, lon: float, ayanamsa: str = "LAHIRI") -> Dict[str, Any]:
@@ -21,7 +21,7 @@ class CalculationClient:
             self._cache[cache_key] = data
             return data
         except Exception:
-            # IN-PROCESS FALLBACK: If calculation service on port 8000 is offline or times out, run directly in-process!
+            # IN-PROCESS FALLBACK: Instant execution when port 8000 is offline or busy
             try:
                 from calculation_service.app.core.engine import calculate_natal_chart
                 data = calculate_natal_chart(year, month, day, hour, lat, lon, ayanamsa)
@@ -37,7 +37,7 @@ class CalculationClient:
         url = f"{self.base_url}/v1/transits/range"
         payload = {"start_date": start, "end_date": end, "lat": lat, "lon": lon}
         try:
-            resp = requests.post(url, json=payload, timeout=10.0)
+            resp = requests.post(url, json=payload, timeout=0.8)
             resp.raise_for_status()
             data = resp.json()
             self._cache[cache_key] = data
@@ -53,7 +53,7 @@ class CalculationClient:
         url = f"{self.base_url}/v1/sky-events"
         payload = {"jd_ut": jd_ut, "lat": lat, "lon": lon}
         try:
-            resp = requests.post(url, json=payload, timeout=5.0)
+            resp = requests.post(url, json=payload, timeout=0.5)
             resp.raise_for_status()
             return resp.json()
         except Exception:
@@ -65,9 +65,8 @@ class CalculationClient:
 
     def check_health(self) -> bool:
         try:
-            return requests.get(f"{self.base_url}/health", timeout=1.0).status_code == 200
+            return requests.get(f"{self.base_url}/health", timeout=0.5).status_code == 200
         except:
-            # Return True because in-process fallback is active
             return True
 
 calc_client = CalculationClient()
