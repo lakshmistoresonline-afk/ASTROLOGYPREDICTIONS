@@ -2,7 +2,7 @@
 {% block title %}Astro Predictions — Premium Vedic Intelligence{% endblock %}
 
 {% block content %}
-<div class="row align-items-center g-5 py-4">
+<div class="row align-items-start g-5 pt-0 pb-5">
     <div class="col-lg-7">
         <div class="pe-lg-5">
             <div class="text-gold xsmall fw-black tracking-widest uppercase font-mono mb-3">V8.0 Vedic Intelligence Engine</div>
@@ -35,41 +35,15 @@
     </div>
 
     <div class="col-lg-5 align-self-start">
-        <!-- SAVED PROFILES VAULT -->
-        <div id="panel-saved" class="card-premium p-4 p-md-5 border-white border-opacity-10 bg-glass shadow-2xl mb-4 {% if not saved_charts %}d-none{% endif %}" style="border-radius: 24px;">
-            <h4 class="text-white fw-black mb-4 font-premium tracking-widest uppercase xsmall opacity-70">Your Saved Charts</h4>
-            <div class="d-flex flex-column gap-3 overflow-auto pr-2" style="max-height: 380px">
-                {% for c in saved_charts %}
-                <div class="p-4 rounded-4 bg-black bg-opacity-30 border border-white border-opacity-10 hover-scale-sm cursor-pointer transition-all" onclick="window.location.href='{{ url_for('main.load_kundli', cid=c.id) }}?next=dashboard'">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div class="d-flex align-items-center gap-3">
-                            <div class="vc-avatar bg-gold text-dark fw-bold rounded-circle d-flex align-items-center justify-content-center" style="width: 45px; height: 45px; font-size: 1.1rem; box-shadow: 0 0 12px rgba(251, 191, 36, 0.3)">
-                                {{ (c.name or 'N')[0].upper() }}
-                            </div>
-                            <div>
-                                <h6 class="text-white fw-bold mb-1">{{ c.name or 'Unknown' }}</h6>
-                                <div class="xxsmall text-gold uppercase font-mono tracking-widest opacity-80">Active Blueprint</div>
-                            </div>
-                        </div>
-                        <i class="bi bi-chevron-right text-gold"></i>
-                    </div>
-                </div>
-                {% endfor %}
-            </div>
-            <div class="mt-4 pt-4 border-top border-white border-opacity-10 text-center">
-                 <button class="btn btn-vedic py-2 px-4 xsmall fw-black rounded-pill" onclick="switchTab('new')">+ ADD NEW PROFILE</button>
-            </div>
-        </div>
-
-        <!-- NEW PROFILE CREATION FORM -->
-        <div id="panel-new" class="card-premium p-4 p-md-5 border-white border-opacity-10 bg-glass shadow-2xl overflow-hidden position-relative {% if saved_charts %}d-none{% endif %}" style="border-radius: 24px;">
+        <!-- NEW PROFILE CREATION FORM (PRIMARY & IMMEDIATE) -->
+        <div id="panel-new" class="card-premium p-4 p-md-5 border-white border-opacity-10 bg-glass shadow-2xl overflow-hidden position-relative" style="border-radius: 24px;">
             <div class="glow-orb" style="width: 350px; height: 350px; top: -80px; right: -80px; opacity: 0.15"></div>
 
             <div class="position-relative z-index-1">
                 <div class="d-flex justify-content-between align-items-center mb-4">
                     <h4 class="text-white fw-black font-premium tracking-widest uppercase xsmall mb-0">Create Your Profile</h4>
                     {% if saved_charts %}
-                    <button class="btn btn-link text-gold xsmall text-decoration-none p-0" onclick="switchTab('saved')">← Back to Vault</button>
+                    <button class="btn btn-link text-gold xsmall text-decoration-none p-0 fw-bold" onclick="switchTab('saved')">View Vault ({{ saved_charts|length }}) →</button>
                     {% endif %}
                 </div>
 
@@ -102,6 +76,32 @@
                         </div>
                     </div>
                 </form>
+            </div>
+        </div>
+
+        <!-- SAVED PROFILES VAULT (TOGGLEABLE) -->
+        <div id="panel-saved" class="card-premium p-4 p-md-5 border-white border-opacity-10 bg-glass shadow-2xl mb-4 d-none" style="border-radius: 24px;">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h4 class="text-white fw-black font-premium tracking-widest uppercase xsmall mb-0">Your Saved Charts</h4>
+                <button class="btn btn-link text-gold xsmall text-decoration-none p-0 fw-bold" onclick="switchTab('new')">← Create New Profile</button>
+            </div>
+            <div class="d-flex flex-column gap-3 overflow-auto pr-2" style="max-height: 380px">
+                {% for c in saved_charts %}
+                <div class="p-4 rounded-4 bg-black bg-opacity-30 border border-white border-opacity-10 hover-scale-sm cursor-pointer transition-all" onclick="window.location.href='{{ url_for('main.load_kundli', cid=c.id) }}?next=dashboard'">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="vc-avatar bg-gold text-dark fw-bold rounded-circle d-flex align-items-center justify-content-center" style="width: 45px; height: 45px; font-size: 1.1rem; box-shadow: 0 0 12px rgba(251, 191, 36, 0.3)">
+                                {{ (c.name or 'N')[0].upper() }}
+                            </div>
+                            <div>
+                                <h6 class="text-white fw-bold mb-1">{{ c.name or 'Unknown' }}</h6>
+                                <div class="xxsmall text-gold uppercase font-mono tracking-widest opacity-80">Active Blueprint</div>
+                            </div>
+                        </div>
+                        <i class="bi bi-chevron-right text-gold"></i>
+                    </div>
+                </div>
+                {% endfor %}
             </div>
         </div>
     </div>
