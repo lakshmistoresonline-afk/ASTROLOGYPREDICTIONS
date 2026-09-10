@@ -34,32 +34,33 @@
         </div>
 
         <nav class="nav-list">
-            <div class="nav-group-title">INTELLIGENCE</div>
+            <div class="nav-group-title">NAVIGATION</div>
             <a href="{{ url_for('main.dashboard') }}" class="nav-item-v2 {% if request.endpoint == 'main.dashboard' %}active{% endif %}">
-                <i class="bi bi-grid-1x2"></i> <span>Dashboard</span>
-            </a>
-            <a href="{{ url_for('main.timeline') }}" class="nav-item-v2 {% if request.endpoint == 'main.timeline' %}active{% endif %}">
-                <i class="bi bi-calendar3"></i> <span>Lifecycle Map</span>
+                <i class="bi bi-house-door"></i> <span>Home</span>
             </a>
             <a href="{{ url_for('main.predictions') }}" class="nav-item-v2 {% if request.endpoint == 'main.predictions' %}active{% endif %}">
-                <i class="bi bi-stars"></i> <span>Domain Audit</span>
+                <i class="bi bi-compass"></i> <span>Forecast</span>
+            </a>
+            <a href="{{ url_for('main.timeline') }}" class="nav-item-v2 {% if request.endpoint == 'main.timeline' %}active{% endif %}">
+                <i class="bi bi-calendar3"></i> <span>Life Atlas</span>
+            </a>
+            <a href="{{ url_for('main.index') }}" class="nav-item-v2 {% if request.endpoint == 'main.index' %}active{% endif %}">
+                <i class="bi bi-circle-square"></i> <span>My Chart & Vault</span>
+            </a>
+            <a href="{{ url_for('main.predictions') }}" class="nav-item-v2">
+                <i class="bi bi-lightbulb"></i> <span>Insights</span>
+            </a>
+
+            <div class="nav-group-title">GOVERNANCE</div>
+            <a href="{{ url_for('main.history') }}" class="nav-item-v2 {% if request.endpoint == 'main.history' %}active{% endif %}">
+                <i class="bi bi-check2-square"></i> <span>Outcomes</span>
             </a>
             <a href="{{ url_for('main.showcase') }}" class="nav-item-v2 {% if request.endpoint == 'main.showcase' %}active{% endif %}">
                 <i class="bi bi-display"></i> <span>Presentation</span>
             </a>
 
-            <div class="nav-group-title">GOVERNANCE</div>
-            <a href="{{ url_for('main.history') }}" class="nav-item-v2 {% if request.endpoint == 'main.history' %}active{% endif %}">
-                <i class="bi bi-check2-square"></i> <span>Verification</span>
-            </a>
-
-            <div class="nav-group-title">SYSTEM</div>
-            <a href="{{ url_for('main.index') }}" class="nav-item-v2 {% if request.endpoint == 'main.index' %}active{% endif %}">
-                <i class="bi bi-person-lines-fill"></i> <span>Chart Vault</span>
-            </a>
-
             {% if session.get('is_beta_session') or session.get('is_admin') %}
-            <div class="nav-group-title">EXPERT</div>
+            <div class="nav-group-title">EXPERT MODE</div>
             <a href="{{ url_for('main.admin_accuracy') }}" class="nav-item-v2">
                 <i class="bi bi-bar-chart"></i> <span>Validation</span>
             </a>
