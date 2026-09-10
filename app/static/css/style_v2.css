@@ -1,18 +1,18 @@
 /* ══════════════════════════════════════════════════════
-   Astro Predictions V6.0 — World-Class Design System
-   "Celestial Elegance meets Precision Intelligence"
+   Astro Predictions V6.0 — High Visibility Contrast Polish
+   "Absolute Clarity & Celestial Legibility"
    ══════════════════════════════════════════════════════ */
 
 :root {
     --bg-main:      #08090E;
     --bg-card:      #12131C;
     --bg-sidebar:   #0A0B10;
-    --gold:         #FBCFE8;
+    --gold:         #FDE68A;
     --gold-bright:  #FBBF24;
-    --gold-dim:     #92400E;
+    --gold-dim:     #D97706;
     --text-white:   #FFFFFF;
-    --text-dim:     #94A3B8;
-    --border:       rgba(255, 255, 255, 0.08);
+    --text-dim:     #CBD5E1; /* High contrast bright slate */
+    --border:       rgba(255, 255, 255, 0.15);
     --radius-lg:    28px;
     --radius-md:    18px;
     --font-cinzel:  'Cinzel', serif;
@@ -26,58 +26,32 @@ body {
     font-family: var(--font-inter);
     overflow-x: hidden;
     letter-spacing: -0.01em;
+    font-size: 1rem;
+    line-height: 1.6;
 }
 
 /* Background Nebula Glow */
 .ethereal-bg {
-    background: radial-gradient(circle at 15% 15%, rgba(139, 92, 246, 0.08) 0%, transparent 40%),
-                radial-gradient(circle at 85% 85%, rgba(251, 191, 36, 0.06) 0%, transparent 40%),
+    background: radial-gradient(circle at 15% 15%, rgba(139, 92, 246, 0.12) 0%, transparent 40%),
+                radial-gradient(circle at 85% 85%, rgba(251, 191, 36, 0.1) 0%, transparent 40%),
                 var(--bg-main);
 }
 
-/* --- Navigation & Sidebar --- */
-#sidebar {
-    background: var(--bg-sidebar);
-    border-right: 1px solid var(--border);
-    padding: 36px 20px;
-    backdrop-filter: blur(20px);
+/* --- Navigation & Header --- */
+.navbar-brand .font-premium {
+    color: #FFFFFF !important;
+    text-shadow: 0 0 20px rgba(251, 191, 36, 0.3);
 }
 
-.nav-group-title {
-    font-size: 0.6rem;
-    font-weight: 800;
-    color: var(--gold-bright);
-    opacity: 0.5;
-    letter-spacing: 2.5px;
-    margin-bottom: 10px;
-    margin-top: 28px;
-    text-transform: uppercase;
-}
-
-.nav-item-v2 {
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    padding: 12px 18px;
-    color: var(--text-dim);
-    text-decoration: none;
-    border-radius: 14px;
+.nav-link {
+    color: #CBD5E1 !important;
+    font-weight: 600;
     transition: all 0.25s ease;
-    font-weight: 500;
-    font-size: 0.9rem;
 }
 
-.nav-item-v2:hover {
-    background: rgba(255, 255, 255, 0.03);
-    color: var(--text-white);
-    transform: translateX(3px);
-}
-
-.nav-item-v2.active {
-    color: var(--gold-bright);
-    background: rgba(251, 191, 36, 0.08);
-    border: 1px solid rgba(251, 191, 36, 0.15);
-    box-shadow: 0 0 20px rgba(251, 191, 36, 0.05);
+.nav-link:hover, .nav-link.active-pill {
+    color: #FBBF24 !important;
+    background: rgba(251, 191, 36, 0.1);
 }
 
 /* --- Premium Cards --- */
@@ -87,14 +61,14 @@ body {
     border-radius: var(--radius-lg);
     padding: 36px;
     position: relative;
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
     transition: all 0.35s ease;
 }
 
 .bg-glass {
-    background: rgba(18, 19, 28, 0.7);
-    backdrop-filter: blur(16px);
-    border: 1px solid rgba(255, 255, 255, 0.06);
+    background: rgba(18, 19, 28, 0.85);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.12);
 }
 
 .bg-glass-subtle {
@@ -102,9 +76,22 @@ body {
 }
 
 .card-premium:hover {
-    border-color: rgba(251, 191, 36, 0.25);
-    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.6);
+    border-color: rgba(251, 191, 36, 0.4);
+    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.8);
 }
+
+/* --- Typography Contrast Enhancements --- */
+p, span, div, label {
+    color: var(--text-white);
+}
+
+.text-dim {
+    color: var(--text-dim) !important;
+}
+
+.opacity-50 { opacity: 0.85 !important; }
+.opacity-60 { opacity: 0.9 !important; }
+.opacity-70 { opacity: 0.95 !important; }
 
 /* --- Buttons & Inputs --- */
 .btn-vedic {
@@ -126,19 +113,20 @@ body {
 }
 
 .form-control-vedic {
-    background: rgba(0, 0, 0, 0.4);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(0, 0, 0, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.2);
     color: #fff;
     border-radius: 16px;
     padding: 14px 20px;
+    font-size: 1rem;
     transition: all 0.25s ease;
 }
 
 .form-control-vedic:focus {
-    background: rgba(0, 0, 0, 0.6);
+    background: rgba(0, 0, 0, 0.8);
     border-color: var(--gold-bright);
     color: #fff;
-    box-shadow: 0 0 0 4px rgba(251, 191, 36, 0.15);
+    box-shadow: 0 0 0 4px rgba(251, 191, 36, 0.25);
 }
 
 .text-gold {
@@ -151,11 +139,4 @@ body {
 
 .font-mono {
     font-family: var(--font-mono);
-}
-
-.glow-orb {
-    position: absolute;
-    border-radius: 50%;
-    filter: blur(80px);
-    pointer-events: none;
 }
