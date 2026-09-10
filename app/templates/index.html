@@ -1,29 +1,33 @@
 {% extends "base.html" %}
-{% block title %}Jyotish AI — Personal Life Intelligence{% endblock %}
+{% block title %}Astro Predictions — Premium Vedic Intelligence{% endblock %}
 
 {% block content %}
-<!-- V3.22 PREMIUM EXECUTIVE LANDING (FIRST-TIME USER) -->
-
 <div class="row min-vh-75 align-items-center g-5 py-5">
     <div class="col-lg-7">
         <div class="pe-lg-5">
-            <div class="badge bg-gold text-dark mb-4 fw-black px-3 py-2 xsmall tracking-widest shadow-lg">SYSTEM VERSION: V3.22</div>
-            <h1 class="display-1 fw-black text-white mb-4 font-premium tracking-tight">Personal <br/><span class="text-gold">Life Intelligence</span></h1>
-            <p class="fs-3 text-white opacity-60 leading-relaxed mb-5 pe-lg-5">
-                Navigate your lifetime developmental roadmap with deterministic calculations. No horoscopes, just data-driven life signals.
+            <div class="badge bg-gold text-dark mb-4 fw-black px-3 py-2 xsmall tracking-widest shadow-lg rounded-pill">ASTRO PREDICTIONS V6.0</div>
+            <h1 class="display-1 fw-black text-white mb-4 font-premium tracking-tight" style="font-family: 'Cinzel', serif;">Cosmic Intelligence <br/><span class="text-gold font-italic"> & Life Forecasting</span></h1>
+            <p class="fs-3 text-white opacity-70 leading-relaxed mb-5 pe-lg-5" style="font-weight: 300;">
+                Navigate your life chapters with precision timing, evidence-driven event forecasts, and verified deterministic astrology.
             </p>
 
             <div class="row g-4 mt-2">
                 <div class="col-md-6">
-                    <div class="p-4 rounded-5 border border-white border-opacity-5 bg-glass h-100">
-                        <h6 class="xxsmall text-gold fw-black uppercase tracking-widest mb-3">DETERMINISTIC ENGINE</h6>
-                        <p class="xsmall text-white leading-relaxed opacity-70">Hierarchical confluence across 16 domains using Swiss Ephemeris precision.</p>
+                    <div class="p-4 rounded-5 border border-white border-opacity-10 bg-glass h-100 shadow-sm">
+                        <div class="d-flex align-items-center gap-3 mb-2">
+                            <i class="bi bi-compass text-gold fs-4"></i>
+                            <h6 class="xxsmall text-gold fw-black uppercase tracking-widest mb-0">Timing & Horizons</h6>
+                        </div>
+                        <p class="xsmall text-white leading-relaxed opacity-70">Precise life phase tracking through active Mahadasha and Antardasha cycles.</p>
                     </div>
                 </div>
                 <div class="col-md-6">
-                    <div class="p-4 rounded-5 border border-white border-opacity-5 bg-glass h-100">
-                        <h6 class="xxsmall text-gold fw-black uppercase tracking-widest mb-3">PROSPECTIVE AUDIT</h6>
-                        <p class="xsmall text-white leading-relaxed opacity-70">Strict walk-forward validation rules to ensure transparency and integrity.</p>
+                    <div class="p-4 rounded-5 border border-white border-opacity-10 bg-glass h-100 shadow-sm">
+                        <div class="d-flex align-items-center gap-3 mb-2">
+                            <i class="bi bi-shield-check text-gold fs-4"></i>
+                            <h6 class="xxsmall text-gold fw-black uppercase tracking-widest mb-0">Evidence-Backed</h6>
+                        </div>
+                        <p class="xsmall text-white leading-relaxed opacity-70">Rigorous confirmation gates, contradiction controls, and immutable prediction ledgers.</p>
                     </div>
                 </div>
             </div>
@@ -31,159 +35,86 @@
     </div>
 
     <div class="col-lg-5">
-        <!-- VAULT RECALL (V3.22 PREMIUM) -->
-        <div id="panel-saved" class="card-premium p-5 border-white border-opacity-5 bg-glass shadow-2xl mb-4 {% if not saved_charts %}d-none{% endif %}">
-            <h4 class="text-white fw-black mb-5 font-premium tracking-widest uppercase xsmall opacity-50">Active Life Blueprints</h4>
-            <div class="d-flex flex-column gap-3 overflow-auto pr-2" style="max-height: 400px">
+        <!-- SAVED PROFILES VAULT -->
+        <div id="panel-saved" class="card-premium p-5 border-white border-opacity-10 bg-glass shadow-2xl mb-4 {% if not saved_charts %}d-none{% endif %}" style="border-radius: 24px;">
+            <h4 class="text-white fw-black mb-4 font-premium tracking-widest uppercase xsmall opacity-70">Your Saved Charts</h4>
+            <div class="d-flex flex-column gap-3 overflow-auto pr-2" style="max-height: 380px">
                 {% for c in saved_charts %}
-                <div class="p-4 rounded-5 bg-black bg-opacity-20 border border-white border-opacity-5 hover-scale-sm cursor-pointer transition-all" onclick="window.location.href='{{ url_for('main.load_kundli', cid=c.id) }}?next=dashboard'">
+                <div class="p-4 rounded-4 bg-black bg-opacity-30 border border-white border-opacity-10 hover-scale-sm cursor-pointer transition-all" onclick="window.location.href='{{ url_for('main.load_kundli', cid=c.id) }}?next=dashboard'">
                     <div class="d-flex justify-content-between align-items-center">
-                        <div class="d-flex align-items-center gap-4">
-                            <div class="vc-avatar bg-gold text-dark" style="width: 45px; height: 45px; font-size: 1.1rem">
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="vc-avatar bg-gold text-dark fw-bold rounded-circle d-flex align-items-center justify-content-center" style="width: 45px; height: 45px; font-size: 1.1rem; box-shadow: 0 0 12px rgba(251, 191, 36, 0.3)">
                                 {{ (c.name or 'N')[0].upper() }}
                             </div>
                             <div>
                                 <h6 class="text-white fw-bold mb-1">{{ c.name or 'Unknown' }}</h6>
-                                <div class="xxsmall text-gold fw-black uppercase font-mono tracking-widest opacity-60">Verified Baseline</div>
+                                <div class="xxsmall text-gold uppercase font-mono tracking-widest opacity-80">Active Blueprint</div>
                             </div>
                         </div>
-                        <i class="bi bi-arrow-right text-gold opacity-30"></i>
+                        <i class="bi bi-chevron-right text-gold"></i>
                     </div>
                 </div>
                 {% endfor %}
             </div>
-            <div class="mt-5 pt-4 border-top border-white border-opacity-5 text-center">
-                 <button class="btn btn-vedic py-2 px-4 xsmall fw-black" onclick="switchTab('new')">GENERATE NEW AUDIT</button>
+            <div class="mt-4 pt-4 border-top border-white border-opacity-10 text-center">
+                 <button class="btn btn-vedic py-2 px-4 xsmall fw-black rounded-pill" onclick="switchTab('new')">+ ADD NEW PROFILE</button>
             </div>
         </div>
 
-        <!-- NEW BLUEPRINT (V3.22 PREMIUM) -->
-        <div id="panel-new" class="card-premium p-5 border-white border-opacity-5 bg-gold-glass shadow-2xl overflow-hidden position-relative {% if saved_charts %}d-none{% endif %}">
-            <div class="glow-orb" style="width: 400px; height: 400px; top: -100px; right: -100px; opacity: 0.1"></div>
+        <!-- NEW PROFILE CREATION FORM -->
+        <div id="panel-new" class="card-premium p-5 border-white border-opacity-10 bg-glass shadow-2xl overflow-hidden position-relative {% if saved_charts %}d-none{% endif %}" style="border-radius: 24px;">
+            <div class="glow-orb" style="width: 350px; height: 350px; top: -80px; right: -80px; opacity: 0.15"></div>
 
             <div class="position-relative z-index-1">
-                <h4 class="text-white fw-black mb-5 font-premium tracking-widest uppercase xsmall">Generate Your Audit</h4>
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h4 class="text-white fw-black font-premium tracking-widest uppercase xsmall mb-0">Create Your Profile</h4>
+                    {% if saved_charts %}
+                    <button class="btn btn-link text-gold xsmall text-decoration-none p-0" onclick="switchTab('saved')">← Back to Vault</button>
+                    {% endif %}
+                </div>
+
                 <form action="{{ url_for('main.kundli') }}" method="POST" id="kundli-form">
-                    <div class="row g-4">
+                    <div class="row g-3">
                         <div class="col-12">
-                            <label class="form-label-vedic">Full Name</label>
-                            <input type="text" name="name" class="form-control-vedic py-3 fs-6" placeholder="Subramanian T S" required/>
+                            <label class="form-label-vedic xsmall text-uppercase opacity-70">Full Name</label>
+                            <input type="text" name="name" class="form-control-vedic py-3 fs-6 rounded-4" placeholder="e.g. Maya Lin" required/>
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label-vedic">Birth Date</label>
-                            <input type="date" name="dob" class="form-control-vedic py-3" required/>
+                            <label class="form-label-vedic xsmall text-uppercase opacity-70">Birth Date</label>
+                            <input type="date" name="dob" class="form-control-vedic py-3 rounded-4" required/>
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label-vedic">Birth Time</label>
-                            <input type="time" name="tob" class="form-control-vedic py-3" required/>
+                            <label class="form-label-vedic xsmall text-uppercase opacity-70">Birth Time</label>
+                            <input type="time" name="tob" class="form-control-vedic py-3 rounded-4" required/>
                         </div>
                         <div class="col-12">
-                            <label class="form-label-vedic">Birth Location</label>
-                            <input type="text" name="place" id="place-input" class="form-control-vedic py-3" placeholder="City, Country" required/>
+                            <label class="form-label-vedic xsmall text-uppercase opacity-70">Birth Location</label>
+                            <input type="text" name="place" id="place-input" class="form-control-vedic py-3 rounded-4" placeholder="City, Country" required/>
                         </div>
 
                         <input type="hidden" name="lat" id="lat-input"/>
                         <input type="hidden" name="lon" id="lon-input"/>
                         <input type="hidden" name="timezone" id="tz-input"/>
 
-                        <div class="col-12 pt-4">
-                            <button type="submit" class="btn btn-vedic w-100 py-3 fw-black fs-5 shadow-lg">CALCULATE BLUEPRINT</button>
+                        <div class="col-12 pt-3">
+                            <button type="submit" class="btn btn-vedic w-100 py-3 fw-black fs-6 shadow-lg rounded-pill">CALCULATE FORECAST</button>
                         </div>
                     </div>
                 </form>
-
-                <div class="mt-5 pt-4 border-top border-white border-opacity-5 text-center">
-                    <button class="btn btn-link text-white opacity-40 xsmall fw-bold text-decoration-none" onclick="window.location.href='/admin/accuracy'">
-                        VIEW RESEARCH PERFORMANCE <i class="bi bi-arrow-right ms-1"></i>
-                    </button>
-                </div>
             </div>
         </div>
     </div>
 </div>
-{% endblock %}
 
-{% block scripts %}
 <script>
 function switchTab(tab) {
-    const isSaved = tab === 'saved';
-    const pSaved = document.getElementById('panel-saved');
-    const pNew = document.getElementById('panel-new');
-    if (pSaved) pSaved.classList.toggle('d-none', !isSaved);
-    if (pNew) pNew.classList.toggle('d-none', isSaved);
-}
-
-{% if request.args.get('action') == 'new' %}
-window.addEventListener('DOMContentLoaded', () => {
-    switchTab('new');
-});
-{% endif %}
-
-// Reuse existing geocode logic
-const placeInput = document.getElementById("place-input");
-if (placeInput) {
-    let timer;
-    placeInput.addEventListener("input", function() {
-        clearTimeout(timer);
-        const q = this.value.trim();
-        if (q.length < 3) return;
-        timer = setTimeout(() => {
-            fetch(`/api/geocode?q=${encodeURIComponent(q)}`)
-                .then(r => r.json()).then(d => {
-                    if (!d.error) {
-                        document.getElementById("lat-input").value = d.lat;
-                        document.getElementById("lon-input").value = d.lon;
-                        document.getElementById("tz-input").value  = d.timezone;
-                    }
-                });
-        }, 800);
-    });
-}
-
-const kundliForm = document.getElementById("kundli-form");
-if (kundliForm) {
-    kundliForm.addEventListener("submit", async function(e) {
-        const lat = document.getElementById("lat-input").value;
-        const lon = document.getElementById("lon-input").value;
-        const place = document.getElementById("place-input").value;
-        const btn = this.querySelector("button[type='submit']");
-
-        if (!lat || !lon) {
-            e.preventDefault();
-            if (btn) {
-                btn.disabled = true;
-                btn.innerHTML = `<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>RESOLVING LOCATION...`;
-            }
-            try {
-                const res = await fetch(`/api/geocode?q=${encodeURIComponent(place || 'New Delhi')}`);
-                const d = await res.json();
-                if (d.error) {
-                    alert("Could not determine location: " + d.error);
-                    if (btn) {
-                        btn.disabled = false;
-                        btn.innerHTML = "CALCULATE BLUEPRINT";
-                    }
-                    return;
-                }
-                document.getElementById("lat-input").value = d.lat;
-                document.getElementById("lon-input").value = d.lon;
-                document.getElementById("tz-input").value  = d.timezone;
-            } catch (err) {
-                alert("Geocoding service unavailable.");
-                if (btn) {
-                    btn.disabled = false;
-                    btn.innerHTML = "CALCULATE BLUEPRINT";
-                }
-                return;
-            }
-        }
-
-        if (btn) {
-            btn.disabled = true;
-            btn.innerHTML = `<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>CALCULATING BLUEPRINT...`;
-        }
-        kundliForm.submit();
-    });
+    if(tab === 'new') {
+        document.getElementById('panel-saved').classList.add('d-none');
+        document.getElementById('panel-new').classList.remove('d-none');
+    } else {
+        document.getElementById('panel-new').classList.add('d-none');
+        document.getElementById('panel-saved').classList.remove('d-none');
+    }
 }
 </script>
 {% endblock %}
