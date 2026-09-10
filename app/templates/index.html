@@ -80,8 +80,9 @@
                             <input type="text" name="name" class="form-control-vedic py-3 fs-6 rounded-4" placeholder="e.g. Maya Lin" required/>
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label-vedic xsmall text-uppercase opacity-70">Birth Date</label>
-                            <input type="date" name="dob" class="form-control-vedic py-3 rounded-4" required/>
+                            <label class="form-label-vedic xsmall text-uppercase opacity-70">Birth Date (DD/MM/YYYY)</label>
+                            <input type="text" id="dob-display" class="form-control-vedic py-3 rounded-4 font-mono" placeholder="DD/MM/YYYY" maxlength="10" autocomplete="off" required/>
+                            <input type="hidden" name="dob" id="dob-canonical"/>
                         </div>
                         <div class="col-md-6">
                             <label class="form-label-vedic xsmall text-uppercase opacity-70">Birth Time</label>
@@ -89,7 +90,7 @@
                         </div>
                         <div class="col-12">
                             <label class="form-label-vedic xsmall text-uppercase opacity-70">Birth Location</label>
-                            <input type="text" name="place" id="place-input" class="form-control-vedic py-3 rounded-4" placeholder="City, Country" required/>
+                            <input type="text" name="place" id="place-input" class="form-control-vedic py-3 rounded-4" placeholder="Search city, town or village..." required/>
                         </div>
 
                         <input type="hidden" name="lat" id="lat-input"/>
@@ -107,6 +108,49 @@
 </div>
 
 <script>
+document.addEventListener('DOMContentLoaded', function() {
+    const displayInput = document.getElementById('dob-display');
+    const canonicalInput = document.getElementById('dob-canonical');
+
+    if (displayInput && canonicalInput) {
+        displayInput.addEventListener('input', function(e) {
+            let v = e.target.value.replace(/\D/g, '');
+            if (v.length >= 2 && v.length <= 4) {
+                v = v.slice(0,2) + '/' + v.slice(2);
+            } else if (v.length > 4) {
+                v = v.slice(0,2) + '/' + v.slice(2,4) + '/' + v.slice(4,8);
+            }
+            e.target.value = v;
+
+            if (v.length === 10) {
+                const parts = v.split('/');
+                if (parts.length === 3) {
+                    const day = parts[0], month = parts[1], year = parts[2];
+                    const dNum = parseInt(day, 10), mNum = parseInt(month, 10), yNum = parseInt(year, 10);
+                    if (mNum >= 1 && mNum <= 12 && dNum >= 1 && dNum <= 31 && yNum >= 1000 && yNum <= 9999) {
+                        canonicalInput.value = `${year}-${month}-${day}`;
+                    } else {
+                        canonicalInput.value = '';
+                    }
+                }
+            } else {
+                canonicalInput.value = '';
+            }
+        });
+
+        const form = displayInput.closest('form');
+        if (form) {
+            form.addEventListener('submit', function(e) {
+                if (!canonicalInput.value) {
+                    e.preventDefault();
+                    alert('Please enter a valid birth date in DD/MM/YYYY format.');
+                    displayInput.focus();
+                }
+            });
+        }
+    }
+});
+
 function switchTab(tab) {
     if(tab === 'new') {
         document.getElementById('panel-saved').classList.add('d-none');
