@@ -357,3 +357,32 @@
 2026-09-10 22:46:45,525 INFO [_internal.py:97]: 127.0.0.1 - - [10/Sep/2026 22:46:45] "[36mGET /static/manifest.json HTTP/1.1[0m" 304 -
 2026-09-10 22:46:46,149 INFO [_internal.py:97]: 127.0.0.1 - - [10/Sep/2026 22:46:46] "[36mGET /static/img/icon.svg HTTP/1.1[0m" 304 -
 2026-09-10 22:46:46,538 INFO [_internal.py:97]: 127.0.0.1 - - [10/Sep/2026 22:46:46] "[36mGET /static/img/icon.svg HTTP/1.1[0m" 304 -
+2026-09-10 22:47:36,807 DEBUG [connectionpool.py:1062]: Starting new HTTPS connection (1): freeipapi.com:443
+2026-09-10 22:47:37,201 DEBUG [connectionpool.py:544]: https://freeipapi.com:443 "GET /api/json HTTP/1.1" 302 None
+2026-09-10 22:47:37,229 DEBUG [connectionpool.py:1062]: Starting new HTTPS connection (1): free.freeipapi.com:443
+2026-09-10 22:47:37,708 DEBUG [connectionpool.py:544]: https://free.freeipapi.com:443 "GET /api/json HTTP/1.1" 200 None
+2026-09-10 22:47:37,730 INFO [_internal.py:97]: 127.0.0.1 - - [10/Sep/2026 22:47:37] "GET / HTTP/1.1" 200 -
+2026-09-10 22:47:38,154 INFO [_internal.py:97]: 127.0.0.1 - - [10/Sep/2026 22:47:38] "[36mGET /static/css/style.css?v=6.0 HTTP/1.1[0m" 304 -
+2026-09-10 22:47:38,173 INFO [_internal.py:97]: 127.0.0.1 - - [10/Sep/2026 22:47:38] "[36mGET /static/css/style_v2.css?v=6.0 HTTP/1.1[0m" 304 -
+2026-09-10 22:47:38,183 INFO [_internal.py:97]: 127.0.0.1 - - [10/Sep/2026 22:47:38] "[36mGET /static/manifest.json HTTP/1.1[0m" 304 -
+2026-09-10 22:47:41,302 INFO [_internal.py:97]: 127.0.0.1 - - [10/Sep/2026 22:47:41] "[36mGET /static/img/icon.svg HTTP/1.1[0m" 304 -
+2026-09-10 22:47:43,075 DEBUG [connectionpool.py:1062]: Starting new HTTPS connection (1): freeipapi.com:443
+2026-09-10 22:47:43,212 INFO [_internal.py:97]: 127.0.0.1 - - [10/Sep/2026 22:47:43] "[36mGET /static/img/icon.svg HTTP/1.1[0m" 304 -
+2026-09-10 22:47:43,481 DEBUG [connectionpool.py:544]: https://freeipapi.com:443 "GET /api/json HTTP/1.1" 302 None
+2026-09-10 22:47:43,522 DEBUG [connectionpool.py:1062]: Starting new HTTPS connection (1): free.freeipapi.com:443
+2026-09-10 22:47:44,089 DEBUG [connectionpool.py:544]: https://free.freeipapi.com:443 "GET /api/json HTTP/1.1" 200 None
+2026-09-10 22:47:44,129 INFO [_internal.py:97]: 127.0.0.1 - - [10/Sep/2026 22:47:44] "GET / HTTP/1.1" 200 -
+2026-09-10 22:47:45,650 INFO [_internal.py:97]: 127.0.0.1 - - [10/Sep/2026 22:47:45] "[36mGET /static/css/style.css?v=6.0 HTTP/1.1[0m" 304 -
+2026-09-10 22:47:45,750 INFO [_internal.py:97]: 127.0.0.1 - - [10/Sep/2026 22:47:45] "[36mGET /static/css/style_v2.css?v=6.0 HTTP/1.1[0m" 304 -
+2026-09-10 22:47:45,817 INFO [_internal.py:97]: 127.0.0.1 - - [10/Sep/2026 22:47:45] "[36mGET /static/manifest.json HTTP/1.1[0m" 304 -
+2026-09-10 22:47:46,125 INFO [_internal.py:97]: 127.0.0.1 - - [10/Sep/2026 22:47:46] "[36mGET /static/img/icon.svg HTTP/1.1[0m" 304 -
+2026-09-10 22:57:45,215 DEBUG [connectionpool.py:1062]: Starting new HTTPS connection (1): freeipapi.com:443
+2026-09-10 22:57:46,085 DEBUG [connectionpool.py:544]: https://freeipapi.com:443 "GET /api/json HTTP/1.1" 302 None
+2026-09-10 22:57:46,090 DEBUG [connectionpool.py:1062]: Starting new HTTPS connection (1): free.freeipapi.com:443
+2026-09-10 22:57:48,312 DEBUG [connectionpool.py:544]: https://free.freeipapi.com:443 "GET /api/json HTTP/1.1" 200 None
+2026-09-10 22:57:48,322 INFO [_internal.py:97]: 127.0.0.1 - - [10/Sep/2026 22:57:48] "GET / HTTP/1.1" 200 -
+2026-09-10 22:57:48,474 INFO [_internal.py:97]: 127.0.0.1 - - [10/Sep/2026 22:57:48] "[36mGET /static/css/style.css?v=6.0 HTTP/1.1[0m" 304 -
+2026-09-10 22:57:48,477 INFO [_internal.py:97]: 127.0.0.1 - - [10/Sep/2026 22:57:48] "[36mGET /static/css/style_v2.css?v=6.0 HTTP/1.1[0m" 304 -
+2026-09-10 22:57:48,856 INFO [_internal.py:97]: 127.0.0.1 - - [10/Sep/2026 22:57:48] "[36mGET /static/manifest.json HTTP/1.1[0m" 304 -
+2026-09-10 22:57:50,812 INFO [_internal.py:97]: 127.0.0.1 - - [10/Sep/2026 22:57:50] "[36mGET /static/img/icon.svg HTTP/1.1[0m" 304 -
+2026-09-10 22:57:50,975 INFO [_internal.py:97]: 127.0.0.1 - - [10/Sep/2026 22:57:50] "[36mGET /static/img/icon.svg HTTP/1.1[0m" 304 -
