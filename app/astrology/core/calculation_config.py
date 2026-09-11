@@ -12,12 +12,13 @@ class CalculationConfig:
     engine_version: str = "V3.15-PROTECTED"
     zodiac: str = "SIDEREAL"
     ayanamsa: str = "LAHIRI"
-    house_system: str = "WHOLE_SIGN"
+    house_system: str = "WHOLE_SIGN" # Vedic interpretive planetary house assignment (rashi offset)
+    astronomical_house_system: str = "PLACIDUS" # Swiss Ephemeris cusps calculation (swe.houses_ex b'P')
     node_mode: str = "MEAN"
     ephemeris_mode: str = "SWISS_EPHEMERIS"
     topocentric_mode: bool = True
     time_standard: str = "UTC/UT"
-    config_version: str = "2.0.0"
+    config_version: str = "2.1.0"
 
     def to_dict(self) -> Dict[str, Any]:
         return asdict(self)
@@ -43,9 +44,8 @@ def generate_chart_fingerprint(birth_instant_utc: str, lat: float, lon: float, t
 
 def validate_chart_geometry(chart_obj: Any) -> bool:
     """
-    True authoritative geometry validation (Rule 6 & Rule 13): verifies Ascendant, house system,
-    planet houses correspond to canonical Whole Sign geometry (V3.15 standard), and house occupancy agrees.
-    Accepts CanonicalChart or dict representations.
+    True authoritative geometry validation (Rule 9): verifies Ascendant validity,
+    Placidus astronomical cusps (12 cusps), and Whole Sign planetary house assignments (V3.15 standard).
     """
     if not chart_obj:
         raise ValueError("CHART_GEOMETRY_INVALID: Null chart object")
@@ -83,7 +83,7 @@ def validate_chart_geometry(chart_obj: Any) -> bool:
 
     houses = getattr(chart_obj, 'houses', [])
     if houses and len(houses) != 12:
-        raise ValueError(f"CHART_GEOMETRY_INVALID: Expected 12 house cusps, got {len(houses)}")
+        raise ValueError(f"CHART_GEOMETRY_INVALID: Expected 12 Placidus house cusps, got {len(houses)}")
 
     return True
 
@@ -118,6 +118,7 @@ def calculate_canonical_chart(birth_dt: datetime, lat: float, lon: float, tz_str
         "ayanamsa": cfg.ayanamsa,
         "node_mode": cfg.node_mode,
         "house_system": cfg.house_system,
+        "astronomical_house_system": cfg.astronomical_house_system,
         "ephemeris_mode": cfg.ephemeris_mode,
         "topocentric_mode": cfg.topocentric_mode,
         "time_standard": cfg.time_standard,
