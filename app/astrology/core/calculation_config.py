@@ -12,7 +12,7 @@ class CalculationConfig:
     engine_version: str = "V3.15-PROTECTED"
     zodiac: str = "SIDEREAL"
     ayanamsa: str = "LAHIRI"
-    house_system: str = "PLACIDUS"
+    house_system: str = "WHOLE_SIGN"
     node_mode: str = "MEAN"
     ephemeris_mode: str = "SWISS_EPHEMERIS"
     topocentric_mode: bool = True
@@ -43,8 +43,9 @@ def generate_chart_fingerprint(birth_instant_utc: str, lat: float, lon: float, t
 
 def validate_chart_geometry(chart_obj: Any) -> bool:
     """
-    True real geometry validation (Rule 6 & Rule 13): verifies Ascendant, house cusps,
-    and planetary house assignments under authoritative Placidus geometry.
+    True authoritative geometry validation (Rule 6 & Rule 13): verifies Ascendant, house system,
+    planet houses correspond to canonical Whole Sign geometry (V3.15 standard), and house occupancy agrees.
+    Accepts CanonicalChart or dict representations.
     """
     if not chart_obj:
         raise ValueError("CHART_GEOMETRY_INVALID: Null chart object")
@@ -64,14 +65,21 @@ def validate_chart_geometry(chart_obj: Any) -> bool:
     if asc is None or not (0.0 <= asc < 360.0):
         raise ValueError(f"CHART_GEOMETRY_INVALID: Invalid ascendant {asc}")
 
+    asc_rashi = int(asc // 30)
     planets = getattr(chart_obj, 'planets', {})
     if not planets:
         raise ValueError("CHART_GEOMETRY_INVALID: Missing planets data")
 
     for p_name, p_info in planets.items():
         house = getattr(p_info, 'house', None)
+        rashi = getattr(p_info, 'rashi', None)
         if house is None or not (1 <= house <= 12):
             raise ValueError(f"CHART_GEOMETRY_INVALID: Planet {p_name} has invalid house {house}")
+
+        if rashi is not None:
+            expected_house = (rashi - asc_rashi + 12) % 12 + 1
+            if house != expected_house:
+                raise ValueError(f"CHART_GEOMETRY_INVALID: Planet {p_name} house mismatch. Stored: {house}, Expected Whole Sign: {expected_house}")
 
     houses = getattr(chart_obj, 'houses', [])
     if houses and len(houses) != 12:
@@ -95,7 +103,6 @@ def calculate_canonical_chart(birth_dt: datetime, lat: float, lon: float, tz_str
 
     chart_obj = _cached_calculate_chart_data(dt_iso, lat, lon, tz_str, birth_time_conf, cfg_hash)
 
-    # Convert local birth datetime to UTC instant
     from .datetime import to_utc, datetime_to_jd
     dt_utc = to_utc(birth_dt, tz_str)
     utc_instant = dt_utc.strftime("%Y-%m-%dT%H:%M:%SZ")
