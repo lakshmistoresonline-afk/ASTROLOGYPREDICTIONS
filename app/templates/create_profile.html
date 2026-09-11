@@ -4,18 +4,18 @@
 {% block content %}
 <div class="row justify-content-center pt-2 pb-5">
     <div class="col-lg-6">
-        <div class="card-premium p-4 p-md-5 bg-glass shadow-2xl position-relative overflow-hidden" style="border-radius: 28px;">
-            <div class="glow-orb" style="width: 350px; height: 350px; top: -100px; right: -100px; opacity: 0.15"></div>
+        <div class="card-premium p-4 p-md-5 bg-glass shadow-2xl position-relative overflow-hidden" style="border-radius: 28px; height: auto;">
+            <div class="glow-orb" style="width: 300px; height: 300px; top: -60px; right: -60px; opacity: 0.12"></div>
 
             <div class="position-relative z-index-1">
-                <div class="text-center mb-5">
-                    <div class="badge bg-gold text-dark mb-3 fw-black px-3 py-2 xsmall tracking-widest rounded-pill">ONBOARDING</div>
-                    <h2 class="font-premium text-white fw-black mb-2">Create Your Life Profile</h2>
-                    <p class="text-dim xsmall">Enter your precise birth particulars for deterministic Swiss Ephemeris calculation.</p>
+                <div class="text-center mb-4">
+                    <div class="badge bg-gold text-dark mb-2 fw-black px-3 py-2 xsmall tracking-widest rounded-pill" style="font-size: 0.65rem;">ONBOARDING</div>
+                    <h2 class="font-premium text-white fw-black mb-2 fs-3">Create Your Life Profile</h2>
+                    <p class="text-dim xsmall mb-0">Enter your precise birth particulars for deterministic Swiss Ephemeris calculation.</p>
                 </div>
 
                 <form action="{{ url_for('main.kundli') }}" method="POST" id="kundli-form">
-                    <div class="row g-4">
+                    <div class="row g-3">
                         <div class="col-12">
                             <label class="form-label-vedic xsmall text-uppercase opacity-70">Full Name</label>
                             <input type="text" name="name" class="form-control-vedic py-3 fs-6 rounded-4" placeholder="e.g. Subramanian T S" required/>
@@ -38,7 +38,7 @@
                         <input type="hidden" name="lon" id="lon-input"/>
                         <input type="hidden" name="timezone" id="tz-input"/>
 
-                        <div class="col-12 pt-3">
+                        <div class="col-12 pt-2">
                             <button type="submit" class="btn btn-vedic w-100 py-3 fw-black fs-6 shadow-lg rounded-pill">CALCULATE BLUEPRINT & FORECAST</button>
                         </div>
                     </div>

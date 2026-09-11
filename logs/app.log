@@ -657,3 +657,15 @@
 2026-09-11 07:53:02,763 INFO [_internal.py:97]: 127.0.0.1 - - [11/Sep/2026 07:53:02] "[36mGET /static/css/style_v2.css?v=6.0 HTTP/1.1[0m" 304 -
 2026-09-11 07:53:02,788 INFO [_internal.py:97]: 127.0.0.1 - - [11/Sep/2026 07:53:02] "[36mGET /static/manifest.json HTTP/1.1[0m" 304 -
 2026-09-11 07:53:03,176 INFO [_internal.py:97]: 127.0.0.1 - - [11/Sep/2026 07:53:03] "[36mGET /static/img/icon.svg HTTP/1.1[0m" 304 -
+2026-09-11 08:20:31,441 INFO [_internal.py:97]: 127.0.0.1 - - [11/Sep/2026 08:20:31] "GET /profile/new HTTP/1.1" 200 -
+2026-09-11 08:20:31,691 INFO [_internal.py:97]: 127.0.0.1 - - [11/Sep/2026 08:20:31] "[36mGET /static/css/style.css?v=6.0 HTTP/1.1[0m" 304 -
+2026-09-11 08:20:31,812 INFO [_internal.py:97]: 127.0.0.1 - - [11/Sep/2026 08:20:31] "[36mGET /static/css/style_v2.css?v=6.0 HTTP/1.1[0m" 304 -
+2026-09-11 08:20:31,886 INFO [_internal.py:97]: 127.0.0.1 - - [11/Sep/2026 08:20:31] "[36mGET /static/manifest.json HTTP/1.1[0m" 304 -
+2026-09-11 08:20:32,210 INFO [_internal.py:97]: 127.0.0.1 - - [11/Sep/2026 08:20:32] "[36mGET /static/img/icon.svg HTTP/1.1[0m" 304 -
+2026-09-11 08:20:32,424 INFO [_internal.py:97]: 127.0.0.1 - - [11/Sep/2026 08:20:32] "[36mGET /static/img/icon.svg HTTP/1.1[0m" 304 -
+2026-09-11 08:20:36,823 INFO [_internal.py:97]: 127.0.0.1 - - [11/Sep/2026 08:20:36] "GET /profile/new HTTP/1.1" 200 -
+2026-09-11 08:20:37,058 INFO [_internal.py:97]: 127.0.0.1 - - [11/Sep/2026 08:20:37] "[36mGET /static/css/style.css?v=6.0 HTTP/1.1[0m" 304 -
+2026-09-11 08:20:37,130 INFO [_internal.py:97]: 127.0.0.1 - - [11/Sep/2026 08:20:37] "[36mGET /static/css/style_v2.css?v=6.0 HTTP/1.1[0m" 304 -
+2026-09-11 08:20:37,192 INFO [_internal.py:97]: 127.0.0.1 - - [11/Sep/2026 08:20:37] "[36mGET /static/manifest.json HTTP/1.1[0m" 304 -
+2026-09-11 08:20:37,383 INFO [_internal.py:97]: 127.0.0.1 - - [11/Sep/2026 08:20:37] "[36mGET /static/img/icon.svg HTTP/1.1[0m" 304 -
+2026-09-11 08:20:37,489 INFO [_internal.py:97]: 127.0.0.1 - - [11/Sep/2026 08:20:37] "[36mGET /static/img/icon.svg HTTP/1.1[0m" 304 -
