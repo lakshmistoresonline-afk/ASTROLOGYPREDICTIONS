@@ -2,6 +2,7 @@ import hashlib
 import json
 from dataclasses import dataclass, asdict
 from typing import Dict, Any, Optional
+from datetime import datetime
 
 @dataclass(frozen=True)
 class CalculationConfig:
@@ -55,3 +56,42 @@ def validate_chart_geometry(chart_data: Dict[str, Any]) -> bool:
                 raise ValueError(f"CHART_GEOMETRY_INVALID: Invalid house {house} for planet {p_name}")
 
     return True
+
+def enrich_chart_with_config(chart_obj: Any, birth_instant_utc: Optional[str] = None) -> Any:
+    """
+    Enriches a CanonicalChart with canonical CalculationConfig, provenance, and SHA-256 fingerprint
+    without modifying protected V3.15 chart.py.
+    """
+    cfg = get_canonical_calculation_config()
+    lat = getattr(chart_obj, 'latitude', 0.0)
+    lon = getattr(chart_obj, 'longitude', 0.0)
+    tz = getattr(chart_obj, 'timezone', 'UTC')
+    dt_utc_str = birth_instant_utc or getattr(chart_obj, 'birth_datetime', datetime.utcnow()).isoformat()
+
+    fp = generate_chart_fingerprint(dt_utc_str, lat, lon, tz, cfg)
+
+    provenance = {
+        "engine_version": cfg.engine_version,
+        "config_version": cfg.config_version,
+        "zodiac": cfg.zodiac,
+        "ayanamsa": cfg.ayanamsa,
+        "node_mode": cfg.node_mode,
+        "house_system": cfg.house_system,
+        "ephemeris_mode": cfg.ephemeris_mode,
+        "time_standard": cfg.time_standard,
+        "latitude": lat,
+        "longitude": lon,
+        "timezone": tz,
+        "birth_instant_utc": dt_utc_str,
+        "jd_ut": getattr(chart_obj, 'ayanamsa', 0.0)
+    }
+
+    # Attach attributes if fields exist on model
+    try:
+        chart_obj.calculation_config = cfg.to_dict()
+        chart_obj.calculation_provenance = provenance
+        chart_obj.chart_fingerprint = fp
+    except AttributeError:
+        pass
+
+    return chart_obj
