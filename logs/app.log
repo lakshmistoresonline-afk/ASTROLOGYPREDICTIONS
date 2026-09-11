@@ -762,3 +762,9 @@
 2026-09-11 09:09:48,587 INFO [_internal.py:97]: 127.0.0.1 - - [11/Sep/2026 09:09:48] "[36mGET /static/manifest.json HTTP/1.1[0m" 304 -
 2026-09-11 09:09:48,588 INFO [_internal.py:97]: 127.0.0.1 - - [11/Sep/2026 09:09:48] "[36mGET /static/css/style_v2.css?v=6.0 HTTP/1.1[0m" 304 -
 2026-09-11 09:09:48,921 INFO [_internal.py:97]: 127.0.0.1 - - [11/Sep/2026 09:09:48] "[36mGET /static/img/icon.svg HTTP/1.1[0m" 304 -
+2026-09-11 10:07:52,286 INFO [_internal.py:97]: 127.0.0.1 - - [11/Sep/2026 10:07:52] "GET /profile/new HTTP/1.1" 200 -
+2026-09-11 10:07:52,505 INFO [_internal.py:97]: 127.0.0.1 - - [11/Sep/2026 10:07:52] "GET /static/css/style.css?v=6.1 HTTP/1.1" 200 -
+2026-09-11 10:07:52,769 INFO [_internal.py:97]: 127.0.0.1 - - [11/Sep/2026 10:07:52] "GET /static/css/style_v2.css?v=6.1 HTTP/1.1" 200 -
+2026-09-11 10:07:52,802 INFO [_internal.py:97]: 127.0.0.1 - - [11/Sep/2026 10:07:52] "[36mGET /static/manifest.json HTTP/1.1[0m" 304 -
+2026-09-11 10:07:53,347 INFO [_internal.py:97]: 127.0.0.1 - - [11/Sep/2026 10:07:53] "[36mGET /static/img/icon.svg HTTP/1.1[0m" 304 -
+2026-09-11 10:07:53,588 INFO [_internal.py:97]: 127.0.0.1 - - [11/Sep/2026 10:07:53] "[36mGET /static/img/icon.svg HTTP/1.1[0m" 304 -
