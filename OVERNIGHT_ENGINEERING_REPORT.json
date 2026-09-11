@@ -1,0 +1,35 @@
+{
+  "start_sha": "d71f30ec12a5ba78df54eb2d1ce3847aa1973695",
+  "final_sha": "d71f30ec12a5ba78df54eb2d1ce3847aa1973695",
+  "commits": [
+    "d71f30ec12a5ba78df54eb2d1ce3847aa1973695"
+  ],
+  "phases_completed": [
+    "P0.1",
+    "P0.2",
+    "P0.2-R8"
+  ],
+  "tests": {
+    "total": 44,
+    "passed": 44,
+    "failed": 0
+  },
+  "runtime_verified": true,
+  "unresolved_p0": [],
+  "unresolved_p1": [],
+  "unresolved_p2": [],
+  "calculation_conventions": {
+    "engine": "V3.15-PROTECTED",
+    "zodiac": "SIDEREAL",
+    "ayanamsa": "LAHIRI",
+    "house_system": "WHOLE_SIGN",
+    "astronomical_house_system": "PLACIDUS",
+    "node_mode": "MEAN",
+    "topocentric_mode": true
+  },
+  "house_system_semantics": {
+    "interpretive": "WHOLE_SIGN",
+    "astronomical": "PLACIDUS"
+  },
+  "next_phase": "P0.3"
+}
