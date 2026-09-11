@@ -101,6 +101,7 @@ def calculate_canonical_chart(birth_dt: datetime, lat: float, lon: float, tz_str
 
     utc_instant = birth_dt.strftime("%Y-%m-%dT%H:%M:%SZ")
     fp = generate_chart_fingerprint(utc_instant, lat, lon, tz_str, cfg)
+    cfg_fp = hashlib.sha256(json.dumps(cfg.to_dict(), sort_keys=True).encode('utf-8')).hexdigest()
 
     provenance = {
         "engine_version": cfg.engine_version,
@@ -119,12 +120,10 @@ def calculate_canonical_chart(birth_dt: datetime, lat: float, lon: float, tz_str
         "jd_ut": getattr(chart_obj, 'ayanamsa', 0.0)
     }
 
-    try:
-        chart_obj.calculation_config = cfg.to_dict()
-        chart_obj.calculation_provenance = provenance
-        chart_obj.chart_fingerprint = fp
-    except AttributeError:
-        pass
+    chart_obj.calculation_config = cfg.to_dict()
+    chart_obj.calculation_provenance = provenance
+    chart_obj.chart_fingerprint = fp
+    chart_obj.calculation_config_fingerprint = cfg_fp
 
     validate_chart_geometry(chart_obj)
 

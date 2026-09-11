@@ -53,6 +53,11 @@ class CanonicalChart(BaseModel):
     houses: List[float] # Cusps
     house_lords: Dict[int, str]
 
+    calculation_config: Optional[Dict[str, Any]] = None
+    calculation_provenance: Optional[Dict[str, Any]] = None
+    chart_fingerprint: Optional[str] = None
+    calculation_config_fingerprint: Optional[str] = None
+
     divisional_charts: Dict[str, Dict[str, int]] = {}
 
     ashtakavarga: Dict[str, Any] = {}
