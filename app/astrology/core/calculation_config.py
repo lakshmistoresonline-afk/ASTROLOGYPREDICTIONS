@@ -3,6 +3,9 @@ import json
 from dataclasses import dataclass, asdict
 from typing import Dict, Any, Optional
 from datetime import datetime
+from functools import lru_cache
+from .chart import calculate_chart_data
+from .models import CanonicalChart
 
 @dataclass(frozen=True)
 class CalculationConfig:
@@ -38,37 +41,66 @@ def generate_chart_fingerprint(birth_instant_utc: str, lat: float, lon: float, t
     raw_str = json.dumps(payload, sort_keys=True, default=str)
     return hashlib.sha256(raw_str.encode('utf-8')).hexdigest()
 
-def validate_chart_geometry(chart_data: Dict[str, Any]) -> bool:
+def validate_chart_geometry(chart_obj: Any) -> bool:
     """
-    Validates chart geometry and house consistency (Rule 5 & Rule 7).
+    True real geometry validation (Rule 6): verifies Ascendant, house system,
+    planet houses correspond to canonical Whole Sign geometry, and house occupancy agrees.
+    Accepts CanonicalChart or dict representations.
     """
-    if not chart_data:
-        raise ValueError("CHART_GEOMETRY_INVALID: Empty chart data")
+    if not chart_obj:
+        raise ValueError("CHART_GEOMETRY_INVALID: Null chart object")
 
-    planets = chart_data.get("planets", {})
+    if isinstance(chart_obj, dict):
+        planets = chart_obj.get("planets", {})
+        if not planets:
+            raise ValueError("CHART_GEOMETRY_INVALID: Missing planets data")
+        for p_name, p_info in planets.items():
+            if isinstance(p_info, dict):
+                house = p_info.get("house")
+                if house is not None and not (1 <= house <= 12):
+                    raise ValueError(f"CHART_GEOMETRY_INVALID: Invalid house {house} for planet {p_name}")
+        return True
+
+    asc = getattr(chart_obj, 'ascendant', None)
+    if asc is None or not (0.0 <= asc < 360.0):
+        raise ValueError(f"CHART_GEOMETRY_INVALID: Invalid ascendant {asc}")
+
+    asc_rashi = int(asc // 30)
+    planets = getattr(chart_obj, 'planets', {})
     if not planets:
         raise ValueError("CHART_GEOMETRY_INVALID: Missing planets data")
 
     for p_name, p_info in planets.items():
-        if isinstance(p_info, dict):
-            house = p_info.get("house")
-            if house is not None and not (1 <= house <= 12):
-                raise ValueError(f"CHART_GEOMETRY_INVALID: Invalid house {house} for planet {p_name}")
+        house = getattr(p_info, 'house', None)
+        rashi = getattr(p_info, 'rashi', None)
+        if house is None or not (1 <= house <= 12):
+            raise ValueError(f"CHART_GEOMETRY_INVALID: Planet {p_name} has invalid house {house}")
+
+        if rashi is not None:
+            expected_house = (rashi - asc_rashi + 12) % 12 + 1
+            if house != expected_house:
+                raise ValueError(f"CHART_GEOMETRY_INVALID: Planet {p_name} house mismatch. Stored: {house}, Expected Whole Sign: {expected_house}")
 
     return True
 
-def enrich_chart_with_config(chart_obj: Any, birth_instant_utc: Optional[str] = None) -> Any:
-    """
-    Enriches a CanonicalChart with canonical CalculationConfig, provenance, and SHA-256 fingerprint
-    without modifying protected V3.15 chart.py.
-    """
-    cfg = get_canonical_calculation_config()
-    lat = getattr(chart_obj, 'latitude', 0.0)
-    lon = getattr(chart_obj, 'longitude', 0.0)
-    tz = getattr(chart_obj, 'timezone', 'UTC')
-    dt_utc_str = birth_instant_utc or getattr(chart_obj, 'birth_datetime', datetime.utcnow()).isoformat()
+@lru_cache(maxsize=128)
+def _cached_calculate_chart_data(dt_iso: str, lat: float, lon: float, tz_str: str, conf: str, config_hash: str) -> CanonicalChart:
+    dt = datetime.fromisoformat(dt_iso)
+    return calculate_chart_data(dt, lat, lon, tz_str, birth_time_conf=conf)
 
-    fp = generate_chart_fingerprint(dt_utc_str, lat, lon, tz, cfg)
+def calculate_canonical_chart(birth_dt: datetime, lat: float, lon: float, tz_str: str, birth_time_conf: str = "HIGH", config: Optional[CalculationConfig] = None) -> CanonicalChart:
+    """
+    Authoritative calculation wrapper ensuring CalculationConfig, provenance, fingerprint,
+    and strict geometry validation are fully integrated into every chart.
+    """
+    cfg = config or get_canonical_calculation_config()
+    dt_iso = birth_dt.isoformat()
+    cfg_hash = hashlib.sha256(json.dumps(cfg.to_dict(), sort_keys=True).encode('utf-8')).hexdigest()
+
+    chart_obj = _cached_calculate_chart_data(dt_iso, lat, lon, tz_str, birth_time_conf, cfg_hash)
+
+    utc_instant = birth_dt.strftime("%Y-%m-%dT%H:%M:%SZ")
+    fp = generate_chart_fingerprint(utc_instant, lat, lon, tz_str, cfg)
 
     provenance = {
         "engine_version": cfg.engine_version,
@@ -78,20 +110,22 @@ def enrich_chart_with_config(chart_obj: Any, birth_instant_utc: Optional[str] = 
         "node_mode": cfg.node_mode,
         "house_system": cfg.house_system,
         "ephemeris_mode": cfg.ephemeris_mode,
+        "topocentric_mode": cfg.topocentric_mode,
         "time_standard": cfg.time_standard,
+        "birth_instant_utc": utc_instant,
+        "timezone": tz_str,
         "latitude": lat,
         "longitude": lon,
-        "timezone": tz,
-        "birth_instant_utc": dt_utc_str,
         "jd_ut": getattr(chart_obj, 'ayanamsa', 0.0)
     }
 
-    # Attach attributes if fields exist on model
     try:
         chart_obj.calculation_config = cfg.to_dict()
         chart_obj.calculation_provenance = provenance
         chart_obj.chart_fingerprint = fp
     except AttributeError:
         pass
+
+    validate_chart_geometry(chart_obj)
 
     return chart_obj
