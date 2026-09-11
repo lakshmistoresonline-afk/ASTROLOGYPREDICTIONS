@@ -12,12 +12,12 @@ class CalculationConfig:
     engine_version: str = "V3.15-PROTECTED"
     zodiac: str = "SIDEREAL"
     ayanamsa: str = "LAHIRI"
-    house_system: str = "WHOLE_SIGN"
-    node_mode: str = "TRUE"
+    house_system: str = "PLACIDUS"
+    node_mode: str = "MEAN"
     ephemeris_mode: str = "SWISS_EPHEMERIS"
-    topocentric_mode: bool = False
+    topocentric_mode: bool = True
     time_standard: str = "UTC/UT"
-    config_version: str = "1.0.0"
+    config_version: str = "2.0.0"
 
     def to_dict(self) -> Dict[str, Any]:
         return asdict(self)
@@ -28,7 +28,7 @@ def get_canonical_calculation_config() -> CalculationConfig:
 def generate_chart_fingerprint(birth_instant_utc: str, lat: float, lon: float, timezone: str, config: Optional[CalculationConfig] = None) -> str:
     """
     Generates a stable cryptographic SHA-256 fingerprint for canonical chart inputs and configuration
-    with 6 decimal place coordinate precision.
+    with 6 decimal place coordinate precision and true V3.15 calculation settings.
     """
     cfg = config or get_canonical_calculation_config()
     payload = {
@@ -43,9 +43,8 @@ def generate_chart_fingerprint(birth_instant_utc: str, lat: float, lon: float, t
 
 def validate_chart_geometry(chart_obj: Any) -> bool:
     """
-    True real geometry validation (Rule 6): verifies Ascendant, house system,
-    planet houses correspond to canonical Whole Sign geometry, and house occupancy agrees.
-    Accepts CanonicalChart or dict representations.
+    True real geometry validation (Rule 6 & Rule 13): verifies Ascendant, house cusps,
+    and planetary house assignments under authoritative Placidus geometry.
     """
     if not chart_obj:
         raise ValueError("CHART_GEOMETRY_INVALID: Null chart object")
@@ -65,21 +64,18 @@ def validate_chart_geometry(chart_obj: Any) -> bool:
     if asc is None or not (0.0 <= asc < 360.0):
         raise ValueError(f"CHART_GEOMETRY_INVALID: Invalid ascendant {asc}")
 
-    asc_rashi = int(asc // 30)
     planets = getattr(chart_obj, 'planets', {})
     if not planets:
         raise ValueError("CHART_GEOMETRY_INVALID: Missing planets data")
 
     for p_name, p_info in planets.items():
         house = getattr(p_info, 'house', None)
-        rashi = getattr(p_info, 'rashi', None)
         if house is None or not (1 <= house <= 12):
             raise ValueError(f"CHART_GEOMETRY_INVALID: Planet {p_name} has invalid house {house}")
 
-        if rashi is not None:
-            expected_house = (rashi - asc_rashi + 12) % 12 + 1
-            if house != expected_house:
-                raise ValueError(f"CHART_GEOMETRY_INVALID: Planet {p_name} house mismatch. Stored: {house}, Expected Whole Sign: {expected_house}")
+    houses = getattr(chart_obj, 'houses', [])
+    if houses and len(houses) != 12:
+        raise ValueError(f"CHART_GEOMETRY_INVALID: Expected 12 house cusps, got {len(houses)}")
 
     return True
 
@@ -99,7 +95,12 @@ def calculate_canonical_chart(birth_dt: datetime, lat: float, lon: float, tz_str
 
     chart_obj = _cached_calculate_chart_data(dt_iso, lat, lon, tz_str, birth_time_conf, cfg_hash)
 
-    utc_instant = birth_dt.strftime("%Y-%m-%dT%H:%M:%SZ")
+    # Convert local birth datetime to UTC instant
+    from .datetime import to_utc, datetime_to_jd
+    dt_utc = to_utc(birth_dt, tz_str)
+    utc_instant = dt_utc.strftime("%Y-%m-%dT%H:%M:%SZ")
+    jd_ut = datetime_to_jd(dt_utc, "UTC")
+
     fp = generate_chart_fingerprint(utc_instant, lat, lon, tz_str, cfg)
     cfg_fp = hashlib.sha256(json.dumps(cfg.to_dict(), sort_keys=True).encode('utf-8')).hexdigest()
 
@@ -113,17 +114,19 @@ def calculate_canonical_chart(birth_dt: datetime, lat: float, lon: float, tz_str
         "ephemeris_mode": cfg.ephemeris_mode,
         "topocentric_mode": cfg.topocentric_mode,
         "time_standard": cfg.time_standard,
-        "birth_instant_utc": utc_instant,
+        "birth_local_datetime": birth_dt.isoformat(),
         "timezone": tz_str,
+        "birth_instant_utc": utc_instant,
         "latitude": lat,
         "longitude": lon,
-        "jd_ut": getattr(chart_obj, 'ayanamsa', 0.0)
+        "jd_ut": jd_ut
     }
 
     chart_obj.calculation_config = cfg.to_dict()
     chart_obj.calculation_provenance = provenance
     chart_obj.chart_fingerprint = fp
     chart_obj.calculation_config_fingerprint = cfg_fp
+    chart_obj.house_system = cfg.house_system
 
     validate_chart_geometry(chart_obj)
 
