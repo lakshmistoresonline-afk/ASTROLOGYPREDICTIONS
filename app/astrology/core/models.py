@@ -57,6 +57,8 @@ class CanonicalChart(BaseModel):
     calculation_provenance: Optional[Dict[str, Any]] = None
     chart_fingerprint: Optional[str] = None
     calculation_config_fingerprint: Optional[str] = None
+    astronomical_house_system: str = "PLACIDUS"
+    interpretive_house_system: str = "WHOLE_SIGN"
 
     divisional_charts: Dict[str, Dict[str, int]] = {}
 

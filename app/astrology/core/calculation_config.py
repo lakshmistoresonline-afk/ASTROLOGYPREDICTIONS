@@ -12,13 +12,14 @@ class CalculationConfig:
     engine_version: str = "V3.15-PROTECTED"
     zodiac: str = "SIDEREAL"
     ayanamsa: str = "LAHIRI"
-    house_system: str = "WHOLE_SIGN" # Vedic interpretive planetary house assignment (rashi offset)
+    house_system: str = "WHOLE_SIGN" # Interpretive planetary house assignment (rashi offset)
     astronomical_house_system: str = "PLACIDUS" # Swiss Ephemeris cusps calculation (swe.houses_ex b'P')
+    interpretive_house_system: str = "WHOLE_SIGN" # Alias for explicit dual semantics
     node_mode: str = "MEAN"
     ephemeris_mode: str = "SWISS_EPHEMERIS"
     topocentric_mode: bool = True
     time_standard: str = "UTC/UT"
-    config_version: str = "2.1.0"
+    config_version: str = "2.2.0"
 
     def to_dict(self) -> Dict[str, Any]:
         return asdict(self)
@@ -26,12 +27,34 @@ class CalculationConfig:
 def get_canonical_calculation_config() -> CalculationConfig:
     return CalculationConfig()
 
+def validate_config_against_v315_engine(config: CalculationConfig) -> bool:
+    """
+    Validates that the CalculationConfig matches the exact fixed V3.15 engine contract (Architecture B).
+    Rejects any configuration attempting to introduce unsupported runtime variations.
+    """
+    if config.zodiac != "SIDEREAL":
+        raise ValueError(f"CONFIG_INCOMPATIBLE: V3.15 engine requires SIDEREAL zodiac, got {config.zodiac}")
+    if config.ayanamsa != "LAHIRI":
+        raise ValueError(f"CONFIG_INCOMPATIBLE: V3.15 engine requires LAHIRI ayanamsa, got {config.ayanamsa}")
+    if config.node_mode != "MEAN":
+        raise ValueError(f"CONFIG_INCOMPATIBLE: V3.15 engine requires MEAN node mode, got {config.node_mode}")
+    if config.astronomical_house_system != "PLACIDUS":
+        raise ValueError(f"CONFIG_INCOMPATIBLE: V3.15 engine requires PLACIDUS astronomical cusps, got {config.astronomical_house_system}")
+    if config.interpretive_house_system != "WHOLE_SIGN":
+        raise ValueError(f"CONFIG_INCOMPATIBLE: V3.15 engine requires WHOLE_SIGN interpretive houses, got {config.interpretive_house_system}")
+    if not config.topocentric_mode:
+        raise ValueError(f"CONFIG_INCOMPATIBLE: V3.15 engine requires topocentric_mode = True")
+    if config.time_standard != "UTC/UT":
+        raise ValueError(f"CONFIG_INCOMPATIBLE: V3.15 engine requires UTC/UT time standard, got {config.time_standard}")
+    return True
+
 def generate_chart_fingerprint(birth_instant_utc: str, lat: float, lon: float, timezone: str, config: Optional[CalculationConfig] = None) -> str:
     """
     Generates a stable cryptographic SHA-256 fingerprint for canonical chart inputs and configuration
     with 6 decimal place coordinate precision and true V3.15 calculation settings.
     """
     cfg = config or get_canonical_calculation_config()
+    validate_config_against_v315_engine(cfg)
     payload = {
         "birth_instant_utc": birth_instant_utc,
         "latitude": round(lat, 6),
@@ -111,6 +134,8 @@ def calculate_canonical_chart(birth_dt: datetime, lat: float, lon: float, tz_str
     and strict geometry validation are fully integrated into every chart.
     """
     cfg = config or get_canonical_calculation_config()
+    validate_config_against_v315_engine(cfg)
+
     dt_iso = birth_dt.isoformat()
     cfg_hash = hashlib.sha256(json.dumps(cfg.to_dict(), sort_keys=True).encode('utf-8')).hexdigest()
 
@@ -132,6 +157,7 @@ def calculate_canonical_chart(birth_dt: datetime, lat: float, lon: float, tz_str
         "node_mode": cfg.node_mode,
         "house_system": cfg.house_system,
         "astronomical_house_system": cfg.astronomical_house_system,
+        "interpretive_house_system": cfg.interpretive_house_system,
         "ephemeris_mode": cfg.ephemeris_mode,
         "topocentric_mode": cfg.topocentric_mode,
         "time_standard": cfg.time_standard,
@@ -148,6 +174,8 @@ def calculate_canonical_chart(birth_dt: datetime, lat: float, lon: float, tz_str
     chart_obj.chart_fingerprint = fp
     chart_obj.calculation_config_fingerprint = cfg_fp
     chart_obj.house_system = cfg.house_system
+    chart_obj.astronomical_house_system = cfg.astronomical_house_system
+    chart_obj.interpretive_house_system = cfg.interpretive_house_system
 
     validate_chart_geometry(chart_obj)
 
