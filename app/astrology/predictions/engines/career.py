@@ -18,6 +18,17 @@ class CareerPredictionEngine:
         d10 = chart.divisional_charts.get("D10", {})
 
         # 1. NATAL PROMISE
+        from ..v5_natal_promise import evaluate_natal_promise
+        np_res = evaluate_natal_promise(chart, "CAREER", "PROMOTION")
+        if np_res["promise_level"] != "INSUFFICIENT_EVIDENCE":
+            evidence.append(CorroborationEngine.create_evidence(
+                "NATAL_PROMISE",
+                f"NATAL PROMISE: Structural promotion support is {np_res['promise_level']} (Score: {np_res['promise_score']}).",
+                float(np_res['promise_score']) * 100.0,
+                rationale=f"Event-specific evaluation: {len(np_res['positive_evidence'])} positive evidence items.",
+                source_layer="NATAL", evidence_type="INDEPENDENT"
+            ))
+
         l10_name = house_lords[10]
         l10 = planets[l10_name]
 

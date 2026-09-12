@@ -17,6 +17,17 @@ class FinancePredictionEngine:
         planets = chart.planets
 
         # 1. NATAL PROMISE (2nd and 11th Houses)
+        from ..v5_natal_promise import evaluate_natal_promise
+        np_res = evaluate_natal_promise(chart, "FINANCE", "INCOME_EXPANSION")
+        if np_res["promise_level"] != "INSUFFICIENT_EVIDENCE":
+            evidence.append(CorroborationEngine.create_evidence(
+                "NATAL_PROMISE",
+                f"NATAL PROMISE: Income expansion support is {np_res['promise_level']} (Score: {np_res['promise_score']}).",
+                float(np_res['promise_score']) * 100.0,
+                rationale=f"Event-specific evaluation: {len(np_res['positive_evidence'])} positive evidence items.",
+                source_layer="NATAL", evidence_type="INDEPENDENT"
+            ))
+
         l2_name = house_lords[2]
         l11_name = house_lords[11]
         l2 = planets[l2_name]
