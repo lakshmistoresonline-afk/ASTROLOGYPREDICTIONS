@@ -44,21 +44,34 @@ def generate_chart_fingerprint(birth_instant_utc: str, lat: float, lon: float, t
 
 def validate_chart_geometry(chart_obj: Any) -> bool:
     """
-    True authoritative geometry validation (Rule 9): verifies Ascendant validity,
+    True authoritative geometry validation (Rule 6 & Rule 13): verifies Ascendant validity,
     Placidus astronomical cusps (12 cusps), and Whole Sign planetary house assignments (V3.15 standard).
+    Validates both CanonicalChart and dictionary chart representations equally.
     """
     if not chart_obj:
         raise ValueError("CHART_GEOMETRY_INVALID: Null chart object")
 
     if isinstance(chart_obj, dict):
+        asc = chart_obj.get("ascendant")
+        if asc is None or not (0.0 <= asc < 360.0):
+            raise ValueError(f"CHART_GEOMETRY_INVALID: Invalid ascendant {asc}")
+        asc_rashi = int(asc // 30)
         planets = chart_obj.get("planets", {})
         if not planets:
             raise ValueError("CHART_GEOMETRY_INVALID: Missing planets data")
         for p_name, p_info in planets.items():
             if isinstance(p_info, dict):
                 house = p_info.get("house")
-                if house is not None and not (1 <= house <= 12):
+                rashi = p_info.get("rashi")
+                if house is None or not (1 <= house <= 12):
                     raise ValueError(f"CHART_GEOMETRY_INVALID: Invalid house {house} for planet {p_name}")
+                if rashi is not None:
+                    expected_house = (rashi - asc_rashi + 12) % 12 + 1
+                    if house != expected_house:
+                        raise ValueError(f"CHART_GEOMETRY_INVALID: Planet {p_name} house mismatch. Stored: {house}, Expected Whole Sign: {expected_house}")
+        houses = chart_obj.get("houses", [])
+        if houses and len(houses) != 12:
+            raise ValueError(f"CHART_GEOMETRY_INVALID: Expected 12 Placidus house cusps, got {len(houses)}")
         return True
 
     asc = getattr(chart_obj, 'ascendant', None)
