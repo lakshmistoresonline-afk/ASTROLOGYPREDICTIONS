@@ -1,13 +1,15 @@
 {
   "start_sha": "d71f30ec12a5ba78df54eb2d1ce3847aa1973695",
-  "final_sha": "d71f30ec12a5ba78df54eb2d1ce3847aa1973695",
+  "final_sha": "2d6ae6319288626039fe31b2f423d540a3c9a5a4",
   "commits": [
-    "d71f30ec12a5ba78df54eb2d1ce3847aa1973695"
+    "d71f30ec12a5ba78df54eb2d1ce3847aa1973695",
+    "2d6ae6319288626039fe31b2f423d540a3c9a5a4"
   ],
   "phases_completed": [
     "P0.1",
     "P0.2",
-    "P0.2-R8"
+    "P0.2-R8",
+    "P0.2-R9"
   ],
   "tests": {
     "total": 44,
