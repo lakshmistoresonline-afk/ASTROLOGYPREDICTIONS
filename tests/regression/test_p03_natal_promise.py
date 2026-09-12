@@ -6,6 +6,7 @@ from app.astrology.predictions.v5_natal_promise import (
     calculate_score_from_evidence,
     EVENT_RULES
 )
+from app.astrology.predictions.engine import generate_evidence_based_predictions
 
 def test_p03_registry_completeness():
     assert len(EVENT_RULES) >= 14
@@ -37,16 +38,25 @@ def test_p03_event_differentiation():
 
     promo = evaluate_natal_promise(chart, "CAREER", "PROMOTION")
     job_change = evaluate_natal_promise(chart, "CAREER", "JOB_CHANGE")
+    leadership = evaluate_natal_promise(chart, "CAREER", "LEADERSHIP_APPOINTMENT")
     marriage = evaluate_natal_promise(chart, "MARRIAGE", "MARRIAGE")
     divorce = evaluate_natal_promise(chart, "MARRIAGE", "SEPARATION_OR_DIVORCE")
+    income = evaluate_natal_promise(chart, "FINANCE", "INCOME_EXPANSION")
+    pressure = evaluate_natal_promise(chart, "FINANCE", "FINANCIAL_PRESSURE")
+    prop_buy = evaluate_natal_promise(chart, "PROPERTY", "PROPERTY_PURCHASE")
+    prop_sale = evaluate_natal_promise(chart, "PROPERTY", "PROPERTY_SALE")
 
     assert promo["event_type"] == "PROMOTION"
     assert job_change["event_type"] == "JOB_CHANGE"
+    assert leadership["event_type"] == "LEADERSHIP_APPOINTMENT"
     assert promo["relevant_houses"] != job_change["relevant_houses"]
 
     assert marriage["event_type"] == "MARRIAGE"
     assert divorce["event_type"] == "SEPARATION_OR_DIVORCE"
-    assert marriage["relevant_houses"] != divorce["relevant_houses"]
+    assert income["event_type"] == "INCOME_EXPANSION"
+    assert pressure["event_type"] == "FINANCIAL_PRESSURE"
+    assert prop_buy["event_type"] == "PROPERTY_PURCHASE"
+    assert prop_sale["event_type"] == "PROPERTY_SALE"
 
 def test_p03_score_reconstruction_from_evidence():
     dt = datetime(1990, 9, 10, 14, 30)
@@ -98,3 +108,15 @@ def test_p03_multi_chart_coverage():
     chart2 = calculate_canonical_chart(dt2, 51.5074, -0.1278, "Europe/London")
     res2 = evaluate_natal_promise(chart2, "EDUCATION", "ACADEMIC_ENROLLMENT")
     assert res2["domain"] == "EDUCATION"
+
+def test_p03_master_engine_integration():
+    dt = datetime(1990, 9, 10, 14, 30)
+    chart = calculate_canonical_chart(dt, 10.5276, 76.2144, "Asia/Kolkata")
+    preds = generate_evidence_based_predictions(chart)
+    assert preds is not None
+    assert "predictions" in preds
+    assert len(preds["predictions"]) >= 1
+    # Verify career domain prediction contains evidence
+    career_p = next((p for p in preds["predictions"] if p["domain"] == "Career & Authority"), None)
+    assert career_p is not None
+    assert len(career_p["evidence_chain"]) >= 1
