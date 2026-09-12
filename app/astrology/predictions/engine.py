@@ -141,7 +141,7 @@ def generate_evidence_based_predictions(chart: CanonicalChart, selected_date: da
         "calculation_confidence": "HIGH (Swiss Ephemeris)",
         "evidence_strength": "HIERARCHICAL",
         "timing_confidence": "TRANSIT_VERIFIED",
-        "historical_match_rate": "85.7% (Backtest)",
+        "historical_match_rate": None, # Uncalibrated / insufficient empirical out-of-sample data
         "generated_at": datetime.now().isoformat()
     }
 
