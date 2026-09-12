@@ -1,10 +1,11 @@
 {
   "start_sha": "d71f30ec12a5ba78df54eb2d1ce3847aa1973695",
-  "final_sha": "45ce6fc72d74e1743a52f4a9ea8cf3175e685dea",
+  "final_sha": "9f66d2347e6faeee1fe9c2ff5e5c393c4b1c468c",
   "commits": [
     "d71f30ec12a5ba78df54eb2d1ce3847aa1973695",
     "2d6ae6319288626039fe31b2f423d540a3c9a5a4",
-    "45ce6fc72d74e1743a52f4a9ea8cf3175e685dea"
+    "45ce6fc72d74e1743a52f4a9ea8cf3175e685dea",
+    "9f66d2347e6faeee1fe9c2ff5e5c393c4b1c468c"
   ],
   "phases_completed": [
     "P0.1",
@@ -12,11 +13,12 @@
     "P0.2-R8",
     "P0.2-R9",
     "P0.2-R10",
-    "P0.2-R11"
+    "P0.2-R11",
+    "P0.3"
   ],
   "tests": {
-    "total": 48,
-    "passed": 48,
+    "total": 50,
+    "passed": 50,
     "failed": 0
   },
   "runtime_verified": true,
@@ -27,7 +29,7 @@
     "engine": "V3.15-PROTECTED",
     "zodiac": "SIDEREAL",
     "ayanamsa": "LAHIRI",
-    "interpretive_house_system": "WHOLE_SIGN",
+    "house_system": "WHOLE_SIGN",
     "astronomical_house_system": "PLACIDUS",
     "node_mode": "MEAN",
     "topocentric_mode": true
@@ -36,5 +38,5 @@
     "interpretive": "WHOLE_SIGN",
     "astronomical": "PLACIDUS"
   },
-  "next_phase": "P0.3"
+  "next_phase": "P0.4"
 }
