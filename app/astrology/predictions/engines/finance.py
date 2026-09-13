@@ -11,22 +11,23 @@ class FinancePredictionEngine:
     """
 
     @staticmethod
-    def get_prediction(chart: CanonicalChart, selected_date: datetime, event_type: str = "INCOME_EXPANSION") -> DomainPrediction:
+    def get_prediction(chart: CanonicalChart, selected_date: datetime, event_type: str = None) -> DomainPrediction:
         evidence = []
         house_lords = chart.house_lords
         planets = chart.planets
 
-        # 1. NATAL PROMISE (Event-Specific Propagation)
-        from ..v5_natal_promise import evaluate_natal_promise
-        np_res = evaluate_natal_promise(chart, "FINANCE", event_type)
-        if np_res["promise_level"] != "INSUFFICIENT_EVIDENCE":
-            evidence.append(CorroborationEngine.create_evidence(
-                "NATAL_PROMISE",
-                f"NATAL PROMISE: Structural {event_type} support is {np_res['promise_level']} (Score: {np_res['promise_score']}).",
-                float(np_res['promise_score']) * 100.0,
-                rationale=f"Event-specific evaluation for {event_type}: {len(np_res['positive_evidence'])} positive items.",
-                source_layer="NATAL", evidence_type="INDEPENDENT"
-            ))
+        # 1. NATAL PROMISE (Strictly event-specific only if explicitly requested; no silent default coercion)
+        if event_type:
+            from ..v5_natal_promise import evaluate_natal_promise
+            np_res = evaluate_natal_promise(chart, "FINANCE", event_type)
+            if np_res["promise_level"] != "INSUFFICIENT_EVIDENCE":
+                evidence.append(CorroborationEngine.create_evidence(
+                    "NATAL_PROMISE",
+                    f"NATAL PROMISE: Structural {event_type} support is {np_res['promise_level']} (Score: {np_res['promise_score']}).",
+                    float(np_res['promise_score']) * 100.0,
+                    rationale=f"Event-specific evaluation for {event_type}: {len(np_res['positive_evidence'])} positive items.",
+                    source_layer="NATAL", evidence_type="INDEPENDENT"
+                ))
 
         l2_name = house_lords[2]
         l11_name = house_lords[11]
