@@ -6,54 +6,46 @@ from ...timing.precision import timing_engine
 
 class PropertyPredictionEngine:
     """
-    V2 Hardened Property & Assets Engine.
-    Analyzes 4th house (Property), Mars (Bhumikaraka), and D4 Divisional Chart.
+    V3 Authoritative Property & Assets Engine.
+    Consumes canonical evaluate_natal_promise() as the single source of structural asset promise.
     """
 
     @staticmethod
-    def get_prediction(chart: CanonicalChart, selected_date: datetime) -> DomainPrediction:
+    def get_prediction(chart: CanonicalChart, selected_date: datetime, event_type: str = "PROPERTY_PURCHASE") -> DomainPrediction:
         evidence = []
         house_lords = chart.house_lords
         planets = chart.planets
-        d4 = chart.divisional_charts.get("D4", {})
 
-        # 1. NATAL PROMISE (4th Lord & House)
-        l4_name = house_lords[4]
-        l4 = planets[l4_name]
+        # 1. AUTHORITATIVE NATAL PROMISE
+        from ..v5_natal_promise import evaluate_natal_promise
+        ev = event_type or "PROPERTY_PURCHASE"
+        np_res = evaluate_natal_promise(chart, "PROPERTY", ev)
 
         promise_level = "MODERATE"
-        if l4.house in [1, 4, 7, 10, 5, 9]:
-            promise_level = "STRONG"
+        if np_res["promise_level"] != "INSUFFICIENT_EVIDENCE":
+            if np_res["promise_level"] in ["STRONG_PROMISE", "MODERATE_PROMISE"]:
+                promise_level = "STRONG"
+            elif np_res["promise_level"] == "WEAK_PROMISE" or np_res["promise_level"] == "WITHHELD":
+                promise_level = "CONDITIONAL"
+
             evidence.append(CorroborationEngine.create_evidence(
                 "NATAL_PROMISE",
-                f"NATAL PROMISE: High asset potential indicated by Kendra/Trikona placement of 4th Lord {l4_name}.",
-                90.0, rationale=f"{l4_name} is in house {l4.house}"
-            ))
-        elif l4.house in [2, 11]:
-            evidence.append(CorroborationEngine.create_evidence(
-                "SECONDARY_PROMISE",
-                f"SECONDARY PROMISE: Supportive house placement (2/11) for 4th Lord {l4_name} provides stable asset foundation.",
-                60.0, rationale=f"{l4_name} is in house {l4.house}"
+                f"NATAL PROMISE: Structural {ev} support is {np_res['promise_level']} (Score: {np_res['promise_score']}).",
+                float(np_res['promise_score']) * 100.0,
+                rationale=f"Authoritative event-specific evaluation: {len(np_res['positive_evidence'])} positive items.",
+                source_layer="NATAL", evidence_type="INDEPENDENT"
             ))
 
-        # 2. KARAKA STRENGTH (Mars)
-        mars = planets["Mars"]
-        if "Exalted" in mars.dignity or mars.dignity == "Own Sign":
-             evidence.append(CorroborationEngine.create_evidence(
-                "PLANETARY_STRENGTH",
-                "LAND MODIFIER: Strong Mars (Karaka for land) indicates capacity for real estate control.",
-                80.0
-            ))
+            for item in np_res.get("evidence_items", []):
+                if item["polarity"] == "NEGATIVE":
+                    evidence.append(CorroborationEngine.create_evidence(
+                        "CONFLICTS",
+                        f"ASSET PRESSURE: {item['rationale']}",
+                        -50.0, source_layer="NATAL", evidence_type="CONFLICT"
+                    ))
 
-        # 3. DIVISIONAL AUDIT (D4 Chaturthamsha)
-        if d4:
-             evidence.append(CorroborationEngine.create_evidence(
-                "DIVISIONAL_CONFIRM",
-                "VARGA CONFIRMATION: Chaturthamsha (D4) corroborates underlying asset stability.",
-                85.0
-            ))
-
-        # 4. DASHA ACTIVATION
+        # 2. DASHA ACTIVATION
+        l4_name = house_lords[4]
         from ...dasha import calculate_vimshottari
         moon_lon = planets["Moon"].longitude
         dasha = calculate_vimshottari(moon_lon, chart.birth_datetime, calculation_date=selected_date)
@@ -81,7 +73,7 @@ class PropertyPredictionEngine:
                 60.0
             ))
 
-        # 4. TIMING
+        # 3. TIMING
         window = timing_engine.calculate_window(chart, ["Mars", "Saturn", l4_name], [4, 11, 2], calculation_date=selected_date)
         if window.get("proximity_weight", 0) > 0:
              evidence.append(CorroborationEngine.create_evidence(
@@ -89,7 +81,7 @@ class PropertyPredictionEngine:
                 90.0 * window.get("proximity_weight")
             ))
 
-        # 5. SYNTHESIS
+        # 4. SYNTHESIS
         summary_template = (
             "Property and fixed asset dynamics show {promise} natal foundation and {strength} current alignment. "
             "Hierarchical synthesis shows a {score}% match for asset acquisition."

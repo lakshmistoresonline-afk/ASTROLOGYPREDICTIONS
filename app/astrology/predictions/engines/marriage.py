@@ -6,63 +6,46 @@ from ...timing.precision import timing_engine
 
 class MarriagePredictionEngine:
     """
-    V2 Hardened Marriage & Relationship Engine.
-    Analyzes 7th House (Partnerships), Venus (Karaka), and D9 (Navamsha).
+    V3 Authoritative Marriage & Relationship Engine.
+    Consumes canonical evaluate_natal_promise() as the single source of structural relationship promise.
     """
 
     @staticmethod
-    def get_prediction(chart: CanonicalChart, selected_date: datetime) -> DomainPrediction:
+    def get_prediction(chart: CanonicalChart, selected_date: datetime, event_type: str = "MARRIAGE") -> DomainPrediction:
         evidence = []
         house_lords = chart.house_lords
         planets = chart.planets
-        d9 = chart.divisional_charts.get("D9", {})
 
-        # 1. NATAL PROMISE (7th Lord & House)
-        l7_name = house_lords[7]
-        l7 = planets[l7_name]
+        # 1. AUTHORITATIVE NATAL PROMISE
+        from ..v5_natal_promise import evaluate_natal_promise
+        ev = event_type or "MARRIAGE"
+        np_res = evaluate_natal_promise(chart, "MARRIAGE", ev)
 
         promise_level = "MODERATE"
-        if l7.house in [1, 4, 7, 10, 5, 9]:
-            promise_level = "STRONG"
+        if np_res["promise_level"] != "INSUFFICIENT_EVIDENCE":
+            if np_res["promise_level"] in ["STRONG_PROMISE", "MODERATE_PROMISE"]:
+                promise_level = "STRONG"
+            elif np_res["promise_level"] == "WEAK_PROMISE" or np_res["promise_level"] == "WITHHELD":
+                promise_level = "CONDITIONAL"
+
             evidence.append(CorroborationEngine.create_evidence(
                 "NATAL_PROMISE",
-                f"NATAL PROMISE: High relationship stability indicated by Kendra/Trikona placement of 7th Lord {l7_name}.",
-                90.0, rationale=f"{l7_name} is in house {l7.house}"
-            ))
-        elif l7.house in [2, 11]:
-            evidence.append(CorroborationEngine.create_evidence(
-                "SECONDARY_PROMISE",
-                f"SECONDARY PROMISE: Supportive house placement (2/11) for 7th Lord {l7_name} provides stable partnership foundation.",
-                60.0, rationale=f"{l7_name} is in house {l7.house}"
-            ))
-        elif l7.house in [6, 8, 12]:
-            promise_level = "CONDITIONAL"
-            evidence.append(CorroborationEngine.create_evidence(
-                "CONFLICTS",
-                f"RELATIONSHIP PRESSURE: 7th Lord {l7_name} in Dusthana suggests karmic complexity in partnerships.",
-                40.0, rationale=f"{l7_name} in challenging house {l7.house}."
+                f"NATAL PROMISE: Structural {ev} support is {np_res['promise_level']} (Score: {np_res['promise_score']}).",
+                float(np_res['promise_score']) * 100.0,
+                rationale=f"Authoritative event-specific evaluation: {len(np_res['positive_evidence'])} positive items.",
+                source_layer="NATAL", evidence_type="INDEPENDENT"
             ))
 
-        # 2. KARAKA STRENGTH (Venus/Jupiter)
-        ven = planets["Venus"]
-        if "Exalted" in ven.dignity or ven.dignity == "Own Sign":
-             evidence.append(CorroborationEngine.create_evidence(
-                "YOGA_SUPPORT",
-                "HARMONY MODIFIER: Strong Venus (Karaka for marriage) supports aesthetic and emotional bonding.",
-                80.0
-            ))
+            for item in np_res.get("evidence_items", []):
+                if item["polarity"] == "NEGATIVE":
+                    evidence.append(CorroborationEngine.create_evidence(
+                        "CONFLICTS",
+                        f"RELATIONSHIP PRESSURE: {item['rationale']}",
+                        -50.0, source_layer="NATAL", evidence_type="CONFLICT"
+                    ))
 
-        # 3. DIVISIONAL AUDIT (D9 Navamsha)
-        if d9:
-            d9_l7 = d9.get(l7_name)
-            if d9_l7 is not None and d9_l7 in [0, 4, 8, 1, 5, 9]:
-                 evidence.append(CorroborationEngine.create_evidence(
-                    "DIVISIONAL_CONFIRM",
-                    "VARGA CONFIRMATION: Navamsha (D9) corroborates underlying relational longevity.",
-                    85.0
-                ))
-
-        # 4. DASHA ACTIVATION
+        # 2. DASHA ACTIVATION
+        l7_name = house_lords[7]
         from ...dasha import calculate_vimshottari
         moon_lon = chart.planets["Moon"].longitude
         dasha = calculate_vimshottari(moon_lon, chart.birth_datetime, calculation_date=selected_date)
@@ -90,7 +73,7 @@ class MarriagePredictionEngine:
                 60.0
             ))
 
-        # 5. TIMING
+        # 3. TIMING
         window = timing_engine.calculate_window(chart, ["Venus", "Jupiter", l7_name], [7, 5, 2], calculation_date=selected_date)
         if window.get("proximity_weight", 0) > 0:
              evidence.append(CorroborationEngine.create_evidence(
@@ -98,7 +81,7 @@ class MarriagePredictionEngine:
                 90.0 * window.get("proximity_weight")
             ))
 
-        # 6. SYNTHESIS
+        # 4. SYNTHESIS
         summary_template = (
             "Partnership and relational dynamics show {promise} natal strength and {strength} current alignment. "
             "Hierarchical synthesis shows a {score}% match for union themes."
