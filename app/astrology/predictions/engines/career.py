@@ -6,92 +6,47 @@ from ...timing.precision import timing_engine
 
 class CareerPredictionEngine:
     """
-    V2 Hardened Career Engine.
-    Deep-dives into 10th House (Action), 11th (Gains), 1st (Identity) and D10 (Dashamsha).
+    V3 Authoritative Career Engine.
+    Consumes canonical evaluate_natal_promise() as the single source of structural promise.
     """
 
     @staticmethod
-    def get_prediction(chart: CanonicalChart, selected_date: datetime, event_type: str = None) -> DomainPrediction:
+    def get_prediction(chart: CanonicalChart, selected_date: datetime, event_type: str = "PROMOTION") -> DomainPrediction:
         evidence = []
         house_lords = chart.house_lords
         planets = chart.planets
         d10 = chart.divisional_charts.get("D10", {})
 
-        # 1. NATAL PROMISE (Strictly event-specific only if explicitly requested; no silent default coercion)
-        if event_type:
-            from ..v5_natal_promise import evaluate_natal_promise
-            np_res = evaluate_natal_promise(chart, "CAREER", event_type)
-            if np_res["promise_level"] != "INSUFFICIENT_EVIDENCE":
-                evidence.append(CorroborationEngine.create_evidence(
-                    "NATAL_PROMISE",
-                    f"NATAL PROMISE: Structural {event_type} support is {np_res['promise_level']} (Score: {np_res['promise_score']}).",
-                    float(np_res['promise_score']) * 100.0,
-                    rationale=f"Event-specific evaluation for {event_type}: {len(np_res['positive_evidence'])} positive items.",
-                    source_layer="NATAL", evidence_type="INDEPENDENT"
-                ))
-
-        l10_name = house_lords[10]
-        l10 = planets[l10_name]
+        # 1. AUTHORITATIVE NATAL PROMISE
+        from ..v5_natal_promise import evaluate_natal_promise
+        ev = event_type or "PROMOTION"
+        np_res = evaluate_natal_promise(chart, "CAREER", ev)
 
         promise_level = "MODERATE"
+        if np_res["promise_level"] != "INSUFFICIENT_EVIDENCE":
+            if np_res["promise_level"] in ["STRONG_PROMISE", "MODERATE_PROMISE"]:
+                promise_level = "STRONG"
+            elif np_res["promise_level"] == "WEAK_PROMISE" or np_res["promise_level"] == "WITHHELD":
+                promise_level = "CONDITIONAL"
 
-        # Occupancy Promise
-        for p_name, p in planets.items():
-            if p.house == 10 and p_name in ["Jupiter", "Sun", "Mars", "Saturn", "Mercury"]:
-                 promise_level = "STRONG"
-                 evidence.append(CorroborationEngine.create_evidence(
-                    "NATAL_PROMISE",
-                    f"NATAL SIGNAL: Strong presence in the 10th house ({p_name}) supports major career events.",
-                    85.0, source_layer="NATAL", evidence_type="INDEPENDENT"
-                 ))
-
-        if l10.house in [1, 4, 7, 10, 5, 9]:
-            promise_level = "STRONG"
             evidence.append(CorroborationEngine.create_evidence(
                 "NATAL_PROMISE",
-                f"NATAL PROMISE: High professional status indicated by Kendra/Trikona placement of 10th Lord {l10_name}.",
-                90.0, rationale=f"{l10_name} is in house {l10.house}",
+                f"NATAL PROMISE: Structural {ev} support is {np_res['promise_level']} (Score: {np_res['promise_score']}).",
+                float(np_res['promise_score']) * 100.0,
+                rationale=f"Authoritative event-specific evaluation: {len(np_res['positive_evidence'])} positive items.",
                 source_layer="NATAL", evidence_type="INDEPENDENT"
             ))
-        elif l10.house in [6, 8, 12]:
-             evidence.append(CorroborationEngine.create_evidence(
-                "CONFLICTS",
-                f"CAREER FRICTION: 10th Lord {l10_name} in Dusthana ({l10.house}) suggests instability or shifts.",
-                -70.0, source_layer="NATAL", evidence_type="CONFLICT"
-             ))
-        elif l10.house in [2, 11]:
-            evidence.append(CorroborationEngine.create_evidence(
-                "SECONDARY_PROMISE",
-                f"SECONDARY PROMISE: Supportive house placement (2/11) for 10th Lord {l10_name} provides stable material gains.",
-                60.0, rationale=f"{l10_name} is in house {l10.house}"
-            ))
-        elif l10.house in [6, 8, 12]:
-            promise_level = "CONDITIONAL"
-            evidence.append(CorroborationEngine.create_evidence(
-                "CONFLICTS",
-                f"PROMISE OBSTRUCTION: 10th Lord {l10_name} in Dusthana suggests service orientation or initial delays.",
-                40.0, rationale="Placement in challenging house requires remediation."
-            ))
 
-        # 2. STRENGTH ANALYSIS (Shadbala)
-        if l10.shadbala_score and l10.shadbala_score > 1.2:
-             evidence.append(CorroborationEngine.create_evidence(
-                "PLANETARY_STRENGTH",
-                f"RESILIENCE MODIFIER: Exceptional Shadbala strength of {l10_name} grants authority and endurance.",
-                80.0
-            ))
+            for item in np_res.get("evidence_items", []):
+                if item["polarity"] == "NEGATIVE":
+                    evidence.append(CorroborationEngine.create_evidence(
+                        "CONFLICTS",
+                        f"CAREER FRICTION: {item['rationale']}",
+                        -70.0, source_layer="NATAL", evidence_type="CONFLICT"
+                    ))
 
-        # 3. DIVISIONAL AUDIT (D10 Dashamsha)
-        if d10:
-            d10_lagna = d10.get("Lagna", 0)
-            if d10_lagna in [0, 4, 8]: # Dharma signs in D10
-                 evidence.append(CorroborationEngine.create_evidence(
-                    "DIVISIONAL_CONFIRM",
-                    "VARGA CONFIRMATION: Dashamsha (D10) supports natural professional leadership.",
-                    85.0
-                ))
-
-        # 4. DASHA ACTIVATION
+        # 2. DASHA ACTIVATION
+        l10_name = house_lords[10]
         from ...dasha import calculate_vimshottari
         moon_lon = chart.planets["Moon"].longitude
         dasha = calculate_vimshottari(moon_lon, chart.birth_datetime, calculation_date=selected_date)
@@ -111,7 +66,7 @@ class CareerPredictionEngine:
                 60.0, group="SECONDARY"
             ))
 
-        # 5. TIMING GENERATION
+        # 3. TIMING GENERATION
         window = timing_engine.calculate_window(chart, ["Jupiter", "Mars", l10_name], [10, 11, 1],
                                                 calculation_date=selected_date, domain="Career & Authority")
         if window.get("proximity_weight", 0) > 0:
@@ -120,7 +75,7 @@ class CareerPredictionEngine:
                 90.0 * window.get("proximity_weight")
             ))
 
-        # 6. SYNTHESIS
+        # 4. SYNTHESIS
         summary_template = (
             "Your professional trajectory has a {promise} natal foundation and is currently {strength} aligned. "
             "Hierarchical synthesis shows a {score}% match for status expansion."
