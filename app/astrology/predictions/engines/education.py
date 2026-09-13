@@ -6,72 +6,59 @@ from ...timing.precision import timing_engine
 
 class EducationPredictionEngine:
     """
-    Hardened Education & Knowledge Engine.
-    Evaluates 4th house (Basic Ed), 5th house (Intellect), and Mercury/Jupiter stability.
+    V3 Authoritative Education & Knowledge Engine.
+    Consumes canonical evaluate_natal_promise() as the single source of structural educational promise.
     """
 
     @staticmethod
-    def get_prediction(chart: CanonicalChart, selected_date: datetime) -> DomainPrediction:
+    def get_prediction(chart: CanonicalChart, selected_date: datetime, event_type: str = "ACADEMIC_ENROLLMENT") -> DomainPrediction:
         evidence = []
         house_lords = chart.house_lords
         planets = chart.planets
 
-        # 1. NATAL PROMISE (4th & 5th Houses)
-        l4_name = house_lords[4]
-        l5_name = house_lords[5]
+        # 1. AUTHORITATIVE NATAL PROMISE
+        from ..v5_natal_promise import evaluate_natal_promise
+        ev = event_type or "ACADEMIC_ENROLLMENT"
+        np_res = evaluate_natal_promise(chart, "EDUCATION", ev)
 
         promise_level = "MODERATE"
+        if np_res["promise_level"] != "INSUFFICIENT_EVIDENCE":
+            if np_res["promise_level"] in ["STRONG_PROMISE", "MODERATE_PROMISE"]:
+                promise_level = "STRONG"
+            elif np_res["promise_level"] == "WEAK_PROMISE" or np_res["promise_level"] == "WITHHELD":
+                promise_level = "CONDITIONAL"
 
-        # Occupancy Promise (V3.14)
-        for p_name, p in planets.items():
-            if p.house in [4, 5] and p_name in ["Mercury", "Jupiter", "Sun"]:
-                 promise_level = "STRONG"
-                 evidence.append(CorroborationEngine.create_evidence(
-                    "NATAL_PROMISE",
-                    f"NATAL SIGNAL: Strong presence in academic houses (H{p.house}) indicates learning focus.",
-                    85.0
-                 ))
-
-        l4_house = planets[l4_name].house
-        if l4_house in [1, 4, 7, 10, 5, 9]:
-            promise_level = "STRONG"
             evidence.append(CorroborationEngine.create_evidence(
                 "NATAL_PROMISE",
-                f"NATAL PROMISE: High capacity for learning supported by Kendra/Trikona placement of 4th Lord {l4_name}.",
-                90.0, rationale=f"{l4_name} is in house {l4_house}"
-            ))
-        elif l4_house in [2, 11]:
-            evidence.append(CorroborationEngine.create_evidence(
-                "SECONDARY_PROMISE",
-                f"SECONDARY PROMISE: Supportive house placement (2/11) for 4th Lord {l4_name} provides stable educational base.",
-                60.0, rationale=f"{l4_name} is in house {l4_house}"
+                f"NATAL PROMISE: Structural {ev} support is {np_res['promise_level']} (Score: {np_res['promise_score']}).",
+                float(np_res['promise_score']) * 100.0,
+                rationale=f"Authoritative event-specific evaluation: {len(np_res['positive_evidence'])} positive items.",
+                source_layer="NATAL", evidence_type="INDEPENDENT"
             ))
 
-        # Mercury & Jupiter (Karakas)
-        merc = planets["Mercury"]
-        jup = planets["Jupiter"]
-        if merc.shadbala_score > 1.1:
-            evidence.append(CorroborationEngine.create_evidence(
-                "MODIFIERS", "INTELLECT MODIFIER: Strong Mercury grants sharp analytical and linguistic skills.", 80.0
-            ))
-        if jup.house in [1, 4, 7, 10, 5, 9]:
-            evidence.append(CorroborationEngine.create_evidence(
-                "MODIFIERS", "WISDOM MODIFIER: Beneficial Jupiter placement supports higher educational attainment.", 75.0
-            ))
+            for item in np_res.get("evidence_items", []):
+                if item["polarity"] == "NEGATIVE":
+                    evidence.append(CorroborationEngine.create_evidence(
+                        "CONFLICTS",
+                        f"EDUCATIONAL PRESSURE: {item['rationale']}",
+                        -50.0, source_layer="NATAL", evidence_type="CONFLICT"
+                    ))
 
         # 2. DASHA ACTIVATION
+        l4_name = house_lords[4]
+        l5_name = house_lords[5]
+        l9_name = house_lords[9]
         from ...dasha import calculate_vimshottari
         moon_lon = chart.planets["Moon"].longitude
         dasha = calculate_vimshottari(moon_lon, chart.birth_datetime, calculation_date=selected_date)
 
-        l9_name = house_lords[9]
         relevant_lords = [l4_name, l5_name, l9_name, "Mercury", "Jupiter"]
         dasha_evidence = CorroborationEngine.audit_dasha_activation(dasha, chart, relevant_lords, "educational")
         if dasha_evidence:
             evidence.extend(dasha_evidence)
         else:
             evidence.append(CorroborationEngine.create_evidence(
-                "DASHA_FOUNDATION", # Changed from ACTIVATION to FOUNDATION for fallback
+                "DASHA_FOUNDATION",
                 "STABILITY PHASE: Life-period favors maintenance of existing knowledge base.",
                 65.0, group="SECONDARY"
             ))
