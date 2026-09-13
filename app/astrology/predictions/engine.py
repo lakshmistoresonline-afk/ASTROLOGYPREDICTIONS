@@ -22,7 +22,7 @@ from concurrent.futures import ThreadPoolExecutor
 
 _prediction_cache = {}
 
-def generate_evidence_based_predictions(chart: CanonicalChart, selected_date: datetime = None, limit_domains: List[str] = None) -> Dict[str, Any]:
+def generate_evidence_based_predictions(chart: CanonicalChart, selected_date: datetime = None, limit_domains: List[str] = None, event_requests: Dict[str, str] = None) -> Dict[str, Any]:
     """
     Master Engine (V3): Orchestrates specialized domain engines using hierarchical confluence.
     V3.22: Re-enabled cache with profile-specific keys to ensure performance.
@@ -30,9 +30,13 @@ def generate_evidence_based_predictions(chart: CanonicalChart, selected_date: da
     if selected_date is None:
         selected_date = datetime.now()
 
+    if event_requests is None:
+        event_requests = {}
+
     # 0. Cache Check (V3.20/V3.22 Performance Hardening)
     ld_key = "-".join(sorted(limit_domains)) if limit_domains else "ALL"
-    cache_key = f"{chart.birth_datetime.isoformat()}_{chart.latitude}_{chart.longitude}_{selected_date.strftime('%Y-%m')}_{ld_key}"
+    er_key = "-".join(sorted([f"{k}:{v}" for k, v in event_requests.items()])) if event_requests else "DEFAULT"
+    cache_key = f"{chart.birth_datetime.isoformat()}_{chart.latitude}_{chart.longitude}_{selected_date.strftime('%Y-%m')}_{ld_key}_{er_key}"
     if cache_key in _prediction_cache:
         return _prediction_cache[cache_key]
 
@@ -63,7 +67,11 @@ def generate_evidence_based_predictions(chart: CanonicalChart, selected_date: da
 
     def process_domain(name, engine_func):
         try:
-            prediction = engine_func(chart, selected_date)
+            ev_type = event_requests.get(name)
+            if ev_type:
+                prediction = engine_func(chart, selected_date, event_type=ev_type)
+            else:
+                prediction = engine_func(chart, selected_date)
             # Ensure categorized view logic in UI can group them
             cat_map = {
                 "Career": "material",

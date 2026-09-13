@@ -11,21 +11,21 @@ class CareerPredictionEngine:
     """
 
     @staticmethod
-    def get_prediction(chart: CanonicalChart, selected_date: datetime) -> DomainPrediction:
+    def get_prediction(chart: CanonicalChart, selected_date: datetime, event_type: str = "PROMOTION") -> DomainPrediction:
         evidence = []
         house_lords = chart.house_lords
         planets = chart.planets
         d10 = chart.divisional_charts.get("D10", {})
 
-        # 1. NATAL PROMISE
+        # 1. NATAL PROMISE (Event-Specific Propagation)
         from ..v5_natal_promise import evaluate_natal_promise
-        np_res = evaluate_natal_promise(chart, "CAREER", "PROMOTION")
+        np_res = evaluate_natal_promise(chart, "CAREER", event_type)
         if np_res["promise_level"] != "INSUFFICIENT_EVIDENCE":
             evidence.append(CorroborationEngine.create_evidence(
                 "NATAL_PROMISE",
-                f"NATAL PROMISE: Structural promotion support is {np_res['promise_level']} (Score: {np_res['promise_score']}).",
+                f"NATAL PROMISE: Structural {event_type} support is {np_res['promise_level']} (Score: {np_res['promise_score']}).",
                 float(np_res['promise_score']) * 100.0,
-                rationale=f"Event-specific evaluation: {len(np_res['positive_evidence'])} positive evidence items.",
+                rationale=f"Event-specific evaluation for {event_type}: {len(np_res['positive_evidence'])} positive items.",
                 source_layer="NATAL", evidence_type="INDEPENDENT"
             ))
 
@@ -96,7 +96,6 @@ class CareerPredictionEngine:
         dasha = calculate_vimshottari(moon_lon, chart.birth_datetime, calculation_date=selected_date)
 
         relevant_lords = {l10_name, house_lords[11], house_lords[9], "Sun", "Jupiter", "Mars"}
-        # Include major occupants as relevant lords (V3.15)
         for p_name, p in planets.items():
             if p.house in [10, 11, 1, 5, 9]:
                 relevant_lords.add(p_name)
