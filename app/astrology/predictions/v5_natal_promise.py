@@ -118,6 +118,7 @@ EVENT_RULES = {
 def calculate_score_from_evidence(evidence_items: List[Dict[str, Any]]) -> float:
     """
     Reconstructs the final score strictly from evidence items using independence group capping.
+    Starts from 0.0 baseline (no artificial score).
     """
     group_totals: Dict[str, float] = {}
     for item in evidence_items:
@@ -131,8 +132,8 @@ def calculate_score_from_evidence(evidence_items: List[Dict[str, Any]]) -> float
 
 def evaluate_natal_promise(chart_obj, domain: str, event_type: str = "GENERAL") -> Dict[str, Any]:
     """
-    P0.3-R4 Forensic Hardened Event-Specific Natal Promise Engine.
-    Strict domain/event validation, zero fallback, structured evidence items,
+    P0.3-R9 Causal Event-Specific Natal Promise Engine.
+    Strict domain/event validation, zero baseline, structured evidence items,
     and traceable score reconstruction.
     """
     if not event_type:
@@ -148,7 +149,7 @@ def evaluate_natal_promise(chart_obj, domain: str, event_type: str = "GENERAL") 
             "relevant_planets": [],
             "evidence_items": [],
             "independence_count": 0,
-            "engine_version": "V5.3-EVENT-SPECIFIC-HARDENED-R4"
+            "engine_version": "V5.3-EVENT-SPECIFIC-CAUSAL-R9"
         }
 
     ev_key = event_type.upper().replace(" ", "_")
@@ -167,7 +168,7 @@ def evaluate_natal_promise(chart_obj, domain: str, event_type: str = "GENERAL") 
             "relevant_planets": [],
             "evidence_items": [],
             "independence_count": 0,
-            "engine_version": "V5.3-EVENT-SPECIFIC-HARDENED-R4"
+            "engine_version": "V5.3-EVENT-SPECIFIC-CAUSAL-R9"
         }
 
     # Strict domain validation
@@ -184,7 +185,7 @@ def evaluate_natal_promise(chart_obj, domain: str, event_type: str = "GENERAL") 
             "relevant_planets": [],
             "evidence_items": [],
             "independence_count": 0,
-            "engine_version": "V5.3-EVENT-SPECIFIC-HARDENED-R4"
+            "engine_version": "V5.3-EVENT-SPECIFIC-CAUSAL-R9"
         }
 
     if not chart_obj or not hasattr(chart_obj, 'planets') or not chart_obj.planets:
@@ -200,7 +201,7 @@ def evaluate_natal_promise(chart_obj, domain: str, event_type: str = "GENERAL") 
             "relevant_planets": rule["karakas"],
             "evidence_items": [],
             "independence_count": 0,
-            "engine_version": "V5.3-EVENT-SPECIFIC-HARDENED-R4"
+            "engine_version": "V5.3-EVENT-SPECIFIC-CAUSAL-R9"
         }
 
     evidence_items: List[Dict[str, Any]] = []
@@ -259,7 +260,7 @@ def evaluate_natal_promise(chart_obj, domain: str, event_type: str = "GENERAL") 
                     "rationale": f"Event significator {k} is combust."
                 })
 
-            if shadbala and shadbala > 6.0:
+            if shadbala and shadbala > 1.0: # Using normalized relative threshold if available
                 evidence_items.append({
                     "rule_id": f"SHADBALA_STRONG_{k}",
                     "event_type": ev_key,
@@ -305,8 +306,9 @@ def evaluate_natal_promise(chart_obj, domain: str, event_type: str = "GENERAL") 
                     "rationale": f"Primary house {h} lord ({lord}) is debilitated."
                 })
 
+        # House occupancy requires supporting karaka or lord corroboration to avoid generic false-positives
         occupants = [pname for pname, pinfo in planets.items() if getattr(pinfo, 'house', 0) == h]
-        if occupants:
+        if occupants and (lord in rule["karakas"] or any(occ in rule["karakas"] for occ in occupants)):
             evidence_items.append({
                 "rule_id": f"HOUSE_OCCUPANCY_{h}",
                 "event_type": ev_key,
@@ -314,32 +316,16 @@ def evaluate_natal_promise(chart_obj, domain: str, event_type: str = "GENERAL") 
                 "evidence_group": "HOUSE_STRUCTURE",
                 "polarity": "POSITIVE",
                 "source_type": "HOUSE_OCCUPANTS",
-                "source_fact": f"House {h} tenanted by {', '.join(occupants)}",
+                "source_fact": f"House {h} tenanted by corroborating {', '.join(occupants)}",
                 "magnitude": 0.15,
-                "rationale": f"Primary house {h} is tenanted."
+                "rationale": f"Primary house {h} is tenanted by event-relevant factors."
             })
 
-    # 3. Evaluate Supporting Houses
-    for h in rule.get("supporting_houses", []):
-        occupants = [pname for pname, pinfo in planets.items() if getattr(pinfo, 'house', 0) == h]
-        if occupants:
-            evidence_items.append({
-                "rule_id": f"SUPPORT_HOUSE_OCCUPANCY_{h}",
-                "event_type": ev_key,
-                "domain": rule["domain"],
-                "evidence_group": "HOUSE_STRUCTURE",
-                "polarity": "POSITIVE",
-                "source_type": "SUPPORTING_HOUSE",
-                "source_fact": f"Supporting House {h} tenanted by {', '.join(occupants)}",
-                "magnitude": 0.08,
-                "rationale": f"Supporting house {h} provides contextual support."
-            })
-
-    # 4. Evaluate Yogas if relevant
+    # 3. Evaluate Yogas if relevant
     if yogas:
         for y in yogas:
             y_name = y.get("name", "") if isinstance(y, dict) else getattr(y, 'name', '')
-            if y_name:
+            if y_name and any(k.lower() in y_name.lower() for k in [rule["domain"].lower(), "raja", "dhana"]):
                 evidence_items.append({
                     "rule_id": f"YOGA_MEMBERSHIP_{y_name}",
                     "event_type": ev_key,
@@ -347,12 +333,12 @@ def evaluate_natal_promise(chart_obj, domain: str, event_type: str = "GENERAL") 
                     "evidence_group": "YOGA_SUPPORT",
                     "polarity": "POSITIVE",
                     "source_type": "YOGA",
-                    "source_fact": f"Active Yoga: {y_name}",
+                    "source_fact": f"Domain-relevant Yoga: {y_name}",
                     "magnitude": 0.15,
-                    "rationale": f"Chart exhibits Yoga formation: {y_name}."
+                    "rationale": f"Chart exhibits event-relevant Yoga formation: {y_name}."
                 })
 
-    # 5. Evaluate Varga Confirmation if available
+    # 4. Evaluate Varga Confirmation if available
     if varga_req and varga_req in div_charts:
         evidence_items.append({
             "rule_id": f"VARGA_CONFIRMATION_{varga_req}",
@@ -395,5 +381,5 @@ def evaluate_natal_promise(chart_obj, domain: str, event_type: str = "GENERAL") 
         "relevant_planets": rule["karakas"],
         "evidence_items": evidence_items,
         "independence_count": len(set(i["evidence_group"] for i in evidence_items)),
-        "engine_version": "V5.3-EVENT-SPECIFIC-HARDENED-R4"
+        "engine_version": "V5.3-EVENT-SPECIFIC-CAUSAL-R9"
     }
