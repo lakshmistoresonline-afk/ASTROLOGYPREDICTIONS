@@ -134,7 +134,7 @@ def evaluate_natal_promise(chart_obj, domain: str, event_type: str = "GENERAL") 
     """
     P0.3-R10 Forensic Hardened Causal Natal Promise Engine.
     Strict domain/event validation, zero baseline score, structured evidence with strict independence keys,
-    and exposure of Shadbala as factual evidence without arbitrary threshold multipliers.
+    exposing Shadbala/occupancy/Vargas as factual evidence without arbitrary magnitude inflation.
     """
     if not event_type:
         return {
@@ -304,7 +304,6 @@ def evaluate_natal_promise(chart_obj, domain: str, event_type: str = "GENERAL") 
                     "event_type": ev_key,
                     "domain": rule["domain"],
                     "evidence_group": "LORD_PLACEMENT",
-                    "independence_key": f"lord_place_{h}_{lord}",
                     "polarity": "NEGATIVE",
                     "source_type": "HOUSE_LORD",
                     "source_fact": f"House {h} lord {lord} in House {lhouse} (Debilitated)",
@@ -327,8 +326,22 @@ def evaluate_natal_promise(chart_obj, domain: str, event_type: str = "GENERAL") 
                 "magnitude": 0.15,
                 "rationale": f"Primary house {h} is tenanted by event-relevant factors."
             })
+        elif occupants:
+            # Record factual occupancy without quantitative score inflation
+            evidence_items.append({
+                "rule_id": f"HOUSE_OCCUPANCY_FACT_{h}",
+                "event_type": ev_key,
+                "domain": rule["domain"],
+                "evidence_group": "HOUSE_STRUCTURE",
+                "independence_key": f"house_occupancy_fact_{h}",
+                "polarity": "POSITIVE",
+                "source_type": "HOUSE_OCCUPANTS",
+                "source_fact": f"House {h} tenanted by {', '.join(occupants)}",
+                "magnitude": 0.0,
+                "rationale": f"Primary house {h} is occupied by {', '.join(occupants)}."
+            })
 
-    # 3. Evaluate Yogas (Non-substring: matching canonical Yoga constituents if verified)
+    # 3. Evaluate Yogas (Strict membership verification without substring matching)
     if yogas:
         for y in yogas:
             y_name = y.get("name", "") if isinstance(y, dict) else getattr(y, 'name', '')
