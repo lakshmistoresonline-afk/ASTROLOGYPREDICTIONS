@@ -36,7 +36,8 @@ def generate_evidence_based_predictions(chart: CanonicalChart, selected_date: da
     # 0. Cache Check (V3.20/V3.22 Performance Hardening)
     ld_key = "-".join(sorted(limit_domains)) if limit_domains else "ALL"
     er_key = "-".join(sorted([f"{k}:{v}" for k, v in event_requests.items()])) if event_requests else "DEFAULT"
-    cache_key = f"{chart.birth_datetime.isoformat()}_{chart.latitude}_{chart.longitude}_{selected_date.strftime('%Y-%m')}_{ld_key}_{er_key}"
+    cfg_fp = getattr(chart, 'calculation_config_fingerprint', 'DEFAULT_CONFIG')
+    cache_key = f"{chart.birth_datetime.isoformat()}_{chart.latitude}_{chart.longitude}_{selected_date.strftime('%Y-%m-%d %H:%M')}_{ld_key}_{er_key}_{cfg_fp}"
     if cache_key in _prediction_cache:
         return _prediction_cache[cache_key]
 
