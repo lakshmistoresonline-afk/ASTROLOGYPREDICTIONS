@@ -6,110 +6,65 @@ from ...timing.precision import timing_engine
 
 class FamilyPredictionEngine:
     """
-    V2 Hardened Family & Roots Engine.
-    Evaluates 2nd (Family), 4th (Mother/Home), and 9th (Father) houses.
+    V3 Authoritative Family & Roots Engine.
+    Consumes canonical evaluate_natal_promise() as the single source of structural family promise.
     """
 
     @staticmethod
-    def get_prediction(chart: CanonicalChart, selected_date: datetime) -> DomainPrediction:
+    def get_prediction(chart: CanonicalChart, selected_date: datetime, event_type: str = None) -> DomainPrediction:
         evidence = []
         house_lords = chart.house_lords
         planets = chart.planets
 
-        # 1. NATAL PROMISE (2nd and 4th Houses)
-        l2_name = house_lords[2]
-        l4_name = house_lords[4]
-
         promise_level = "MODERATE"
-        l2_house = planets[l2_name].house
-        if l2_house in [1, 4, 7, 10, 5, 9]:
-            promise_level = "STRONG"
-            evidence.append(CorroborationEngine.create_evidence(
-                "NATAL_PROMISE",
-                f"NATAL PROMISE: Strong 2nd Lord {l2_name} in Kendra/Trikona indicates deep family roots.",
-                90.0, rationale=f"{l2_name} is in house {l2_house}"
-            ))
-        elif l2_house in [2, 11]:
-            evidence.append(CorroborationEngine.create_evidence(
-                "SECONDARY_PROMISE",
-                f"SECONDARY PROMISE: Supportive house placement (2/11) for 2nd Lord {l2_name} provides stable family foundation.",
-                60.0, rationale=f"{l2_name} is in house {l2_house}"
-            ))
-        elif planets[l2_name].house in [1, 2, 4, 5, 7, 9, 10, 11]:
-            evidence.append(CorroborationEngine.create_evidence(
-                "NATAL_PROMISE",
-                f"FAMILY PROMISE: Supportive 2nd Lord {l2_name} placement indicates strong roots.",
-                80.0
-            ))
+        if event_type:
+            from ..v5_natal_promise import evaluate_natal_promise
+            np_res = evaluate_natal_promise(chart, "FAMILY", event_type)
+            if np_res["promise_level"] != "INSUFFICIENT_EVIDENCE":
+                if np_res["promise_level"] in ["STRONG_PROMISE", "MODERATE_PROMISE"]:
+                    promise_level = "STRONG"
+                elif np_res["promise_level"] == "WEAK_PROMISE" or np_res["promise_level"] == "WITHHELD":
+                    promise_level = "CONDITIONAL"
 
-        l4_house = planets[l4_name].house
-        if l4_house in [1, 4, 7, 10, 5, 9]:
-             promise_level = "STRONG"
-             evidence.append(CorroborationEngine.create_evidence(
-                "NATAL_PROMISE",
-                f"NATAL PROMISE: Beneficial 4th Lord {l4_name} in Kendra/Trikona supports home stability.",
-                90.0, rationale=f"{l4_name} is in house {l4_house}"
-            ))
-        elif l4_house in [2, 11]:
-            evidence.append(CorroborationEngine.create_evidence(
-                "SECONDARY_PROMISE",
-                f"SECONDARY PROMISE: Supportive house placement (2/11) for 4th Lord {l4_name} provides stable domestic base.",
-                60.0, rationale=f"{l4_name} is in house {l4_house}"
-            ))
+                evidence.append(CorroborationEngine.create_evidence(
+                    "NATAL_PROMISE",
+                    f"NATAL PROMISE: Structural {event_type} support is {np_res['promise_level']} (Score: {np_res['promise_score']}).",
+                    float(np_res['promise_score']) * 100.0,
+                    rationale=f"Authoritative event-specific evaluation: {len(np_res['positive_evidence'])} positive items.",
+                    source_layer="NATAL", evidence_type="INDEPENDENT"
+                ))
 
         # 2. DASHA ACTIVATION
+        l2_name = house_lords[2]
+        l4_name = house_lords[4]
         from ...dasha import calculate_vimshottari
-        moon_lon = planets["Moon"].longitude
+        moon_lon = chart.planets["Moon"].longitude
         dasha = calculate_vimshottari(moon_lon, chart.birth_datetime, calculation_date=selected_date)
-        maha_lord = dasha.get("current_maha", {}).get("lord")
-        antar_lord = dasha.get("current_antar", {}).get("lord")
 
-        relevant_lords = [l2_name, l4_name, "Moon"]
-        if antar_lord in relevant_lords:
-            evidence.append(CorroborationEngine.create_evidence(
-                "DASHA_ACTIVATION",
-                f"ROOTS ACTIVATION: Period of {antar_lord} highlights domestic and family sectors.",
-                90.0
-            ))
+        relevant_lords = [l2_name, l4_name, "Moon", "Jupiter"]
+        dasha_evidence = CorroborationEngine.audit_dasha_activation(dasha, chart, relevant_lords, "domestic")
+        if dasha_evidence:
+            evidence.extend(dasha_evidence)
         else:
             evidence.append(CorroborationEngine.create_evidence(
-                "DASHA_ACTIVATION",
-                "STABILITY PHASE: Focus on maintenance of domestic foundations.",
-                65.0
-            ))
-
-        if maha_lord in relevant_lords:
-            evidence.append(CorroborationEngine.create_evidence(
                 "DASHA_FOUNDATION",
-                f"DASHA FOUNDATION: Major life-cycle ruled by {maha_lord} provides underlying support for family stability.",
-                60.0
+                "STABILITY PHASE: Life-period focuses on domestic maintenance and family harmony.",
+                60.0, group="SECONDARY"
             ))
 
         # 3. TIMING
-        window = timing_engine.calculate_window(chart, ["Moon", "Venus", l4_name], [2, 4], calculation_date=selected_date)
+        window = timing_engine.calculate_window(chart, ["Moon", "Jupiter", l2_name], [2, 4],
+                                                calculation_date=selected_date, domain="Family & Roots")
         if window.get("proximity_weight", 0) > 0:
              evidence.append(CorroborationEngine.create_evidence(
                 "TRANSIT_TRIGGER", f"TEMPORAL TRIGGER: {window.get('description')}",
                 90.0 * window.get("proximity_weight")
             ))
 
-        # 4. SYNTHESIS
         summary_template = (
-            "Domestic harmony and family support show {promise} natal foundation. "
-            "Current alignment is {strength} for family matters with a {score}% match."
+            "Family and domestic roots show {promise} natal foundation and {strength} current alignment. "
+            "Hierarchical synthesis shows a {score}% match for domestic harmony."
         )
 
         res = CorroborationEngine.synthesize("Family & Roots", promise_level, evidence, summary_template, timing_window=window)
-
-        res.manifestations = [
-            "Increased focus on family traditions and gatherings.",
-            "Development of domestic infrastructure or home comfort.",
-            "Changes in roles or responsibilities within the family unit."
-        ]
-        res.practical_actions = [
-            "Maintain ancestral traditions during lunar peak windows.",
-            "Focus on emotional communication within the home.",
-            "Traditional family-blessing rituals are supported during this phase."
-        ]
-
         return res

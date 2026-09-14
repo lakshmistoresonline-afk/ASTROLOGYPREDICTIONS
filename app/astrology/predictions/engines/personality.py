@@ -6,100 +6,54 @@ from ...timing.precision import timing_engine
 
 class PersonalityPredictionEngine:
     """
-    Hardened Personality & Essence Engine (Phase 4).
-    Evaluates Ascendant, Moon Sign, and Lagna Lord dignity.
+    V3 Authoritative Personality & Essence Engine.
+    Consumes canonical evaluate_natal_promise() as the single source of structural identity promise.
     """
 
     @staticmethod
-    def get_prediction(chart: CanonicalChart, selected_date: datetime) -> DomainPrediction:
+    def get_prediction(chart: CanonicalChart, selected_date: datetime, event_type: str = None) -> DomainPrediction:
         evidence = []
         planets = chart.planets
         house_lords = chart.house_lords
 
-        # 1. LAGNA & LAGNA LORD (Natal Promise)
-        l1_name = house_lords[1]
-        l1 = planets[l1_name]
-
         promise_level = "MODERATE"
-        if l1.house in [1, 4, 7, 10, 5, 9]:
-            promise_level = "STRONG"
-            evidence.append(CorroborationEngine.create_evidence(
-                "NATAL_PROMISE",
-                f"NATAL PROMISE: High physical and mental vitality indicated by Kendra/Trikona placement of Lagna Lord {l1_name}.",
-                90.0, rationale=f"{l1_name} is in house {l1.house}"
-            ))
-        elif l1.house in [2, 11]:
-            evidence.append(CorroborationEngine.create_evidence(
-                "SECONDARY_PROMISE",
-                f"SECONDARY PROMISE: Supportive house placement (2/11) for Lagna Lord {l1_name} provides stable energetic baseline.",
-                60.0, rationale=f"{l1_name} is in house {l1.house}"
-            ))
-        elif "Exalted" in l1.dignity or l1.dignity == "Own Sign":
-            promise_level = "STRONG"
-            evidence.append(CorroborationEngine.create_evidence(
-                "NATAL_PROMISE", f"NATAL PROMISE: Strong Lagna Lord {l1_name} indicates high physical and mental vitality.", 90.0
-            ))
+        if event_type:
+            from ..v5_natal_promise import evaluate_natal_promise
+            np_res = evaluate_natal_promise(chart, "PERSONALITY", event_type)
+            if np_res["promise_level"] != "INSUFFICIENT_EVIDENCE":
+                if np_res["promise_level"] in ["STRONG_PROMISE", "MODERATE_PROMISE"]:
+                    promise_level = "STRONG"
+                elif np_res["promise_level"] == "WEAK_PROMISE" or np_res["promise_level"] == "WITHHELD":
+                    promise_level = "CONDITIONAL"
 
-        # 2. LAGNA CHARACTERISTICS
-        asc_rashi = chart.asc_rashi
-        r_types = ["Movable (Action-oriented)", "Fixed (Stability-focused)", "Dual (Adaptable)"]
-        r_elements = ["Fire (Inspirational)", "Earth (Practical)", "Air (Intellectual)", "Water (Emotional)"]
-
-        evidence.append(CorroborationEngine.create_evidence(
-            "MODIFIERS", f"TEMPERAMENT: {r_elements[asc_rashi % 4]} and {r_types[asc_rashi % 3]} nature defines your core approach.", 60.0
-        ))
-
-        # 3. MOON DISPOSITION (Mental State)
-        moon = planets["Moon"]
-        m_nak = moon.nakshatra.name
-        if moon.house in [1, 4, 7, 10, 5, 9]:
-             evidence.append(CorroborationEngine.create_evidence(
-                "MODIFIERS", f"MENTAL ESSENCE: Moon in a Kendra/Trikona supports emotional stability and clarity.", 70.0
-            ))
-
-        from ..data import NAKSHATRA_MEANINGS
-        m_nak_meaning = NAKSHATRA_MEANINGS.get(m_nak, "General lunar influence.")
-        evidence.append(CorroborationEngine.create_evidence(
-            "MODIFIERS", f"LUNAR SIGNATURE: Birth in {m_nak} Nakshatra indicates: {m_nak_meaning}", 55.0
-        ))
-
-        # 4. YOGAS (Gaja Kesari, etc.)
-        for yoga in chart.yogas:
-             if yoga["name"] in ["Gaja Kesari Yoga", "Pancha Mahapurusha"]:
-                 evidence.append(CorroborationEngine.create_evidence(
-                    "YOGA_SUPPORT", f"YOGA MODIFIER: {yoga['name']} enhances leadership and character.", 85.0
+                evidence.append(CorroborationEngine.create_evidence(
+                    "NATAL_PROMISE",
+                    f"NATAL PROMISE: Structural {event_type} support is {np_res['promise_level']} (Score: {np_res['promise_score']}).",
+                    float(np_res['promise_score']) * 100.0,
+                    rationale=f"Authoritative event-specific evaluation: {len(np_res['positive_evidence'])} positive items.",
+                    source_layer="NATAL", evidence_type="INDEPENDENT"
                 ))
 
-        # 5. DASHA ACTIVATION
+        # 2. DASHA ACTIVATION
+        l1_name = house_lords[1]
         from ...dasha import calculate_vimshottari
-        moon_lon = planets["Moon"].longitude
+        moon_lon = chart.planets["Moon"].longitude
         dasha = calculate_vimshottari(moon_lon, chart.birth_datetime, calculation_date=selected_date)
-        maha_lord = dasha.get("current_maha", {}).get("lord")
-        antar_lord = dasha.get("current_antar", {}).get("lord")
 
-        relevant_lords = [l1_name, "Moon"]
-        if antar_lord in relevant_lords:
-            evidence.append(CorroborationEngine.create_evidence(
-                "DASHA_ACTIVATION",
-                f"ESSENCE ACTIVATION: Period of {antar_lord} triggers major personality and vitality themes.",
-                90.0
-            ))
+        relevant_lords = [l1_name, "Sun", "Moon"]
+        dasha_evidence = CorroborationEngine.audit_dasha_activation(dasha, chart, relevant_lords, "personal")
+        if dasha_evidence:
+            evidence.extend(dasha_evidence)
         else:
             evidence.append(CorroborationEngine.create_evidence(
-                "DASHA_ACTIVATION",
-                "STABILITY PHASE: Life-period focuses on maintenance of internal consistency.",
-                65.0
-            ))
-
-        if maha_lord in relevant_lords:
-            evidence.append(CorroborationEngine.create_evidence(
                 "DASHA_FOUNDATION",
-                f"DASHA FOUNDATION: Major life-cycle ruled by {maha_lord} provides underlying support for self-development.",
-                60.0
+                "STABILITY PHASE: Life-period focuses on inner self-reflection and personal growth.",
+                60.0, group="SECONDARY"
             ))
 
-        # 6. TIMING
-        window = timing_engine.calculate_window(chart, ["Moon", l1_name], [1, 4, 7, 10], calculation_date=selected_date)
+        # 3. TIMING
+        window = timing_engine.calculate_window(chart, ["Sun", "Moon", l1_name], [1, 4],
+                                                calculation_date=selected_date, domain="Personality & Essence")
         if window.get("proximity_weight", 0) > 0:
              evidence.append(CorroborationEngine.create_evidence(
                 "TRANSIT_TRIGGER", f"TEMPORAL TRIGGER: {window.get('description')}",
@@ -107,14 +61,9 @@ class PersonalityPredictionEngine:
             ))
 
         summary_template = (
-            "Your personality and mental essence show a {promise} natal foundation. "
-            "Hierarchical synthesis results in a {score}% match for character strength."
+            "Personal expression and core identity show {promise} natal baseline and {strength} current alignment. "
+            "Hierarchical synthesis shows a {score}% match for self-actualization."
         )
 
         res = CorroborationEngine.synthesize("Personality & Essence", promise_level, evidence, summary_template, timing_window=window)
-        res.practical_actions = [
-            "Observe the activation of the Lagna Lord for self-growth.",
-            "Maintain emotional hygiene through meditation and mindfulness.",
-            "Traditional Vedic alignment practices for the Moon are supported."
-        ]
         return res

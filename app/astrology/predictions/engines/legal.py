@@ -6,97 +6,64 @@ from ...timing.precision import timing_engine
 
 class LegalPredictionEngine:
     """
-    V2 Hardened Legal & Conflict Engine.
-    Evaluates 6th house (Enemies/Litigation) and Jupiter (Justice).
+    V3 Authoritative Legal & Conflict Engine.
+    Consumes canonical evaluate_natal_promise() as the single source of structural legal promise.
     """
 
     @staticmethod
-    def get_prediction(chart: CanonicalChart, selected_date: datetime) -> DomainPrediction:
+    def get_prediction(chart: CanonicalChart, selected_date: datetime, event_type: str = None) -> DomainPrediction:
         evidence = []
         house_lords = chart.house_lords
         planets = chart.planets
 
-        # 1. NATAL PROMISE (6th House)
-        l6_name = house_lords[6]
-
         promise_level = "MODERATE"
-        l6_house = planets[l6_name].house
-        if l6_house in [1, 4, 7, 10, 5, 9]:
-            promise_level = "STRONG"
-            evidence.append(CorroborationEngine.create_evidence(
-                "NATAL_PROMISE",
-                f"NATAL PROMISE: High victory potential indicated by Kendra/Trikona placement of 6th Lord {l6_name}.",
-                90.0, rationale=f"{l6_name} is in house {l6_house}"
-            ))
-        elif l6_house in [2, 11]:
-            evidence.append(CorroborationEngine.create_evidence(
-                "SECONDARY_PROMISE",
-                f"SECONDARY PROMISE: Supportive house placement (2/11) for 6th Lord {l6_name} provides stable dispute management.",
-                60.0, rationale=f"{l6_name} is in house {l6_house}"
-            ))
+        if event_type:
+            from ..v5_natal_promise import evaluate_natal_promise
+            np_res = evaluate_natal_promise(chart, "LEGAL", event_type)
+            if np_res["promise_level"] != "INSUFFICIENT_EVIDENCE":
+                if np_res["promise_level"] in ["STRONG_PROMISE", "MODERATE_PROMISE"]:
+                    promise_level = "STRONG"
+                elif np_res["promise_level"] == "WEAK_PROMISE" or np_res["promise_level"] == "WITHHELD":
+                    promise_level = "CONDITIONAL"
 
-        # Jupiter (Significator of law and justice)
-        jup = planets["Jupiter"]
-        if jup.house in [1, 4, 7, 10, 5, 9]:
-             evidence.append(CorroborationEngine.create_evidence(
-                "PLANETARY_STRENGTH",
-                "JUSTICE MODIFIER: Well-placed Jupiter supports favorable legal outcomes.",
-                80.0
-            ))
+                evidence.append(CorroborationEngine.create_evidence(
+                    "NATAL_PROMISE",
+                    f"NATAL PROMISE: Structural {event_type} support is {np_res['promise_level']} (Score: {np_res['promise_score']}).",
+                    float(np_res['promise_score']) * 100.0,
+                    rationale=f"Authoritative event-specific evaluation: {len(np_res['positive_evidence'])} positive items.",
+                    source_layer="NATAL", evidence_type="INDEPENDENT"
+                ))
 
         # 2. DASHA ACTIVATION
+        l6_name = house_lords[6]
         from ...dasha import calculate_vimshottari
-        moon_lon = planets["Moon"].longitude
+        moon_lon = chart.planets["Moon"].longitude
         dasha = calculate_vimshottari(moon_lon, chart.birth_datetime, calculation_date=selected_date)
-        maha_lord = dasha.get("current_maha", {}).get("lord")
-        antar_lord = dasha.get("current_antar", {}).get("lord")
 
-        relevant_lords = [l6_name, "Jupiter"]
-        if antar_lord in relevant_lords:
-            evidence.append(CorroborationEngine.create_evidence(
-                "DASHA_ACTIVATION",
-                f"ADMINISTRATIVE ACTIVATION: Period of {antar_lord} triggers resolution of disputes.",
-                90.0
-            ))
+        relevant_lords = [l6_name, "Jupiter", "Saturn"]
+        dasha_evidence = CorroborationEngine.audit_dasha_activation(dasha, chart, relevant_lords, "legal")
+        if dasha_evidence:
+            evidence.extend(dasha_evidence)
         else:
             evidence.append(CorroborationEngine.create_evidence(
-                "DASHA_ACTIVATION",
-                "STABILITY PHASE: Focus on maintenance of existing formal commitments.",
-                60.0
-            ))
-
-        if maha_lord in relevant_lords:
-            evidence.append(CorroborationEngine.create_evidence(
                 "DASHA_FOUNDATION",
-                f"DASHA FOUNDATION: Major life-cycle ruled by {maha_lord} provides underlying support for conflict resolution.",
-                60.0
+                "STABILITY PHASE: Life-period favors calm resolution and avoidance of dispute escalations.",
+                60.0, group="SECONDARY"
             ))
 
         # 3. TIMING
-        window = timing_engine.calculate_window(chart, ["Jupiter", "Saturn", l6_name], [6, 10, 1], calculation_date=selected_date)
+        window = timing_engine.calculate_window(chart, ["Jupiter", "Saturn", l6_name], [6, 8, 12],
+                                                calculation_date=selected_date, domain="Legal & Disputes")
         if window.get("proximity_weight", 0) > 0:
              evidence.append(CorroborationEngine.create_evidence(
                 "TRANSIT_TRIGGER", f"TEMPORAL TRIGGER: {window.get('description')}",
                 90.0 * window.get("proximity_weight")
             ))
 
-        # 4. SYNTHESIS
         summary_template = (
-            "Legal matters and conflict resolution show {promise} natal strength. "
-            "Current alignment is {strength} for success with a {score}% match."
+            "Legal and dispute resolution shows {promise} natal foundation and {strength} current alignment. "
+            "Hierarchical synthesis shows a {score}% match for dispute outcomes."
         )
 
         res = CorroborationEngine.synthesize("Legal & Disputes", promise_level, evidence, summary_template, timing_window=window)
-
-        res.manifestations = [
-            "Resolution of pending disputes or administrative hurdles.",
-            "Increased focus on formal documentation and compliance.",
-            "Successful navigation of competitive or adversarial cycles."
-        ]
-        res.practical_actions = [
-            "Verify documentation and evidence during lunar peak windows.",
-            "Maintain transparency in all formal dealings.",
-            "Traditional Jupiter-based justice rituals support truth."
-        ]
-
         return res

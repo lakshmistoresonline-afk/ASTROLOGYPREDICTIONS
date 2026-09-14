@@ -6,94 +6,53 @@ from ...timing.precision import timing_engine
 
 class FamePredictionEngine:
     """
-    V2 Hardened Fame & Reputation Engine.
-    Evaluates 10th house (Action), 1st (Identity), and 5th (Recognition).
+    V3 Authoritative Fame & Reputation Engine.
+    Consumes canonical evaluate_natal_promise() as the single source of structural reputation promise.
     """
 
     @staticmethod
-    def get_prediction(chart: CanonicalChart, selected_date: datetime) -> DomainPrediction:
+    def get_prediction(chart: CanonicalChart, selected_date: datetime, event_type: str = None) -> DomainPrediction:
         evidence = []
         house_lords = chart.house_lords
         planets = chart.planets
 
-        # 1. NATAL PROMISE (10th and 1st Houses)
-        l10_name = house_lords[10]
-        l1_name = house_lords[1]
-
         promise_level = "MODERATE"
+        if event_type:
+            from ..v5_natal_promise import evaluate_natal_promise
+            np_res = evaluate_natal_promise(chart, "FAME", event_type)
+            if np_res["promise_level"] != "INSUFFICIENT_EVIDENCE":
+                if np_res["promise_level"] in ["STRONG_PROMISE", "MODERATE_PROMISE"]:
+                    promise_level = "STRONG"
+                elif np_res["promise_level"] == "WEAK_PROMISE" or np_res["promise_level"] == "WITHHELD":
+                    promise_level = "CONDITIONAL"
 
-        # Occupancy Promise (V3.14/V3.15)
-        for p_name, p in planets.items():
-            if p.house == 10 and p_name in ["Sun", "Jupiter", "Mars", "Moon"]:
-                promise_level = "STRONG"
                 evidence.append(CorroborationEngine.create_evidence(
                     "NATAL_PROMISE",
-                    f"NATAL SIGNAL: Strong presence in the 10th house ({p_name}) indicates public role.",
-                    85.0
+                    f"NATAL PROMISE: Structural {event_type} support is {np_res['promise_level']} (Score: {np_res['promise_score']}).",
+                    float(np_res['promise_score']) * 100.0,
+                    rationale=f"Authoritative event-specific evaluation: {len(np_res['positive_evidence'])} positive items.",
+                    source_layer="NATAL", evidence_type="INDEPENDENT"
                 ))
-            elif p.house == 5 and p_name in ["Sun", "Jupiter", "Venus", "Moon"]:
-                 promise_level = "STRONG"
-                 evidence.append(CorroborationEngine.create_evidence(
-                    "NATAL_PROMISE",
-                    f"RECOGNITION POTENTIAL: Presence of {p_name} in 5th house indicates creative/public acclaim.",
-                    80.0
-                 ))
-
-        # Dig-Bala (Directional Strength) for Sun or Jupiter in 10th
-        if planets["Sun"].house == 10 or planets["Jupiter"].house == 10:
-            promise_level = "STRONG"
-            evidence.append(CorroborationEngine.create_evidence(
-                "YOGA_SUPPORT",
-                "LEADERSHIP MODIFIER: Powerful directional strength in 10th house indicates high public visibility.",
-                90.0
-            ))
-
-        l10_house = planets[l10_name].house
-        if l10_house in [1, 4, 7, 10, 5, 9]:
-            promise_level = "STRONG"
-            evidence.append(CorroborationEngine.create_evidence(
-                "NATAL_PROMISE",
-                f"NATAL PROMISE: High status potential indicated by Kendra/Trikona placement of 10th Lord {l10_name}.",
-                90.0, rationale=f"{l10_name} is in house {l10_house}"
-            ))
-        elif l10_house in [6, 8, 12]:
-            evidence.append(CorroborationEngine.create_evidence(
-                "CONFLICTS",
-                f"STATUS LIMITATION: 10th Lord {l10_name} in challenging house {l10_house} may delay public recognition.",
-                -70.0
-            ))
-        elif l10_house in [2, 11]:
-            evidence.append(CorroborationEngine.create_evidence(
-                "SECONDARY_PROMISE",
-                f"SECONDARY PROMISE: Supportive house placement (2/11) for 10th Lord {l10_name} provides stable reputation base.",
-                60.0, rationale=f"{l10_name} is in house {l10_house}"
-            ))
 
         # 2. DASHA ACTIVATION
+        l10_name = house_lords[10]
         from ...dasha import calculate_vimshottari
-        moon_lon = planets["Moon"].longitude
+        moon_lon = chart.planets["Moon"].longitude
         dasha = calculate_vimshottari(moon_lon, chart.birth_datetime, calculation_date=selected_date)
 
-        l11_name = house_lords[11]
-        relevant_lords = {l10_name, l1_name, l11_name, house_lords[5], house_lords[9], "Sun", "Jupiter"}
-        # Include major occupants as relevant lords (V3.15)
-        for p_name, p in planets.items():
-            if p.house in [10, 5, 1, 11]:
-                relevant_lords.add(p_name)
-
-        dasha_evidence = CorroborationEngine.audit_dasha_activation(dasha, chart, list(relevant_lords), "recognition")
+        relevant_lords = [l10_name, "Sun", "Jupiter"]
+        dasha_evidence = CorroborationEngine.audit_dasha_activation(dasha, chart, relevant_lords, "public")
         if dasha_evidence:
             evidence.extend(dasha_evidence)
         else:
             evidence.append(CorroborationEngine.create_evidence(
                 "DASHA_FOUNDATION",
-                "STABILITY PHASE: Life-period favors maintenance of existing status.",
+                "STABILITY PHASE: Life-period focuses on private consolidation rather than public exposure.",
                 60.0, group="SECONDARY"
             ))
 
         # 3. TIMING
-        l11_name = house_lords[11]
-        window = timing_engine.calculate_window(chart, ["Sun", "Saturn", l1_name, l10_name, l11_name], [10, 1, 5, 11],
+        window = timing_engine.calculate_window(chart, ["Sun", "Jupiter", l10_name], [10, 1, 5],
                                                 calculation_date=selected_date, domain="Fame & Reputation")
         if window.get("proximity_weight", 0) > 0:
              evidence.append(CorroborationEngine.create_evidence(
@@ -101,23 +60,10 @@ class FamePredictionEngine:
                 90.0 * window.get("proximity_weight")
             ))
 
-        # 4. SYNTHESIS
         summary_template = (
-            "The potential for public recognition and status shows {promise} underlying factors. "
-            "Current alignment is {strength} for achievement with a {score}% match."
+            "Public recognition and reputation dynamics show {promise} natal foundation and {strength} current alignment. "
+            "Hierarchical synthesis shows a {score}% match for public prominence."
         )
 
         res = CorroborationEngine.synthesize("Fame & Reputation", promise_level, evidence, summary_template, timing_window=window)
-
-        res.manifestations = [
-            "Recognition within professional or social circles.",
-            "Increased visibility in public or administrative roles.",
-            "Formalization of status-oriented achievements."
-        ]
-        res.practical_actions = [
-            "Focus on integrity and public service during peak windows.",
-            "Traditional Sun-related alignment practices support visibility.",
-            "Maintain transparency in professional dealings during this phase."
-        ]
-
         return res
