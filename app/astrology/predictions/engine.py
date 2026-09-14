@@ -25,7 +25,7 @@ from concurrent.futures import ThreadPoolExecutor
 
 _prediction_cache = {}
 
-PREDICTION_ENGINE_VERSION = "P0.3-R24"
+PREDICTION_ENGINE_VERSION = "P0.3-R25"
 
 def generate_evidence_based_predictions(chart: CanonicalChart, selected_date: datetime = None, limit_domains: List[str] = None, event_requests: Dict[str, str] = None) -> Dict[str, Any]:
     """
