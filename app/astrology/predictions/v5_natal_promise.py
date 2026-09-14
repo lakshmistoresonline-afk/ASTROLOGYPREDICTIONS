@@ -1,4 +1,5 @@
 from typing import Dict, Any, List, Optional
+from .evidence import EvidenceNode, EvidenceEdge, EvidenceGraph, calculate_score_from_evidence
 
 EVENT_RULES = {
     "PROMOTION": {
@@ -115,26 +116,11 @@ EVENT_RULES = {
     }
 }
 
-def calculate_score_from_evidence(evidence_items: List[Dict[str, Any]]) -> float:
-    """
-    Reconstructs the structural promise score strictly from evidence items using independence key capping.
-    Starts from 0.0 baseline (no artificial score).
-    """
-    group_totals: Dict[str, float] = {}
-    for item in evidence_items:
-        key = item.get("independence_key", item.get("evidence_group", "GENERAL"))
-        mag = item.get("magnitude", 0.0)
-        current = group_totals.get(key, 0.0)
-        group_totals[key] = max(-0.35, min(0.35, current + mag))
-
-    final = sum(group_totals.values())
-    return round(max(0.0, min(1.0, final)), 2)
-
 def evaluate_natal_promise(chart_obj, domain: str, event_type: str = "GENERAL") -> Dict[str, Any]:
     """
-    P0.3-R10 Forensic Hardened Causal Natal Promise Engine.
-    Strict domain/event validation, zero baseline score, structured evidence with strict independence keys,
-    exposing Shadbala/occupancy/Vargas as factual evidence without arbitrary magnitude inflation.
+    P0.3-R26 Authoritative Evidence Graph Natal Promise Engine.
+    Strict domain/event validation, zero baseline score, structured EvidenceGraph provenance,
+    and exact score reconstruction.
     """
     if not event_type:
         return {
@@ -148,8 +134,9 @@ def evaluate_natal_promise(chart_obj, domain: str, event_type: str = "GENERAL") 
             "relevant_house_lords": [],
             "relevant_planets": [],
             "evidence_items": [],
+            "evidence_graph": {"nodes": [], "edges": []},
             "independence_count": 0,
-            "engine_version": "V5.3-EVENT-SPECIFIC-CAUSAL-R10"
+            "engine_version": "V5.3-EVIDENCE-GRAPH-R26"
         }
 
     ev_key = event_type.upper().replace(" ", "_")
@@ -167,8 +154,9 @@ def evaluate_natal_promise(chart_obj, domain: str, event_type: str = "GENERAL") 
             "relevant_house_lords": [],
             "relevant_planets": [],
             "evidence_items": [],
+            "evidence_graph": {"nodes": [], "edges": []},
             "independence_count": 0,
-            "engine_version": "V5.3-EVENT-SPECIFIC-CAUSAL-R10"
+            "engine_version": "V5.3-EVIDENCE-GRAPH-R26"
         }
 
     # Strict domain validation
@@ -184,8 +172,9 @@ def evaluate_natal_promise(chart_obj, domain: str, event_type: str = "GENERAL") 
             "relevant_house_lords": [],
             "relevant_planets": [],
             "evidence_items": [],
+            "evidence_graph": {"nodes": [], "edges": []},
             "independence_count": 0,
-            "engine_version": "V5.3-EVENT-SPECIFIC-CAUSAL-R10"
+            "engine_version": "V5.3-EVIDENCE-GRAPH-R26"
         }
 
     if not chart_obj or not hasattr(chart_obj, 'planets') or not chart_obj.planets:
@@ -200,19 +189,19 @@ def evaluate_natal_promise(chart_obj, domain: str, event_type: str = "GENERAL") 
             "relevant_house_lords": [],
             "relevant_planets": rule["karakas"],
             "evidence_items": [],
+            "evidence_graph": {"nodes": [], "edges": []},
             "independence_count": 0,
-            "engine_version": "V5.3-EVENT-SPECIFIC-CAUSAL-R10"
+            "engine_version": "V5.3-EVIDENCE-GRAPH-R26"
         }
 
-    evidence_items: List[Dict[str, Any]] = []
+    graph = EvidenceGraph()
     planets = chart_obj.planets
     house_lords = getattr(chart_obj, 'house_lords', {})
     div_charts = getattr(chart_obj, 'divisional_charts', {})
     yogas = getattr(chart_obj, 'yogas', [])
-    varga_req = rule.get("varga_required")
 
     # 1. Evaluate Karakas (Group: SIGNIFICATOR_STRENGTH)
-    for k in rule["karakas"]:
+    for idx, k in enumerate(rule["karakas"]):
         if k in planets:
             pdata = planets[k]
             dignity = getattr(pdata, 'dignity', 'Neutral')
@@ -222,63 +211,87 @@ def evaluate_natal_promise(chart_obj, domain: str, event_type: str = "GENERAL") 
 
             if dignity in ["Exalted", "Moolatrikona", "Own Sign"]:
                 val = 0.25
-                evidence_items.append({
-                    "rule_id": f"KARAKA_STRONG_{k}",
-                    "event_type": ev_key,
-                    "domain": rule["domain"],
-                    "evidence_group": "SIGNIFICATOR_STRENGTH",
-                    "independence_key": f"sig_strength_{k}",
-                    "polarity": "POSITIVE",
-                    "source_type": "PLANET_DIGNITY",
-                    "source_fact": f"{k} in House {house} ({dignity})",
-                    "magnitude": val,
-                    "rationale": f"Event significator {k} has strong dignity ({dignity})."
-                })
+                node = EvidenceNode(
+                    evidence_id=f"node_karaka_strong_{idx}_{k}",
+                    event_type=ev_key,
+                    domain=rule["domain"],
+                    evidence_group="SIGNIFICATOR_STRENGTH",
+                    independence_key=f"sig_strength_{k}",
+                    polarity="POSITIVE",
+                    source_type="PLANET_DIGNITY",
+                    source_path="app.astrology.predictions.v5_natal_promise",
+                    source_fact=f"{k} in House {house} ({dignity})",
+                    observed_value=dignity,
+                    operator="IN",
+                    expected_condition="Exalted, Moolatrikona, Own Sign",
+                    magnitude=val,
+                    rationale=f"Event significator {k} has strong dignity ({dignity}).",
+                    provenance={"module": "app.astrology.predictions.v5_natal_promise", "function": "evaluate_natal_promise"}
+                )
+                graph.add_node(node)
             elif dignity in ["Debilitated"]:
                 val = -0.25
-                evidence_items.append({
-                    "rule_id": f"KARAKA_WEAK_{k}",
-                    "event_type": ev_key,
-                    "domain": rule["domain"],
-                    "evidence_group": "SIGNIFICATOR_STRENGTH",
-                    "independence_key": f"sig_strength_{k}",
-                    "polarity": "NEGATIVE",
-                    "source_type": "PLANET_DIGNITY",
-                    "source_fact": f"{k} in House {house} (Debilitated)",
-                    "magnitude": val,
-                    "rationale": f"Event significator {k} is debilitated."
-                })
+                node = EvidenceNode(
+                    evidence_id=f"node_karaka_weak_{idx}_{k}",
+                    event_type=ev_key,
+                    domain=rule["domain"],
+                    evidence_group="SIGNIFICATOR_STRENGTH",
+                    independence_key=f"sig_strength_{k}",
+                    polarity="NEGATIVE",
+                    source_type="PLANET_DIGNITY",
+                    source_path="app.astrology.predictions.v5_natal_promise",
+                    source_fact=f"{k} in House {house} (Debilitated)",
+                    observed_value=dignity,
+                    operator="EQ",
+                    expected_condition="Not Debilitated",
+                    magnitude=val,
+                    rationale=f"Event significator {k} is debilitated.",
+                    provenance={"module": "app.astrology.predictions.v5_natal_promise", "function": "evaluate_natal_promise"}
+                )
+                graph.add_node(node)
 
             if is_combust:
-                evidence_items.append({
-                    "rule_id": f"KARAKA_COMBUST_{k}",
-                    "event_type": ev_key,
-                    "domain": rule["domain"],
-                    "evidence_group": "PLANETARY_CONDITION",
-                    "independence_key": f"combust_{k}",
-                    "polarity": "NEGATIVE",
-                    "source_type": "COMBUSTION",
-                    "source_fact": f"{k} combust by Sun",
-                    "magnitude": -0.20,
-                    "rationale": f"Event significator {k} is combust."
-                })
+                node = EvidenceNode(
+                    evidence_id=f"node_karaka_combust_{idx}_{k}",
+                    event_type=ev_key,
+                    domain=rule["domain"],
+                    evidence_group="PLANETARY_CONDITION",
+                    independence_key=f"combust_{k}",
+                    polarity="NEGATIVE",
+                    source_type="COMBUSTION",
+                    source_path="app.astrology.predictions.v5_natal_promise",
+                    source_fact=f"{k} combust by Sun",
+                    observed_value=True,
+                    operator="EQ",
+                    expected_condition="Not Combust",
+                    magnitude=-0.20,
+                    rationale=f"Event significator {k} is combust.",
+                    provenance={"module": "app.astrology.predictions.v5_natal_promise", "function": "evaluate_natal_promise"}
+                )
+                graph.add_node(node)
 
             if shadbala is not None:
-                evidence_items.append({
-                    "rule_id": f"SHADBALA_FACT_{k}",
-                    "event_type": ev_key,
-                    "domain": rule["domain"],
-                    "evidence_group": "SHADBALA_MODIFIER",
-                    "independence_key": f"shadbala_{k}",
-                    "polarity": "POSITIVE" if shadbala > 5.0 else "NEGATIVE",
-                    "source_type": "SHADBALA",
-                    "source_fact": f"{k} shadbala score {shadbala:.2f}",
-                    "magnitude": 0.0, # Factual exposure without arbitrary threshold score inflation
-                    "rationale": f"Event significator {k} raw Shadbala score is {shadbala:.2f}."
-                })
+                node = EvidenceNode(
+                    evidence_id=f"node_shadbala_{idx}_{k}",
+                    event_type=ev_key,
+                    domain=rule["domain"],
+                    evidence_group="SHADBALA_MODIFIER",
+                    independence_key=f"shadbala_{k}",
+                    polarity="POSITIVE" if shadbala > 5.0 else "NEGATIVE",
+                    source_type="SHADBALA",
+                    source_path="app.astrology.predictions.v5_natal_promise",
+                    source_fact=f"{k} shadbala score {shadbala:.2f}",
+                    observed_value=shadbala,
+                    operator="FACTUAL",
+                    expected_condition="Factual Exposure",
+                    magnitude=0.0,
+                    rationale=f"Event significator {k} raw Shadbala score is {shadbala:.2f}.",
+                    provenance={"module": "app.astrology.predictions.v5_natal_promise", "function": "evaluate_natal_promise"}
+                )
+                graph.add_node(node)
 
     # 2. Evaluate Primary Houses & Lords (Group: LORD_PLACEMENT & HOUSE_STRUCTURE)
-    for h in rule["primary_houses"]:
+    for idx, h in enumerate(rule["primary_houses"]):
         lord = house_lords.get(h)
         if lord and lord in planets:
             lp = planets[lord]
@@ -286,96 +299,133 @@ def evaluate_natal_promise(chart_obj, domain: str, event_type: str = "GENERAL") 
             lhouse = getattr(lp, 'house', 1)
 
             if ldignity in ["Exalted", "Moolatrikona", "Own Sign"]:
-                evidence_items.append({
-                    "rule_id": f"LORD_STRONG_{h}_{lord}",
-                    "event_type": ev_key,
-                    "domain": rule["domain"],
-                    "evidence_group": "LORD_PLACEMENT",
-                    "independence_key": f"lord_place_{h}_{lord}",
-                    "polarity": "POSITIVE",
-                    "source_type": "HOUSE_LORD",
-                    "source_fact": f"House {h} lord {lord} in House {lhouse} ({ldignity})",
-                    "magnitude": 0.25,
-                    "rationale": f"Primary house {h} lord ({lord}) is strong ({ldignity})."
-                })
+                node = EvidenceNode(
+                    evidence_id=f"node_lord_strong_{idx}_h{h}",
+                    event_type=ev_key,
+                    domain=rule["domain"],
+                    evidence_group="LORD_PLACEMENT",
+                    independence_key=f"lord_place_{h}_{lord}",
+                    polarity="POSITIVE",
+                    source_type="HOUSE_LORD",
+                    source_path="app.astrology.predictions.v5_natal_promise",
+                    source_fact=f"House {h} lord {lord} in House {lhouse} ({ldignity})",
+                    observed_value=ldignity,
+                    operator="IN",
+                    expected_condition="Strong Dignity",
+                    magnitude=0.25,
+                    rationale=f"Primary house {h} lord ({lord}) is strong ({ldignity}).",
+                    provenance={"module": "app.astrology.predictions.v5_natal_promise", "function": "evaluate_natal_promise"}
+                )
+                graph.add_node(node)
             elif ldignity in ["Debilitated"]:
-                evidence_items.append({
-                    "rule_id": f"LORD_WEAK_{h}_{lord}",
-                    "event_type": ev_key,
-                    "domain": rule["domain"],
-                    "evidence_group": "LORD_PLACEMENT",
-                    "polarity": "NEGATIVE",
-                    "source_type": "HOUSE_LORD",
-                    "source_fact": f"House {h} lord {lord} in House {lhouse} (Debilitated)",
-                    "magnitude": -0.20,
-                    "rationale": f"Primary house {h} lord ({lord}) is debilitated."
-                })
+                node = EvidenceNode(
+                    evidence_id=f"node_lord_weak_{idx}_h{h}",
+                    event_type=ev_key,
+                    domain=rule["domain"],
+                    evidence_group="LORD_PLACEMENT",
+                    independence_key=f"lord_place_{h}_{lord}",
+                    polarity="NEGATIVE",
+                    source_type="HOUSE_LORD",
+                    source_path="app.astrology.predictions.v5_natal_promise",
+                    source_fact=f"House {h} lord {lord} in House {lhouse} (Debilitated)",
+                    observed_value=ldignity,
+                    operator="EQ",
+                    expected_condition="Not Debilitated",
+                    magnitude=-0.20,
+                    rationale=f"Primary house {h} lord ({lord}) is debilitated.",
+                    provenance={"module": "app.astrology.predictions.v5_natal_promise", "function": "evaluate_natal_promise"}
+                )
+                graph.add_node(node)
 
-        # House occupancy strictly validated against event karakas or lords (no generic occupancy bonuses)
         occupants = [pname for pname, pinfo in planets.items() if getattr(pinfo, 'house', 0) == h]
         if occupants and (lord in rule["karakas"] or any(occ in rule["karakas"] for occ in occupants)):
-            evidence_items.append({
-                "rule_id": f"HOUSE_OCCUPANCY_{h}",
-                "event_type": ev_key,
-                "domain": rule["domain"],
-                "evidence_group": "HOUSE_STRUCTURE",
-                "independence_key": f"house_occupancy_{h}",
-                "polarity": "POSITIVE",
-                "source_type": "HOUSE_OCCUPANTS",
-                "source_fact": f"House {h} tenanted by corroborating {', '.join(occupants)}",
-                "magnitude": 0.15,
-                "rationale": f"Primary house {h} is tenanted by event-relevant factors."
-            })
+            node = EvidenceNode(
+                evidence_id=f"node_house_occ_{idx}_h{h}",
+                event_type=ev_key,
+                domain=rule["domain"],
+                evidence_group="HOUSE_STRUCTURE",
+                independence_key=f"house_occupancy_{h}",
+                polarity="POSITIVE",
+                source_type="HOUSE_OCCUPANTS",
+                source_path="app.astrology.predictions.v5_natal_promise",
+                source_fact=f"House {h} tenanted by corroborating {', '.join(occupants)}",
+                observed_value=occupants,
+                operator="IN",
+                expected_condition="Event-Relevant Occupants",
+                magnitude=0.15,
+                rationale=f"Primary house {h} is tenanted by event-relevant factors.",
+                provenance={"module": "app.astrology.predictions.v5_natal_promise", "function": "evaluate_natal_promise"}
+            )
+            graph.add_node(node)
         elif occupants:
-            # Record factual occupancy without quantitative score inflation
-            evidence_items.append({
-                "rule_id": f"HOUSE_OCCUPANCY_FACT_{h}",
-                "event_type": ev_key,
-                "domain": rule["domain"],
-                "evidence_group": "HOUSE_STRUCTURE",
-                "independence_key": f"house_occupancy_fact_{h}",
-                "polarity": "POSITIVE",
-                "source_type": "HOUSE_OCCUPANTS",
-                "source_fact": f"House {h} tenanted by {', '.join(occupants)}",
-                "magnitude": 0.0,
-                "rationale": f"Primary house {h} is occupied by {', '.join(occupants)}."
-            })
+            node = EvidenceNode(
+                evidence_id=f"node_house_occ_fact_{idx}_h{h}",
+                event_type=ev_key,
+                domain=rule["domain"],
+                evidence_group="HOUSE_STRUCTURE",
+                independence_key=f"house_occupancy_fact_{h}",
+                polarity="POSITIVE",
+                source_type="HOUSE_OCCUPANTS",
+                source_path="app.astrology.predictions.v5_natal_promise",
+                source_fact=f"House {h} tenanted by {', '.join(occupants)}",
+                observed_value=occupants,
+                operator="FACTUAL",
+                expected_condition="Factual Occupancy",
+                magnitude=0.0,
+                rationale=f"Primary house {h} is occupied by {', '.join(occupants)}.",
+                provenance={"module": "app.astrology.predictions.v5_natal_promise", "function": "evaluate_natal_promise"}
+            )
+            graph.add_node(node)
 
-    # 3. Evaluate Yogas (Strict membership verification without substring matching)
+    # 3. Evaluate Yogas
     if yogas:
-        for y in yogas:
+        for idx, y in enumerate(yogas):
             y_name = y.get("name", "") if isinstance(y, dict) else getattr(y, 'name', '')
             y_planets = y.get("planets", []) if isinstance(y, dict) else getattr(y, 'planets', [])
             if y_name and any(k in y_planets for k in rule["karakas"]):
-                evidence_items.append({
-                    "rule_id": f"YOGA_MEMBERSHIP_{y_name}",
-                    "event_type": ev_key,
-                    "domain": rule["domain"],
-                    "evidence_group": "YOGA_SUPPORT",
-                    "independence_key": f"yoga_{y_name}",
-                    "polarity": "POSITIVE",
-                    "source_type": "YOGA",
-                    "source_fact": f"Active event-relevant Yoga: {y_name}",
-                    "magnitude": 0.15,
-                    "rationale": f"Chart exhibits Yoga formation involving event karakas: {y_name}."
-                })
+                node = EvidenceNode(
+                    evidence_id=f"node_yoga_{idx}_{y_name}",
+                    event_type=ev_key,
+                    domain=rule["domain"],
+                    evidence_group="YOGA_SUPPORT",
+                    independence_key=f"yoga_{y_name}",
+                    polarity="POSITIVE",
+                    source_type="YOGA",
+                    source_path="app.astrology.predictions.v5_natal_promise",
+                    source_fact=f"Active event-relevant Yoga: {y_name}",
+                    observed_value=y_name,
+                    operator="IN",
+                    expected_condition="Active Formation",
+                    magnitude=0.15,
+                    rationale=f"Chart exhibits Yoga formation involving event karakas: {y_name}.",
+                    provenance={"module": "app.astrology.predictions.v5_natal_promise", "function": "evaluate_natal_promise"}
+                )
+                graph.add_node(node)
 
-    # 4. Evaluate Varga Confirmation if available
+    # 4. Evaluate Varga Confirmation
+    varga_req = rule.get("varga_required")
     if varga_req and varga_req in div_charts:
-        evidence_items.append({
-            "rule_id": f"VARGA_CONFIRMATION_{varga_req}",
-            "event_type": ev_key,
-            "domain": rule["domain"],
-            "evidence_group": "DIVISIONAL_CONFIRMATION",
-            "independence_key": f"varga_{varga_req}",
-            "polarity": "POSITIVE",
-            "source_type": "DIVISIONAL_CHART",
-            "source_fact": f"Divisional chart {varga_req} computed and aligned",
-            "magnitude": 0.15,
-            "rationale": f"Divisional chart {varga_req} corroborates structural baseline."
-        })
+        node = EvidenceNode(
+            evidence_id=f"node_varga_{varga_req}",
+            event_type=ev_key,
+            domain=rule["domain"],
+            evidence_group="DIVISIONAL_CONFIRMATION",
+            independence_key=f"varga_{varga_req}",
+            polarity="POSITIVE",
+            source_type="DIVISIONAL_CHART",
+            source_path="app.astrology.predictions.v5_natal_promise",
+            source_fact=f"Divisional chart {varga_req} computed and aligned",
+            observed_value=varga_req,
+            operator="EXISTS",
+            expected_condition="Computed Chart",
+            magnitude=0.15,
+            rationale=f"Divisional chart {varga_req} corroborates structural baseline.",
+            provenance={"module": "app.astrology.predictions.v5_natal_promise", "function": "evaluate_natal_promise"}
+        )
+        graph.add_node(node)
 
-    final_score = calculate_score_from_evidence(evidence_items)
+    evidence_items = [n.to_dict() for n in graph.nodes]
+    final_score = calculate_score_from_evidence(graph)
     min_req = rule.get("required_min_score", 0.30)
 
     positive_evidence = [i["rationale"] for i in evidence_items if i["polarity"] == "POSITIVE"]
@@ -403,6 +453,7 @@ def evaluate_natal_promise(chart_obj, domain: str, event_type: str = "GENERAL") 
         "relevant_house_lords": [house_lords.get(h) for h in rule["primary_houses"] if h in house_lords],
         "relevant_planets": rule["karakas"],
         "evidence_items": evidence_items,
+        "evidence_graph": graph.to_dict(),
         "independence_count": len(set(i["independence_key"] for i in evidence_items)),
-        "engine_version": "V5.3-EVENT-SPECIFIC-CAUSAL-R10"
+        "engine_version": "V5.3-EVIDENCE-GRAPH-R26"
     }
