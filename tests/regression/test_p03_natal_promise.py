@@ -112,7 +112,7 @@ def test_p03_multi_chart_coverage():
 def test_p03_master_engine_integration():
     dt = datetime(1990, 9, 10, 14, 30)
     chart = calculate_canonical_chart(dt, 10.5276, 76.2144, "Asia/Kolkata")
-    preds = generate_evidence_based_predictions(chart)
+    preds = generate_evidence_based_predictions(chart, selected_date=dt)
     assert preds is not None
     assert "predictions" in preds
     assert len(preds["predictions"]) >= 1

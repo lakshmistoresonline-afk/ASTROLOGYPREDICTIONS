@@ -17,23 +17,33 @@ from .engines.family import FamilyPredictionEngine
 from .engines.vehicles import VehiclesPredictionEngine
 from .engines.legal import LegalPredictionEngine
 from .engines.fame import FamePredictionEngine
+from .v5_natal_promise import EVENT_RULES
 
 from concurrent.futures import ThreadPoolExecutor
 
 _prediction_cache = {}
 
-PREDICTION_ENGINE_VERSION = "P0.3-R17"
+PREDICTION_ENGINE_VERSION = "P0.3-R18"
 
 def generate_evidence_based_predictions(chart: CanonicalChart, selected_date: datetime = None, limit_domains: List[str] = None, event_requests: Dict[str, str] = None) -> Dict[str, Any]:
     """
-    Master Engine (V3): Orchestrates specialized domain engines using hierarchical confluence.
-    V3.22: Re-enabled cache with profile-specific keys to ensure performance.
+    Master Engine (V3.18): Orchestrates specialized domain engines using hierarchical confluence.
+    Enforces strict event validation, fail-closed caching, and explicit target date contract.
     """
     if selected_date is None:
-        selected_date = datetime.now()
+        raise ValueError("INVALID_REQUEST: selected_date is required. Implicit datetime.now() fallback is prohibited.")
 
     if event_requests is None:
         event_requests = {}
+
+    # Centralized Event Request Validation
+    for dom, ev in event_requests.items():
+        ev_key = ev.upper().replace(" ", "_")
+        if ev_key not in EVENT_RULES:
+            raise ValueError(f"UNSUPPORTED_EVENT: '{ev}' is not registered in canonical EVENT_RULES.")
+        rule = EVENT_RULES[ev_key]
+        if dom.upper() != rule["domain"]:
+            raise ValueError(f"DOMAIN_MISMATCH: Event '{ev}' belongs to domain '{rule['domain']}', not requested domain '{dom.upper()}'.")
 
     # 0. Cache Check (Fail-closed provenance verification)
     cfg_fp = getattr(chart, 'calculation_config_fingerprint', None)
@@ -75,6 +85,25 @@ def generate_evidence_based_predictions(chart: CanonicalChart, selected_date: da
 
     results = []
 
+    cat_map = {
+        "Career": "material",
+        "Finance": "material",
+        "Marriage": "social",
+        "Health": "survival",
+        "Travel": "survival",
+        "Education": "essence",
+        "Personality": "essence",
+        "Property": "material",
+        "Business": "material",
+        "Children": "social",
+        "Spirituality": "essence",
+        "Foreign Settlement": "survival",
+        "Family": "social",
+        "Vehicles": "material",
+        "Legal": "survival",
+        "Fame": "material"
+    }
+
     def process_domain(name, engine_func):
         try:
             ev_type = event_requests.get(name)
@@ -82,75 +111,52 @@ def generate_evidence_based_predictions(chart: CanonicalChart, selected_date: da
                 prediction = engine_func(chart, selected_date, event_type=ev_type)
             else:
                 prediction = engine_func(chart, selected_date)
-            # Ensure categorized view logic in UI can group them
-            cat_map = {
-                "Career": "material",
-                "Finance": "material",
-                "Marriage": "social",
-                "Health": "survival",
-                "Travel": "survival",
-                "Education": "essence",
-                "Personality": "essence",
-                "Property": "material",
-                "Business": "material",
-                "Children": "social",
-                "Spirituality": "essence",
-                "Foreign Settlement": "survival",
-                "Family": "social",
-                "Vehicles": "material",
-                "Legal": "survival",
-                "Fame": "material"
-            }
+
             p_dict = prediction.model_dump()
             p_dict["category"] = cat_map.get(name, "essence")
-
-            # Map V2 Headline
             p_dict["headline"] = prediction.headline
+            p_dict["status"] = "SUCCESS"
             return p_dict
         except Exception as e:
-            # Domain failures are logged but don't break the report
-            import traceback
-            traceback.print_exc()
-            return None
+            return {
+                "domain": name,
+                "status": "ERROR",
+                "error_code": "DOMAIN_EXECUTION_FAILURE",
+                "message": str(e),
+                "engine_version": PREDICTION_ENGINE_VERSION
+            }
 
-    # V3.5 Optimization: Parallel synthesis for speed
     with ThreadPoolExecutor(max_workers=8) as executor:
         future_to_domain = {executor.submit(process_domain, name, func): name for name, func in domain_tasks.items()}
         for future in future_to_domain:
             res = future.result()
-            if res: results.append(res)
+            if res:
+                results.append(res)
 
-    # Explicitly categorize for the UI template
-    categorized = {"material": [], "social": [], "survival": [], "essence": []}
-    for p in results:
-        categorized[p["category"]].append(p)
+    results_sorted = sorted(results, key=lambda x: x.get("score", 0), reverse=True)
+    categorized = {
+        "material": [p for p in results_sorted if p.get("category") == "material"],
+        "social": [p for p in results_sorted if p.get("category") == "social"],
+        "survival": [p for p in results_sorted if p.get("category") == "survival"],
+        "essence": [p for p in results_sorted if p.get("category") == "essence"]
+    }
 
-    # V3.15 Intelligence Enhancement: Sorting & Chronology
-    # 1. Sort by Signal Score (Descending)
-    results_sorted = sorted(results, key=lambda x: x['score'], reverse=True)
+    from .v322_timeline import lifetime_timeline_engine_v22
+    timeline_sorted = []
+    clusters = []
+    if not limit_domains:
+        try:
+            dummy_id = f"chart-{hash(cache_key)}"
+            tl_obj = lifetime_timeline_engine_v22.generate_lifetime_timeline(chart, dummy_id)
+            timeline_sorted = [e.model_dump() if hasattr(e, 'model_dump') else e for e in tl_obj.events]
+        except Exception:
+            pass
 
-    # 2. Extract Timeline
-    timeline = []
-    for p in results:
-        if p.get('timing_window', {}).get('peak'):
-             timeline.append({
-                 "domain": p['domain'],
-                 "peak": p['timing_window']['peak'],
-                 "strength": p['prediction_strength'],
-                 "event": p.get('what_may_develop', 'Development')
-             })
-    timeline_sorted = sorted(timeline, key=lambda x: x['peak'] or '9999')
-
-    # 3. Clustering (V3.21)
-    from .clustering import clustering_engine
-    clusters = clustering_engine.cluster_predictions(results)
-
-    # 4. Roadmap Filtering (V3.22.1 Presentation Layer)
     today_str = datetime.now().strftime('%Y-%m-%d')
-    upcoming_roadmap = [e for e in timeline_sorted if (e['peak'] or '0000') >= today_str]
+    upcoming_roadmap = [e for e in timeline_sorted if (e.get('peak') or '0000') >= today_str]
 
     res_payload = {
-        "overall_status": "V3.22 Intelligence Report Generated",
+        "overall_status": f"V3.18 Authoritative Intelligence Report Generated ({PREDICTION_ENGINE_VERSION})",
         "predictions": results_sorted,
         "categorized_domains": categorized,
         "timeline": timeline_sorted,
@@ -159,7 +165,7 @@ def generate_evidence_based_predictions(chart: CanonicalChart, selected_date: da
         "calculation_confidence": "HIGH (Swiss Ephemeris)",
         "evidence_strength": "HIERARCHICAL",
         "timing_confidence": "TRANSIT_VERIFIED",
-        "historical_match_rate": None, # Uncalibrated / insufficient empirical out-of-sample data
+        "historical_match_rate": None,
         "generated_at": datetime.now().isoformat()
     }
 

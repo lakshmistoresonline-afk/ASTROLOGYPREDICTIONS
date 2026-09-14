@@ -83,7 +83,7 @@ def test_r15_10_event_differentiation():
 def test_r15_11_master_engine_propagation():
     dt = datetime(1990, 9, 10, 14, 30)
     chart = calculate_canonical_chart(dt, 10.5276, 76.2144, "Asia/Kolkata")
-    preds = generate_evidence_based_predictions(chart, event_requests={"Career": "PROMOTION"})
+    preds = generate_evidence_based_predictions(chart, selected_date=dt, event_requests={"Career": "PROMOTION"})
     assert preds is not None
     assert "predictions" in preds
 

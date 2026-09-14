@@ -6,87 +6,55 @@ from ...timing.precision import timing_engine
 
 class HealthPredictionEngine:
     """
-    Hardened Health & Vitality Engine (Phase 4).
-    Evaluates Ascendant, 6th house, and Sun/Moon vitality.
+    V3 Authoritative Health & Vitality Engine.
+    Consumes canonical evaluate_natal_promise() as the single source of structural vitality promise.
     """
 
     @staticmethod
-    def get_prediction(chart: CanonicalChart, selected_date: datetime) -> DomainPrediction:
+    def get_prediction(chart: CanonicalChart, selected_date: datetime, event_type: str = "HEALTH_VITALITY") -> DomainPrediction:
         evidence = []
         house_lords = chart.house_lords
         planets = chart.planets
-        l1_name = house_lords[1]
-        l1 = planets[l1_name]
-        l6_name = house_lords[6]
-        l6 = planets[l6_name]
 
-        # 1. NATAL PROMISE (Lagna & 6th House)
+        # 1. AUTHORITATIVE NATAL PROMISE
+        from ..v5_natal_promise import evaluate_natal_promise
+        ev = event_type or "HEALTH_VITALITY"
+        np_res = evaluate_natal_promise(chart, "HEALTH", ev)
+
         promise_level = "MODERATE"
-        if l1.house in [1, 4, 7, 10, 5, 9]:
-            promise_level = "STRONG"
+        if np_res["promise_level"] != "INSUFFICIENT_EVIDENCE":
+            if np_res["promise_level"] in ["STRONG_PROMISE", "MODERATE_PROMISE"]:
+                promise_level = "STRONG"
+            elif np_res["promise_level"] == "WEAK_PROMISE" or np_res["promise_level"] == "WITHHELD":
+                promise_level = "CONDITIONAL"
+
             evidence.append(CorroborationEngine.create_evidence(
                 "NATAL_PROMISE",
-                f"NATAL PROMISE: High physical resilience indicated by Kendra/Trikona placement of Lagna Lord {l1_name}.",
-                90.0, rationale=f"{l1_name} is in house {l1.house}"
-            ))
-        elif l1.house in [2, 11]:
-            evidence.append(CorroborationEngine.create_evidence(
-                "SECONDARY_PROMISE",
-                f"SECONDARY PROMISE: Supportive house placement (2/11) for Lagna Lord {l1_name} provides stable vitality foundation.",
-                60.0, rationale=f"{l1_name} is in house {l1.house}"
-            ))
-        elif "Exalted" in l1.dignity or l1.dignity == "Own Sign":
-            promise_level = "STRONG"
-            evidence.append(CorroborationEngine.create_evidence(
-                "NATAL_PROMISE", f"VITALITY PROMISE: Strong Lagna Lord {l1_name} provides deep physical resilience.", 90.0,
-                rationale=f"{l1_name} is in its own sign or exaltation."
+                f"NATAL PROMISE: Structural {ev} support is {np_res['promise_level']} (Score: {np_res['promise_score']}).",
+                float(np_res['promise_score']) * 100.0,
+                rationale=f"Authoritative event-specific evaluation: {len(np_res['positive_evidence'])} positive items.",
+                source_layer="NATAL", evidence_type="INDEPENDENT"
             ))
 
-        # 2. STRENGTH (Shadbala)
-        if l1.shadbala_score > 1.1:
-             evidence.append(CorroborationEngine.create_evidence(
-                "MODIFIERS", "IMMUNITY MODIFIER: High Shadbala of Ascendant Lord bolsters natural recovery.", 75.0
-            ))
-
-        # 3. DUSTHANA DYNAMICS (Conflicts)
-        if l6.house == 1 or l1.house == 6:
-            evidence.append(CorroborationEngine.create_evidence(
-                "CONFLICTS", "HEALTH PRESSURE: Interaction between Lagna and 6th Lord suggests susceptibility to seasonal stress.", 35.0
-            ))
-
-        # 4. DASHA ACTIVATION
+        # 2. DASHA ACTIVATION
+        l1_name = house_lords[1]
         from ...dasha import calculate_vimshottari
         moon_lon = chart.planets["Moon"].longitude
         dasha = calculate_vimshottari(moon_lon, chart.birth_datetime, calculation_date=selected_date)
-        maha_lord = dasha.get("current_maha", {}).get("lord")
-        antar_lord = dasha.get("current_antar", {}).get("lord")
 
-        relevant_lords = [l6_name]
-        if antar_lord in relevant_lords:
-            evidence.append(CorroborationEngine.create_evidence(
-                "DASHA_ACTIVATION", f"CURRENT ACTIVATION: Period of 6th Lord {antar_lord} requires disciplined routine.", 90.0
-            ))
+        relevant_lords = [l1_name, "Sun", "Mars"]
+        dasha_evidence = CorroborationEngine.audit_dasha_activation(dasha, chart, relevant_lords, "vitality")
+        if dasha_evidence:
+            evidence.extend(dasha_evidence)
         else:
             evidence.append(CorroborationEngine.create_evidence(
-                "DASHA_ACTIVATION", "STABILITY PHASE: Life-period favors maintenance and balanced physical habits.", 65.0
-            ))
-
-        if maha_lord in relevant_lords:
-            evidence.append(CorroborationEngine.create_evidence(
                 "DASHA_FOUNDATION",
-                f"DASHA FOUNDATION: Major life-cycle ruled by {maha_lord} highlights structural health themes.",
-                60.0
+                "STABILITY PHASE: Life-period favors balanced routine and preventative wellness management.",
+                60.0, group="SECONDARY"
             ))
 
-        # 5. MODIFIERS (Sun/Moon vitality)
-        sun = planets["Sun"]
-        if sun.house in [1, 10, 11]:
-            evidence.append(CorroborationEngine.create_evidence(
-                "MODIFIERS", "VITALITY MODIFIER: Strong Sun placement grants natural internal immunity.", 25.0
-            ))
-
-        # 6. TIMING
-        window = timing_engine.calculate_window(chart, ["Sun", "Moon", l1_name], [1, 5, 9], calculation_date=selected_date)
+        # 3. TIMING
+        window = timing_engine.calculate_window(chart, ["Sun", "Mars", l1_name], [1, 6], calculation_date=selected_date)
         if window.get("proximity_weight", 0) > 0:
              evidence.append(CorroborationEngine.create_evidence(
                 "TRANSIT_TRIGGER", f"TEMPORAL TRIGGER: {window.get('description')}",
@@ -94,16 +62,10 @@ class HealthPredictionEngine:
             ))
 
         summary_template = (
-            "Health and vitality factors show {promise} underlying factors. "
-            "Current alignment is {strength} for maintenance with a {score}% evidence score."
+            "Vitality and physical resilience show {promise} natal baseline with {strength} temporal alignment. "
+            "Validation status: INSUFFICIENT DATA (Traditional astrological interpretation only)."
         )
 
-        # IMPORTANT: Health remains INSUFFICIENT DATA for medical claims (Req 47)
         res = CorroborationEngine.synthesize("Health & Vitality", promise_level, evidence, summary_template, timing_window=window)
         res.validation_status = "INSUFFICIENT DATA"
-        res.practical_actions = [
-            "This is not a medical diagnosis. Consult a doctor for any health concerns.",
-            "Maintain consistent physical routine and hygiene.",
-            "Observe standard safety protocols for daily activity."
-        ]
         return res

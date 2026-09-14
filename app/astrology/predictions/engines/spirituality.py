@@ -6,118 +6,65 @@ from ...timing.precision import timing_engine
 
 class SpiritualityPredictionEngine:
     """
-    V2 Hardened Spirituality & Inner Growth Engine.
-    Evaluates 9th (Dharma) and 12th (Moksha) houses, and Ketu (Karaka).
+    V3 Authoritative Spirituality & Inner Growth Engine.
+    Consumes canonical evaluate_natal_promise() as the single source of structural spiritual promise.
     """
 
     @staticmethod
-    def get_prediction(chart: CanonicalChart, selected_date: datetime) -> DomainPrediction:
+    def get_prediction(chart: CanonicalChart, selected_date: datetime, event_type: str = "SPIRITUAL_INITIATION") -> DomainPrediction:
         evidence = []
         house_lords = chart.house_lords
         planets = chart.planets
 
-        # 1. NATAL PROMISE (9th & 12th Houses)
-        l9_name = house_lords[9]
-        l12_name = house_lords[12]
+        # 1. AUTHORITATIVE NATAL PROMISE
+        from ..v5_natal_promise import evaluate_natal_promise
+        ev = event_type or "SPIRITUAL_INITIATION"
+        np_res = evaluate_natal_promise(chart, "SPIRITUALITY", ev)
 
         promise_level = "MODERATE"
-        l9_house = planets[l9_name].house
-        if l9_house in [1, 4, 7, 10, 5, 9]:
-            promise_level = "STRONG"
-            evidence.append(CorroborationEngine.create_evidence(
-                "NATAL_PROMISE",
-                f"NATAL PROMISE: High dharmic potential indicated by Kendra/Trikona placement of 9th Lord {l9_name}.",
-                90.0, rationale=f"{l9_name} is in house {l9_house}"
-            ))
-        elif l9_house in [2, 11]:
-            evidence.append(CorroborationEngine.create_evidence(
-                "SECONDARY_PROMISE",
-                f"SECONDARY PROMISE: Supportive house placement (2/11) for 9th Lord {l9_name} provides stable spiritual foundation.",
-                60.0, rationale=f"{l9_name} is in house {l9_house}"
-            ))
-        elif planets[l9_name].house in [1, 4, 7, 10, 5, 9] and planets[l12_name].house in [1, 4, 7, 10, 5, 9, 12]:
-            promise_level = "STRONG"
-            evidence.append(CorroborationEngine.create_evidence(
-                "NATAL_PROMISE",
-                "DHARMIC PROMISE: Strong alignment of wisdom and liberation sectors in the natal map.",
-                90.0
-            ))
-        l12_house = planets[l12_name].house
-        if l12_house in [1, 4, 7, 10, 5, 9]:
-             evidence.append(CorroborationEngine.create_evidence(
-                "NATAL_PROMISE",
-                f"MOKSHA PROMISE: High liberation potential indicated by Kendra/Trikona placement of 12th Lord {l12_name}.",
-                90.0, rationale=f"{l12_name} is in house {l12_house}"
-            ))
-        elif l12_house in [2, 11]:
-             evidence.append(CorroborationEngine.create_evidence(
-                "SECONDARY_PROMISE",
-                f"SECONDARY PROMISE: Supportive house placement (2/11) for 12th Lord {l12_name} provides stable inner growth.",
-                60.0, rationale=f"{l12_name} is in house {l12_house}"
-            ))
+        if np_res["promise_level"] != "INSUFFICIENT_EVIDENCE":
+            if np_res["promise_level"] in ["STRONG_PROMISE", "MODERATE_PROMISE"]:
+                promise_level = "STRONG"
+            elif np_res["promise_level"] == "WEAK_PROMISE" or np_res["promise_level"] == "WITHHELD":
+                promise_level = "CONDITIONAL"
 
-        # Ketu (Karaka for Moksha)
-        ketu = planets["Ketu"]
-        if ketu.house in [8, 12]:
             evidence.append(CorroborationEngine.create_evidence(
-                "PLANETARY_STRENGTH",
-                "MYSTIC MODIFIER: Ketu in a hidden house enhances intuitive and meditative depth.",
-                85.0
+                "NATAL_PROMISE",
+                f"NATAL PROMISE: Structural {ev} support is {np_res['promise_level']} (Score: {np_res['promise_score']}).",
+                float(np_res['promise_score']) * 100.0,
+                rationale=f"Authoritative event-specific evaluation: {len(np_res['positive_evidence'])} positive items.",
+                source_layer="NATAL", evidence_type="INDEPENDENT"
             ))
 
         # 2. DASHA ACTIVATION
+        l9_name = house_lords[9]
         from ...dasha import calculate_vimshottari
-        moon_lon = planets["Moon"].longitude
+        moon_lon = chart.planets["Moon"].longitude
         dasha = calculate_vimshottari(moon_lon, chart.birth_datetime, calculation_date=selected_date)
-        maha_lord = dasha.get("current_maha", {}).get("lord")
-        antar_lord = dasha.get("current_antar", {}).get("lord")
 
-        relevant_lords = [l9_name, l12_name, "Jupiter", "Ketu"]
-        if antar_lord in relevant_lords:
-            evidence.append(CorroborationEngine.create_evidence(
-                "DASHA_ACTIVATION",
-                f"INTERNAL ACTIVATION: Period of {antar_lord} favors introspection and study of truth.",
-                90.0
-            ))
+        relevant_lords = [l9_name, house_lords[12], "Jupiter", "Ketu"]
+        dasha_evidence = CorroborationEngine.audit_dasha_activation(dasha, chart, relevant_lords, "spiritual")
+        if dasha_evidence:
+            evidence.extend(dasha_evidence)
         else:
             evidence.append(CorroborationEngine.create_evidence(
-                "DASHA_ACTIVATION",
-                "STABILITY PHASE: Life-period focuses on maintenance of external commitments.",
-                65.0
-            ))
-
-        if maha_lord in relevant_lords:
-            evidence.append(CorroborationEngine.create_evidence(
                 "DASHA_FOUNDATION",
-                f"DASHA FOUNDATION: Major life-cycle ruled by {maha_lord} provides underlying support for inner growth.",
-                60.0
+                "STABILITY PHASE: Life-period focuses on inner contemplation and philosophical synthesis.",
+                60.0, group="SECONDARY"
             ))
 
         # 3. TIMING
-        window = timing_engine.calculate_window(chart, ["Jupiter", "Ketu", l9_name, l12_name], [9, 12, 8], calculation_date=selected_date)
+        window = timing_engine.calculate_window(chart, ["Jupiter", "Ketu", l9_name], [9, 12, 5], calculation_date=selected_date)
         if window.get("proximity_weight", 0) > 0:
              evidence.append(CorroborationEngine.create_evidence(
                 "TRANSIT_TRIGGER", f"TEMPORAL TRIGGER: {window.get('description')}",
                 90.0 * window.get("proximity_weight")
             ))
 
-        # 4. SYNTHESIS
         summary_template = (
-            "The trajectory for inner growth and wisdom shows {promise} potential. "
-            "Current alignment is {strength} for deep practice with a {score}% match."
+            "Spiritual growth and philosophical alignment show {promise} natal foundation and {strength} current alignment. "
+            "Hierarchical synthesis shows a {score}% match for inner evolution."
         )
 
-        res = CorroborationEngine.synthesize("Spirituality & Growth", promise_level, evidence, summary_template, timing_window=window)
-
-        res.manifestations = [
-            "Increased interest in philosophical or dharmic study.",
-            "Development of consistent meditative or ritual practices.",
-            "Detachment from material or social complexities."
-        ]
-        res.practical_actions = [
-            "Leverage dharmic windows for deep meditation and seva.",
-            "Traditional pilgrimage or retreat cycles are supported.",
-            "Maintain consistency in internal discipline during transitions."
-        ]
-
+        res = CorroborationEngine.synthesize("Spirituality & Inner Growth", promise_level, evidence, summary_template, timing_window=window)
         return res

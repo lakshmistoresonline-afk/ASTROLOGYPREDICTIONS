@@ -6,97 +6,65 @@ from ...timing.precision import timing_engine
 
 class ForeignSettlementEngine:
     """
-    V2 Hardened Foreign Settlement & Immigration Engine.
-    Evaluates 9th, 12th, and 7th houses for international movement.
+    V3 Authoritative Foreign Settlement & Immigration Engine.
+    Consumes canonical evaluate_natal_promise() as the single source of structural foreign promise.
     """
 
     @staticmethod
-    def get_prediction(chart: CanonicalChart, selected_date: datetime) -> DomainPrediction:
+    def get_prediction(chart: CanonicalChart, selected_date: datetime, event_type: str = "FOREIGN_SETTLEMENT") -> DomainPrediction:
         evidence = []
         house_lords = chart.house_lords
         planets = chart.planets
 
-        # 1. NATAL PROMISE (12th House - Foreign Lands)
-        l12_name = house_lords[12]
-        l12 = planets[l12_name]
+        # 1. AUTHORITATIVE NATAL PROMISE
+        from ..v5_natal_promise import evaluate_natal_promise
+        ev = event_type or "FOREIGN_SETTLEMENT"
+        np_res = evaluate_natal_promise(chart, "FOREIGN", ev)
 
         promise_level = "MODERATE"
-        if l12.house in [1, 4, 7, 10, 5, 9]:
-            promise_level = "STRONG"
+        if np_res["promise_level"] != "INSUFFICIENT_EVIDENCE":
+            if np_res["promise_level"] in ["STRONG_PROMISE", "MODERATE_PROMISE"]:
+                promise_level = "STRONG"
+            elif np_res["promise_level"] == "WEAK_PROMISE" or np_res["promise_level"] == "WITHHELD":
+                promise_level = "CONDITIONAL"
+
             evidence.append(CorroborationEngine.create_evidence(
                 "NATAL_PROMISE",
-                f"NATAL PROMISE: High migration potential indicated by Kendra/Trikona placement of 12th Lord {l12_name}.",
-                90.0, rationale=f"{l12_name} is in house {l12.house}"
-            ))
-        elif l12.house in [2, 11]:
-            evidence.append(CorroborationEngine.create_evidence(
-                "SECONDARY_PROMISE",
-                f"SECONDARY PROMISE: Supportive house placement (2/11) for 12th Lord {l12_name} provides stable transition potential.",
-                60.0, rationale=f"{l12_name} is in house {l12.house}"
-            ))
-
-        # Rahu (Karaka for Foreign things)
-        rahu = planets["Rahu"]
-        if rahu.house in [1, 4, 7, 9, 10, 12]:
-            evidence.append(CorroborationEngine.create_evidence(
-                "PLANETARY_STRENGTH",
-                "EXPANSION MODIFIER: Rahu's placement bolsters desire and opportunity for cross-border movement.",
-                80.0
+                f"NATAL PROMISE: Structural {ev} support is {np_res['promise_level']} (Score: {np_res['promise_score']}).",
+                float(np_res['promise_score']) * 100.0,
+                rationale=f"Authoritative event-specific evaluation: {len(np_res['positive_evidence'])} positive items.",
+                source_layer="NATAL", evidence_type="INDEPENDENT"
             ))
 
         # 2. DASHA ACTIVATION
+        l12_name = house_lords[12]
         from ...dasha import calculate_vimshottari
-        moon_lon = planets["Moon"].longitude
+        moon_lon = chart.planets["Moon"].longitude
         dasha = calculate_vimshottari(moon_lon, chart.birth_datetime, calculation_date=selected_date)
-        maha_lord = dasha.get("current_maha", {}).get("lord")
-        antar_lord = dasha.get("current_antar", {}).get("lord")
 
-        relevant_lords = [l12_name, "Rahu"]
-        if antar_lord in relevant_lords:
-            evidence.append(CorroborationEngine.create_evidence(
-                "DASHA_ACTIVATION",
-                f"MIGRATION ACTIVATION: Period of {antar_lord} triggers movement and relocation cycles.",
-                90.0
-            ))
+        relevant_lords = [l12_name, house_lords[9], "Rahu", "Moon"]
+        dasha_evidence = CorroborationEngine.audit_dasha_activation(dasha, chart, relevant_lords, "foreign")
+        if dasha_evidence:
+            evidence.extend(dasha_evidence)
         else:
             evidence.append(CorroborationEngine.create_evidence(
-                "DASHA_ACTIVATION",
-                "LOCAL STABILITY: Life-period focuses on maintenance of current domestic base.",
-                60.0
-            ))
-
-        if maha_lord in relevant_lords:
-            evidence.append(CorroborationEngine.create_evidence(
                 "DASHA_FOUNDATION",
-                f"DASHA FOUNDATION: Major life-cycle ruled by {maha_lord} provides underlying support for foreign relocation.",
-                60.0
+                "STABILITY PHASE: Life-period focuses on local stabilization and domestic consolidation.",
+                60.0, group="SECONDARY"
             ))
 
         # 3. TIMING
-        window = timing_engine.calculate_window(chart, ["Rahu", "Saturn", l12_name], [12, 9, 7], calculation_date=selected_date)
+        window = timing_engine.calculate_window(chart, ["Rahu", "Moon", l12_name], [9, 12, 3], calculation_date=selected_date)
         if window.get("proximity_weight", 0) > 0:
              evidence.append(CorroborationEngine.create_evidence(
                 "TRANSIT_TRIGGER", f"TEMPORAL TRIGGER: {window.get('description')}",
                 90.0 * window.get("proximity_weight")
             ))
 
-        # 4. SYNTHESIS
         summary_template = (
-            "The potential for international relocation shows {promise} underlying factors. "
-            "Current alignment is {strength} for foreign engagement with a {score}% match."
+            "Foreign settlement dynamics show {promise} natal foundation and {strength} current alignment. "
+            "Hierarchical synthesis shows a {score}% match for international movement."
         )
 
         res = CorroborationEngine.synthesize("Foreign Settlement", promise_level, evidence, summary_template, timing_window=window)
-
-        res.manifestations = [
-            "Opportunities for long-distance travel or relocation.",
-            "Development of international professional or social networks.",
-            "Changes in domestic or residential documentation."
-        ]
-        res.practical_actions = [
-            "Verify immigration protocols during lunar peak windows.",
-            "Maintain cultural flexibility during transitional phases.",
-            "Traditional journey-blessing practices for foreign lands are recommended."
-        ]
-
         return res
