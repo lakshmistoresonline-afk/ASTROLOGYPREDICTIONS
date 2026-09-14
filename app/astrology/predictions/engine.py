@@ -19,16 +19,17 @@ from .engines.vehicles import VehiclesPredictionEngine
 from .engines.legal import LegalPredictionEngine
 from .engines.fame import FamePredictionEngine
 from .v5_natal_promise import EVENT_RULES
+from .request import normalize_prediction_request, prediction_request_fingerprint
 
 from concurrent.futures import ThreadPoolExecutor
 
 _prediction_cache = {}
 
-PREDICTION_ENGINE_VERSION = "P0.3-R22"
+PREDICTION_ENGINE_VERSION = "P0.3-R23"
 
 def generate_evidence_based_predictions(chart: CanonicalChart, selected_date: datetime = None, limit_domains: List[str] = None, event_requests: Dict[str, str] = None) -> Dict[str, Any]:
     """
-    Master Engine (V3.20): Orchestrates specialized domain engines using hierarchical confluence.
+    Master Engine (V3.23): Orchestrates specialized domain engines using hierarchical confluence.
     Enforces strict event validation, fail-closed caching, deterministic SHA-256 ID, and explicit target date contract.
     """
     if selected_date is None:
@@ -134,7 +135,7 @@ def generate_evidence_based_predictions(chart: CanonicalChart, selected_date: da
             if res:
                 results.append(res)
 
-    results_sorted = sorted(results, key=lambda x: x.get("score", 0), reverse=True)
+    results_sorted = sorted(results, key=lambda x: (x.get("domain", ""), x.get("score", 0)), reverse=False)
     categorized = {
         "material": [p for p in results_sorted if p.get("category") == "material"],
         "social": [p for p in results_sorted if p.get("category") == "social"],
@@ -155,7 +156,7 @@ def generate_evidence_based_predictions(chart: CanonicalChart, selected_date: da
             pass
 
     today_str = selected_date.strftime('%Y-%m-%d')
-    upcoming_roadmap = [e for e in timeline_sorted if (e.get('peak') or '0000') >= today_str]
+    upcoming_roadmap = [e for e in timeline_sorted if isinstance(e, dict) and (e.get('peak') or '0000') >= today_str]
 
     res_payload = {
         "overall_status": f"V3.20 Authoritative Intelligence Report Generated ({PREDICTION_ENGINE_VERSION})",
