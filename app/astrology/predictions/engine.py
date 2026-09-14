@@ -25,12 +25,13 @@ from concurrent.futures import ThreadPoolExecutor
 
 _prediction_cache = {}
 
-PREDICTION_ENGINE_VERSION = "P0.3-R23"
+PREDICTION_ENGINE_VERSION = "P0.3-R24"
 
 def generate_evidence_based_predictions(chart: CanonicalChart, selected_date: datetime = None, limit_domains: List[str] = None, event_requests: Dict[str, str] = None) -> Dict[str, Any]:
     """
-    Master Engine (V3.23): Orchestrates specialized domain engines using hierarchical confluence.
-    Enforces strict event validation, fail-closed caching, deterministic SHA-256 ID, and explicit target date contract.
+    Master Engine (V3.24): Orchestrates specialized domain engines using hierarchical confluence.
+    Enforces strict event validation, fail-closed caching via SHA-256 request fingerprinting,
+    structured timeline/domain errors, and explicit target date contract.
     """
     if selected_date is None:
         raise ValueError("INVALID_REQUEST: selected_date is required. Implicit datetime.now() fallback is prohibited.")
@@ -47,18 +48,19 @@ def generate_evidence_based_predictions(chart: CanonicalChart, selected_date: da
         if dom.upper() != rule["domain"]:
             raise ValueError(f"DOMAIN_MISMATCH: Event '{ev}' belongs to domain '{rule['domain']}', not requested domain '{dom.upper()}'.")
 
-    # 0. Cache Check (Fail-closed provenance verification)
-    cfg_fp = getattr(chart, 'calculation_config_fingerprint', None)
-    if not cfg_fp:
-        raise ValueError("CACHE_FAIL_CLOSED: Missing calculation_config_fingerprint on CanonicalChart.")
+    # 0. Cache Check via Canonical Request Fingerprint (Fail-closed provenance verification)
+    try:
+        req_model = normalize_prediction_request(
+            chart=chart,
+            selected_date=selected_date,
+            limit_domains=limit_domains,
+            event_requests=event_requests,
+            engine_version=PREDICTION_ENGINE_VERSION
+        )
+    except Exception as e:
+        raise ValueError(f"CACHE_FAIL_CLOSED: Failed to normalize prediction request provenance: {e}")
 
-    chart_fp = getattr(chart, 'chart_fingerprint', None)
-    if not chart_fp:
-        raise ValueError("CACHE_FAIL_CLOSED: Missing chart_fingerprint on CanonicalChart.")
-
-    ld_key = "-".join(sorted(limit_domains)) if limit_domains else "ALL"
-    er_key = "-".join(sorted([f"{k}:{v}" for k, v in event_requests.items()])) if event_requests else "DEFAULT"
-    cache_key = f"{chart.birth_datetime.isoformat()}_{chart.latitude}_{chart.longitude}_{chart_fp}_{selected_date.isoformat()}_{ld_key}_{er_key}_{cfg_fp}_{PREDICTION_ENGINE_VERSION}"
+    cache_key = prediction_request_fingerprint(req_model)
     if cache_key in _prediction_cache:
         return _prediction_cache[cache_key]
 
@@ -152,14 +154,19 @@ def generate_evidence_based_predictions(chart: CanonicalChart, selected_date: da
             dummy_id = f"chart-{h_digest}"
             tl_obj = lifetime_timeline_engine_v22.generate_lifetime_timeline(chart, dummy_id)
             timeline_sorted = [e.model_dump() if hasattr(e, 'model_dump') else e for e in tl_obj.events]
-        except Exception:
-            pass
+        except Exception as tle:
+            timeline_sorted = [{
+                "status": "ERROR",
+                "error_code": "TIMELINE_EXECUTION_FAILURE",
+                "message": str(tle),
+                "engine_version": PREDICTION_ENGINE_VERSION
+            }]
 
     today_str = selected_date.strftime('%Y-%m-%d')
     upcoming_roadmap = [e for e in timeline_sorted if isinstance(e, dict) and (e.get('peak') or '0000') >= today_str]
 
     res_payload = {
-        "overall_status": f"V3.20 Authoritative Intelligence Report Generated ({PREDICTION_ENGINE_VERSION})",
+        "overall_status": f"V3.24 Authoritative Intelligence Report Generated ({PREDICTION_ENGINE_VERSION})",
         "predictions": results_sorted,
         "categorized_domains": categorized,
         "timeline": timeline_sorted,

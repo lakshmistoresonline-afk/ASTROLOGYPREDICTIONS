@@ -15,7 +15,7 @@ class PredictionRequestModel:
     selected_date: str
     limit_domains: Optional[List[str]] = None
     event_requests: Optional[Dict[str, str]] = None
-    prediction_engine_version: str = "P0.3-R23"
+    prediction_engine_version: str = "P0.3-R24"
     schema_version: str = "1.0.0"
 
     def to_dict(self) -> Dict[str, Any]:
@@ -31,29 +31,44 @@ def normalize_prediction_request(
     selected_date: datetime,
     limit_domains: Optional[List[str]] = None,
     event_requests: Optional[Dict[str, str]] = None,
-    engine_version: str = "P0.3-R23"
+    engine_version: str = "P0.3-R24"
 ) -> PredictionRequestModel:
     if selected_date is None:
         raise ValueError("INVALID_REQUEST: selected_date is required.")
 
+    if not chart:
+        raise ValueError("MISSING_CHART_PROVENANCE: Chart object is missing or null.")
+
     chart_fp = getattr(chart, 'chart_fingerprint', None)
     if not chart_fp:
-        raise ValueError("CACHE_FAIL_CLOSED: Missing chart_fingerprint on CanonicalChart.")
+        raise ValueError("MISSING_CHART_PROVENANCE: Missing chart_fingerprint on CanonicalChart.")
 
     cfg_fp = getattr(chart, 'calculation_config_fingerprint', None)
     if not cfg_fp:
-        raise ValueError("CACHE_FAIL_CLOSED: Missing calculation_config_fingerprint on CanonicalChart.")
+        raise ValueError("MISSING_CALCULATION_PROVENANCE: Missing calculation_config_fingerprint on CanonicalChart.")
 
-    birth_dt_str = getattr(chart, 'birth_datetime', datetime.now()).isoformat()
-    tz_str = getattr(chart, 'timezone', 'UTC')
-    lat = float(getattr(chart, 'latitude', 0.0))
-    lon = float(getattr(chart, 'longitude', 0.0))
+    birth_dt = getattr(chart, 'birth_datetime', None)
+    if not birth_dt:
+        raise ValueError("MISSING_CHART_PROVENANCE: Missing birth_datetime on CanonicalChart.")
+    birth_dt_str = birth_dt.isoformat()
+
+    tz_str = getattr(chart, 'timezone', None)
+    if not tz_str:
+        raise ValueError("MISSING_CHART_PROVENANCE: Missing timezone on CanonicalChart.")
+
+    lat = getattr(chart, 'latitude', None)
+    if lat is None:
+        raise ValueError("MISSING_CHART_PROVENANCE: Missing latitude on CanonicalChart.")
+
+    lon = getattr(chart, 'longitude', None)
+    if lon is None:
+        raise ValueError("MISSING_CHART_PROVENANCE: Missing longitude on CanonicalChart.")
 
     return PredictionRequestModel(
         birth_datetime=birth_dt_str,
-        timezone=tz_str,
-        latitude=round(lat, 6),
-        longitude=round(lon, 6),
+        timezone=str(tz_str),
+        latitude=round(float(lat), 6),
+        longitude=round(float(lon), 6),
         chart_fingerprint=chart_fp,
         calculation_config_fingerprint=cfg_fp,
         selected_date=selected_date.isoformat(),
