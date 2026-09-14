@@ -22,6 +22,8 @@ from concurrent.futures import ThreadPoolExecutor
 
 _prediction_cache = {}
 
+PREDICTION_ENGINE_VERSION = "P0.3-R17"
+
 def generate_evidence_based_predictions(chart: CanonicalChart, selected_date: datetime = None, limit_domains: List[str] = None, event_requests: Dict[str, str] = None) -> Dict[str, Any]:
     """
     Master Engine (V3): Orchestrates specialized domain engines using hierarchical confluence.
@@ -33,11 +35,18 @@ def generate_evidence_based_predictions(chart: CanonicalChart, selected_date: da
     if event_requests is None:
         event_requests = {}
 
-    # 0. Cache Check (V3.20/V3.22 Performance Hardening)
+    # 0. Cache Check (Fail-closed provenance verification)
+    cfg_fp = getattr(chart, 'calculation_config_fingerprint', None)
+    if not cfg_fp:
+        raise ValueError("CACHE_FAIL_CLOSED: Missing calculation_config_fingerprint on CanonicalChart.")
+
+    chart_fp = getattr(chart, 'chart_fingerprint', None)
+    if not chart_fp:
+        raise ValueError("CACHE_FAIL_CLOSED: Missing chart_fingerprint on CanonicalChart.")
+
     ld_key = "-".join(sorted(limit_domains)) if limit_domains else "ALL"
     er_key = "-".join(sorted([f"{k}:{v}" for k, v in event_requests.items()])) if event_requests else "DEFAULT"
-    cfg_fp = getattr(chart, 'calculation_config_fingerprint', 'DEFAULT_CONFIG')
-    cache_key = f"{chart.birth_datetime.isoformat()}_{chart.latitude}_{chart.longitude}_{selected_date.strftime('%Y-%m-%d %H:%M')}_{ld_key}_{er_key}_{cfg_fp}"
+    cache_key = f"{chart.birth_datetime.isoformat()}_{chart.latitude}_{chart.longitude}_{chart_fp}_{selected_date.isoformat()}_{ld_key}_{er_key}_{cfg_fp}_{PREDICTION_ENGINE_VERSION}"
     if cache_key in _prediction_cache:
         return _prediction_cache[cache_key]
 
