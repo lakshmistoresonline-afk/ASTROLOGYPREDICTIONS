@@ -1,5 +1,6 @@
 from typing import Dict, Any, List
 from datetime import datetime
+import hashlib
 from ..core.models import CanonicalChart, DomainPrediction
 from .engines.career import CareerPredictionEngine
 from .engines.finance import FinancePredictionEngine
@@ -23,12 +24,12 @@ from concurrent.futures import ThreadPoolExecutor
 
 _prediction_cache = {}
 
-PREDICTION_ENGINE_VERSION = "P0.3-R18"
+PREDICTION_ENGINE_VERSION = "P0.3-R20"
 
 def generate_evidence_based_predictions(chart: CanonicalChart, selected_date: datetime = None, limit_domains: List[str] = None, event_requests: Dict[str, str] = None) -> Dict[str, Any]:
     """
-    Master Engine (V3.18): Orchestrates specialized domain engines using hierarchical confluence.
-    Enforces strict event validation, fail-closed caching, and explicit target date contract.
+    Master Engine (V3.20): Orchestrates specialized domain engines using hierarchical confluence.
+    Enforces strict event validation, fail-closed caching, deterministic SHA-256 ID, and explicit target date contract.
     """
     if selected_date is None:
         raise ValueError("INVALID_REQUEST: selected_date is required. Implicit datetime.now() fallback is prohibited.")
@@ -146,17 +147,18 @@ def generate_evidence_based_predictions(chart: CanonicalChart, selected_date: da
     clusters = []
     if not limit_domains:
         try:
-            dummy_id = f"chart-{hash(cache_key)}"
+            h_digest = hashlib.sha256(cache_key.encode('utf-8')).hexdigest()[:16]
+            dummy_id = f"chart-{h_digest}"
             tl_obj = lifetime_timeline_engine_v22.generate_lifetime_timeline(chart, dummy_id)
             timeline_sorted = [e.model_dump() if hasattr(e, 'model_dump') else e for e in tl_obj.events]
         except Exception:
             pass
 
-    today_str = datetime.now().strftime('%Y-%m-%d')
+    today_str = selected_date.strftime('%Y-%m-%d')
     upcoming_roadmap = [e for e in timeline_sorted if (e.get('peak') or '0000') >= today_str]
 
     res_payload = {
-        "overall_status": f"V3.18 Authoritative Intelligence Report Generated ({PREDICTION_ENGINE_VERSION})",
+        "overall_status": f"V3.20 Authoritative Intelligence Report Generated ({PREDICTION_ENGINE_VERSION})",
         "predictions": results_sorted,
         "categorized_domains": categorized,
         "timeline": timeline_sorted,
