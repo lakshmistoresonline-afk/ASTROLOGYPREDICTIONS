@@ -1,0 +1,172 @@
+TEMPORAL_RULE_REGISTRY_VERSION = "R38"
+
+TEMPORAL_EVENT_RULES = {
+    "PROMOTION": {
+        "event_type": "PROMOTION",
+        "domain": "CAREER",
+        "karakas": ["Sun", "Jupiter"],
+        "primary_houses": [10, 1, 11],
+        "dasha_lords": ["Sun", "Jupiter", "Saturn"],
+        "transit_planets": ["Sun", "Jupiter", "Saturn"],
+        "permitted_aspects": ["CONJUNCTION", "TRINE", "SEXTILE"],
+        "max_orb": 6.0,
+        "required_confluence": "NATAL_AND_TEMPORAL_CONFLUENCE",
+        "rule_id": "R38-CAREER-PROMOTION-01"
+    },
+    "JOB_CHANGE": {
+        "event_type": "JOB_CHANGE",
+        "domain": "CAREER",
+        "karakas": ["Saturn", "Mars"],
+        "primary_houses": [6, 10, 12],
+        "dasha_lords": ["Saturn", "Mars", "Rahu"],
+        "transit_planets": ["Saturn", "Mars", "Rahu"],
+        "permitted_aspects": ["CONJUNCTION", "OPPOSITION", "SQUARE"],
+        "max_orb": 6.0,
+        "required_confluence": "NATAL_AND_TEMPORAL_CONFLUENCE",
+        "rule_id": "R38-CAREER-JOBCHANGE-01"
+    },
+    "LEADERSHIP_APPOINTMENT": {
+        "event_type": "LEADERSHIP_APPOINTMENT",
+        "domain": "CAREER",
+        "karakas": ["Sun", "Mars"],
+        "primary_houses": [1, 10],
+        "dasha_lords": ["Sun", "Mars", "Jupiter"],
+        "transit_planets": ["Sun", "Mars", "Jupiter"],
+        "permitted_aspects": ["CONJUNCTION", "TRINE"],
+        "max_orb": 5.0,
+        "required_confluence": "NATAL_AND_TEMPORAL_CONFLUENCE",
+        "rule_id": "R38-CAREER-LEADERSHIP-01"
+    },
+    "MARRIAGE": {
+        "event_type": "MARRIAGE",
+        "domain": "MARRIAGE",
+        "karakas": ["Venus", "Jupiter"],
+        "primary_houses": [7, 2, 11],
+        "dasha_lords": ["Venus", "Jupiter", "Moon"],
+        "transit_planets": ["Venus", "Jupiter", "Saturn"],
+        "permitted_aspects": ["CONJUNCTION", "TRINE", "SEXTILE"],
+        "max_orb": 6.0,
+        "required_confluence": "NATAL_AND_TEMPORAL_CONFLUENCE",
+        "rule_id": "R38-MARRIAGE-UNION-01"
+    },
+    "SEPARATION_OR_DIVORCE": {
+        "event_type": "SEPARATION_OR_DIVORCE",
+        "domain": "MARRIAGE",
+        "karakas": ["Saturn", "Mars", "Rahu"],
+        "primary_houses": [6, 8, 12],
+        "dasha_lords": ["Saturn", "Mars", "Rahu"],
+        "transit_planets": ["Saturn", "Mars", "Rahu"],
+        "permitted_aspects": ["OPPOSITION", "SQUARE"],
+        "max_orb": 5.0,
+        "required_confluence": "NATAL_AND_TEMPORAL_CONFLUENCE",
+        "rule_id": "R38-MARRIAGE-SEPARATION-01"
+    },
+    "INCOME_EXPANSION": {
+        "event_type": "INCOME_EXPANSION",
+        "domain": "FINANCE",
+        "karakas": ["Jupiter", "Mercury"],
+        "primary_houses": [11, 2, 10],
+        "dasha_lords": ["Jupiter", "Mercury", "Venus"],
+        "transit_planets": ["Jupiter", "Mercury", "Venus"],
+        "permitted_aspects": ["CONJUNCTION", "TRINE", "SEXTILE"],
+        "max_orb": 6.0,
+        "required_confluence": "NATAL_AND_TEMPORAL_CONFLUENCE",
+        "rule_id": "R38-FINANCE-INCOME-01"
+    },
+    "FINANCIAL_PRESSURE": {
+        "event_type": "FINANCIAL_PRESSURE",
+        "domain": "FINANCE",
+        "karakas": ["Saturn", "Mars"],
+        "primary_houses": [6, 8, 12],
+        "dasha_lords": ["Saturn", "Mars", "Rahu"],
+        "transit_planets": ["Saturn", "Mars", "Rahu"],
+        "permitted_aspects": ["SQUARE", "OPPOSITION"],
+        "max_orb": 5.0,
+        "required_confluence": "NATAL_AND_TEMPORAL_CONFLUENCE",
+        "rule_id": "R38-FINANCE-PRESSURE-01"
+    },
+    "PROPERTY_PURCHASE": {
+        "event_type": "PROPERTY_PURCHASE",
+        "domain": "PROPERTY",
+        "karakas": ["Mars", "Venus"],
+        "primary_houses": [4, 2, 11],
+        "dasha_lords": ["Mars", "Venus", "Moon"],
+        "transit_planets": ["Mars", "Venus", "Jupiter"],
+        "permitted_aspects": ["CONJUNCTION", "TRINE"],
+        "max_orb": 6.0,
+        "required_confluence": "NATAL_AND_TEMPORAL_CONFLUENCE",
+        "rule_id": "R38-PROPERTY-PURCHASE-01"
+    },
+    "PROPERTY_SALE": {
+        "event_type": "PROPERTY_SALE",
+        "domain": "PROPERTY",
+        "karakas": ["Mars", "Mercury"],
+        "primary_houses": [3, 10, 12],
+        "dasha_lords": ["Mars", "Mercury", "Saturn"],
+        "transit_planets": ["Mars", "Mercury", "Saturn"],
+        "permitted_aspects": ["OPPOSITION", "SQUARE"],
+        "max_orb": 5.0,
+        "required_confluence": "NATAL_AND_TEMPORAL_CONFLUENCE",
+        "rule_id": "R38-PROPERTY-SALE-01"
+    },
+    "ACADEMIC_ENROLLMENT": {
+        "event_type": "ACADEMIC_ENROLLMENT",
+        "domain": "EDUCATION",
+        "karakas": ["Mercury", "Jupiter"],
+        "primary_houses": [4, 5, 9],
+        "dasha_lords": ["Mercury", "Jupiter", "Sun"],
+        "transit_planets": ["Mercury", "Jupiter", "Sun"],
+        "permitted_aspects": ["CONJUNCTION", "TRINE", "SEXTILE"],
+        "max_orb": 6.0,
+        "required_confluence": "NATAL_AND_TEMPORAL_CONFLUENCE",
+        "rule_id": "R38-EDUCATION-ENROLLMENT-01"
+    },
+    "CHILD_BIRTH": {
+        "event_type": "CHILD_BIRTH",
+        "domain": "CHILDREN",
+        "karakas": ["Jupiter"],
+        "primary_houses": [5, 9, 11],
+        "dasha_lords": ["Jupiter", "Moon", "Venus"],
+        "transit_planets": ["Jupiter", "Moon", "Venus"],
+        "permitted_aspects": ["CONJUNCTION", "TRINE"],
+        "max_orb": 6.0,
+        "required_confluence": "NATAL_AND_TEMPORAL_CONFLUENCE",
+        "rule_id": "R38-CHILDREN-BIRTH-01"
+    },
+    "FOREIGN_SETTLEMENT": {
+        "event_type": "FOREIGN_SETTLEMENT",
+        "domain": "FOREIGN",
+        "karakas": ["Rahu", "Moon"],
+        "primary_houses": [9, 12, 3, 4],
+        "dasha_lords": ["Rahu", "Moon", "Saturn"],
+        "transit_planets": ["Rahu", "Moon", "Saturn"],
+        "permitted_aspects": ["CONJUNCTION", "TRINE", "OPPOSITION"],
+        "max_orb": 6.0,
+        "required_confluence": "NATAL_AND_TEMPORAL_CONFLUENCE",
+        "rule_id": "R38-FOREIGN-SETTLEMENT-01"
+    },
+    "HEALTH_VITALITY": {
+        "event_type": "HEALTH_VITALITY",
+        "domain": "HEALTH",
+        "karakas": ["Sun", "Mars"],
+        "primary_houses": [1, 6],
+        "dasha_lords": ["Sun", "Mars", "Jupiter"],
+        "transit_planets": ["Sun", "Mars", "Jupiter"],
+        "permitted_aspects": ["CONJUNCTION", "TRINE"],
+        "max_orb": 6.0,
+        "required_confluence": "NATAL_AND_TEMPORAL_CONFLUENCE",
+        "rule_id": "R38-HEALTH-VITALITY-01"
+    },
+    "SPIRITUAL_INITIATION": {
+        "event_type": "SPIRITUAL_INITIATION",
+        "domain": "SPIRITUALITY",
+        "karakas": ["Jupiter", "Ketu"],
+        "primary_houses": [9, 12, 5],
+        "dasha_lords": ["Jupiter", "Ketu", "Saturn"],
+        "transit_planets": ["Jupiter", "Ketu", "Saturn"],
+        "permitted_aspects": ["CONJUNCTION", "TRINE"],
+        "max_orb": 6.0,
+        "required_confluence": "NATAL_AND_TEMPORAL_CONFLUENCE",
+        "rule_id": "R38-SPIRITUAL_INITIATION-01"
+    }
+}

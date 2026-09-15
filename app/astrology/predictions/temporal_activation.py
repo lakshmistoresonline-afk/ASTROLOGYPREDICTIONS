@@ -7,6 +7,7 @@ from ..core.datetime import datetime_to_jd
 from ..core import ephemeris
 from ..core.swe_proxy import swe
 from .evidence import EvidenceNode, EvidenceEdge, EvidenceGraph, calculate_score_from_evidence, generate_deterministic_evidence_id
+from .temporal_rules import TEMPORAL_EVENT_RULES, TEMPORAL_RULE_REGISTRY_VERSION
 
 ASPECT_RULES = {
     "CONJUNCTION": {"angle": 0.0, "max_orb": 6.0, "magnitude": 0.15, "polarity": "POSITIVE"},
@@ -27,7 +28,7 @@ class TemporalActivationResult:
         temporal_evidence: List[Dict[str, Any]],
         evidence_graph: Dict[str, Any],
         provenance: Dict[str, str],
-        engine_version: str = "P0.3-R37"
+        engine_version: str = "P0.3-R38"
     ):
         self.target_datetime = target_datetime
         self.timezone = timezone
@@ -54,8 +55,8 @@ class TemporalActivationResult:
 
 def evaluate_temporal_activation(chart: CanonicalChart, selected_date: datetime, domain: str = "GENERAL", event_type: str = "GENERAL") -> TemporalActivationResult:
     """
-    P0.3-R36 Authoritative Event-Specific Temporal Activation Engine.
-    Computes deterministic Dasha activation and Swiss Ephemeris transit positions with authoritative aspect rules.
+    P0.3-R38 Authoritative Event-Specific Temporal Activation Engine.
+    Computes deterministic Dasha activation and Swiss Ephemeris transit positions using R38 event rules.
     Fails closed (CALCULATION_ENGINE_UNAVAILABLE) if transit calculation fails (no natal fallback).
     """
     if selected_date is None:
@@ -68,8 +69,14 @@ def evaluate_temporal_activation(chart: CanonicalChart, selected_date: datetime,
     ev_key = event_type.upper().replace(" ", "_")
     dom_key = domain.upper()
 
-    from .v5_natal_promise import EVENT_RULES
-    rule = EVENT_RULES.get(ev_key, {"karakas": [], "primary_houses": []})
+    t_rule = TEMPORAL_EVENT_RULES.get(ev_key, {
+        "karakas": [],
+        "dasha_lords": [],
+        "transit_planets": [],
+        "permitted_aspects": ["CONJUNCTION"],
+        "max_orb": 6.0,
+        "rule_id": "R38-DEFAULT-01"
+    })
 
     # 1. Dasha Calculation
     moon_lon = chart.planets["Moon"].longitude
@@ -130,9 +137,9 @@ def evaluate_temporal_activation(chart: CanonicalChart, selected_date: datetime,
     primary_node_ids.append(node_dasha_fact.evidence_id)
 
     # Event-Specific Dasha Rule Application
-    karakas = rule.get("karakas", [])
-    is_karaka_period = (maha in karakas or antar in karakas)
-    if is_karaka_period:
+    allowed_dasha_lords = t_rule.get("dasha_lords", []) + t_rule.get("karakas", [])
+    is_dasha_activated = (maha in allowed_dasha_lords or antar in allowed_dasha_lords)
+    if is_dasha_activated:
         dasha_rule_dict = {
             "evidence_id": "",
             "event_type": ev_key,
@@ -143,12 +150,12 @@ def evaluate_temporal_activation(chart: CanonicalChart, selected_date: datetime,
             "classification": "RULE_APPLICATION",
             "source_type": "TEMPORAL_RULE",
             "source_path": "app.astrology.predictions.temporal_activation",
-            "source_fact": f"Dasha lords ({maha}/{antar}) match event karakas {karakas}",
+            "source_fact": f"Dasha lords ({maha}/{antar}) match event rule {t_rule['rule_id']}",
             "observed_value": [maha, antar],
             "operator": "IN",
-            "expected_condition": "Event Karaka Period",
+            "expected_condition": "Event-Relevant Period Lord",
             "magnitude": 0.15,
-            "rationale": f"Active period lords ({maha}/{antar}) directly activate event karakas for {ev_key}.",
+            "rationale": f"Active period lords ({maha}/{antar}) activate temporal rule {t_rule['rule_id']} for {ev_key}.",
             "provenance": {"module": "app.astrology.predictions.temporal_activation", "function": "evaluate_temporal_activation"}
         }
         dasha_rule_dict["evidence_id"] = generate_deterministic_evidence_id(dasha_rule_dict)
@@ -186,18 +193,26 @@ def evaluate_temporal_activation(chart: CanonicalChart, selected_date: datetime,
     node_transit_fact = EvidenceNode(**transit_fact_dict)
     graph.add_node(node_transit_fact)
 
-    # Check Transit Aspects using ASPECT_RULES
+    # Check Transit Aspects using ASPECT_RULES and event-specific permitted transit planets / aspects
+    permitted_transits = t_rule.get("transit_planets", [])
+    permitted_aspects = t_rule.get("permitted_aspects", ["CONJUNCTION"])
+    max_orb = t_rule.get("max_orb", 6.0)
+
     for t_planet, t_lon in transits.items():
-        for k in karakas:
+        if permitted_transits and t_planet not in permitted_transits:
+            continue
+        for k in t_rule.get("karakas", []):
             if k in chart.planets:
                 n_lon = chart.planets[k].longitude
                 diff = abs(t_lon - n_lon) % 360.0
                 if diff > 180: diff = 360 - diff
 
                 for asp_name, asp_spec in ASPECT_RULES.items():
+                    if asp_name not in permitted_aspects:
+                        continue
                     target_angle = asp_spec["angle"]
-                    max_orb = asp_spec["max_orb"]
-                    if abs(diff - target_angle) <= max_orb:
+                    orb_limit = min(max_orb, asp_spec["max_orb"])
+                    if abs(diff - target_angle) <= orb_limit:
                         t_rule_dict = {
                             "evidence_id": "",
                             "event_type": ev_key,
@@ -211,9 +226,9 @@ def evaluate_temporal_activation(chart: CanonicalChart, selected_date: datetime,
                             "source_fact": f"Transit {t_planet} {asp_name.lower()} natal {k} within {abs(diff - target_angle):.2f} deg orb",
                             "observed_value": diff,
                             "operator": "LTE",
-                            "expected_condition": f"Aspect {target_angle} +/- {max_orb}",
+                            "expected_condition": f"Aspect {target_angle} +/- {orb_limit}",
                             "magnitude": asp_spec["magnitude"],
-                            "rationale": f"Transit {t_planet} forms {asp_name} to natal {k}, triggering temporal activation for {ev_key}.",
+                            "rationale": f"Transit {t_planet} forms {asp_name} to natal {k} under rule {t_rule['rule_id']}, triggering temporal activation for {ev_key}.",
                             "provenance": {"module": "app.astrology.predictions.temporal_activation", "function": "evaluate_temporal_activation"}
                         }
                         t_rule_dict["evidence_id"] = generate_deterministic_evidence_id(t_rule_dict)
@@ -240,5 +255,5 @@ def evaluate_temporal_activation(chart: CanonicalChart, selected_date: datetime,
         temporal_evidence=evidence_items,
         evidence_graph=graph.to_dict(),
         provenance={"module": "app.astrology.predictions.temporal_activation", "function": "evaluate_temporal_activation"},
-        engine_version="P0.3-R37"
+        engine_version="P0.3-R38"
     )
