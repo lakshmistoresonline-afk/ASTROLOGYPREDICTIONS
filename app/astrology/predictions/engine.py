@@ -26,7 +26,7 @@ from concurrent.futures import ThreadPoolExecutor
 
 _prediction_cache = {}
 
-PREDICTION_ENGINE_VERSION = "P0.3-R33"
+PREDICTION_ENGINE_VERSION = "P0.3-R34"
 
 def generate_evidence_based_predictions(chart: CanonicalChart, selected_date: datetime = None, limit_domains: List[str] = None, event_requests: Dict[str, str] = None) -> Dict[str, Any]:
     """
@@ -66,7 +66,10 @@ def generate_evidence_based_predictions(chart: CanonicalChart, selected_date: da
         return _prediction_cache[cache_key]
 
     # Evaluate Temporal Activation
-    temporal_act = evaluate_temporal_activation(chart, selected_date)
+    default_dom, default_ev = ("CAREER", "PROMOTION")
+    if event_requests:
+        default_dom, default_ev = list(event_requests.items())[0]
+    temporal_act = evaluate_temporal_activation(chart, selected_date, domain=default_dom, event_type=default_ev)
 
     domain_tasks = {
         "Career": CareerPredictionEngine.get_prediction,

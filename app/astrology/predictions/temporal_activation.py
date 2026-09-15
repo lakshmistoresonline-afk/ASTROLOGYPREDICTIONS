@@ -19,7 +19,7 @@ class TemporalActivationResult:
         temporal_evidence: List[Dict[str, Any]],
         evidence_graph: Dict[str, Any],
         provenance: Dict[str, str],
-        engine_version: str = "P0.3-R33"
+        engine_version: str = "P0.3-R34"
     ):
         self.target_datetime = target_datetime
         self.timezone = timezone
@@ -46,7 +46,7 @@ class TemporalActivationResult:
 
 def evaluate_temporal_activation(chart: CanonicalChart, selected_date: datetime, domain: str = "GENERAL", event_type: str = "GENERAL") -> TemporalActivationResult:
     """
-    P0.3-R32 Authoritative Temporal Activation Engine.
+    P0.3-R34 Authoritative Event-Specific Temporal Activation Engine.
     Computes deterministic Dasha activation and Swiss Ephemeris transit positions for selected_date.
     Fails closed (CALCULATION_ENGINE_UNAVAILABLE) if transit calculation fails (no natal fallback).
     """
@@ -57,6 +57,11 @@ def evaluate_temporal_activation(chart: CanonicalChart, selected_date: datetime,
         raise ValueError("MISSING_CHART_PROVENANCE: Chart planetary data required for temporal activation.")
 
     tz_str = getattr(chart, 'timezone', 'UTC')
+    ev_key = event_type.upper().replace(" ", "_")
+    dom_key = domain.upper()
+
+    from .v5_natal_promise import EVENT_RULES
+    rule = EVENT_RULES.get(ev_key, {"karakas": [], "primary_houses": []})
 
     # 1. Dasha Calculation
     moon_lon = chart.planets["Moon"].longitude
@@ -87,8 +92,7 @@ def evaluate_temporal_activation(chart: CanonicalChart, selected_date: datetime,
         raise RuntimeError(f"CALCULATION_ENGINE_UNAVAILABLE: Failed to calculate Swiss Ephemeris transits for target date {selected_date}: {e}")
 
     graph = EvidenceGraph()
-    ev_key = event_type.upper().replace(" ", "_")
-    dom_key = domain.upper()
+    primary_node_ids = []
 
     maha = dasha.get("current_maha", {}).get("lord", "Unknown")
     antar = dasha.get("current_antar", {}).get("lord", "Unknown")
@@ -115,36 +119,41 @@ def evaluate_temporal_activation(chart: CanonicalChart, selected_date: datetime,
     dasha_fact_dict["evidence_id"] = generate_deterministic_evidence_id(dasha_fact_dict)
     node_dasha_fact = EvidenceNode(**dasha_fact_dict)
     graph.add_node(node_dasha_fact)
+    primary_node_ids.append(node_dasha_fact.evidence_id)
 
-    # Dasha Rule Application Node
-    dasha_rule_dict = {
-        "evidence_id": "",
-        "event_type": ev_key,
-        "domain": dom_key,
-        "evidence_group": "DASHA_ACTIVATION",
-        "independence_key": f"dasha_rule_{dom_key}_{ev_key}",
-        "polarity": "POSITIVE",
-        "classification": "RULE_APPLICATION",
-        "source_type": "TEMPORAL_RULE",
-        "source_path": "app.astrology.predictions.temporal_activation",
-        "source_fact": f"Dasha period lords ({maha}/{antar}) match temporal activation criteria for {ev_key}",
-        "observed_value": [maha, antar],
-        "operator": "IN",
-        "expected_condition": "Event-Relevant Period Lord",
-        "magnitude": 0.15,
-        "rationale": f"Active Dasha period ({maha}/{antar}) structurally activates temporal potential for {ev_key}.",
-        "provenance": {"module": "app.astrology.predictions.temporal_activation", "function": "evaluate_temporal_activation"}
-    }
-    dasha_rule_dict["evidence_id"] = generate_deterministic_evidence_id(dasha_rule_dict)
-    node_dasha_rule = EvidenceNode(**dasha_rule_dict)
-    graph.add_node(node_dasha_rule)
+    # Event-Specific Dasha Rule Application
+    karakas = rule.get("karakas", [])
+    is_karaka_period = (maha in karakas or antar in karakas)
+    if is_karaka_period:
+        dasha_rule_dict = {
+            "evidence_id": "",
+            "event_type": ev_key,
+            "domain": dom_key,
+            "evidence_group": "DASHA_ACTIVATION",
+            "independence_key": f"dasha_rule_{dom_key}_{ev_key}",
+            "polarity": "POSITIVE",
+            "classification": "RULE_APPLICATION",
+            "source_type": "TEMPORAL_RULE",
+            "source_path": "app.astrology.predictions.temporal_activation",
+            "source_fact": f"Dasha lords ({maha}/{antar}) match event karakas {karakas}",
+            "observed_value": [maha, antar],
+            "operator": "IN",
+            "expected_condition": "Event Karaka Period",
+            "magnitude": 0.15,
+            "rationale": f"Active period lords ({maha}/{antar}) directly activate event karakas for {ev_key}.",
+            "provenance": {"module": "app.astrology.predictions.temporal_activation", "function": "evaluate_temporal_activation"}
+        }
+        dasha_rule_dict["evidence_id"] = generate_deterministic_evidence_id(dasha_rule_dict)
+        node_dasha_rule = EvidenceNode(**dasha_rule_dict)
+        graph.add_node(node_dasha_rule)
+        primary_node_ids.append(node_dasha_rule.evidence_id)
 
-    graph.add_edge(EvidenceEdge(
-        source_id=node_dasha_fact.evidence_id,
-        target_id=node_dasha_rule.evidence_id,
-        relation="DERIVED_FROM",
-        provenance={"module": "app.astrology.predictions.temporal_activation", "rule": "dasha_derivation"}
-    ))
+        graph.add_edge(EvidenceEdge(
+            source_id=node_dasha_fact.evidence_id,
+            target_id=node_dasha_rule.evidence_id,
+            relation="DERIVED_FROM",
+            provenance={"module": "app.astrology.predictions.temporal_activation", "rule": "dasha_derivation"}
+        ))
 
     # Transit Fact Node
     transit_fact_dict = {
@@ -169,6 +178,44 @@ def evaluate_temporal_activation(chart: CanonicalChart, selected_date: datetime,
     node_transit_fact = EvidenceNode(**transit_fact_dict)
     graph.add_node(node_transit_fact)
 
+    # Check Transit-to-Natal Conjunctions / Aspects for Karakas
+    for k in karakas:
+        if k in transits and k in chart.planets:
+            t_lon = transits[k]
+            n_lon = chart.planets[k].longitude
+            diff = abs(t_lon - n_lon) % 360.0
+            if diff > 180: diff = 360 - diff
+            if diff <= 6.0: # Conjunction orb 6 deg
+                t_rule_dict = {
+                    "evidence_id": "",
+                    "event_type": ev_key,
+                    "domain": dom_key,
+                    "evidence_group": "TRANSIT_ACTIVATION",
+                    "independence_key": f"transit_conj_{k}",
+                    "polarity": "POSITIVE",
+                    "classification": "RULE_APPLICATION",
+                    "source_type": "TRANSIT_ASPECT",
+                    "source_path": "app.astrology.predictions.temporal_activation",
+                    "source_fact": f"Transit {k} conjunct natal {k} within {diff:.2f} deg",
+                    "observed_value": diff,
+                    "operator": "LTE",
+                    "expected_condition": "Orb <= 6.0",
+                    "magnitude": 0.15,
+                    "rationale": f"Transit {k} returns to natal exact position, triggering active return/conjunction for {ev_key}.",
+                    "provenance": {"module": "app.astrology.predictions.temporal_activation", "function": "evaluate_temporal_activation"}
+                }
+                t_rule_dict["evidence_id"] = generate_deterministic_evidence_id(t_rule_dict)
+                node_t_rule = EvidenceNode(**t_rule_dict)
+                graph.add_node(node_t_rule)
+                primary_node_ids.append(node_t_rule.evidence_id)
+
+                graph.add_edge(EvidenceEdge(
+                    source_id=node_transit_fact.evidence_id,
+                    target_id=node_t_rule.evidence_id,
+                    relation="CORROBORATES",
+                    provenance={"module": "app.astrology.predictions.temporal_activation", "rule": "transit_confluence"}
+                ))
+
     evidence_items = [n.to_dict() for n in graph.nodes]
     activation_score = calculate_score_from_evidence(graph)
 
@@ -181,5 +228,5 @@ def evaluate_temporal_activation(chart: CanonicalChart, selected_date: datetime,
         temporal_evidence=evidence_items,
         evidence_graph=graph.to_dict(),
         provenance={"module": "app.astrology.predictions.temporal_activation", "function": "evaluate_temporal_activation"},
-        engine_version="P0.3-R33"
+        engine_version="P0.3-R34"
     )
