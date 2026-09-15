@@ -8,6 +8,14 @@ from ..core import ephemeris
 from ..core.swe_proxy import swe
 from .evidence import EvidenceNode, EvidenceEdge, EvidenceGraph, calculate_score_from_evidence, generate_deterministic_evidence_id
 
+ASPECT_RULES = {
+    "CONJUNCTION": {"angle": 0.0, "max_orb": 6.0, "magnitude": 0.15, "polarity": "POSITIVE"},
+    "OPPOSITION": {"angle": 180.0, "max_orb": 6.0, "magnitude": 0.12, "polarity": "NEGATIVE"},
+    "TRINE": {"angle": 120.0, "max_orb": 5.0, "magnitude": 0.15, "polarity": "POSITIVE"},
+    "SQUARE": {"angle": 90.0, "max_orb": 5.0, "magnitude": -0.12, "polarity": "NEGATIVE"},
+    "SEXTILE": {"angle": 60.0, "max_orb": 4.0, "magnitude": 0.10, "polarity": "POSITIVE"}
+}
+
 class TemporalActivationResult:
     def __init__(
         self,
@@ -19,7 +27,7 @@ class TemporalActivationResult:
         temporal_evidence: List[Dict[str, Any]],
         evidence_graph: Dict[str, Any],
         provenance: Dict[str, str],
-        engine_version: str = "P0.3-R35"
+        engine_version: str = "P0.3-R36"
     ):
         self.target_datetime = target_datetime
         self.timezone = timezone
@@ -46,8 +54,8 @@ class TemporalActivationResult:
 
 def evaluate_temporal_activation(chart: CanonicalChart, selected_date: datetime, domain: str = "GENERAL", event_type: str = "GENERAL") -> TemporalActivationResult:
     """
-    P0.3-R34 Authoritative Event-Specific Temporal Activation Engine.
-    Computes deterministic Dasha activation and Swiss Ephemeris transit positions for selected_date.
+    P0.3-R36 Authoritative Event-Specific Temporal Activation Engine.
+    Computes deterministic Dasha activation and Swiss Ephemeris transit positions with authoritative aspect rules.
     Fails closed (CALCULATION_ENGINE_UNAVAILABLE) if transit calculation fails (no natal fallback).
     """
     if selected_date is None:
@@ -178,43 +186,47 @@ def evaluate_temporal_activation(chart: CanonicalChart, selected_date: datetime,
     node_transit_fact = EvidenceNode(**transit_fact_dict)
     graph.add_node(node_transit_fact)
 
-    # Check Transit-to-Natal Conjunctions / Aspects for Karakas
-    for k in karakas:
-        if k in transits and k in chart.planets:
-            t_lon = transits[k]
-            n_lon = chart.planets[k].longitude
-            diff = abs(t_lon - n_lon) % 360.0
-            if diff > 180: diff = 360 - diff
-            if diff <= 6.0: # Conjunction orb 6 deg
-                t_rule_dict = {
-                    "evidence_id": "",
-                    "event_type": ev_key,
-                    "domain": dom_key,
-                    "evidence_group": "TRANSIT_ACTIVATION",
-                    "independence_key": f"transit_conj_{k}",
-                    "polarity": "POSITIVE",
-                    "classification": "RULE_APPLICATION",
-                    "source_type": "TRANSIT_ASPECT",
-                    "source_path": "app.astrology.predictions.temporal_activation",
-                    "source_fact": f"Transit {k} conjunct natal {k} within {diff:.2f} deg",
-                    "observed_value": diff,
-                    "operator": "LTE",
-                    "expected_condition": "Orb <= 6.0",
-                    "magnitude": 0.15,
-                    "rationale": f"Transit {k} returns to natal exact position, triggering active return/conjunction for {ev_key}.",
-                    "provenance": {"module": "app.astrology.predictions.temporal_activation", "function": "evaluate_temporal_activation"}
-                }
-                t_rule_dict["evidence_id"] = generate_deterministic_evidence_id(t_rule_dict)
-                node_t_rule = EvidenceNode(**t_rule_dict)
-                graph.add_node(node_t_rule)
-                primary_node_ids.append(node_t_rule.evidence_id)
+    # Check Transit Aspects using ASPECT_RULES
+    for t_planet, t_lon in transits.items():
+        for k in karakas:
+            if k in chart.planets:
+                n_lon = chart.planets[k].longitude
+                diff = abs(t_lon - n_lon) % 360.0
+                if diff > 180: diff = 360 - diff
 
-                graph.add_edge(EvidenceEdge(
-                    source_id=node_transit_fact.evidence_id,
-                    target_id=node_t_rule.evidence_id,
-                    relation="CORROBORATES",
-                    provenance={"module": "app.astrology.predictions.temporal_activation", "rule": "transit_confluence"}
-                ))
+                for asp_name, asp_spec in ASPECT_RULES.items():
+                    target_angle = asp_spec["angle"]
+                    max_orb = asp_spec["max_orb"]
+                    if abs(diff - target_angle) <= max_orb:
+                        t_rule_dict = {
+                            "evidence_id": "",
+                            "event_type": ev_key,
+                            "domain": dom_key,
+                            "evidence_group": "TRANSIT_ACTIVATION",
+                            "independence_key": f"transit_{asp_name.lower()}_{t_planet}_{k}",
+                            "polarity": asp_spec["polarity"],
+                            "classification": "RULE_APPLICATION",
+                            "source_type": "TRANSIT_ASPECT",
+                            "source_path": "app.astrology.predictions.temporal_activation",
+                            "source_fact": f"Transit {t_planet} {asp_name.lower()} natal {k} within {abs(diff - target_angle):.2f} deg orb",
+                            "observed_value": diff,
+                            "operator": "LTE",
+                            "expected_condition": f"Aspect {target_angle} +/- {max_orb}",
+                            "magnitude": asp_spec["magnitude"],
+                            "rationale": f"Transit {t_planet} forms {asp_name} to natal {k}, triggering temporal activation for {ev_key}.",
+                            "provenance": {"module": "app.astrology.predictions.temporal_activation", "function": "evaluate_temporal_activation"}
+                        }
+                        t_rule_dict["evidence_id"] = generate_deterministic_evidence_id(t_rule_dict)
+                        node_t_rule = EvidenceNode(**t_rule_dict)
+                        graph.add_node(node_t_rule)
+                        primary_node_ids.append(node_t_rule.evidence_id)
+
+                        graph.add_edge(EvidenceEdge(
+                            source_id=node_transit_fact.evidence_id,
+                            target_id=node_t_rule.evidence_id,
+                            relation="CORROBORATES",
+                            provenance={"module": "app.astrology.predictions.temporal_activation", "rule": "aspect_confluence"}
+                        ))
 
     evidence_items = [n.to_dict() for n in graph.nodes]
     activation_score = calculate_score_from_evidence(graph)
@@ -228,5 +240,5 @@ def evaluate_temporal_activation(chart: CanonicalChart, selected_date: datetime,
         temporal_evidence=evidence_items,
         evidence_graph=graph.to_dict(),
         provenance={"module": "app.astrology.predictions.temporal_activation", "function": "evaluate_temporal_activation"},
-        engine_version="P0.3-R35"
+        engine_version="P0.3-R36"
     )
