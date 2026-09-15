@@ -6,10 +6,23 @@ from app.astrology.predictions.request import normalize_prediction_request, pred
 from app.astrology.predictions.temporal_activation import evaluate_temporal_activation, TemporalActivationResult
 from app.astrology.predictions.engine import generate_evidence_based_predictions, PREDICTION_ENGINE_VERSION
 
-def test_p03_r32_engine_version():
+def test_p03_r33_engine_version():
     assert PREDICTION_ENGINE_VERSION == "P0.3-R33"
 
-def test_p03_r32_true_target_date_invariance_master():
+def test_p03_r33_golden_transit_difference():
+    dt = datetime(1990, 9, 10, 14, 30)
+    chart = calculate_canonical_chart(dt, 10.5276, 76.2144, "Asia/Kolkata")
+
+    target_a = datetime(2026, 1, 1, 10, 0)
+    target_b = datetime(2030, 1, 1, 10, 0)
+
+    act_a = evaluate_temporal_activation(chart, target_a, domain="CAREER", event_type="PROMOTION")
+    act_b = evaluate_temporal_activation(chart, target_b, domain="CAREER", event_type="PROMOTION")
+
+    assert act_a.transit_positions["Sun"] != act_b.transit_positions["Sun"]
+    assert act_a.target_datetime != act_b.target_datetime
+
+def test_p03_r33_true_target_date_invariance_master():
     dt = datetime(1990, 9, 10, 14, 30)
     chart = calculate_canonical_chart(dt, 10.5276, 76.2144, "Asia/Kolkata")
 
@@ -25,12 +38,12 @@ def test_p03_r32_true_target_date_invariance_master():
     assert "temporal_activation" in res_b
     assert res_a["temporal_activation"]["target_datetime"] != res_b["temporal_activation"]["target_datetime"]
 
-def test_p03_r32_transit_failure_mutation(monkeypatch):
+def test_p03_r33_transit_failure_mutation(monkeypatch):
     dt = datetime(1990, 9, 10, 14, 30)
     chart = calculate_canonical_chart(dt, 10.5276, 76.2144, "Asia/Kolkata")
     target_dt = datetime(2026, 1, 1, 12, 0)
 
-    def mock_calc_fail(jd):
+    def mock_calc_fail(jd, pid):
         raise RuntimeError("Simulated Ephemeris Failure")
 
     monkeypatch.setattr("app.astrology.core.ephemeris.get_planet_position", mock_calc_fail)
@@ -38,19 +51,19 @@ def test_p03_r32_transit_failure_mutation(monkeypatch):
     with pytest.raises(RuntimeError, match="CALCULATION_ENGINE_UNAVAILABLE"):
         evaluate_temporal_activation(chart, target_dt, domain="CAREER", event_type="PROMOTION")
 
-def test_p03_r32_missing_selected_date_fails():
+def test_p03_r33_missing_selected_date_fails():
     dt = datetime(1990, 9, 10, 14, 30)
     chart = calculate_canonical_chart(dt, 10.5276, 76.2144, "Asia/Kolkata")
     with pytest.raises(ValueError, match="INVALID_REQUEST: selected_date is required"):
         generate_evidence_based_predictions(chart, selected_date=None)
 
-def test_p03_r32_unsupported_event_fails():
+def test_p03_r33_unsupported_event_fails():
     dt = datetime(1990, 9, 10, 14, 30)
     chart = calculate_canonical_chart(dt, 10.5276, 76.2144, "Asia/Kolkata")
     with pytest.raises(ValueError, match="UNSUPPORTED_EVENT"):
         generate_evidence_based_predictions(chart, selected_date=dt, event_requests={"Career": "BAD_EVENT"})
 
-def test_p03_r32_domain_mismatch_fails():
+def test_p03_r33_domain_mismatch_fails():
     dt = datetime(1990, 9, 10, 14, 30)
     chart = calculate_canonical_chart(dt, 10.5276, 76.2144, "Asia/Kolkata")
     with pytest.raises(ValueError, match="DOMAIN_MISMATCH"):
