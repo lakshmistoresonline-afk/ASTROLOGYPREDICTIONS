@@ -8,7 +8,7 @@ from app.astrology.predictions.evidence import EvidenceGraph, calculate_score_fr
 from app.astrology.predictions.engine import generate_evidence_based_predictions, PREDICTION_ENGINE_VERSION
 
 def test_p03_r36_engine_version():
-    assert PREDICTION_ENGINE_VERSION == "P0.3-R38"
+    assert PREDICTION_ENGINE_VERSION == "P0.3-R39"
 
 def test_p03_r36_aspect_rules_completeness():
     assert len(ASPECT_RULES) >= 5

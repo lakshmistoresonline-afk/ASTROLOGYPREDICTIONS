@@ -8,6 +8,7 @@ from ..core import ephemeris
 from ..core.swe_proxy import swe
 from .evidence import EvidenceNode, EvidenceEdge, EvidenceGraph, calculate_score_from_evidence, generate_deterministic_evidence_id
 from .temporal_rules import TEMPORAL_EVENT_RULES, TEMPORAL_RULE_REGISTRY_VERSION
+from .v5_natal_promise import evaluate_natal_promise
 
 ASPECT_RULES = {
     "CONJUNCTION": {"angle": 0.0, "max_orb": 6.0, "magnitude": 0.15, "polarity": "POSITIVE"},
@@ -25,16 +26,18 @@ class TemporalActivationResult:
         dasha_data: Dict[str, Any],
         transit_positions: Dict[str, float],
         activation_score: float,
+        confluence_state: str,
         temporal_evidence: List[Dict[str, Any]],
         evidence_graph: Dict[str, Any],
         provenance: Dict[str, str],
-        engine_version: str = "P0.3-R38"
+        engine_version: str = "P0.3-R39"
     ):
         self.target_datetime = target_datetime
         self.timezone = timezone
         self.dasha_data = dasha_data
         self.transit_positions = transit_positions
         self.activation_score = activation_score
+        self.confluence_state = confluence_state
         self.temporal_evidence = temporal_evidence
         self.evidence_graph = evidence_graph
         self.provenance = provenance
@@ -47,6 +50,7 @@ class TemporalActivationResult:
             "dasha_data": self.dasha_data,
             "transit_positions": self.transit_positions,
             "activation_score": self.activation_score,
+            "confluence_state": self.confluence_state,
             "temporal_evidence": self.temporal_evidence,
             "evidence_graph": self.evidence_graph,
             "provenance": self.provenance,
@@ -55,9 +59,9 @@ class TemporalActivationResult:
 
 def evaluate_temporal_activation(chart: CanonicalChart, selected_date: datetime, domain: str = "GENERAL", event_type: str = "GENERAL") -> TemporalActivationResult:
     """
-    P0.3-R38 Authoritative Event-Specific Temporal Activation Engine.
-    Computes deterministic Dasha activation and Swiss Ephemeris transit positions using R38 event rules.
-    Fails closed (CALCULATION_ENGINE_UNAVAILABLE) if transit calculation fails (no natal fallback).
+    P0.3-R39 Authoritative Event-Specific Temporal Activation & Confluence Engine.
+    Enforces true natal promise gate, Dasha rule evaluation, Swiss Ephemeris transit aspects,
+    and exact score reconstruction.
     """
     if selected_date is None:
         raise ValueError("INVALID_REQUEST: selected_date is required for temporal activation.")
@@ -75,14 +79,20 @@ def evaluate_temporal_activation(chart: CanonicalChart, selected_date: datetime,
         "transit_planets": [],
         "permitted_aspects": ["CONJUNCTION"],
         "max_orb": 6.0,
-        "rule_id": "R38-DEFAULT-01"
+        "rule_id": "R39-DEFAULT-01",
+        "domain": dom_key
     })
 
-    # 1. Dasha Calculation
+    # 1. Authoritative Natal Promise Gate
+    natal_res = evaluate_natal_promise(chart, t_rule.get("domain", dom_key), ev_key)
+    natal_score = float(natal_res.get("promise_score", 0.0))
+    natal_supported = natal_score >= 0.30
+
+    # 2. Dasha Calculation
     moon_lon = chart.planets["Moon"].longitude
     dasha = calculate_vimshottari(moon_lon, chart.birth_datetime, calculation_date=selected_date)
 
-    # 2. Transit Calculation via Swiss Ephemeris (FAIL CLOSED ON ERROR - NO NATAL FALLBACK)
+    # 3. Transit Calculation via Swiss Ephemeris (FAIL CLOSED ON ERROR - NO NATAL FALLBACK)
     transits = {}
     try:
         jd_ut = datetime_to_jd(selected_date, tz_str)
@@ -116,7 +126,7 @@ def evaluate_temporal_activation(chart: CanonicalChart, selected_date: datetime,
     dasha_fact_dict = {
         "evidence_id": "",
         "event_type": ev_key,
-        "domain": dom_key,
+        "domain": t_rule.get("domain", dom_key),
         "evidence_group": "DASHA_ACTIVATION",
         "independence_key": f"dasha_{maha}_{antar}",
         "polarity": "NEUTRAL",
@@ -143,7 +153,7 @@ def evaluate_temporal_activation(chart: CanonicalChart, selected_date: datetime,
         dasha_rule_dict = {
             "evidence_id": "",
             "event_type": ev_key,
-            "domain": dom_key,
+            "domain": t_rule.get("domain", dom_key),
             "evidence_group": "DASHA_ACTIVATION",
             "independence_key": f"dasha_rule_{dom_key}_{ev_key}",
             "polarity": "POSITIVE",
@@ -174,7 +184,7 @@ def evaluate_temporal_activation(chart: CanonicalChart, selected_date: datetime,
     transit_fact_dict = {
         "evidence_id": "",
         "event_type": ev_key,
-        "domain": dom_key,
+        "domain": t_rule.get("domain", dom_key),
         "evidence_group": "TRANSIT_ACTIVATION",
         "independence_key": "swiss_ephemeris_transits",
         "polarity": "NEUTRAL",
@@ -198,6 +208,7 @@ def evaluate_temporal_activation(chart: CanonicalChart, selected_date: datetime,
     permitted_aspects = t_rule.get("permitted_aspects", ["CONJUNCTION"])
     max_orb = t_rule.get("max_orb", 6.0)
 
+    transit_activated = False
     for t_planet, t_lon in transits.items():
         if permitted_transits and t_planet not in permitted_transits:
             continue
@@ -213,10 +224,11 @@ def evaluate_temporal_activation(chart: CanonicalChart, selected_date: datetime,
                     target_angle = asp_spec["angle"]
                     orb_limit = min(max_orb, asp_spec["max_orb"])
                     if abs(diff - target_angle) <= orb_limit:
+                        transit_activated = True
                         t_rule_dict = {
                             "evidence_id": "",
                             "event_type": ev_key,
-                            "domain": dom_key,
+                            "domain": t_rule.get("domain", dom_key),
                             "evidence_group": "TRANSIT_ACTIVATION",
                             "independence_key": f"transit_{asp_name.lower()}_{t_planet}_{k}",
                             "polarity": asp_spec["polarity"],
@@ -243,6 +255,18 @@ def evaluate_temporal_activation(chart: CanonicalChart, selected_date: datetime,
                             provenance={"module": "app.astrology.predictions.temporal_activation", "rule": "aspect_confluence"}
                         ))
 
+    # Confluence State Determination
+    if not natal_supported:
+        confluence_state = "NATAL_NOT_SUPPORTED"
+    elif is_dasha_activated and transit_activated:
+        confluence_state = "NATAL_AND_TEMPORAL_CONFLUENCE"
+    elif is_dasha_activated:
+        confluence_state = "DASHA_ACTIVE_ONLY"
+    elif transit_activated:
+        confluence_state = "TRANSIT_ACTIVE_ONLY"
+    else:
+        confluence_state = "NATAL_SUPPORTED_TEMPORAL_INACTIVE"
+
     evidence_items = [n.to_dict() for n in graph.nodes]
     activation_score = calculate_score_from_evidence(graph)
 
@@ -252,8 +276,9 @@ def evaluate_temporal_activation(chart: CanonicalChart, selected_date: datetime,
         dasha_data=dasha,
         transit_positions=transits,
         activation_score=activation_score,
+        confluence_state=confluence_state,
         temporal_evidence=evidence_items,
         evidence_graph=graph.to_dict(),
         provenance={"module": "app.astrology.predictions.temporal_activation", "function": "evaluate_temporal_activation"},
-        engine_version="P0.3-R38"
+        engine_version="P0.3-R39"
     )

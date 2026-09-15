@@ -1,4 +1,4 @@
-TEMPORAL_RULE_REGISTRY_VERSION = "R38"
+TEMPORAL_RULE_REGISTRY_VERSION = "R39"
 
 TEMPORAL_EVENT_RULES = {
     "PROMOTION": {
@@ -11,7 +11,7 @@ TEMPORAL_EVENT_RULES = {
         "permitted_aspects": ["CONJUNCTION", "TRINE", "SEXTILE"],
         "max_orb": 6.0,
         "required_confluence": "NATAL_AND_TEMPORAL_CONFLUENCE",
-        "rule_id": "R38-CAREER-PROMOTION-01"
+        "rule_id": "R39-CAREER-PROMOTION-01"
     },
     "JOB_CHANGE": {
         "event_type": "JOB_CHANGE",
@@ -23,7 +23,7 @@ TEMPORAL_EVENT_RULES = {
         "permitted_aspects": ["CONJUNCTION", "OPPOSITION", "SQUARE"],
         "max_orb": 6.0,
         "required_confluence": "NATAL_AND_TEMPORAL_CONFLUENCE",
-        "rule_id": "R38-CAREER-JOBCHANGE-01"
+        "rule_id": "R39-CAREER-JOBCHANGE-01"
     },
     "LEADERSHIP_APPOINTMENT": {
         "event_type": "LEADERSHIP_APPOINTMENT",
@@ -35,7 +35,7 @@ TEMPORAL_EVENT_RULES = {
         "permitted_aspects": ["CONJUNCTION", "TRINE"],
         "max_orb": 5.0,
         "required_confluence": "NATAL_AND_TEMPORAL_CONFLUENCE",
-        "rule_id": "R38-CAREER-LEADERSHIP-01"
+        "rule_id": "R39-CAREER-LEADERSHIP-01"
     },
     "MARRIAGE": {
         "event_type": "MARRIAGE",
@@ -47,7 +47,7 @@ TEMPORAL_EVENT_RULES = {
         "permitted_aspects": ["CONJUNCTION", "TRINE", "SEXTILE"],
         "max_orb": 6.0,
         "required_confluence": "NATAL_AND_TEMPORAL_CONFLUENCE",
-        "rule_id": "R38-MARRIAGE-UNION-01"
+        "rule_id": "R39-MARRIAGE-UNION-01"
     },
     "SEPARATION_OR_DIVORCE": {
         "event_type": "SEPARATION_OR_DIVORCE",
@@ -59,7 +59,7 @@ TEMPORAL_EVENT_RULES = {
         "permitted_aspects": ["OPPOSITION", "SQUARE"],
         "max_orb": 5.0,
         "required_confluence": "NATAL_AND_TEMPORAL_CONFLUENCE",
-        "rule_id": "R38-MARRIAGE-SEPARATION-01"
+        "rule_id": "R39-MARRIAGE-SEPARATION-01"
     },
     "INCOME_EXPANSION": {
         "event_type": "INCOME_EXPANSION",
@@ -71,7 +71,7 @@ TEMPORAL_EVENT_RULES = {
         "permitted_aspects": ["CONJUNCTION", "TRINE", "SEXTILE"],
         "max_orb": 6.0,
         "required_confluence": "NATAL_AND_TEMPORAL_CONFLUENCE",
-        "rule_id": "R38-FINANCE-INCOME-01"
+        "rule_id": "R39-FINANCE-INCOME-01"
     },
     "FINANCIAL_PRESSURE": {
         "event_type": "FINANCIAL_PRESSURE",
@@ -83,7 +83,7 @@ TEMPORAL_EVENT_RULES = {
         "permitted_aspects": ["SQUARE", "OPPOSITION"],
         "max_orb": 5.0,
         "required_confluence": "NATAL_AND_TEMPORAL_CONFLUENCE",
-        "rule_id": "R38-FINANCE-PRESSURE-01"
+        "rule_id": "R39-FINANCE-PRESSURE-01"
     },
     "PROPERTY_PURCHASE": {
         "event_type": "PROPERTY_PURCHASE",
@@ -95,7 +95,7 @@ TEMPORAL_EVENT_RULES = {
         "permitted_aspects": ["CONJUNCTION", "TRINE"],
         "max_orb": 6.0,
         "required_confluence": "NATAL_AND_TEMPORAL_CONFLUENCE",
-        "rule_id": "R38-PROPERTY-PURCHASE-01"
+        "rule_id": "R39-PROPERTY-PURCHASE-01"
     },
     "PROPERTY_SALE": {
         "event_type": "PROPERTY_SALE",
@@ -107,7 +107,7 @@ TEMPORAL_EVENT_RULES = {
         "permitted_aspects": ["OPPOSITION", "SQUARE"],
         "max_orb": 5.0,
         "required_confluence": "NATAL_AND_TEMPORAL_CONFLUENCE",
-        "rule_id": "R38-PROPERTY-SALE-01"
+        "rule_id": "R39-PROPERTY-SALE-01"
     },
     "ACADEMIC_ENROLLMENT": {
         "event_type": "ACADEMIC_ENROLLMENT",
@@ -119,7 +119,7 @@ TEMPORAL_EVENT_RULES = {
         "permitted_aspects": ["CONJUNCTION", "TRINE", "SEXTILE"],
         "max_orb": 6.0,
         "required_confluence": "NATAL_AND_TEMPORAL_CONFLUENCE",
-        "rule_id": "R38-EDUCATION-ENROLLMENT-01"
+        "rule_id": "R39-EDUCATION-ENROLLMENT-01"
     },
     "CHILD_BIRTH": {
         "event_type": "CHILD_BIRTH",
@@ -131,7 +131,7 @@ TEMPORAL_EVENT_RULES = {
         "permitted_aspects": ["CONJUNCTION", "TRINE"],
         "max_orb": 6.0,
         "required_confluence": "NATAL_AND_TEMPORAL_CONFLUENCE",
-        "rule_id": "R38-CHILDREN-BIRTH-01"
+        "rule_id": "R39-CHILDREN-BIRTH-01"
     },
     "FOREIGN_SETTLEMENT": {
         "event_type": "FOREIGN_SETTLEMENT",
@@ -143,7 +143,7 @@ TEMPORAL_EVENT_RULES = {
         "permitted_aspects": ["CONJUNCTION", "TRINE", "OPPOSITION"],
         "max_orb": 6.0,
         "required_confluence": "NATAL_AND_TEMPORAL_CONFLUENCE",
-        "rule_id": "R38-FOREIGN-SETTLEMENT-01"
+        "rule_id": "R39-FOREIGN-SETTLEMENT-01"
     },
     "HEALTH_VITALITY": {
         "event_type": "HEALTH_VITALITY",
@@ -155,7 +155,7 @@ TEMPORAL_EVENT_RULES = {
         "permitted_aspects": ["CONJUNCTION", "TRINE"],
         "max_orb": 6.0,
         "required_confluence": "NATAL_AND_TEMPORAL_CONFLUENCE",
-        "rule_id": "R38-HEALTH-VITALITY-01"
+        "rule_id": "R39-HEALTH-VITALITY-01"
     },
     "SPIRITUAL_INITIATION": {
         "event_type": "SPIRITUAL_INITIATION",
@@ -167,6 +167,6 @@ TEMPORAL_EVENT_RULES = {
         "permitted_aspects": ["CONJUNCTION", "TRINE"],
         "max_orb": 6.0,
         "required_confluence": "NATAL_AND_TEMPORAL_CONFLUENCE",
-        "rule_id": "R38-SPIRITUAL_INITIATION-01"
+        "rule_id": "R39-SPIRITUAL_INITIATION-01"
     }
 }

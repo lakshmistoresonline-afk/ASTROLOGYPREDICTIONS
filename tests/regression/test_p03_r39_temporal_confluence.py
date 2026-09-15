@@ -1,16 +1,24 @@
 import pytest
 from datetime import datetime
 from app.astrology.core.calculation_config import calculate_canonical_chart
-from app.astrology.predictions.v5_natal_promise import evaluate_natal_promise, EVENT_RULES
-from app.astrology.predictions.request import normalize_prediction_request, prediction_request_fingerprint
-from app.astrology.predictions.temporal_activation import evaluate_temporal_activation, TemporalActivationResult
+from app.astrology.predictions.temporal_rules import TEMPORAL_EVENT_RULES, TEMPORAL_RULE_REGISTRY_VERSION
+from app.astrology.predictions.temporal_activation import evaluate_temporal_activation, TemporalActivationResult, ASPECT_RULES
 from app.astrology.predictions.evidence import EvidenceGraph, calculate_score_from_evidence
 from app.astrology.predictions.engine import generate_evidence_based_predictions, PREDICTION_ENGINE_VERSION
 
-def test_p03_r35_engine_version():
+def test_p03_r39_engine_version():
     assert PREDICTION_ENGINE_VERSION == "P0.3-R39"
+    assert TEMPORAL_RULE_REGISTRY_VERSION == "R39"
 
-def test_p03_r35_multiple_event_requests_temporal():
+def test_p03_r39_aspect_rules_completeness():
+    assert len(ASPECT_RULES) >= 5
+    for asp, spec in ASPECT_RULES.items():
+        assert "angle" in spec
+        assert "max_orb" in spec
+        assert "magnitude" in spec
+        assert "polarity" in spec
+
+def test_p03_r39_multiple_event_requests_temporal():
     dt = datetime(1990, 9, 10, 14, 30)
     chart = calculate_canonical_chart(dt, 10.5276, 76.2144, "Asia/Kolkata")
     target_dt = datetime(2026, 1, 1, 12, 0)
@@ -25,7 +33,7 @@ def test_p03_r35_multiple_event_requests_temporal():
     assert "PROMOTION" in res["temporal_activation_by_event"]
     assert "INCOME_EXPANSION" in res["temporal_activation_by_event"]
 
-def test_p03_r35_true_target_date_invariance_master():
+def test_p03_r39_true_target_date_variance_master():
     dt = datetime(1990, 9, 10, 14, 30)
     chart = calculate_canonical_chart(dt, 10.5276, 76.2144, "Asia/Kolkata")
 
@@ -41,7 +49,7 @@ def test_p03_r35_true_target_date_invariance_master():
     assert "temporal_activation" in res_b
     assert res_a["temporal_activation"]["target_datetime"] != res_b["temporal_activation"]["target_datetime"]
 
-def test_p03_r35_transit_failure_mutation(monkeypatch):
+def test_p03_r39_transit_failure_mutation(monkeypatch):
     dt = datetime(1990, 9, 10, 14, 30)
     chart = calculate_canonical_chart(dt, 10.5276, 76.2144, "Asia/Kolkata")
     target_dt = datetime(2026, 1, 1, 12, 0)
