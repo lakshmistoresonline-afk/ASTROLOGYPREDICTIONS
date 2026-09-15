@@ -26,7 +26,7 @@ from concurrent.futures import ThreadPoolExecutor
 
 _prediction_cache = {}
 
-PREDICTION_ENGINE_VERSION = "P0.3-R34"
+PREDICTION_ENGINE_VERSION = "P0.3-R35"
 
 def generate_evidence_based_predictions(chart: CanonicalChart, selected_date: datetime = None, limit_domains: List[str] = None, event_requests: Dict[str, str] = None) -> Dict[str, Any]:
     """
@@ -65,11 +65,17 @@ def generate_evidence_based_predictions(chart: CanonicalChart, selected_date: da
     if cache_key in _prediction_cache:
         return _prediction_cache[cache_key]
 
-    # Evaluate Temporal Activation
-    default_dom, default_ev = ("CAREER", "PROMOTION")
+    # Evaluate Temporal Activation per requested event or general
+    temporal_activation_by_event = {}
     if event_requests:
+        for dom, ev in event_requests.items():
+            temporal_act_ev = evaluate_temporal_activation(chart, selected_date, domain=dom, event_type=ev)
+            temporal_activation_by_event[ev] = temporal_act_ev.to_dict()
         default_dom, default_ev = list(event_requests.items())[0]
-    temporal_act = evaluate_temporal_activation(chart, selected_date, domain=default_dom, event_type=default_ev)
+        temporal_act = evaluate_temporal_activation(chart, selected_date, domain=default_dom, event_type=default_ev)
+    else:
+        temporal_act = evaluate_temporal_activation(chart, selected_date)
+        temporal_activation_by_event["GENERAL"] = temporal_act.to_dict()
 
     domain_tasks = {
         "Career": CareerPredictionEngine.get_prediction,
@@ -173,10 +179,11 @@ def generate_evidence_based_predictions(chart: CanonicalChart, selected_date: da
     upcoming_roadmap = [e for e in timeline_sorted if isinstance(e, dict) and (e.get('peak') or '0000') >= today_str]
 
     res_payload = {
-        "overall_status": f"V3.31 Authoritative Intelligence Report Generated ({PREDICTION_ENGINE_VERSION})",
+        "overall_status": f"V3.35 Authoritative Intelligence Report Generated ({PREDICTION_ENGINE_VERSION})",
         "predictions": results_sorted,
         "categorized_domains": categorized,
         "temporal_activation": temporal_act.to_dict(),
+        "temporal_activation_by_event": temporal_activation_by_event,
         "timeline": timeline_sorted,
         "upcoming_roadmap": upcoming_roadmap,
         "clusters": clusters,
