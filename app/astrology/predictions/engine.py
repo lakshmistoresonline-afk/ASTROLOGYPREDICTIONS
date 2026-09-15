@@ -20,18 +20,19 @@ from .engines.legal import LegalPredictionEngine
 from .engines.fame import FamePredictionEngine
 from .v5_natal_promise import EVENT_RULES
 from .request import normalize_prediction_request, prediction_request_fingerprint
+from .temporal_activation import evaluate_temporal_activation
 
 from concurrent.futures import ThreadPoolExecutor
 
 _prediction_cache = {}
 
-PREDICTION_ENGINE_VERSION = "P0.3-R30"
+PREDICTION_ENGINE_VERSION = "P0.3-R31"
 
 def generate_evidence_based_predictions(chart: CanonicalChart, selected_date: datetime = None, limit_domains: List[str] = None, event_requests: Dict[str, str] = None) -> Dict[str, Any]:
     """
-    Master Engine (V3.24): Orchestrates specialized domain engines using hierarchical confluence.
+    Master Engine (V3.31): Orchestrates specialized domain engines using hierarchical confluence.
     Enforces strict event validation, fail-closed caching via SHA-256 request fingerprinting,
-    structured timeline/domain errors, and explicit target date contract.
+    deterministic temporal activation, structured timeline/domain errors, and explicit target date contract.
     """
     if selected_date is None:
         raise ValueError("INVALID_REQUEST: selected_date is required. Implicit datetime.now() fallback is prohibited.")
@@ -48,7 +49,7 @@ def generate_evidence_based_predictions(chart: CanonicalChart, selected_date: da
         if dom.upper() != rule["domain"]:
             raise ValueError(f"DOMAIN_MISMATCH: Event '{ev}' belongs to domain '{rule['domain']}', not requested domain '{dom.upper()}'.")
 
-    # 0. Cache Check via Canonical Request Fingerprint (Fail-closed provenance verification)
+    # 0. Cache Check (Fail-closed provenance verification)
     try:
         req_model = normalize_prediction_request(
             chart=chart,
@@ -63,6 +64,9 @@ def generate_evidence_based_predictions(chart: CanonicalChart, selected_date: da
     cache_key = prediction_request_fingerprint(req_model)
     if cache_key in _prediction_cache:
         return _prediction_cache[cache_key]
+
+    # Evaluate Temporal Activation
+    temporal_act = evaluate_temporal_activation(chart, selected_date)
 
     domain_tasks = {
         "Career": CareerPredictionEngine.get_prediction,
@@ -166,9 +170,10 @@ def generate_evidence_based_predictions(chart: CanonicalChart, selected_date: da
     upcoming_roadmap = [e for e in timeline_sorted if isinstance(e, dict) and (e.get('peak') or '0000') >= today_str]
 
     res_payload = {
-        "overall_status": f"V3.24 Authoritative Intelligence Report Generated ({PREDICTION_ENGINE_VERSION})",
+        "overall_status": f"V3.31 Authoritative Intelligence Report Generated ({PREDICTION_ENGINE_VERSION})",
         "predictions": results_sorted,
         "categorized_domains": categorized,
+        "temporal_activation": temporal_act.to_dict(),
         "timeline": timeline_sorted,
         "upcoming_roadmap": upcoming_roadmap,
         "clusters": clusters,
