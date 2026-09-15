@@ -13,7 +13,7 @@ from app.astrology.predictions.request import (
 from app.astrology.predictions.engine import generate_evidence_based_predictions, PREDICTION_ENGINE_VERSION
 
 def test_p03_r23_engine_version():
-    assert PREDICTION_ENGINE_VERSION == "P0.3-R29"
+    assert PREDICTION_ENGINE_VERSION == "P0.3-R30"
 
 def test_p03_r23_registry_completeness():
     assert len(EVENT_RULES) >= 14

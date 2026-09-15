@@ -7,7 +7,7 @@ from app.astrology.predictions.request import normalize_prediction_request, pred
 from app.astrology.predictions.engine import generate_evidence_based_predictions, PREDICTION_ENGINE_VERSION
 
 def test_p03_r29_engine_version():
-    assert PREDICTION_ENGINE_VERSION == "P0.3-R29"
+    assert PREDICTION_ENGINE_VERSION == "P0.3-R30"
 
 def test_p03_r29_true_target_date_invariance():
     dt = datetime(1990, 9, 10, 14, 30)
