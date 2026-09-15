@@ -9,7 +9,7 @@ from app.astrology.predictions.v5_natal_promise import (
 from app.astrology.predictions.engine import generate_evidence_based_predictions, PREDICTION_ENGINE_VERSION
 
 def test_r19_01_engine_version():
-    assert PREDICTION_ENGINE_VERSION == "P0.3-R36"
+    assert PREDICTION_ENGINE_VERSION == "P0.3-R37"
 
 def test_r19_02_registry_completeness():
     assert len(EVENT_RULES) >= 14
