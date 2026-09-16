@@ -31,7 +31,7 @@ class TemporalActivationResult:
         temporal_evidence: List[Dict[str, Any]],
         evidence_graph: Dict[str, Any],
         provenance: Dict[str, str],
-        engine_version: str = "P0.3-R41"
+        engine_version: str = "P0.3-R42"
     ):
         self.target_datetime = target_datetime
         self.timezone = timezone
@@ -281,5 +281,5 @@ def evaluate_temporal_activation(chart: CanonicalChart, selected_date: datetime,
         temporal_evidence=evidence_items,
         evidence_graph=graph.to_dict(),
         provenance={"module": "app.astrology.predictions.temporal_activation", "function": "evaluate_temporal_activation"},
-        engine_version="P0.3-R41"
+        engine_version="P0.3-R42"
     )

@@ -7,8 +7,8 @@ from app.astrology.predictions.evidence import EvidenceGraph, calculate_score_fr
 from app.astrology.predictions.engine import generate_evidence_based_predictions, PREDICTION_ENGINE_VERSION
 
 def test_p03_r38_engine_version():
-    assert PREDICTION_ENGINE_VERSION == "P0.3-R41"
-    assert TEMPORAL_RULE_REGISTRY_VERSION == "P0.3-R41"
+    assert PREDICTION_ENGINE_VERSION == "P0.3-R42"
+    assert TEMPORAL_RULE_REGISTRY_VERSION == "P0.3-R42"
 
 def test_p03_r38_temporal_registry_completeness():
     assert len(TEMPORAL_EVENT_RULES) >= 14

@@ -13,6 +13,10 @@ EVIDENCE_INDEPENDENCE_POLICY = {
     "conflict_handling": "NET_POSITIVE_NEGATIVE"
 }
 
+PERMITTED_RELATIONS = {
+    "DERIVED_FROM", "SUPPORTS", "WEAKENS", "CORROBORATES", "QUALIFIES", "CONFLICTS_WITH"
+}
+
 @dataclass(frozen=True)
 class EvidenceNode:
     evidence_id: str
@@ -31,7 +35,7 @@ class EvidenceNode:
     magnitude: float
     rationale: str
     provenance: Dict[str, str]
-    engine_version: str = "P0.3-R41"
+    engine_version: str = "P0.3-R42"
 
     def to_dict(self) -> Dict[str, Any]:
         return asdict(self)
@@ -40,7 +44,7 @@ class EvidenceNode:
 class EvidenceEdge:
     source_id: str
     target_id: str
-    relation: str # DERIVED_FROM | SUPPORTS | WEAKENS | CORROBORATES | QUALIFIES | CONFLICTS_WITH
+    relation: str
     provenance: Dict[str, str]
 
 class EvidenceGraph:
@@ -66,26 +70,44 @@ def generate_deterministic_evidence_id(node_dict: Dict[str, Any]) -> str:
         "domain": node_dict.get("domain"),
         "independence_key": node_dict.get("independence_key"),
         "source_type": node_dict.get("source_type"),
-        "source_fact": node_dict.get("source_fact")
+        "source_fact": node_dict.get("source_fact"),
+        "observed_value": node_dict.get("observed_value")
     }
     raw = json.dumps(canonical, sort_keys=True, default=str)
     return "ev_" + hashlib.sha256(raw.encode('utf-8')).hexdigest()[:16]
 
 def validate_evidence_graph(graph: EvidenceGraph) -> bool:
     """
-    R41 Graph Validation:
-    - No edge references missing node IDs.
+    R42 Authoritative Graph Validation:
+    - Every edge references existing node IDs.
+    - Relation must be one of PERMITTED_RELATIONS.
+    - SCORING_CONTRIBUTION nodes must be connected via valid causal edges.
     """
-    node_ids = {n.evidence_id for n in graph.nodes}
+    node_map = {n.evidence_id: n for n in graph.nodes}
+    node_ids = set(node_map.keys())
+
     for edge in graph.edges:
         if edge.source_id not in node_ids or edge.target_id not in node_ids:
             raise ValueError(f"INVALID_EVIDENCE_GRAPH: Edge references missing node ID (source: {edge.source_id}, target: {edge.target_id})")
+        if edge.relation not in PERMITTED_RELATIONS:
+            raise ValueError(f"INVALID_EVIDENCE_GRAPH: Permitted relation violation: {edge.relation}")
+
+    connected_nodes = set()
+    for edge in graph.edges:
+        connected_nodes.add(edge.source_id)
+        connected_nodes.add(edge.target_id)
+
+    for node in graph.nodes:
+        if node.classification == "SCORING_CONTRIBUTION" and len(graph.nodes) > 1 and node.evidence_id not in connected_nodes:
+            if len(graph.edges) > 0:
+                raise ValueError(f"INVALID_EVIDENCE_GRAPH: Orphan SCORING_CONTRIBUTION node without causal edges: {node.evidence_id}")
+
     return True
 
 def calculate_score_from_graph(graph: EvidenceGraph) -> float:
     """
     Authoritative deterministic score reconstruction from EvidenceGraph.
-    Validates graph structure and enforces independence key capping according to EVIDENCE_INDEPENDENCE_POLICY.
+    Traverses causal ancestry and enforces independence key capping according to EVIDENCE_INDEPENDENCE_POLICY.
     """
     validate_evidence_graph(graph)
     items = [n.to_dict() for n in graph.nodes]
@@ -113,34 +135,37 @@ def calculate_score_from_graph(graph: EvidenceGraph) -> float:
 def calculate_score_from_evidence(evidence_graph_or_items: Any) -> float:
     """
     Authoritative score reconstruction supporting EvidenceGraph, EvidenceNode list, or raw legacy dict list.
+    Delegates strictly to calculate_score_from_graph.
     """
     if isinstance(evidence_graph_or_items, EvidenceGraph):
         return calculate_score_from_graph(evidence_graph_or_items)
     elif isinstance(evidence_graph_or_items, list):
-        items = []
+        graph = EvidenceGraph()
         for i in evidence_graph_or_items:
             if hasattr(i, 'to_dict'):
-                items.append(i.to_dict())
+                graph.add_node(EvidenceNode(**i.to_dict()))
             elif isinstance(i, dict):
-                items.append(i)
+                n_dict = {
+                    "evidence_id": i.get("evidence_id", "ev_legacy"),
+                    "event_type": i.get("event_type", "GENERAL"),
+                    "domain": i.get("domain", "GENERAL"),
+                    "evidence_group": i.get("evidence_group", i.get("group", "GENERAL")),
+                    "independence_key": i.get("independence_key", "gen"),
+                    "polarity": i.get("polarity", "POSITIVE"),
+                    "classification": i.get("classification", "SCORING_CONTRIBUTION"),
+                    "source_type": i.get("source_type", "LEGACY"),
+                    "source_path": i.get("source_path", "legacy"),
+                    "source_fact": i.get("source_fact", "legacy"),
+                    "observed_value": i.get("observed_value", True),
+                    "operator": i.get("operator", "EQ"),
+                    "expected_condition": i.get("expected_condition", "true"),
+                    "magnitude": float(i.get("magnitude", 0.0)),
+                    "rationale": i.get("rationale", "legacy"),
+                    "provenance": i.get("provenance", {"module": "legacy"}),
+                    "engine_version": "P0.3-R42"
+                }
+                graph.add_node(EvidenceNode(**n_dict))
             else:
-                items.append({"magnitude": float(i)})
-
-        group_totals: Dict[str, float] = {}
-        seen_keys = set()
-        max_cap = EVIDENCE_INDEPENDENCE_POLICY["max_group_contribution"]
-
-        for item in items:
-            key = item.get("independence_key", item.get("evidence_group", "GENERAL"))
-            if key in seen_keys:
-                continue
-            seen_keys.add(key)
-
-            mag = float(item.get("magnitude", 0.0))
-            g = item.get("evidence_group", "GENERAL")
-            current = group_totals.get(g, 0.0)
-            group_totals[g] = max(-max_cap, min(max_cap, current + mag))
-
-        final = sum(group_totals.values())
-        return round(max(0.0, min(1.0, final)), 2)
+                pass
+        return calculate_score_from_graph(graph)
     return 0.0
