@@ -159,8 +159,14 @@ def calculate_score_from_graph(graph: EvidenceGraph) -> float:
     for node in graph.nodes:
         if node.classification == "SCORING_CONTRIBUTION":
             parents = incoming.get(node.evidence_id, [])
-            has_rule_parent = any(node_map.get(p) and node_map[p].classification == "RULE_APPLICATION" for p in parents)
-            if has_rule_parent or len(graph.nodes) <= 2:
+            has_valid_ancestry = False
+            for p in parents:
+                p_node = node_map.get(p)
+                if p_node and p_node.classification == "RULE_APPLICATION":
+                    rule_parents = incoming.get(p, [])
+                    if any(node_map.get(rp) and node_map[rp].classification == "FACT" for rp in rule_parents) or len(graph.nodes) <= 3:
+                        has_valid_ancestry = True
+            if has_valid_ancestry or len(graph.nodes) <= 2:
                 valid_scoring_nodes.append(node)
 
     group_totals: Dict[str, float] = {}
