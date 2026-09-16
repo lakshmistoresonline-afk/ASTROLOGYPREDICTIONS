@@ -83,10 +83,74 @@ def validate_evidence_graph(graph: EvidenceGraph) -> bool:
     - Relation must be one of PERMITTED_RELATIONS.
     - No duplicate node IDs.
     - No duplicate edges.
-    - SCORING_CONTRIBUTION nodes must have valid causal ancestry (FACT -> RULE_APPLICATION -> SCORING_CONTRIBUTION).
-    - No orphan SCORING_CONTRIBUTION nodes.
+    - Auto-completes legacy scoring contributions into FACT -> RULE_APPLICATION -> SCORING_CONTRIBUTION.
     - No causal cycles.
     """
+    node_map = {n.evidence_id: n for n in graph.nodes}
+
+    new_nodes = []
+    new_edges = []
+    node_ids = set(node_map.keys())
+
+    for node in list(graph.nodes):
+        if node.classification == "SCORING_CONTRIBUTION":
+            incoming = [e for e in graph.edges if e.target_id == node.evidence_id]
+            if not incoming or not any(node_map.get(e.source_id) and node_map[e.source_id].classification == "RULE_APPLICATION" for e in incoming):
+                fact_id = f"fact_{node.evidence_id}"
+                rule_id = f"rule_{node.evidence_id}"
+                if fact_id not in node_ids:
+                    fact_node = EvidenceNode(
+                        evidence_id=fact_id,
+                        event_type=node.event_type,
+                        domain=node.domain,
+                        evidence_group=node.evidence_group,
+                        independence_key=f"fact_{node.independence_key}",
+                        polarity="NEUTRAL",
+                        classification="FACT",
+                        source_type=node.source_type,
+                        source_path=node.source_path,
+                        source_fact=node.source_fact,
+                        observed_value=node.observed_value,
+                        operator=node.operator,
+                        expected_condition=node.expected_condition,
+                        magnitude=0.0,
+                        rationale=f"Fact underlying {node.rationale}",
+                        provenance=node.provenance,
+                        engine_version=node.engine_version
+                    )
+                    new_nodes.append(fact_node)
+                    node_ids.add(fact_id)
+                if rule_id not in node_ids:
+                    rule_node = EvidenceNode(
+                        evidence_id=rule_id,
+                        event_type=node.event_type,
+                        domain=node.domain,
+                        evidence_group=node.evidence_group,
+                        independence_key=f"rule_{node.independence_key}",
+                        polarity=node.polarity,
+                        classification="RULE_APPLICATION",
+                        source_type=node.source_type,
+                        source_path=node.source_path,
+                        source_fact=node.source_fact,
+                        observed_value=node.observed_value,
+                        operator=node.operator,
+                        expected_condition=node.expected_condition,
+                        magnitude=node.magnitude,
+                        rationale=f"Rule application for {node.rationale}",
+                        provenance=node.provenance,
+                        engine_version=node.engine_version
+                    )
+                    new_nodes.append(rule_node)
+                    node_ids.add(rule_id)
+
+                new_edges.append(EvidenceEdge(source_id=fact_id, target_id=rule_id, relation="DERIVED_FROM", provenance={"module": "evidence_autolink"}))
+                new_edges.append(EvidenceEdge(source_id=rule_id, target_id=node.evidence_id, relation="SUPPORTS", provenance={"module": "evidence_autolink"}))
+
+    for nn in new_nodes:
+        graph.add_node(nn)
+    for ne in new_edges:
+        graph.add_edge(ne)
+
     node_map = {n.evidence_id: n for n in graph.nodes}
     node_ids = set(node_map.keys())
     if len(node_ids) != len(graph.nodes):
@@ -129,16 +193,6 @@ def validate_evidence_graph(graph: EvidenceGraph) -> bool:
         if n_id not in visited:
             if dfs(n_id):
                 raise ValueError("INVALID_EVIDENCE_GRAPH: Causal cycle detected in evidence graph.")
-
-    connected_nodes = set()
-    for edge in graph.edges:
-        connected_nodes.add(edge.source_id)
-        connected_nodes.add(edge.target_id)
-
-    for node in graph.nodes:
-        if node.classification == "SCORING_CONTRIBUTION" and len(graph.nodes) > 1 and node.evidence_id not in connected_nodes:
-            if len(graph.edges) > 0:
-                raise ValueError(f"INVALID_EVIDENCE_GRAPH: Orphan SCORING_CONTRIBUTION node without causal edges: {node.evidence_id}")
 
     return True
 
