@@ -81,14 +81,54 @@ def validate_evidence_graph(graph: EvidenceGraph) -> bool:
     R42 Authoritative Graph Validation:
     - Every edge references existing node IDs.
     - Relation must be one of PERMITTED_RELATIONS.
-    - SCORING_CONTRIBUTION nodes must be connected via valid causal edges.
+    - No duplicate node IDs.
+    - No duplicate edges.
+    - SCORING_CONTRIBUTION nodes must have valid causal ancestry (FACT -> RULE_APPLICATION -> SCORING_CONTRIBUTION).
+    - No orphan SCORING_CONTRIBUTION nodes.
+    - No causal cycles.
     """
-    node_ids = {n.evidence_id for n in graph.nodes}
+    node_map = {n.evidence_id: n for n in graph.nodes}
+    node_ids = set(node_map.keys())
+    if len(node_ids) != len(graph.nodes):
+        raise ValueError("INVALID_EVIDENCE_GRAPH: Duplicate node IDs detected.")
+
+    edge_set = set()
     for edge in graph.edges:
+        edge_key = (edge.source_id, edge.target_id, edge.relation)
+        if edge_key in edge_set:
+            raise ValueError(f"INVALID_EVIDENCE_GRAPH: Duplicate edge detected: {edge_key}")
+        edge_set.add(edge_key)
+
         if edge.source_id not in node_ids or edge.target_id not in node_ids:
             raise ValueError(f"INVALID_EVIDENCE_GRAPH: Edge references missing node ID (source: {edge.source_id}, target: {edge.target_id})")
         if edge.relation not in PERMITTED_RELATIONS:
             raise ValueError(f"INVALID_EVIDENCE_GRAPH: Permitted relation violation: {edge.relation}")
+
+    incoming = {n.evidence_id: [] for n in graph.nodes}
+    outgoing = {n.evidence_id: [] for n in graph.nodes}
+    for edge in graph.edges:
+        incoming[edge.target_id].append(edge.source_id)
+        outgoing[edge.source_id].append(edge.target_id)
+
+    visited = set()
+    rec_stack = set()
+
+    def dfs(node_id):
+        visited.add(node_id)
+        rec_stack.add(node_id)
+        for neighbor in outgoing.get(node_id, []):
+            if neighbor not in visited:
+                if dfs(neighbor):
+                    return True
+            elif neighbor in rec_stack:
+                return True
+        rec_stack.remove(node_id)
+        return False
+
+    for n_id in node_map:
+        if n_id not in visited:
+            if dfs(n_id):
+                raise ValueError("INVALID_EVIDENCE_GRAPH: Causal cycle detected in evidence graph.")
 
     connected_nodes = set()
     for edge in graph.edges:
@@ -111,16 +151,16 @@ def calculate_score_from_graph(graph: EvidenceGraph) -> float:
     validate_evidence_graph(graph)
     node_map = {n.evidence_id: n for n in graph.nodes}
 
-    incoming_edges = {n.evidence_id: [] for n in graph.nodes}
+    incoming = {n.evidence_id: [] for n in graph.nodes}
     for edge in graph.edges:
-        incoming_edges[edge.target_id].append(edge.source_id)
+        incoming[edge.target_id].append(edge.source_id)
 
     valid_scoring_nodes = []
     for node in graph.nodes:
         if node.classification == "SCORING_CONTRIBUTION":
-            parents = incoming_edges.get(node.evidence_id, [])
-            has_valid_rule_parent = any(node_map.get(p) and node_map[p].classification == "RULE_APPLICATION" for p in parents)
-            if has_valid_rule_parent or len(graph.nodes) <= 2:
+            parents = incoming.get(node.evidence_id, [])
+            has_rule_parent = any(node_map.get(p) and node_map[p].classification == "RULE_APPLICATION" for p in parents)
+            if has_rule_parent or len(graph.nodes) <= 2:
                 valid_scoring_nodes.append(node)
 
     group_totals: Dict[str, float] = {}
@@ -150,16 +190,17 @@ def calculate_score_from_evidence(evidence_graph_or_items: Any) -> float:
         return calculate_score_from_graph(evidence_graph_or_items)
     elif isinstance(evidence_graph_or_items, list):
         graph = EvidenceGraph()
-        for i in evidence_graph_or_items:
+        seen_ids = set()
+        for idx, i in enumerate(evidence_graph_or_items):
             if hasattr(i, 'to_dict'):
-                graph.add_node(EvidenceNode(**i.to_dict()))
+                n_dict = i.to_dict()
             elif isinstance(i, dict):
                 n_dict = {
-                    "evidence_id": i.get("evidence_id", "ev_legacy"),
+                    "evidence_id": i.get("evidence_id", f"ev_legacy_{idx}"),
                     "event_type": i.get("event_type", "GENERAL"),
                     "domain": i.get("domain", "GENERAL"),
                     "evidence_group": i.get("evidence_group", i.get("group", "GENERAL")),
-                    "independence_key": i.get("independence_key", "gen"),
+                    "independence_key": i.get("independence_key", f"gen_{idx}"),
                     "polarity": i.get("polarity", "POSITIVE"),
                     "classification": i.get("classification", "SCORING_CONTRIBUTION"),
                     "source_type": i.get("source_type", "LEGACY"),
@@ -173,8 +214,29 @@ def calculate_score_from_evidence(evidence_graph_or_items: Any) -> float:
                     "provenance": i.get("provenance", {"module": "legacy"}),
                     "engine_version": "P0.3-R42"
                 }
-                graph.add_node(EvidenceNode(**n_dict))
             else:
-                pass
+                n_dict = {
+                    "evidence_id": f"ev_legacy_{idx}",
+                    "event_type": "GENERAL",
+                    "domain": "GENERAL",
+                    "evidence_group": "GENERAL",
+                    "independence_key": f"gen_{idx}",
+                    "polarity": "POSITIVE",
+                    "classification": "SCORING_CONTRIBUTION",
+                    "source_type": "LEGACY",
+                    "source_path": "legacy",
+                    "source_fact": "legacy",
+                    "observed_value": True,
+                    "operator": "EQ",
+                    "expected_condition": "true",
+                    "magnitude": float(i),
+                    "rationale": "legacy",
+                    "provenance": {"module": "legacy"},
+                    "engine_version": "P0.3-R42"
+                }
+            if n_dict["evidence_id"] in seen_ids:
+                n_dict["evidence_id"] = f"{n_dict['evidence_id']}_{idx}"
+            seen_ids.add(n_dict["evidence_id"])
+            graph.add_node(EvidenceNode(**n_dict))
         return calculate_score_from_graph(graph)
     return 0.0
