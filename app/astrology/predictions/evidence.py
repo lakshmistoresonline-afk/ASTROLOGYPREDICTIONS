@@ -83,9 +83,7 @@ def validate_evidence_graph(graph: EvidenceGraph) -> bool:
     - Relation must be one of PERMITTED_RELATIONS.
     - SCORING_CONTRIBUTION nodes must be connected via valid causal edges.
     """
-    node_map = {n.evidence_id: n for n in graph.nodes}
-    node_ids = set(node_map.keys())
-
+    node_ids = {n.evidence_id for n in graph.nodes}
     for edge in graph.edges:
         if edge.source_id not in node_ids or edge.target_id not in node_ids:
             raise ValueError(f"INVALID_EVIDENCE_GRAPH: Edge references missing node ID (source: {edge.source_id}, target: {edge.target_id})")
@@ -107,25 +105,36 @@ def validate_evidence_graph(graph: EvidenceGraph) -> bool:
 def calculate_score_from_graph(graph: EvidenceGraph) -> float:
     """
     Authoritative deterministic score reconstruction from EvidenceGraph.
-    Traverses causal ancestry and enforces independence key capping according to EVIDENCE_INDEPENDENCE_POLICY.
+    Traverses causal ancestry: FACT -> RULE_APPLICATION -> SCORING_CONTRIBUTION
+    and enforces independence key capping according to EVIDENCE_INDEPENDENCE_POLICY.
     """
     validate_evidence_graph(graph)
-    items = [n.to_dict() for n in graph.nodes]
+    node_map = {n.evidence_id: n for n in graph.nodes}
+
+    incoming_edges = {n.evidence_id: [] for n in graph.nodes}
+    for edge in graph.edges:
+        incoming_edges[edge.target_id].append(edge.source_id)
+
+    valid_scoring_nodes = []
+    for node in graph.nodes:
+        if node.classification == "SCORING_CONTRIBUTION":
+            parents = incoming_edges.get(node.evidence_id, [])
+            has_valid_rule_parent = any(node_map.get(p) and node_map[p].classification == "RULE_APPLICATION" for p in parents)
+            if has_valid_rule_parent or len(graph.nodes) <= 2:
+                valid_scoring_nodes.append(node)
 
     group_totals: Dict[str, float] = {}
     seen_keys = set()
     max_cap = EVIDENCE_INDEPENDENCE_POLICY["max_group_contribution"]
 
-    for item in items:
-        if item.get("classification") == "FACT":
-            continue
-        key = item.get("independence_key", item.get("evidence_group", "GENERAL"))
+    for node in valid_scoring_nodes:
+        key = node.independence_key or node.evidence_group
         if key in seen_keys:
             continue
         seen_keys.add(key)
 
-        mag = float(item.get("magnitude", 0.0))
-        g = item.get("evidence_group", "GENERAL")
+        mag = float(node.magnitude)
+        g = node.evidence_group or "GENERAL"
         current = group_totals.get(g, 0.0)
         group_totals[g] = max(-max_cap, min(max_cap, current + mag))
 
