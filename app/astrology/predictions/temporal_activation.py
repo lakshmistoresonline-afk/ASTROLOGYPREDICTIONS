@@ -8,12 +8,13 @@ from ..core import ephemeris
 from ..core.swe_proxy import swe
 from .evidence import EvidenceNode, EvidenceEdge, EvidenceGraph, calculate_score_from_evidence, generate_deterministic_evidence_id
 from .temporal_rules import TEMPORAL_EVENT_RULES, TEMPORAL_RULE_REGISTRY_VERSION
+from .scoring_registry import SCORING_RULES, SCORING_REGISTRY_VERSION
 from .v5_natal_promise import evaluate_natal_promise
 
 ASPECT_RULES = {
-    "CONJUNCTION": {"angle": 0.0, "max_orb": 6.0, "magnitude": 0.15, "polarity": "POSITIVE"},
+    "CONJUNCTION": {"angle": 0.0, "max_orb": 6.0, "magnitude": SCORING_RULES["R40-TRANSIT-ASPECT"]["magnitude"], "polarity": "POSITIVE"},
     "OPPOSITION": {"angle": 180.0, "max_orb": 6.0, "magnitude": 0.12, "polarity": "NEGATIVE"},
-    "TRINE": {"angle": 120.0, "max_orb": 5.0, "magnitude": 0.15, "polarity": "POSITIVE"},
+    "TRINE": {"angle": 120.0, "max_orb": 5.0, "magnitude": SCORING_RULES["R40-TRANSIT-ASPECT"]["magnitude"], "polarity": "POSITIVE"},
     "SQUARE": {"angle": 90.0, "max_orb": 5.0, "magnitude": -0.12, "polarity": "NEGATIVE"},
     "SEXTILE": {"angle": 60.0, "max_orb": 4.0, "magnitude": 0.10, "polarity": "POSITIVE"}
 }
@@ -30,7 +31,7 @@ class TemporalActivationResult:
         temporal_evidence: List[Dict[str, Any]],
         evidence_graph: Dict[str, Any],
         provenance: Dict[str, str],
-        engine_version: str = "P0.3-R39"
+        engine_version: str = "P0.3-R40"
     ):
         self.target_datetime = target_datetime
         self.timezone = timezone
@@ -59,8 +60,8 @@ class TemporalActivationResult:
 
 def evaluate_temporal_activation(chart: CanonicalChart, selected_date: datetime, domain: str = "GENERAL", event_type: str = "GENERAL") -> TemporalActivationResult:
     """
-    P0.3-R39 Authoritative Event-Specific Temporal Activation & Confluence Engine.
-    Enforces true natal promise gate, Dasha rule evaluation, Swiss Ephemeris transit aspects,
+    P0.3-R40 Authoritative Event-Specific Temporal Activation & Confluence Engine.
+    Enforces true natal promise gate, Dasha rule evaluation, Swiss Ephemeris transit aspects using SCORING_RULES,
     and exact score reconstruction.
     """
     if selected_date is None:
@@ -79,7 +80,7 @@ def evaluate_temporal_activation(chart: CanonicalChart, selected_date: datetime,
         "transit_planets": [],
         "permitted_aspects": ["CONJUNCTION"],
         "max_orb": 6.0,
-        "rule_id": "R39-DEFAULT-01",
+        "rule_id": "R40-DEFAULT-01",
         "domain": dom_key
     })
 
@@ -164,7 +165,7 @@ def evaluate_temporal_activation(chart: CanonicalChart, selected_date: datetime,
             "observed_value": [maha, antar],
             "operator": "IN",
             "expected_condition": "Event-Relevant Period Lord",
-            "magnitude": 0.15,
+            "magnitude": SCORING_RULES["R40-DASHA-ACTIVATION"]["magnitude"],
             "rationale": f"Active period lords ({maha}/{antar}) activate temporal rule {t_rule['rule_id']} for {ev_key}.",
             "provenance": {"module": "app.astrology.predictions.temporal_activation", "function": "evaluate_temporal_activation"}
         }
@@ -280,5 +281,5 @@ def evaluate_temporal_activation(chart: CanonicalChart, selected_date: datetime,
         temporal_evidence=evidence_items,
         evidence_graph=graph.to_dict(),
         provenance={"module": "app.astrology.predictions.temporal_activation", "function": "evaluate_temporal_activation"},
-        engine_version="P0.3-R39"
+        engine_version="P0.3-R40"
     )

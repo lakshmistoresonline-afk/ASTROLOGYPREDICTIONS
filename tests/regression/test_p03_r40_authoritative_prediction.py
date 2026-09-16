@@ -1,35 +1,42 @@
 import pytest
 from datetime import datetime
 from app.astrology.core.calculation_config import calculate_canonical_chart
-from app.astrology.predictions.v5_natal_promise import evaluate_natal_promise, EVENT_RULES
-from app.astrology.predictions.request import normalize_prediction_request, prediction_request_fingerprint
+from app.astrology.predictions.temporal_rules import TEMPORAL_EVENT_RULES, TEMPORAL_RULE_REGISTRY_VERSION
+from app.astrology.predictions.scoring_registry import SCORING_RULES, SCORING_REGISTRY_VERSION
 from app.astrology.predictions.temporal_activation import evaluate_temporal_activation, TemporalActivationResult, ASPECT_RULES
 from app.astrology.predictions.evidence import EvidenceGraph, calculate_score_from_evidence
 from app.astrology.predictions.engine import generate_evidence_based_predictions, PREDICTION_ENGINE_VERSION
 
-def test_p03_r37_engine_version():
+def test_p03_r40_engine_version():
     assert PREDICTION_ENGINE_VERSION == "P0.3-R40"
+    assert TEMPORAL_RULE_REGISTRY_VERSION == "R40"
+    assert SCORING_REGISTRY_VERSION == "P0.3-R40"
 
-def test_p03_r37_aspect_rules_completeness():
-    assert len(ASPECT_RULES) >= 5
-    for asp, spec in ASPECT_RULES.items():
-        assert "angle" in spec
-        assert "max_orb" in spec
-        assert "magnitude" in spec
-        assert "polarity" in spec
+def test_p03_r40_temporal_registry_completeness():
+    assert len(TEMPORAL_EVENT_RULES) >= 14
+    for ev, rule in TEMPORAL_EVENT_RULES.items():
+        assert "domain" in rule
+        assert "karakas" in rule
+        assert "dasha_lords" in rule
+        assert "transit_planets" in rule
+        assert "rule_id" in rule
 
-def test_p03_r37_event_specific_temporal_activation():
+def test_p03_r40_multiple_event_requests_temporal():
     dt = datetime(1990, 9, 10, 14, 30)
     chart = calculate_canonical_chart(dt, 10.5276, 76.2144, "Asia/Kolkata")
     target_dt = datetime(2026, 1, 1, 12, 0)
 
-    act = evaluate_temporal_activation(chart, target_dt, domain="CAREER", event_type="PROMOTION")
-    assert isinstance(act, TemporalActivationResult)
-    assert act.target_datetime == target_dt
-    assert "evidence_graph" in act.to_dict()
-    assert len(act.evidence_graph["nodes"]) >= 1
+    res = generate_evidence_based_predictions(
+        chart,
+        selected_date=target_dt,
+        event_requests={"Career": "PROMOTION", "Finance": "INCOME_EXPANSION"}
+    )
+    assert res is not None
+    assert "temporal_activation_by_event" in res
+    assert "PROMOTION" in res["temporal_activation_by_event"]
+    assert "INCOME_EXPANSION" in res["temporal_activation_by_event"]
 
-def test_p03_r37_true_target_date_variance_master():
+def test_p03_r40_true_target_date_variance_master():
     dt = datetime(1990, 9, 10, 14, 30)
     chart = calculate_canonical_chart(dt, 10.5276, 76.2144, "Asia/Kolkata")
 
@@ -45,7 +52,7 @@ def test_p03_r37_true_target_date_variance_master():
     assert "temporal_activation" in res_b
     assert res_a["temporal_activation"]["target_datetime"] != res_b["temporal_activation"]["target_datetime"]
 
-def test_p03_r37_transit_failure_mutation(monkeypatch):
+def test_p03_r40_transit_failure_mutation(monkeypatch):
     dt = datetime(1990, 9, 10, 14, 30)
     chart = calculate_canonical_chart(dt, 10.5276, 76.2144, "Asia/Kolkata")
     target_dt = datetime(2026, 1, 1, 12, 0)
