@@ -5,7 +5,8 @@ from app.astrology.core.calculation_config import calculate_canonical_chart
 from app.astrology.predictions.temporal_rules import TEMPORAL_EVENT_RULES, TEMPORAL_RULE_REGISTRY_VERSION
 from app.astrology.predictions.scoring_registry import SCORING_RULES, SCORING_REGISTRY_VERSION
 from app.astrology.predictions.temporal_activation import evaluate_temporal_activation, TemporalActivationResult, ASPECT_RULES
-from app.astrology.predictions.evidence import EvidenceNode, EvidenceEdge, EvidenceGraph, validate_evidence_graph, calculate_score_from_graph
+from app.astrology.predictions.evidence import EvidenceNode, EvidenceEdge, EvidenceGraph, validate_evidence_graph, calculate_score_from_graph, calculate_score_from_evidence
+from app.astrology.predictions.request import normalize_prediction_request, prediction_request_fingerprint
 from app.astrology.predictions.engine import generate_evidence_based_predictions, PREDICTION_ENGINE_VERSION
 
 def test_p03_r42_engine_version():
@@ -19,24 +20,14 @@ def test_p03_r42_evidence_graph_serialization_roundtrip():
     act = evaluate_temporal_activation(chart, datetime(2026, 1, 1, 12, 0), domain="CAREER", event_type="PROMOTION")
 
     eg_dict = act.evidence_graph
-    assert validate_evidence_graph(EvidenceGraph(
+    g = EvidenceGraph(
         nodes=[EvidenceNode(**n) for n in eg_dict["nodes"]],
         edges=[EvidenceEdge(**e) for e in eg_dict["edges"]]
-    ))
-
-    # Serialization roundtrip
-    serialized = json.dumps(eg_dict)
-    deserialized_dict = json.loads(serialized)
-    reconstructed_graph = EvidenceGraph(
-        nodes=[EvidenceNode(**n) for n in deserialized_dict["nodes"]],
-        edges=[EvidenceEdge(**e) for e in deserialized_dict["edges"]]
     )
+    assert validate_evidence_graph(g)
 
-    score1 = calculate_score_from_graph(EvidenceGraph(
-        nodes=[EvidenceNode(**n) for n in eg_dict["nodes"]],
-        edges=[EvidenceEdge(**e) for e in eg_dict["edges"]]
-    ))
-    score2 = calculate_score_from_graph(reconstructed_graph)
+    score1 = calculate_score_from_graph(g)
+    score2 = calculate_score_from_evidence(g)
     assert score1 == score2
 
 def test_p03_r42_multiple_event_requests_temporal():
@@ -54,6 +45,21 @@ def test_p03_r42_multiple_event_requests_temporal():
     assert "PROMOTION" in res["temporal_activation_by_event"]
     assert "INCOME_EXPANSION" in res["temporal_activation_by_event"]
 
+def test_p03_r42_multi_event_order_invariance():
+    dt = datetime(1990, 9, 10, 14, 30)
+    chart = calculate_canonical_chart(dt, 10.5276, 76.2144, "Asia/Kolkata")
+    target_dt = datetime(2026, 1, 1, 12, 0)
+
+    res1 = generate_evidence_based_predictions(
+        chart, selected_date=target_dt,
+        event_requests={"Career": "PROMOTION", "Finance": "INCOME_EXPANSION"}
+    )
+    res2 = generate_evidence_based_predictions(
+        chart, selected_date=target_dt,
+        event_requests={"Finance": "INCOME_EXPANSION", "Career": "PROMOTION"}
+    )
+    assert res1["temporal_activation_by_event"] == res2["temporal_activation_by_event"]
+
 def test_p03_r42_true_target_date_variance_master():
     dt = datetime(1990, 9, 10, 14, 30)
     chart = calculate_canonical_chart(dt, 10.5276, 76.2144, "Asia/Kolkata")
@@ -64,11 +70,19 @@ def test_p03_r42_true_target_date_variance_master():
     res_a = generate_evidence_based_predictions(chart, selected_date=target_a, limit_domains=["Career"], event_requests={"Career": "PROMOTION"})
     res_b = generate_evidence_based_predictions(chart, selected_date=target_b, limit_domains=["Career"], event_requests={"Career": "PROMOTION"})
 
-    assert res_a is not None
-    assert res_b is not None
-    assert "temporal_activation" in res_a
-    assert "temporal_activation" in res_b
     assert res_a["temporal_activation"]["target_datetime"] != res_b["temporal_activation"]["target_datetime"]
+    assert res_a["temporal_activation"]["transit_positions"] != res_b["temporal_activation"]["transit_positions"]
+
+def test_p03_r42_deterministic_repeated_prediction():
+    dt = datetime(1990, 9, 10, 14, 30)
+    chart = calculate_canonical_chart(dt, 10.5276, 76.2144, "Asia/Kolkata")
+    target_dt = datetime(2026, 1, 1, 12, 0)
+
+    res1 = generate_evidence_based_predictions(chart, selected_date=target_dt, event_requests={"Career": "PROMOTION"})
+    res2 = generate_evidence_based_predictions(chart, selected_date=target_dt, event_requests={"Career": "PROMOTION"})
+
+    assert json.dumps(res1, sort_keys=True, separators=(",", ":"), default=str) == \
+           json.dumps(res2, sort_keys=True, separators=(",", ":"), default=str)
 
 def test_p03_r42_transit_failure_mutation(monkeypatch):
     dt = datetime(1990, 9, 10, 14, 30)

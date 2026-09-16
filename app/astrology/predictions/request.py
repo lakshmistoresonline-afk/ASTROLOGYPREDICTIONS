@@ -3,6 +3,8 @@ import json
 from dataclasses import dataclass, asdict
 from typing import Dict, Any, List, Optional
 from datetime import datetime
+from .temporal_rules import TEMPORAL_RULE_REGISTRY_VERSION
+from .scoring_registry import SCORING_REGISTRY_VERSION
 
 @dataclass(frozen=True)
 class PredictionRequestModel:
@@ -15,7 +17,10 @@ class PredictionRequestModel:
     selected_date: str
     limit_domains: Optional[List[str]] = None
     event_requests: Optional[Dict[str, str]] = None
-    prediction_engine_version: str = "P0.3-R24"
+    prediction_engine_version: str = "P0.3-R42"
+    temporal_rules_version: str = TEMPORAL_RULE_REGISTRY_VERSION
+    scoring_registry_version: str = SCORING_REGISTRY_VERSION
+    evidence_schema_version: str = "P0.3-R42"
     schema_version: str = "1.0.0"
 
     def to_dict(self) -> Dict[str, Any]:
@@ -31,7 +36,7 @@ def normalize_prediction_request(
     selected_date: datetime,
     limit_domains: Optional[List[str]] = None,
     event_requests: Optional[Dict[str, str]] = None,
-    engine_version: str = "P0.3-R24"
+    engine_version: str = "P0.3-R42"
 ) -> PredictionRequestModel:
     if selected_date is None:
         raise ValueError("INVALID_REQUEST: selected_date is required.")
@@ -74,11 +79,14 @@ def normalize_prediction_request(
         selected_date=selected_date.isoformat(),
         limit_domains=limit_domains,
         event_requests=event_requests,
-        prediction_engine_version=engine_version
+        prediction_engine_version=engine_version,
+        temporal_rules_version=TEMPORAL_RULE_REGISTRY_VERSION,
+        scoring_registry_version=SCORING_REGISTRY_VERSION,
+        evidence_schema_version="P0.3-R42"
     )
 
 def canonical_prediction_request_json(req: PredictionRequestModel) -> str:
-    return json.dumps(req.to_dict(), sort_keys=True, default=str)
+    return json.dumps(req.to_dict(), sort_keys=True, separators=(",", ":"), default=str)
 
 def prediction_request_fingerprint(req: PredictionRequestModel) -> str:
     raw = canonical_prediction_request_json(req)
