@@ -6,17 +6,17 @@ from ..dasha import calculate_vimshottari
 from ..core.datetime import datetime_to_jd
 from ..core import ephemeris
 from ..core.swe_proxy import swe
-from .evidence import EvidenceNode, EvidenceEdge, EvidenceGraph, calculate_score_from_evidence, generate_deterministic_evidence_id
+from .evidence import EvidenceNode, EvidenceEdge, EvidenceGraph, calculate_score_from_graph, generate_deterministic_evidence_id
 from .temporal_rules import TEMPORAL_EVENT_RULES, TEMPORAL_RULE_REGISTRY_VERSION
 from .scoring_registry import SCORING_RULES, SCORING_REGISTRY_VERSION
 from .v5_natal_promise import evaluate_natal_promise
 
 ASPECT_RULES = {
-    "CONJUNCTION": {"angle": 0.0, "max_orb": 6.0, "magnitude": SCORING_RULES["R40-TRANSIT-ASPECT"]["magnitude"], "polarity": "POSITIVE"},
-    "OPPOSITION": {"angle": 180.0, "max_orb": 6.0, "magnitude": 0.12, "polarity": "NEGATIVE"},
-    "TRINE": {"angle": 120.0, "max_orb": 5.0, "magnitude": SCORING_RULES["R40-TRANSIT-ASPECT"]["magnitude"], "polarity": "POSITIVE"},
-    "SQUARE": {"angle": 90.0, "max_orb": 5.0, "magnitude": -0.12, "polarity": "NEGATIVE"},
-    "SEXTILE": {"angle": 60.0, "max_orb": 4.0, "magnitude": 0.10, "polarity": "POSITIVE"}
+    "CONJUNCTION": {"angle": 0.0, "max_orb": 6.0, "rule_id": "R42-TRANSIT-ASPECT", "magnitude": SCORING_RULES["R42-TRANSIT-ASPECT"]["magnitude"], "polarity": "POSITIVE"},
+    "OPPOSITION": {"angle": 180.0, "max_orb": 6.0, "rule_id": "R42-TRANSIT-ASPECT", "magnitude": -0.12, "polarity": "NEGATIVE"},
+    "TRINE": {"angle": 120.0, "max_orb": 5.0, "rule_id": "R42-TRANSIT-ASPECT", "magnitude": SCORING_RULES["R42-TRANSIT-ASPECT"]["magnitude"], "polarity": "POSITIVE"},
+    "SQUARE": {"angle": 90.0, "max_orb": 5.0, "rule_id": "R42-TRANSIT-ASPECT", "magnitude": -0.12, "polarity": "NEGATIVE"},
+    "SEXTILE": {"angle": 60.0, "max_orb": 4.0, "rule_id": "R42-TRANSIT-ASPECT", "magnitude": 0.10, "polarity": "POSITIVE"}
 }
 
 class TemporalActivationResult:
@@ -60,9 +60,9 @@ class TemporalActivationResult:
 
 def evaluate_temporal_activation(chart: CanonicalChart, selected_date: datetime, domain: str = "GENERAL", event_type: str = "GENERAL") -> TemporalActivationResult:
     """
-    P0.3-R40 Authoritative Event-Specific Temporal Activation & Confluence Engine.
+    P0.3-R42 Authoritative Event-Specific Temporal Activation & Confluence Engine.
     Enforces true natal promise gate, Dasha rule evaluation, Swiss Ephemeris transit aspects using SCORING_RULES,
-    and exact score reconstruction.
+    complete causal chains (FACT -> RULE_APPLICATION -> SCORING_CONTRIBUTION), and exact score reconstruction.
     """
     if selected_date is None:
         raise ValueError("INVALID_REQUEST: selected_date is required for temporal activation.")
@@ -80,7 +80,7 @@ def evaluate_temporal_activation(chart: CanonicalChart, selected_date: datetime,
         "transit_planets": [],
         "permitted_aspects": ["CONJUNCTION"],
         "max_orb": 6.0,
-        "rule_id": "R40-DEFAULT-01",
+        "rule_id": "R42-DEFAULT-01",
         "domain": dom_key
     })
 
@@ -118,7 +118,6 @@ def evaluate_temporal_activation(chart: CanonicalChart, selected_date: datetime,
         raise RuntimeError(f"CALCULATION_ENGINE_UNAVAILABLE: Failed to calculate Swiss Ephemeris transits for target date {selected_date}: {e}")
 
     graph = EvidenceGraph()
-    primary_node_ids = []
 
     maha = dasha.get("current_maha", {}).get("lord", "Unknown")
     antar = dasha.get("current_antar", {}).get("lord", "Unknown")
@@ -145,12 +144,11 @@ def evaluate_temporal_activation(chart: CanonicalChart, selected_date: datetime,
     dasha_fact_dict["evidence_id"] = generate_deterministic_evidence_id(dasha_fact_dict)
     node_dasha_fact = EvidenceNode(**dasha_fact_dict)
     graph.add_node(node_dasha_fact)
-    primary_node_ids.append(node_dasha_fact.evidence_id)
 
-    # Event-Specific Dasha Rule Application
     allowed_dasha_lords = t_rule.get("dasha_lords", []) + t_rule.get("karakas", [])
     is_dasha_activated = (maha in allowed_dasha_lords or antar in allowed_dasha_lords)
     if is_dasha_activated:
+        # Dasha Rule Application Node
         dasha_rule_dict = {
             "evidence_id": "",
             "event_type": ev_key,
@@ -165,20 +163,49 @@ def evaluate_temporal_activation(chart: CanonicalChart, selected_date: datetime,
             "observed_value": [maha, antar],
             "operator": "IN",
             "expected_condition": "Event-Relevant Period Lord",
-            "magnitude": SCORING_RULES["R40-DASHA-ACTIVATION"]["magnitude"],
+            "magnitude": 0.0,
             "rationale": f"Active period lords ({maha}/{antar}) activate temporal rule {t_rule['rule_id']} for {ev_key}.",
             "provenance": {"module": "app.astrology.predictions.temporal_activation", "function": "evaluate_temporal_activation"}
         }
         dasha_rule_dict["evidence_id"] = generate_deterministic_evidence_id(dasha_rule_dict)
         node_dasha_rule = EvidenceNode(**dasha_rule_dict)
         graph.add_node(node_dasha_rule)
-        primary_node_ids.append(node_dasha_rule.evidence_id)
 
         graph.add_edge(EvidenceEdge(
             source_id=node_dasha_fact.evidence_id,
             target_id=node_dasha_rule.evidence_id,
             relation="DERIVED_FROM",
             provenance={"module": "app.astrology.predictions.temporal_activation", "rule": "dasha_derivation"}
+        ))
+
+        # Dasha Scoring Contribution Node
+        dasha_score_dict = {
+            "evidence_id": "",
+            "event_type": ev_key,
+            "domain": t_rule.get("domain", dom_key),
+            "evidence_group": "DASHA_ACTIVATION",
+            "independence_key": f"dasha_score_{dom_key}_{ev_key}",
+            "polarity": "POSITIVE",
+            "classification": "SCORING_CONTRIBUTION",
+            "source_type": "TEMPORAL_RULE",
+            "source_path": "app.astrology.predictions.temporal_activation",
+            "source_fact": f"Scoring contribution for active Dasha lord under {t_rule['rule_id']}",
+            "observed_value": [maha, antar],
+            "operator": "IN",
+            "expected_condition": "Event-Relevant Period Lord",
+            "magnitude": SCORING_RULES["R42-DASHA-ACTIVATION"]["magnitude"],
+            "rationale": f"Scoring contribution from active Dasha period for {ev_key}.",
+            "provenance": {"module": "app.astrology.predictions.temporal_activation", "function": "evaluate_temporal_activation"}
+        }
+        dasha_score_dict["evidence_id"] = generate_deterministic_evidence_id(dasha_score_dict)
+        node_dasha_score = EvidenceNode(**dasha_score_dict)
+        graph.add_node(node_dasha_score)
+
+        graph.add_edge(EvidenceEdge(
+            source_id=node_dasha_rule.evidence_id,
+            target_id=node_dasha_score.evidence_id,
+            relation="SUPPORTS",
+            provenance={"module": "app.astrology.predictions.temporal_activation", "rule": "dasha_scoring"}
         ))
 
     # Transit Fact Node
@@ -193,7 +220,7 @@ def evaluate_temporal_activation(chart: CanonicalChart, selected_date: datetime,
         "source_type": "SWISS_EPHEMERIS",
         "source_path": "app.astrology.core.ephemeris",
         "source_fact": f"Calculated {len(transits)} transit longitudes for target date {selected_date.isoformat()}",
-        "observed_value": len(transits),
+        "observed_value": transits,
         "operator": "GT",
         "expected_condition": "Non-empty Ephemeris Calculation",
         "magnitude": 0.0,
@@ -240,20 +267,48 @@ def evaluate_temporal_activation(chart: CanonicalChart, selected_date: datetime,
                             "observed_value": diff,
                             "operator": "LTE",
                             "expected_condition": f"Aspect {target_angle} +/- {orb_limit}",
-                            "magnitude": asp_spec["magnitude"],
+                            "magnitude": 0.0,
                             "rationale": f"Transit {t_planet} forms {asp_name} to natal {k} under rule {t_rule['rule_id']}, triggering temporal activation for {ev_key}.",
                             "provenance": {"module": "app.astrology.predictions.temporal_activation", "function": "evaluate_temporal_activation"}
                         }
                         t_rule_dict["evidence_id"] = generate_deterministic_evidence_id(t_rule_dict)
                         node_t_rule = EvidenceNode(**t_rule_dict)
                         graph.add_node(node_t_rule)
-                        primary_node_ids.append(node_t_rule.evidence_id)
 
                         graph.add_edge(EvidenceEdge(
                             source_id=node_transit_fact.evidence_id,
                             target_id=node_t_rule.evidence_id,
-                            relation="CORROBORATES",
-                            provenance={"module": "app.astrology.predictions.temporal_activation", "rule": "aspect_confluence"}
+                            relation="DERIVED_FROM",
+                            provenance={"module": "app.astrology.predictions.temporal_activation", "rule": "transit_derivation"}
+                        ))
+
+                        t_score_dict = {
+                            "evidence_id": "",
+                            "event_type": ev_key,
+                            "domain": t_rule.get("domain", dom_key),
+                            "evidence_group": "TRANSIT_ACTIVATION",
+                            "independence_key": f"transit_score_{asp_name.lower()}_{t_planet}_{k}",
+                            "polarity": asp_spec["polarity"],
+                            "classification": "SCORING_CONTRIBUTION",
+                            "source_type": "TRANSIT_ASPECT",
+                            "source_path": "app.astrology.predictions.temporal_activation",
+                            "source_fact": f"Scoring contribution for transit {t_planet} {asp_name.lower()} natal {k}",
+                            "observed_value": diff,
+                            "operator": "LTE",
+                            "expected_condition": f"Aspect {target_angle} +/- {orb_limit}",
+                            "magnitude": SCORING_RULES["R42-TRANSIT-ASPECT"]["magnitude"] if asp_spec["polarity"] == "POSITIVE" else -0.12,
+                            "rationale": f"Scoring contribution from transit aspect {asp_name} for {ev_key}.",
+                            "provenance": {"module": "app.astrology.predictions.temporal_activation", "function": "evaluate_temporal_activation"}
+                        }
+                        t_score_dict["evidence_id"] = generate_deterministic_evidence_id(t_score_dict)
+                        node_t_score = EvidenceNode(**t_score_dict)
+                        graph.add_node(node_t_score)
+
+                        graph.add_edge(EvidenceEdge(
+                            source_id=node_t_rule.evidence_id,
+                            target_id=node_t_score.evidence_id,
+                            relation="SUPPORTS",
+                            provenance={"module": "app.astrology.predictions.temporal_activation", "rule": "transit_scoring"}
                         ))
 
     # Confluence State Determination
@@ -269,7 +324,7 @@ def evaluate_temporal_activation(chart: CanonicalChart, selected_date: datetime,
         confluence_state = "NATAL_SUPPORTED_TEMPORAL_INACTIVE"
 
     evidence_items = [n.to_dict() for n in graph.nodes]
-    activation_score = calculate_score_from_evidence(graph)
+    activation_score = calculate_score_from_graph(graph)
 
     return TemporalActivationResult(
         target_datetime=selected_date,

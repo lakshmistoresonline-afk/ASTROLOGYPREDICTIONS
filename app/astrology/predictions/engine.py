@@ -30,9 +30,10 @@ PREDICTION_ENGINE_VERSION = "P0.3-R42"
 
 def generate_evidence_based_predictions(chart: CanonicalChart, selected_date: datetime = None, limit_domains: List[str] = None, event_requests: Dict[str, str] = None) -> Dict[str, Any]:
     """
-    Master Engine (V3.31): Orchestrates specialized domain engines using hierarchical confluence.
+    Master Engine (V3.35): Orchestrates specialized domain engines using hierarchical confluence.
     Enforces strict event validation, fail-closed caching via SHA-256 request fingerprinting,
-    deterministic temporal activation, structured timeline/domain errors, and explicit target date contract.
+    deterministic temporal activation with independent per-event evaluation, structured timeline/domain errors,
+    and explicit target date contract.
     """
     if selected_date is None:
         raise ValueError("INVALID_REQUEST: selected_date is required. Implicit datetime.now() fallback is prohibited.")
@@ -65,15 +66,19 @@ def generate_evidence_based_predictions(chart: CanonicalChart, selected_date: da
     if cache_key in _prediction_cache:
         return _prediction_cache[cache_key]
 
-    # Evaluate Temporal Activation per requested event or general (fully canonical and independent)
+    # Evaluate Temporal Activation per requested event or general (fully canonical and independent - NO FIRST-EVENT SHORTCUT)
     temporal_activation_by_event = {}
+    temporal_act = None
     if event_requests:
         sorted_events = sorted(event_requests.items(), key=lambda x: x[1])
         for dom, ev in sorted_events:
             temporal_act_ev = evaluate_temporal_activation(chart, selected_date, domain=dom, event_type=ev)
             temporal_activation_by_event[ev] = temporal_act_ev.to_dict()
-        primary_dom, primary_ev = sorted_events[0]
-        temporal_act = evaluate_temporal_activation(chart, selected_date, domain=primary_dom, event_type=primary_ev)
+        if len(event_requests) == 1:
+            primary_dom, primary_ev = sorted_events[0]
+            temporal_act = evaluate_temporal_activation(chart, selected_date, domain=primary_dom, event_type=primary_ev)
+        else:
+            temporal_act = None
     else:
         temporal_act = evaluate_temporal_activation(chart, selected_date)
         temporal_activation_by_event["GENERAL"] = temporal_act.to_dict()
@@ -183,7 +188,7 @@ def generate_evidence_based_predictions(chart: CanonicalChart, selected_date: da
         "overall_status": f"V3.35 Authoritative Intelligence Report Generated ({PREDICTION_ENGINE_VERSION})",
         "predictions": results_sorted,
         "categorized_domains": categorized,
-        "temporal_activation": temporal_act.to_dict(),
+        "temporal_activation": temporal_act.to_dict() if temporal_act else None,
         "temporal_activation_by_event": temporal_activation_by_event,
         "timeline": timeline_sorted,
         "upcoming_roadmap": upcoming_roadmap,
@@ -191,10 +196,7 @@ def generate_evidence_based_predictions(chart: CanonicalChart, selected_date: da
         "calculation_confidence": "HIGH (Swiss Ephemeris)",
         "evidence_strength": "HIERARCHICAL",
         "timing_confidence": "TRANSIT_VERIFIED",
-        "historical_match_rate": None,
-        "non_deterministic_execution_metadata": {
-            "generated_at": datetime.now().isoformat()
-        }
+        "historical_match_rate": None
     }
 
     if not limit_domains or len(limit_domains) > 0:
