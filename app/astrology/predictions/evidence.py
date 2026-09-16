@@ -2,18 +2,9 @@ import hashlib
 import json
 from dataclasses import dataclass, asdict
 from typing import Dict, Any, List, Optional
+from .scoring_registry import SCORING_RULES, SCORING_REGISTRY_VERSION
 
-EVIDENCE_SCORING_RULES = {
-    "KARAKA_STRONG": {"magnitude": 0.25, "independence_group": "SIGNIFICATOR_STRENGTH", "version": "R27"},
-    "KARAKA_WEAK": {"magnitude": -0.25, "independence_group": "SIGNIFICATOR_STRENGTH", "version": "R27"},
-    "KARAKA_COMBUST": {"magnitude": -0.20, "independence_group": "PLANETARY_CONDITION", "version": "R27"},
-    "LORD_STRONG": {"magnitude": 0.25, "independence_group": "LORD_PLACEMENT", "version": "R27"},
-    "LORD_WEAK": {"magnitude": -0.20, "independence_group": "LORD_PLACEMENT", "version": "R27"},
-    "HOUSE_OCCUPANCY": {"magnitude": 0.15, "independence_group": "HOUSE_STRUCTURE", "version": "R27"},
-    "YOGA_SUPPORT": {"magnitude": 0.15, "independence_group": "YOGA_SUPPORT", "version": "R27"},
-    "VARGA_CONFIRMATION": {"magnitude": 0.15, "independence_group": "DIVISIONAL_CONFIRMATION", "version": "R27"},
-    "SHADBALA_FACTUAL": {"magnitude": 0.0, "independence_group": "SHADBALA_MODIFIER", "version": "R27"}
-}
+EVIDENCE_SCORING_RULES = SCORING_RULES
 
 EVIDENCE_INDEPENDENCE_POLICY = {
     "max_group_contribution": 0.35,
@@ -40,7 +31,7 @@ class EvidenceNode:
     magnitude: float
     rationale: str
     provenance: Dict[str, str]
-    engine_version: str = "P0.3-R27"
+    engine_version: str = "P0.3-R41"
 
     def to_dict(self) -> Dict[str, Any]:
         return asdict(self)
@@ -80,23 +71,32 @@ def generate_deterministic_evidence_id(node_dict: Dict[str, Any]) -> str:
     raw = json.dumps(canonical, sort_keys=True, default=str)
     return "ev_" + hashlib.sha256(raw.encode('utf-8')).hexdigest()[:16]
 
-def calculate_score_from_evidence(evidence_graph_or_items: Any) -> float:
+def validate_evidence_graph(graph: EvidenceGraph) -> bool:
     """
-    Authoritative deterministic score reconstruction from evidence graph or list of evidence items.
-    Enforces independence key capping and zero baseline according to EVIDENCE_INDEPENDENCE_POLICY.
+    R41 Graph Validation:
+    - No edge references missing node IDs.
     """
-    if isinstance(evidence_graph_or_items, EvidenceGraph):
-        items = [n.to_dict() for n in evidence_graph_or_items.nodes]
-    elif isinstance(evidence_graph_or_items, list):
-        items = [i.to_dict() if hasattr(i, 'to_dict') else i for i in evidence_graph_or_items]
-    else:
-        items = []
+    node_ids = {n.evidence_id for n in graph.nodes}
+    for edge in graph.edges:
+        if edge.source_id not in node_ids or edge.target_id not in node_ids:
+            raise ValueError(f"INVALID_EVIDENCE_GRAPH: Edge references missing node ID (source: {edge.source_id}, target: {edge.target_id})")
+    return True
+
+def calculate_score_from_graph(graph: EvidenceGraph) -> float:
+    """
+    Authoritative deterministic score reconstruction from EvidenceGraph.
+    Validates graph structure and enforces independence key capping according to EVIDENCE_INDEPENDENCE_POLICY.
+    """
+    validate_evidence_graph(graph)
+    items = [n.to_dict() for n in graph.nodes]
 
     group_totals: Dict[str, float] = {}
     seen_keys = set()
     max_cap = EVIDENCE_INDEPENDENCE_POLICY["max_group_contribution"]
 
     for item in items:
+        if item.get("classification") == "FACT":
+            continue
         key = item.get("independence_key", item.get("evidence_group", "GENERAL"))
         if key in seen_keys:
             continue
@@ -109,3 +109,38 @@ def calculate_score_from_evidence(evidence_graph_or_items: Any) -> float:
 
     final = sum(group_totals.values())
     return round(max(0.0, min(1.0, final)), 2)
+
+def calculate_score_from_evidence(evidence_graph_or_items: Any) -> float:
+    """
+    Authoritative score reconstruction supporting EvidenceGraph, EvidenceNode list, or raw legacy dict list.
+    """
+    if isinstance(evidence_graph_or_items, EvidenceGraph):
+        return calculate_score_from_graph(evidence_graph_or_items)
+    elif isinstance(evidence_graph_or_items, list):
+        items = []
+        for i in evidence_graph_or_items:
+            if hasattr(i, 'to_dict'):
+                items.append(i.to_dict())
+            elif isinstance(i, dict):
+                items.append(i)
+            else:
+                items.append({"magnitude": float(i)})
+
+        group_totals: Dict[str, float] = {}
+        seen_keys = set()
+        max_cap = EVIDENCE_INDEPENDENCE_POLICY["max_group_contribution"]
+
+        for item in items:
+            key = item.get("independence_key", item.get("evidence_group", "GENERAL"))
+            if key in seen_keys:
+                continue
+            seen_keys.add(key)
+
+            mag = float(item.get("magnitude", 0.0))
+            g = item.get("evidence_group", "GENERAL")
+            current = group_totals.get(g, 0.0)
+            group_totals[g] = max(-max_cap, min(max_cap, current + mag))
+
+        final = sum(group_totals.values())
+        return round(max(0.0, min(1.0, final)), 2)
+    return 0.0
