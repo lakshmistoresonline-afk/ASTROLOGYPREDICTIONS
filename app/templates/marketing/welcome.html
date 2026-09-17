@@ -8,73 +8,127 @@
     <meta property="og:title" content="Astro Predictions — Vedic Astrology Intelligence">
     <meta property="og:description" content="Vedic astrology intelligence built from your exact birth details and planetary movements.">
     <meta property="og:type" content="website">
-    <meta property="og:url" content="{{ public_base_url }}/welcome">
+    <meta property="og:url" content="{{ public_base_url }}/">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        body { background: #0b091a; color: #f1f1f1; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        .hero { padding: 100px 0; background: radial-gradient(circle at center, #1e1342 0%, #0b091a 70%); text-align: center; }
-        .btn-gold { background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%); color: #0b091a; font-weight: bold; border: none; padding: 12px 30px; border-radius: 30px; }
+        body { background: #0b091a; color: #f1f1f1; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height: 1.6; }
+        .hero { padding: 120px 0 80px 0; background: radial-gradient(circle at center, #1e1342 0%, #0b091a 70%); text-align: center; }
+        .btn-gold { background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%); color: #0b091a; font-weight: bold; border: none; padding: 14px 35px; border-radius: 30px; font-size: 1.1rem; }
         .btn-gold:hover { opacity: 0.9; color: #0b091a; }
-        .card-custom { background: #15102a; border: 1px solid #2d2254; border-radius: 15px; color: #fff; padding: 30px; height: 100%; }
-        footer { padding: 40px 0; border-top: 1px solid #2d2254; text-align: center; font-size: 0.9rem; color: #aaa; }
+        .card-custom { background: #15102a; border: 1px solid #2d2254; border-radius: 20px; color: #fff; padding: 35px; height: 100%; transition: transform 0.2s; }
+        .card-custom:hover { transform: translateY(-5px); border-color: #FFD700; }
+        .section-padding { padding: 80px 0; }
+        footer { padding: 50px 0; border-top: 1px solid #2d2254; text-align: center; font-size: 0.9rem; color: #aaa; background: #070512; }
         a { color: #FFD700; text-decoration: none; }
         a:hover { color: #FFA500; }
+        .accordion-button { background: #15102a; color: #fff; border: 1px solid #2d2254; }
+        .accordion-button:not(.collapsed) { background: #1e1342; color: #FFD700; }
+        .accordion-item { background: transparent; border: none; margin-bottom: 15px; }
     </style>
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-transparent fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-transparent fixed-top" style="background: rgba(11,9,26,0.95)!important; backdrop-filter: blur(10px);">
         <div class="container">
-            <a class="navbar-brand fw-bold text-warning" href="/welcome"><i class="fas fa-star-of-life me-2"></i>Astro Predictions</a>
-            <div class="ms-auto">
-                <a href="/birth-chart" class="btn btn-outline-warning btn-sm rounded-pill px-3 me-2">Free Chart</a>
-                <a href="/download" class="btn btn-gold btn-sm rounded-pill px-3">Get App</a>
+            <a class="navbar-brand fw-bold text-warning" href="/"><i class="fas fa-star-of-life me-2"></i>Astro Predictions</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto align-items-center">
+                    <li class="nav-item"><a class="nav-link" href="#features">Features</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#domains">Life Domains</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#pricing">Pricing</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/learn">Learning Hub</a></li>
+                    <li class="nav-item ms-3"><a href="/birth-chart" class="btn btn-gold btn-sm px-4">Create Free Chart</a></li>
+                </ul>
             </div>
         </div>
     </nav>
 
-    <div class="hero container">
-        <div class="row justify-content-center">
-            <div class="col-lg-8">
-                <span class="badge bg-warning text-dark mb-3 px-3 py-2 rounded-pill fw-bold">Vedic Astrology Intelligence</span>
-                <h1 class="display-4 fw-bold mb-4">Go beyond generic daily horoscopes.</h1>
-                <p class="lead text-muted mb-5">Your birth chart is personal. Your timing should be personal too. Explore precise astronomical calculations, Dasha life periods, and meaningful chart insights.</p>
-                <div class="d-flex justify-content-center gap-3 flex-wrap">
-                    <a href="/birth-chart" class="btn btn-gold btn-lg"><i class="fas fa-chart-pie me-2"></i>Create Your Free Birth Chart</a>
-                    <a href="/download" class="btn btn-outline-light btn-lg rounded-pill px-4"><i class="fab fa-android me-2"></i>Get Android App</a>
+    <!-- 1. Hero -->
+    <div class="hero container-fluid">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-9">
+                    <span class="badge bg-warning text-dark mb-3 px-3 py-2 rounded-pill fw-bold">Vedic Astrology Intelligence</span>
+                    <h1 class="display-3 fw-bold mb-4">Go beyond generic daily horoscopes.</h1>
+                    <p class="lead text-muted mb-5">Your birth chart is personal. Your timing should be personal too. Explore precise astronomical calculations, Vimshottari Dashas, and personalized Vedic astrology insights.</p>
+                    <div class="d-flex justify-content-center gap-3 flex-wrap">
+                        <a href="/birth-chart" class="btn btn-gold"><i class="fas fa-chart-pie me-2"></i>Create Your Free Birth Chart</a>
+                        <a href="/dashboard" class="btn btn-outline-light btn-lg rounded-pill px-4">Explore Astro Predictions</a>
+                        <a href="/download" class="btn btn-outline-warning btn-lg rounded-pill px-4"><i class="fab fa-android me-2"></i>Get The Android App</a>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="container py-5">
+    <!-- 2. Why Astro Predictions (Difference) -->
+    <div id="features" class="container section-padding">
+        <div class="text-center mb-5">
+            <h2 class="display-5 fw-bold text-warning">What Makes Astro Predictions Different</h2>
+            <p class="text-muted">Built for seekers who value precision, calculation transparency, and depth.</p>
+        </div>
         <div class="row g-4">
             <div class="col-md-4">
                 <div class="card-custom">
                     <i class="fas fa-crosshairs text-warning fa-2x mb-3"></i>
                     <h3>Exact Birth Details</h3>
-                    <p class="text-muted">Calculated using exact birth date, birth time, and authoritative location timezone pipelines.</p>
+                    <p class="text-muted">Calculated using exact birth date, birth time, and authoritative location timezone pipelines with strict error handling.</p>
                 </div>
             </div>
             <div class="col-md-4">
                 <div class="card-custom">
                     <i class="fas fa-calculator text-warning fa-2x mb-3"></i>
                     <h3>Deterministic Calculations</h3>
-                    <p class="text-muted">Precise Swiss Ephemeris mathematical engine with zero approximate astrology fallbacks.</p>
+                    <p class="text-muted">Precise Swiss Ephemeris mathematical engine with zero approximate astrology fallbacks or fake calculations.</p>
                 </div>
             </div>
             <div class="col-md-4">
                 <div class="card-custom">
                     <i class="fas fa-clock text-warning fa-2x mb-3"></i>
                     <h3>Vedic Life Timing</h3>
-                    <p class="text-muted">Explore Vimshottari Dashas and planetary transits mapped against your personal chart.</p>
+                    <p class="text-muted">Explore Vimshottari Dashas and planetary transits mapped against your personal chart and life timeline.</p>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="container py-5 text-center">
-        <h2 class="fw-bold mb-4">Explore All Life Domains</h2>
+    <!-- 3. How It Works -->
+    <div class="container section-padding bg-dark rounded-4 my-5 p-5 border border-secondary">
+        <div class="text-center mb-5">
+            <h2 class="fw-bold text-warning">How It Works</h2>
+            <p class="text-muted">Four simple steps to personalized Vedic intelligence.</p>
+        </div>
+        <div class="row g-4">
+            <div class="col-md-3 text-center">
+                <div class="display-6 fw-bold text-warning mb-2">01</div>
+                <h5>Enter Birth Details</h5>
+                <p class="text-muted small">Provide exact date, time, and birthplace location.</p>
+            </div>
+            <div class="col-md-3 text-center">
+                <div class="display-6 fw-bold text-warning mb-2">02</div>
+                <h5>Generate Chart</h5>
+                <p class="text-muted small">Deterministic Swiss Ephemeris constructs your Lagna and planetary positions.</p>
+            </div>
+            <div class="col-md-3 text-center">
+                <div class="display-6 fw-bold text-warning mb-2">03</div>
+                <h5>Analyze Dashas</h5>
+                <p class="text-muted small">Evaluate active life periods and current planetary transits.</p>
+            </div>
+            <div class="col-md-3 text-center">
+                <div class="display-6 fw-bold text-warning mb-2">04</div>
+                <h5>Explore Insights</h5>
+                <p class="text-muted small">Access multi-domain timing windows and Life Atlas intelligence.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- 4. Life Domains -->
+    <div id="domains" class="container section-padding text-center">
+        <h2 class="display-5 fw-bold text-warning mb-4">Explore All Life Domains</h2>
+        <p class="text-muted mb-5">Targeted astrological timing and domain analysis.</p>
         <div class="row g-3 justify-content-center">
             <div class="col-auto"><a href="/career-astrology" class="badge bg-dark border border-warning p-3 text-warning fs-6">Career Astrology</a></div>
             <div class="col-auto"><a href="/marriage-astrology" class="badge bg-dark border border-warning p-3 text-warning fs-6">Marriage Astrology</a></div>
@@ -82,22 +136,103 @@
             <div class="col-auto"><a href="/business-astrology" class="badge bg-dark border border-warning p-3 text-warning fs-6">Business Astrology</a></div>
             <div class="col-auto"><a href="/property-astrology" class="badge bg-dark border border-warning p-3 text-warning fs-6">Property Astrology</a></div>
             <div class="col-auto"><a href="/education-astrology" class="badge bg-dark border border-warning p-3 text-warning fs-6">Education Astrology</a></div>
+            <div class="col-auto"><a href="/children-astrology" class="badge bg-dark border border-warning p-3 text-warning fs-6">Children Astrology</a></div>
+            <div class="col-auto"><a href="/foreign-settlement-astrology" class="badge bg-dark border border-warning p-3 text-warning fs-6">Foreign Settlement</a></div>
+            <div class="col-auto"><a href="/spirituality-astrology" class="badge bg-dark border border-warning p-3 text-warning fs-6">Spirituality</a></div>
             <div class="col-auto"><a href="/life-timeline" class="badge bg-dark border border-warning p-3 text-warning fs-6">Life Timeline</a></div>
+        </div>
+    </div>
+
+    <!-- 5. Free vs Premium -->
+    <div id="pricing" class="container section-padding">
+        <div class="text-center mb-5">
+            <h2 class="display-5 fw-bold text-warning">Free vs Astro Plus</h2>
+            <p class="text-muted">Choose the right tier for your astrological journey.</p>
+        </div>
+        <div class="row g-4 justify-content-center">
+            <div class="col-md-5">
+                <div class="card-custom">
+                    <h3>Free Tier</h3>
+                    <h2 class="display-6 fw-bold my-3">₹0</h2>
+                    <ul class="list-unstyled text-muted mb-4">
+                        <li class="mb-2"><i class="fas fa-check text-warning me-2"></i>Basic Vedic Birth Chart</li>
+                        <li class="mb-2"><i class="fas fa-check text-warning me-2"></i>Moon Sign & Nakshatra</li>
+                        <li class="mb-2"><i class="fas fa-check text-warning me-2"></i>Basic Dasha Overview</li>
+                        <li class="mb-2"><i class="fas fa-check text-warning me-2"></i>Limited Daily Insights</li>
+                    </ul>
+                    <a href="/birth-chart" class="btn btn-outline-warning w-100 rounded-pill">Get Started Free</a>
+                </div>
+            </div>
+            <div class="col-md-5">
+                <div class="card-custom border-warning">
+                    <span class="badge bg-warning text-dark mb-2">Recommended</span>
+                    <h3>Astro Plus</h3>
+                    <h2 class="display-6 fw-bold my-3 text-warning">₹499 <span class="fs-6 text-muted">/ month</span></h2>
+                    <ul class="list-unstyled text-muted mb-4">
+                        <li class="mb-2"><i class="fas fa-check text-warning me-2"></i>Full Prediction Domains</li>
+                        <li class="mb-2"><i class="fas fa-check text-warning me-2"></i>Advanced Dasha & Transits</li>
+                        <li class="mb-2"><i class="fas fa-check text-warning me-2"></i>Full Life Timeline Intelligence</li>
+                        <li class="mb-2"><i class="fas fa-check text-warning me-2"></i>Ad-Free Experience</li>
+                    </ul>
+                    <a href="/pricing" class="btn btn-gold w-100">View Pricing Plans</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 6. FAQ -->
+    <div class="container section-padding">
+        <div class="text-center mb-5">
+            <h2 class="fw-bold text-warning">Frequently Asked Questions</h2>
+        </div>
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="accordion" id="faqAccordion">
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="headingOne">
+                            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne">
+                                How are calculations performed?
+                            </button>
+                        </h2>
+                        <div id="collapseOne" class="accordion-collapse collapse show" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body text-muted">
+                                We utilize authoritative Swiss Ephemeris astronomical calculation engines combined with authentic Vedic astrology (Jyotish) rules to construct precise charts and Dasha timings.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="headingTwo">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo">
+                                Do I need exact birth time?
+                            </button>
+                        </h2>
+                        <div id="collapseTwo" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body text-muted">
+                                Exact birth time is highly recommended for precise Ascendant (Lagna) and divisional chart calculations. Our system fails closed if required location or time data is incomplete.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
     <footer>
         <div class="container">
             <p class="mb-2">&copy; 2026 Astro Predictions. All rights reserved.</p>
-            <p class="small text-muted">Vedic astrology interpretation based on deterministic astronomical calculations. For personal reflection and informational purposes.</p>
-            <div class="d-flex justify-content-center gap-3 mt-3">
+            <p class="small text-muted mb-3">Vedic astrology interpretation based on deterministic astronomical calculations. For personal reflection and informational purposes.</p>
+            <div class="d-flex justify-content-center gap-3 flex-wrap">
                 <a href="/privacy">Privacy Policy</a>
                 <a href="/terms">Terms of Service</a>
+                <a href="/refund-policy">Refund Policy</a>
+                <a href="/subscription-policy">Subscription Policy</a>
                 <a href="/about">About</a>
                 <a href="/contact">Contact</a>
                 <a href="/learn">Learning Hub</a>
+                <a href="/pricing">Pricing</a>
             </div>
         </div>
     </footer>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

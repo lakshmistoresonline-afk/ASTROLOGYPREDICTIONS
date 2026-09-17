@@ -46,13 +46,14 @@ def capture_attribution():
             "timestamp": datetime.utcnow().isoformat()
         }
 
+@marketing_bp.route("/")
 @marketing_bp.route("/welcome")
-def welcome():
+def home():
     return render_template("marketing/welcome.html", android_store_url=ANDROID_STORE_URL, public_base_url=PUBLIC_BASE_URL)
 
 @marketing_bp.route("/landing")
 def landing():
-    return redirect(url_for("marketing.welcome"))
+    return redirect(url_for("marketing.home"))
 
 @marketing_bp.route("/birth-chart", methods=["GET", "POST"])
 def birth_chart_funnel():
@@ -61,20 +62,23 @@ def birth_chart_funnel():
     if request.method == "POST":
         name = request.form.get("name", "Seeker")
         dob = request.form.get("dob")
-        tob = request.form.get("tob", "12:00")
-        place = request.form.get("place", "New Delhi, India")
+        tob = request.form.get("tob")
+        place = request.form.get("place")
         lat = request.form.get("lat")
         lon = request.form.get("lon")
-        tz = request.form.get("tz", "Asia/Kolkata")
+        tz = request.form.get("tz")
 
         try:
+            if not dob or not tob or not place:
+                raise ValueError("Birth date, birth time, and birth place are mandatory.")
+
             from ..api.external import geocode_place
-            if not lat or not lon:
+            if not lat or not lon or not tz:
                 geo = geocode_place(place)
                 if geo:
                     lat, lon, tz = geo["lat"], geo["lon"], geo["timezone"]
                 else:
-                    lat, lon = 28.6139, 77.2090
+                    raise ValueError(f"Could not resolve precise location and timezone for '{place}'. Please provide valid birthplace.")
 
             dt = parse_birth_datetime(dob, tob)
             chart = calculate_canonical_chart(dt, float(lat), float(lon), str(tz))
@@ -93,7 +97,6 @@ def birth_chart_funnel():
 
 @marketing_bp.route("/share/<token>")
 def share_card(token):
-    # Deterministic or token-based share view
     share_info = {
         "title": "Astro Predictions — Vedic Astrology Intelligence",
         "description": "Explore personalized Vedic birth chart, transits, and Dasha timing.",
@@ -105,7 +108,7 @@ def share_card(token):
 @marketing_bp.route("/r/<code_str>")
 def referral(code_str):
     session["referral_code"] = code_str
-    return redirect(url_for("marketing.welcome"))
+    return redirect(url_for("marketing.home"))
 
 @marketing_bp.route("/download")
 def download():
@@ -128,6 +131,14 @@ def privacy():
 @marketing_bp.route("/terms")
 def terms():
     return render_template("marketing/terms.html")
+
+@marketing_bp.route("/refund-policy")
+def refund_policy():
+    return render_template("marketing/refund_policy.html")
+
+@marketing_bp.route("/subscription-policy")
+def subscription_policy():
+    return render_template("marketing/subscription_policy.html")
 
 @marketing_bp.route("/about")
 def about():
@@ -156,6 +167,8 @@ Allow: /learn
 Allow: /download
 Allow: /privacy
 Allow: /terms
+Allow: /refund-policy
+Allow: /subscription-policy
 Allow: /about
 Allow: /contact
 """
@@ -169,7 +182,7 @@ def sitemap_xml():
     xml = ['<?xml version="1.0" encoding="UTF-8"?>']
     xml.append('<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">')
 
-    urls = ["/", "/welcome", "/birth-chart", "/download", "/learn", "/privacy", "/terms", "/about", "/contact"]
+    urls = ["/", "/welcome", "/birth-chart", "/download", "/learn", "/privacy", "/terms", "/refund-policy", "/subscription-policy", "/about", "/contact"]
     for p in SEO_PAGES:
         urls.append(f"/{p}")
     for a in LEARN_ARTICLES:
