@@ -9,34 +9,37 @@ USE_FIREBASE = os.getenv("USE_FIREBASE", "false").lower() == "true"
 if USE_FIREBASE:
     from . import firebase_store as fb
 
-    def save_chart(chart_data: dict) -> str:
-        return fb.save_chart(chart_data)
+    def save_chart(owner_uid: str, chart_data: dict) -> str:
+        return fb.save_chart(owner_uid, chart_data)
 
-    def list_charts() -> list:
-        return fb.list_charts()
+    def list_charts(owner_uid: str) -> list:
+        return fb.list_charts(owner_uid)
 
-    def get_chart(cid: str) -> dict | None:
-        return fb.get_chart(cid)
+    def get_chart(owner_uid: str, cid: str) -> dict | None:
+        return fb.get_chart(owner_uid, cid)
 
-    def delete_chart(cid: str) -> bool:
-        return fb.delete_chart(cid)
+    def delete_chart(owner_uid: str, cid: str) -> bool:
+        return fb.delete_chart(owner_uid, cid)
 
 else:
-    # SQLITE Implementation
-    def save_chart(chart_data: dict) -> str:
-        # Hardened Name Validation (Phase 8)
+    # SQLITE Implementation with strict owner scoping
+    def save_chart(owner_uid: str, chart_data: dict) -> str:
+        if not owner_uid:
+            raise ValueError("AUTHENTICATION_REQUIRED: owner_uid is mandatory for saving a chart.")
         name = chart_data.get("name") or "Native"
         dob = chart_data.get("birth_dob")
         tob = chart_data.get("birth_tob")
+        if not dob or not tob:
+            raise ValueError("DATA_INTEGRITY_ERROR: Birth date and birth time are required.")
 
-        # Duplicate Protection (Phase 9)
-        existing = Chart.query.filter_by(name=name, dob=dob, tob=tob).first()
+        existing = Chart.query.filter_by(owner_uid=owner_uid, name=name, dob=dob, tob=tob).first()
         if existing:
             return existing.id
 
         cid = str(uuid.uuid4())[:8]
         new_chart = Chart(
             id=cid,
+            owner_uid=owner_uid,
             name=name,
             dob=dob,
             tob=tob,
@@ -50,15 +53,17 @@ else:
         db.session.commit()
         return cid
 
-    def list_charts() -> list:
+    def list_charts(owner_uid: str) -> list:
+        if not owner_uid:
+            return []
         try:
-            charts = Chart.query.order_by(Chart.saved_at.desc()).all()
+            charts = Chart.query.filter_by(owner_uid=owner_uid).order_by(Chart.saved_at.desc()).all()
             results = []
             for c in charts:
                 data = c.get_data()
                 data["id"] = c.id
-                data["saved_at"] = c.saved_at.isoformat() if c.saved_at else datetime.now().isoformat()
-                # Ensure keys exist for template
+                data["owner_uid"] = c.owner_uid
+                data["saved_at"] = c.saved_at.isoformat() if c.saved_at else datetime.utcnow().isoformat()
                 data["name"] = data.get("name", c.name or "Unknown")
                 data["birth_datetime"] = data.get("birth_datetime", "")
                 results.append(data)
@@ -66,43 +71,21 @@ else:
         except Exception:
             return []
 
-    def get_chart(cid: str) -> dict | None:
-        c = db.session.get(Chart, cid)
+    def get_chart(owner_uid: str, cid: str) -> dict | None:
+        if not owner_uid:
+            return None
+        c = Chart.query.filter_by(id=cid, owner_uid=owner_uid).first()
         if c:
             data = c.get_data()
             data["id"] = c.id
-
-            # Ensure DOB/TOB are present even if columns were empty (Phase 4 Logic)
-            if c.dob:
-                data["birth_dob"] = c.dob
-                data["birth_tob"] = c.tob
-            elif data.get("birth_datetime"):
-                try:
-                    dt = datetime.fromisoformat(str(data.get("birth_datetime")))
-                    data["birth_dob"] = dt.strftime("%Y-%m-%d")
-                    data["birth_tob"] = dt.strftime("%H:%M")
-                except:
-                    pass
-            elif not data.get("birth_dob") and data.get("birth_datetime"):
-                try:
-                    dt = datetime.fromisoformat(str(data.get("birth_datetime")))
-                    data["birth_dob"] = dt.strftime("%Y-%m-%d")
-                    data["birth_tob"] = dt.strftime("%H:%M")
-                except:
-                    pass
-
-            if not data.get("birth_dob") and c.saved_at:
-                data["birth_dob"] = c.saved_at.strftime("%Y-%m-%d")
-                data["birth_tob"] = "12:00"
-
-            data["latitude"] = c.lat if c.lat is not None else data.get("latitude")
-            data["longitude_coord"] = c.lon if c.lon is not None else data.get("longitude")
-            data["timezone"] = c.tz or data.get("timezone") or "Asia/Kolkata"
+            data["owner_uid"] = c.owner_uid
             return data
         return None
 
-    def delete_chart(cid: str) -> bool:
-        c = Chart.query.get(cid)
+    def delete_chart(owner_uid: str, cid: str) -> bool:
+        if not owner_uid:
+            return False
+        c = Chart.query.filter_by(id=cid, owner_uid=owner_uid).first()
         if c:
             db.session.delete(c)
             db.session.commit()
@@ -112,12 +95,10 @@ else:
     def save_prediction_snapshot(chart_id: str, domain_pred: dict, source_type: str = "UNVERIFIED",
                                  participant_id: str = None, session_id: str = None, group_id: str = "BETA_GROUP_1",
                                  cohort: str = None):
-        """Auto-generate immutable snapshot for tracking. Prevents duplicates within 24h."""
         from ..database.models import PredictionOutcome, db, Chart, Profile
         from datetime import datetime, timedelta
         import json
 
-        # Fetch cohort from profile if not provided
         if not cohort:
             chart = Chart.query.get(chart_id)
             if chart and chart.profile_id:
@@ -125,7 +106,6 @@ else:
                 if profile:
                     cohort = "HOLDOUT" if profile.is_holdout else "VALIDATION"
 
-        # Duplicate check
         existing = PredictionOutcome.query.filter_by(
             chart_id=chart_id,
             domain=domain_pred.get("domain"),
@@ -142,7 +122,7 @@ else:
             group_id=group_id,
             participant_id=participant_id,
             session_id=session_id,
-            engine_version="V3.22", # Premium Transformation
+            engine_version="V3.22",
             calculation_version="CALC-SWE-2.10.3",
             dasha_version="DASHA-VIM-365.2425",
             transit_version="TRANSIT-V3.15",

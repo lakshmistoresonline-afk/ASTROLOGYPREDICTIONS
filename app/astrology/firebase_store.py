@@ -1,29 +1,21 @@
-"""
-Firebase Firestore persistence for Kundli charts.
-Used when deployed to Cloud Run/Firebase.
-"""
 import os
 from datetime import datetime
 from google.cloud import firestore
 
-# Initialize Firestore
-# It will use Application Default Credentials (ADC) in Cloud Run
 def _get_db():
     return firestore.Client()
 
-CHARTS_COLLECTION = os.getenv("FIRESTORE_COLLECTION", "charts")
-
-def save_chart(chart: dict) -> str:
-    """Persist a chart dict to Firestore and return its unique ID."""
+def save_chart(owner_uid: str, chart: dict) -> str:
+    if not owner_uid:
+        raise ValueError("AUTHENTICATION_REQUIRED: owner_uid is mandatory.")
     db = _get_db()
-    cid = chart.get("id") or firestore.INCREMENT  # Firestore will generate ID if not provided
-    doc_ref = db.collection(CHARTS_COLLECTION).document()
+    doc_ref = db.collection("users").document(owner_uid).collection("charts").document()
     cid = doc_ref.id
-    # ...
 
     payload = {
         "id": cid,
-        "saved_at": datetime.now().isoformat(),
+        "owner_uid": owner_uid,
+        "saved_at": datetime.utcnow().isoformat(),
         "name": chart.get("name", "Unknown"),
         "place": chart.get("place", ""),
         "birth_datetime": chart.get("birth_datetime", ""),
@@ -41,11 +33,12 @@ def save_chart(chart: dict) -> str:
     doc_ref.set(payload)
     return cid
 
-def list_charts() -> list:
-    """Return all saved charts from Firestore sorted by saved_at."""
+def list_charts(owner_uid: str) -> list:
+    if not owner_uid:
+        return []
     try:
         db = _get_db()
-        docs = db.collection(CHARTS_COLLECTION).order_by(
+        docs = db.collection("users").document(owner_uid).collection("charts").order_by(
             "saved_at", direction=firestore.Query.DESCENDING
         ).stream()
 
@@ -56,21 +49,24 @@ def list_charts() -> list:
                 d["birth_datetime"] = d.get("birth_datetime", "")
                 results.append(d)
         return results
-    except Exception as e:
-        print(f"Firestore Error: {e}")
+    except Exception:
         return []
 
-def get_chart(cid: str) -> dict | None:
+def get_chart(owner_uid: str, cid: str) -> dict | None:
+    if not owner_uid or not cid:
+        return None
     db = _get_db()
-    doc = db.collection(CHARTS_COLLECTION).document(cid).get()
+    doc = db.collection("users").document(owner_uid).collection("charts").document(cid).get()
     if doc.exists:
         return doc.to_dict()
     return None
 
-def delete_chart(cid: str) -> bool:
+def delete_chart(owner_uid: str, cid: str) -> bool:
+    if not owner_uid or not cid:
+        return False
     try:
         db = _get_db()
-        db.collection(CHARTS_COLLECTION).document(cid).delete()
+        db.collection("users").document(owner_uid).collection("charts").document(cid).delete()
         return True
     except Exception:
         return False

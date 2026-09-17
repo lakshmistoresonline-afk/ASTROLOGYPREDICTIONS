@@ -1,9 +1,16 @@
+import os
 import pytest
 from datetime import datetime
 from app import create_app
 from app.database.models import db, UserAccount, Chart, ReportRecord
 from app.services.auth import verify_firebase_id_token, get_current_user_uid
 from app.astrology.core.calculation_config import calculate_canonical_chart
+
+@pytest.fixture(autouse=True)
+def set_testing_env():
+    os.environ["FLASK_ENV"] = "testing"
+    yield
+    os.environ.pop("FLASK_ENV", None)
 
 @pytest.fixture
 def app_instance():
@@ -21,8 +28,9 @@ def client(app_instance):
         yield client
 
 def test_p04_token_verification():
-    uid = verify_firebase_id_token("mock_token_user_alpha")
-    assert uid == "user_alpha"
+    claims = verify_firebase_id_token("mock_token_user_alpha")
+    assert claims is not None
+    assert claims["uid"] == "user_alpha"
 
     invalid_uid = verify_firebase_id_token(None)
     assert invalid_uid is None
