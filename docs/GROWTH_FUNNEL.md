@@ -1,0 +1,21 @@
+# Astro Predictions — Growth Funnel
+
+```
+TRAFFIC (SEO, Social, Direct, UTM)
+  ↓
+MARKETING HOMEPAGE (/)
+  ↓
+FREE BIRTH CHART FUNNEL (/birth-chart)
+  ↓
+CHART PREVIEW & INSIGHTS
+  ↓
+ACCOUNT CREATION & ACTIVATION
+  ↓
+FREE TIER ENGAGEMENT / ADS
+  ↓
+PAYWALL & PRICING (/pricing)
+  ↓
+ASTRO PLUS SUBSCRIPTION OR PREMIUM REPORT PURCHASE
+  ↓
+RETENTION & REFERRAL (/r/<code>, /share/<token>)
+```
