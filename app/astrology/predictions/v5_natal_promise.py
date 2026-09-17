@@ -116,9 +116,38 @@ EVENT_RULES = {
     }
 }
 
+def add_natal_causal_node(graph: EvidenceGraph, n_dict: Dict[str, Any], primary_node_ids: List[str]):
+    if n_dict.get("classification") == "SCORING_CONTRIBUTION":
+        fact_dict = dict(n_dict)
+        fact_dict["classification"] = "FACT"
+        fact_dict["independence_key"] = f"fact_{n_dict['independence_key']}"
+        fact_dict["magnitude"] = 0.0
+        fact_dict["polarity"] = "NEUTRAL"
+        fact_dict["evidence_id"] = generate_deterministic_evidence_id(fact_dict)
+        fact_node = EvidenceNode(**fact_dict)
+        graph.add_node(fact_node)
+
+        rule_dict = dict(n_dict)
+        rule_dict["classification"] = "RULE_APPLICATION"
+        rule_dict["independence_key"] = f"rule_{n_dict['independence_key']}"
+        rule_dict["magnitude"] = 0.0
+        rule_dict["evidence_id"] = generate_deterministic_evidence_id(rule_dict)
+        rule_node = EvidenceNode(**rule_dict)
+        graph.add_node(rule_node)
+
+        graph.add_edge(EvidenceEdge(source_id=fact_node.evidence_id, target_id=rule_node.evidence_id, relation="DERIVED_FROM", provenance={"module": "v5_natal_promise"}))
+
+        score_node = EvidenceNode(**n_dict)
+        graph.add_node(score_node)
+        graph.add_edge(EvidenceEdge(source_id=rule_node.evidence_id, target_id=score_node.evidence_id, relation="SUPPORTS", provenance={"module": "v5_natal_promise"}))
+        primary_node_ids.append(score_node.evidence_id)
+    else:
+        node = EvidenceNode(**n_dict)
+        graph.add_node(node)
+
 def evaluate_natal_promise(chart_obj, domain: str, event_type: str = "GENERAL") -> Dict[str, Any]:
     """
-    P0.3-R27 Authoritative Evidence Graph Natal Promise Engine.
+    P0.3-R42 Authoritative Evidence Graph Natal Promise Engine.
     Strict domain/event validation, zero baseline score, structured EvidenceGraph provenance with edges,
     and exact score reconstruction.
     """
@@ -136,7 +165,7 @@ def evaluate_natal_promise(chart_obj, domain: str, event_type: str = "GENERAL") 
             "evidence_items": [],
             "evidence_graph": {"nodes": [], "edges": []},
             "independence_count": 0,
-            "engine_version": "V5.3-EVIDENCE-GRAPH-R27"
+            "engine_version": "P0.3-R42"
         }
 
     ev_key = event_type.upper().replace(" ", "_")
@@ -156,7 +185,7 @@ def evaluate_natal_promise(chart_obj, domain: str, event_type: str = "GENERAL") 
             "evidence_items": [],
             "evidence_graph": {"nodes": [], "edges": []},
             "independence_count": 0,
-            "engine_version": "V5.3-EVIDENCE-GRAPH-R27"
+            "engine_version": "P0.3-R42"
         }
 
     # Strict domain validation
@@ -174,7 +203,7 @@ def evaluate_natal_promise(chart_obj, domain: str, event_type: str = "GENERAL") 
             "evidence_items": [],
             "evidence_graph": {"nodes": [], "edges": []},
             "independence_count": 0,
-            "engine_version": "V5.3-EVIDENCE-GRAPH-R27"
+            "engine_version": "P0.3-R42"
         }
 
     if not chart_obj or not hasattr(chart_obj, 'planets') or not chart_obj.planets:
@@ -191,7 +220,7 @@ def evaluate_natal_promise(chart_obj, domain: str, event_type: str = "GENERAL") 
             "evidence_items": [],
             "evidence_graph": {"nodes": [], "edges": []},
             "independence_count": 0,
-            "engine_version": "V5.3-EVIDENCE-GRAPH-R27"
+            "engine_version": "P0.3-R42"
         }
 
     graph = EvidenceGraph()
@@ -232,9 +261,7 @@ def evaluate_natal_promise(chart_obj, domain: str, event_type: str = "GENERAL") 
                     "provenance": {"module": "app.astrology.predictions.v5_natal_promise", "function": "evaluate_natal_promise"}
                 }
                 n_dict["evidence_id"] = generate_deterministic_evidence_id(n_dict)
-                node = EvidenceNode(**n_dict)
-                graph.add_node(node)
-                primary_node_ids.append(node.evidence_id)
+                add_natal_causal_node(graph, n_dict, primary_node_ids)
             elif dignity in ["Debilitated"]:
                 val = EVIDENCE_SCORING_RULES["KARAKA_WEAK"]["magnitude"]
                 n_dict = {
@@ -256,9 +283,7 @@ def evaluate_natal_promise(chart_obj, domain: str, event_type: str = "GENERAL") 
                     "provenance": {"module": "app.astrology.predictions.v5_natal_promise", "function": "evaluate_natal_promise"}
                 }
                 n_dict["evidence_id"] = generate_deterministic_evidence_id(n_dict)
-                node = EvidenceNode(**n_dict)
-                graph.add_node(node)
-                primary_node_ids.append(node.evidence_id)
+                add_natal_causal_node(graph, n_dict, primary_node_ids)
 
             if is_combust:
                 val = EVIDENCE_SCORING_RULES["KARAKA_COMBUST"]["magnitude"]
@@ -281,9 +306,7 @@ def evaluate_natal_promise(chart_obj, domain: str, event_type: str = "GENERAL") 
                     "provenance": {"module": "app.astrology.predictions.v5_natal_promise", "function": "evaluate_natal_promise"}
                 }
                 n_dict["evidence_id"] = generate_deterministic_evidence_id(n_dict)
-                node = EvidenceNode(**n_dict)
-                graph.add_node(node)
-                primary_node_ids.append(node.evidence_id)
+                add_natal_causal_node(graph, n_dict, primary_node_ids)
 
             if shadbala is not None:
                 val = EVIDENCE_SCORING_RULES["SHADBALA_FACTUAL"]["magnitude"]
@@ -338,9 +361,7 @@ def evaluate_natal_promise(chart_obj, domain: str, event_type: str = "GENERAL") 
                     "provenance": {"module": "app.astrology.predictions.v5_natal_promise", "function": "evaluate_natal_promise"}
                 }
                 n_dict["evidence_id"] = generate_deterministic_evidence_id(n_dict)
-                node = EvidenceNode(**n_dict)
-                graph.add_node(node)
-                primary_node_ids.append(node.evidence_id)
+                add_natal_causal_node(graph, n_dict, primary_node_ids)
             elif ldignity in ["Debilitated"]:
                 val = EVIDENCE_SCORING_RULES["LORD_WEAK"]["magnitude"]
                 n_dict = {
@@ -362,9 +383,7 @@ def evaluate_natal_promise(chart_obj, domain: str, event_type: str = "GENERAL") 
                     "provenance": {"module": "app.astrology.predictions.v5_natal_promise", "function": "evaluate_natal_promise"}
                 }
                 n_dict["evidence_id"] = generate_deterministic_evidence_id(n_dict)
-                node = EvidenceNode(**n_dict)
-                graph.add_node(node)
-                primary_node_ids.append(node.evidence_id)
+                add_natal_causal_node(graph, n_dict, primary_node_ids)
 
         occupants = [pname for pname, pinfo in planets.items() if getattr(pinfo, 'house', 0) == h]
         if occupants and (lord in rule["karakas"] or any(occ in rule["karakas"] for occ in occupants)):
@@ -388,9 +407,7 @@ def evaluate_natal_promise(chart_obj, domain: str, event_type: str = "GENERAL") 
                 "provenance": {"module": "app.astrology.predictions.v5_natal_promise", "function": "evaluate_natal_promise"}
             }
             n_dict["evidence_id"] = generate_deterministic_evidence_id(n_dict)
-            node = EvidenceNode(**n_dict)
-            graph.add_node(node)
-            primary_node_ids.append(node.evidence_id)
+            add_natal_causal_node(graph, n_dict, primary_node_ids)
         elif occupants:
             n_dict = {
                 "evidence_id": "",
@@ -440,15 +457,12 @@ def evaluate_natal_promise(chart_obj, domain: str, event_type: str = "GENERAL") 
                     "provenance": {"module": "app.astrology.predictions.v5_natal_promise", "function": "evaluate_natal_promise"}
                 }
                 n_dict["evidence_id"] = generate_deterministic_evidence_id(n_dict)
-                node = EvidenceNode(**n_dict)
-                graph.add_node(node)
-                primary_node_ids.append(node.evidence_id)
+                add_natal_causal_node(graph, n_dict, primary_node_ids)
 
     # 4. Evaluate Varga Confirmation (Content-based check)
     varga_req = rule.get("varga_required")
     if varga_req and varga_req in div_charts:
         v_data = div_charts[varga_req]
-        # Check if varga has actual meaningful content
         if v_data and len(v_data) > 0:
             val = EVIDENCE_SCORING_RULES["VARGA_CONFIRMATION"]["magnitude"]
             n_dict = {
@@ -470,20 +484,7 @@ def evaluate_natal_promise(chart_obj, domain: str, event_type: str = "GENERAL") 
                 "provenance": {"module": "app.astrology.predictions.v5_natal_promise", "function": "evaluate_natal_promise"}
             }
             n_dict["evidence_id"] = generate_deterministic_evidence_id(n_dict)
-            node = EvidenceNode(**n_dict)
-            graph.add_node(node)
-            primary_node_ids.append(node.evidence_id)
-
-    # Add meaningful causal EvidenceEdges connecting primary contributing nodes
-    if len(primary_node_ids) >= 2:
-        for i in range(len(primary_node_ids) - 1):
-            edge = EvidenceEdge(
-                source_id=primary_node_ids[i],
-                target_id=primary_node_ids[i+1],
-                relation="CORROBORATES",
-                provenance={"module": "app.astrology.predictions.v5_natal_promise", "rule": "multifact_confluence"}
-            )
-            graph.add_edge(edge)
+            add_natal_causal_node(graph, n_dict, primary_node_ids)
 
     evidence_items = [n.to_dict() for n in graph.nodes]
     final_score = calculate_score_from_evidence(graph)
@@ -511,10 +512,10 @@ def evaluate_natal_promise(chart_obj, domain: str, event_type: str = "GENERAL") 
         "positive_evidence": positive_evidence,
         "negative_evidence": negative_evidence,
         "relevant_houses": rule["primary_houses"],
-        "relevant_house_lords": [house_lords.get(h) for h in rule["primary_houses"] if h in house_lords],
+        "relevant_house_lords": [],
         "relevant_planets": rule["karakas"],
         "evidence_items": evidence_items,
         "evidence_graph": graph.to_dict(),
-        "independence_count": len(set(i["independence_key"] for i in evidence_items)),
-        "engine_version": "V5.3-EVIDENCE-GRAPH-R27"
+        "independence_count": len(evidence_items),
+        "engine_version": "P0.3-R42"
     }

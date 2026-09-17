@@ -78,79 +78,15 @@ def generate_deterministic_evidence_id(node_dict: Dict[str, Any]) -> str:
 
 def validate_evidence_graph(graph: EvidenceGraph) -> bool:
     """
-    R42 Authoritative Graph Validation:
+    R42 Authoritative Graph Validation (No Auto-Repair for authoritative graphs):
     - Every edge references existing node IDs.
     - Relation must be one of PERMITTED_RELATIONS.
     - No duplicate node IDs.
     - No duplicate edges.
-    - Auto-completes legacy scoring contributions into FACT -> RULE_APPLICATION -> SCORING_CONTRIBUTION.
+    - SCORING_CONTRIBUTION nodes must have valid causal ancestry (FACT -> RULE_APPLICATION -> SCORING_CONTRIBUTION).
+    - No orphan SCORING_CONTRIBUTION nodes.
     - No causal cycles.
     """
-    node_map = {n.evidence_id: n for n in graph.nodes}
-
-    new_nodes = []
-    new_edges = []
-    node_ids = set(node_map.keys())
-
-    for node in list(graph.nodes):
-        if node.classification == "SCORING_CONTRIBUTION":
-            incoming = [e for e in graph.edges if e.target_id == node.evidence_id]
-            if not incoming or not any(node_map.get(e.source_id) and node_map[e.source_id].classification == "RULE_APPLICATION" for e in incoming):
-                fact_id = f"fact_{node.evidence_id}"
-                rule_id = f"rule_{node.evidence_id}"
-                if fact_id not in node_ids:
-                    fact_node = EvidenceNode(
-                        evidence_id=fact_id,
-                        event_type=node.event_type,
-                        domain=node.domain,
-                        evidence_group=node.evidence_group,
-                        independence_key=f"fact_{node.independence_key}",
-                        polarity="NEUTRAL",
-                        classification="FACT",
-                        source_type=node.source_type,
-                        source_path=node.source_path,
-                        source_fact=node.source_fact,
-                        observed_value=node.observed_value,
-                        operator=node.operator,
-                        expected_condition=node.expected_condition,
-                        magnitude=0.0,
-                        rationale=f"Fact underlying {node.rationale}",
-                        provenance=node.provenance,
-                        engine_version=node.engine_version
-                    )
-                    new_nodes.append(fact_node)
-                    node_ids.add(fact_id)
-                if rule_id not in node_ids:
-                    rule_node = EvidenceNode(
-                        evidence_id=rule_id,
-                        event_type=node.event_type,
-                        domain=node.domain,
-                        evidence_group=node.evidence_group,
-                        independence_key=f"rule_{node.independence_key}",
-                        polarity=node.polarity,
-                        classification="RULE_APPLICATION",
-                        source_type=node.source_type,
-                        source_path=node.source_path,
-                        source_fact=node.source_fact,
-                        observed_value=node.observed_value,
-                        operator=node.operator,
-                        expected_condition=node.expected_condition,
-                        magnitude=node.magnitude,
-                        rationale=f"Rule application for {node.rationale}",
-                        provenance=node.provenance,
-                        engine_version=node.engine_version
-                    )
-                    new_nodes.append(rule_node)
-                    node_ids.add(rule_id)
-
-                new_edges.append(EvidenceEdge(source_id=fact_id, target_id=rule_id, relation="DERIVED_FROM", provenance={"module": "evidence_autolink"}))
-                new_edges.append(EvidenceEdge(source_id=rule_id, target_id=node.evidence_id, relation="SUPPORTS", provenance={"module": "evidence_autolink"}))
-
-    for nn in new_nodes:
-        graph.add_node(nn)
-    for ne in new_edges:
-        graph.add_edge(ne)
-
     node_map = {n.evidence_id: n for n in graph.nodes}
     node_ids = set(node_map.keys())
     if len(node_ids) != len(graph.nodes):
@@ -194,6 +130,15 @@ def validate_evidence_graph(graph: EvidenceGraph) -> bool:
             if dfs(n_id):
                 raise ValueError("INVALID_EVIDENCE_GRAPH: Causal cycle detected in evidence graph.")
 
+    for node in graph.nodes:
+        if node.classification == "SCORING_CONTRIBUTION":
+            parents = incoming.get(node.evidence_id, [])
+            if not parents:
+                raise ValueError(f"INVALID_EVIDENCE_GRAPH: Orphan SCORING_CONTRIBUTION node without causal edges: {node.evidence_id}")
+            has_rule_parent = any(node_map.get(p) and node_map[p].classification == "RULE_APPLICATION" for p in parents)
+            if not has_rule_parent:
+                raise ValueError(f"INVALID_EVIDENCE_GRAPH: SCORING_CONTRIBUTION without RULE_APPLICATION ancestry: {node.evidence_id}")
+
     return True
 
 def calculate_score_from_graph(graph: EvidenceGraph) -> float:
@@ -218,9 +163,9 @@ def calculate_score_from_graph(graph: EvidenceGraph) -> float:
                 p_node = node_map.get(p)
                 if p_node and p_node.classification == "RULE_APPLICATION":
                     rule_parents = incoming.get(p, [])
-                    if any(node_map.get(rp) and node_map[rp].classification == "FACT" for rp in rule_parents) or len(graph.nodes) <= 3:
+                    if any(node_map.get(rp) and node_map[rp].classification == "FACT" for rp in rule_parents):
                         has_valid_ancestry = True
-            if has_valid_ancestry or len(graph.nodes) <= 2:
+            if has_valid_ancestry:
                 valid_scoring_nodes.append(node)
 
     group_totals: Dict[str, float] = {}
@@ -243,8 +188,8 @@ def calculate_score_from_graph(graph: EvidenceGraph) -> float:
 
 def calculate_score_from_evidence(evidence_graph_or_items: Any) -> float:
     """
-    Authoritative score reconstruction supporting EvidenceGraph, EvidenceNode list, or raw legacy dict list.
-    Delegates strictly to calculate_score_from_graph.
+    Authoritative compatibility adapter wrapping legacy flat evidence item lists into valid causal graphs
+    and delegating strictly to calculate_score_from_graph.
     """
     if isinstance(evidence_graph_or_items, EvidenceGraph):
         return calculate_score_from_graph(evidence_graph_or_items)
@@ -297,6 +242,36 @@ def calculate_score_from_evidence(evidence_graph_or_items: Any) -> float:
             if n_dict["evidence_id"] in seen_ids:
                 n_dict["evidence_id"] = f"{n_dict['evidence_id']}_{idx}"
             seen_ids.add(n_dict["evidence_id"])
-            graph.add_node(EvidenceNode(**n_dict))
+
+            fact_id = f"fact_{n_dict['evidence_id']}"
+            rule_id = f"rule_{n_dict['evidence_id']}"
+            score_id = n_dict['evidence_id']
+
+            fact_node = EvidenceNode(
+                evidence_id=fact_id, event_type=n_dict['event_type'], domain=n_dict['domain'],
+                evidence_group=n_dict['evidence_group'], independence_key=f"fact_{n_dict['independence_key']}",
+                polarity="NEUTRAL", classification="FACT", source_type=n_dict['source_type'],
+                source_path=n_dict['source_path'], source_fact=n_dict['source_fact'],
+                observed_value=n_dict['observed_value'], operator=n_dict['operator'],
+                expected_condition=n_dict['expected_condition'], magnitude=0.0,
+                rationale=f"Fact for {n_dict['rationale']}", provenance=n_dict['provenance'], engine_version="P0.3-R42"
+            )
+            rule_node = EvidenceNode(
+                evidence_id=rule_id, event_type=n_dict['event_type'], domain=n_dict['domain'],
+                evidence_group=n_dict['evidence_group'], independence_key=f"rule_{n_dict['independence_key']}",
+                polarity=n_dict['polarity'], classification="RULE_APPLICATION", source_type=n_dict['source_type'],
+                source_path=n_dict['source_path'], source_fact=n_dict['source_fact'],
+                observed_value=n_dict['observed_value'], operator=n_dict['operator'],
+                expected_condition=n_dict['expected_condition'], magnitude=0.0,
+                rationale=f"Rule for {n_dict['rationale']}", provenance=n_dict['provenance'], engine_version="P0.3-R42"
+            )
+            score_node = EvidenceNode(**n_dict)
+
+            graph.add_node(fact_node)
+            graph.add_node(rule_node)
+            graph.add_node(score_node)
+            graph.add_edge(EvidenceEdge(source_id=fact_id, target_id=rule_id, relation="DERIVED_FROM", provenance={"module": "adapter"}))
+            graph.add_edge(EvidenceEdge(source_id=rule_id, target_id=score_id, relation="SUPPORTS", provenance={"module": "adapter"}))
+
         return calculate_score_from_graph(graph)
     return 0.0

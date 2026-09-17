@@ -1,7 +1,7 @@
 import pytest
 from datetime import datetime
 from app.astrology.core.calculation_config import calculate_canonical_chart
-from app.astrology.predictions.evidence import EvidenceNode, EvidenceGraph, calculate_score_from_evidence
+from app.astrology.predictions.evidence import EvidenceNode, EvidenceEdge, EvidenceGraph, calculate_score_from_evidence
 from app.astrology.predictions.v5_natal_promise import evaluate_natal_promise, EVENT_RULES
 from app.astrology.predictions.request import normalize_prediction_request, prediction_request_fingerprint
 from app.astrology.predictions.engine import generate_evidence_based_predictions, PREDICTION_ENGINE_VERSION
@@ -26,6 +26,8 @@ def test_p03_r26_score_reconstruction_from_graph():
     eg = EvidenceGraph()
     for n_dict in res["evidence_graph"]["nodes"]:
         eg.add_node(EvidenceNode(**n_dict))
+    for e_dict in res["evidence_graph"]["edges"]:
+        eg.add_edge(EvidenceEdge(**e_dict))
     recomputed = calculate_score_from_evidence(eg)
     assert recomputed == res["promise_score"]
 
