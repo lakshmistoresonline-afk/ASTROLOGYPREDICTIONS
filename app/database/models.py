@@ -82,14 +82,11 @@ class PredictionOutcome(db.Model):
     proximity_weight = db.Column(db.Float) # V3.14 metric
 
     # Outcome Record
-    # OCCURRED, PARTIALLY_OCCURRED, DID_NOT_OCCUR, UNKNOWN, PENDING
     status = db.Column(db.String(30), default="PENDING")
     actual_event_date = db.Column(db.String(20))
     actual_event_end_date = db.Column(db.String(20))
     event_description = db.Column(db.Text)
 
-    # Verification Level (V3.15)
-    # SELF_REPORTED, PRACTITIONER_VERIFIED, DOCUMENTED, INDEPENDENTLY_VERIFIED
     verification_level = db.Column(db.String(30), default="SELF_REPORTED")
 
     # Metrics
@@ -157,7 +154,6 @@ class TimelineEventSnapshot(db.Model):
     status = db.Column(db.String(30)) # PAST_RECONSTRUCTION, etc.
     engine_version = db.Column(db.String(20), default="V3.17")
 
-    # Outcome tracking
     actual_event_date = db.Column(db.String(20))
     matching_status = db.Column(db.String(30), default="UNKNOWN")
     timing_error_days = db.Column(db.Integer)
@@ -165,4 +161,74 @@ class TimelineEventSnapshot(db.Model):
     integrity_reason = db.Column(db.String(100))
 
     cohort = db.Column(db.String(30)) # TRAINING, VALIDATION, HOLDOUT
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+# Monetization & Commercial Models (Master Commercialization Phase)
+
+class UserAccount(db.Model):
+    __tablename__ = 'user_accounts'
+    id = db.Column(db.Integer, primary_key=True)
+    email = db.Column(db.String(120), unique=True, nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    subscriptions = db.relationship('SubscriptionRecord', backref='user', lazy=True)
+    orders = db.relationship('OrderRecord', backref='user', lazy=True)
+    entitlements = db.relationship('EntitlementRecord', backref='user', lazy=True)
+
+class SubscriptionRecord(db.Model):
+    __tablename__ = 'subscription_records'
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user_accounts.id'), nullable=False)
+    provider = db.Column(db.String(30), default="razorpay") # razorpay, google_play, stripe
+    provider_subscription_id = db.Column(db.String(100), unique=True)
+    status = db.Column(db.String(30), default="active") # active, trialing, past_due, canceled, expired
+    plan_type = db.Column(db.String(30), default="plus_monthly")
+    renews_at = db.Column(db.DateTime)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+class OrderRecord(db.Model):
+    __tablename__ = 'order_records'
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user_accounts.id'), nullable=True)
+    product_id = db.Column(db.String(50), nullable=False)
+    amount = db.Column(db.Float, nullable=False)
+    currency = db.Column(db.String(10), default="INR")
+    status = db.Column(db.String(30), default="pending") # pending, paid, failed, refunded
+    provider_order_id = db.Column(db.String(100), unique=True)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+class PaymentRecord(db.Model):
+    __tablename__ = 'payment_records'
+    id = db.Column(db.Integer, primary_key=True)
+    order_id = db.Column(db.Integer, db.ForeignKey('order_records.id'), nullable=False)
+    provider_payment_id = db.Column(db.String(100), unique=True)
+    status = db.Column(db.String(30), default="success")
+    amount = db.Column(db.Float, nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+class EntitlementRecord(db.Model):
+    __tablename__ = 'entitlement_records'
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user_accounts.id'), nullable=False)
+    feature_name = db.Column(db.String(50), nullable=False) # plus_access, report_career, ad_free
+    expires_at = db.Column(db.DateTime)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+class AttributionRecord(db.Model):
+    __tablename__ = 'attribution_records'
+    id = db.Column(db.Integer, primary_key=True)
+    anonymous_id = db.Column(db.String(64), index=True)
+    first_touch_source = db.Column(db.String(50), default="direct")
+    first_touch_medium = db.Column(db.String(50), default="none")
+    last_touch_source = db.Column(db.String(50), default="direct")
+    last_touch_medium = db.Column(db.String(50), default="none")
+    campaign = db.Column(db.String(100))
+    referral_code = db.Column(db.String(50))
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+class AnalyticsEventLog(db.Model):
+    __tablename__ = 'analytics_event_logs'
+    id = db.Column(db.Integer, primary_key=True)
+    event_name = db.Column(db.String(50), nullable=False, index=True)
+    anonymous_id = db.Column(db.String(64))
+    properties_json = db.Column(db.Text)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
