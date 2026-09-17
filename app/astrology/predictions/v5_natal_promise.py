@@ -1,5 +1,6 @@
 from typing import Dict, Any, List, Optional
-from .evidence import EvidenceNode, EvidenceEdge, EvidenceGraph, calculate_score_from_evidence, generate_deterministic_evidence_id, EVIDENCE_SCORING_RULES
+from .evidence import EvidenceNode, EvidenceEdge, EvidenceGraph, calculate_score_from_evidence, generate_deterministic_evidence_id
+from .scoring_registry import SCORING_RULES
 
 EVENT_RULES = {
     "PROMOTION": {
@@ -241,7 +242,7 @@ def evaluate_natal_promise(chart_obj, domain: str, event_type: str = "GENERAL") 
             shadbala = getattr(pdata, 'shadbala_score', None)
 
             if dignity in ["Exalted", "Moolatrikona", "Own Sign"]:
-                val = EVIDENCE_SCORING_RULES["KARAKA_STRONG"]["magnitude"]
+                val = SCORING_RULES["R42-KARAKA-STRONG"]["magnitude"]
                 n_dict = {
                     "evidence_id": "",
                     "event_type": ev_key,
@@ -258,12 +259,12 @@ def evaluate_natal_promise(chart_obj, domain: str, event_type: str = "GENERAL") 
                     "expected_condition": "Exalted, Moolatrikona, Own Sign",
                     "magnitude": val,
                     "rationale": f"Event significator {k} has strong dignity ({dignity}).",
-                    "provenance": {"module": "app.astrology.predictions.v5_natal_promise", "function": "evaluate_natal_promise"}
+                    "provenance": {"module": "app.astrology.predictions.v5_natal_promise", "function": "evaluate_natal_promise", "rule_id": "R42-KARAKA-STRONG", "registry_version": "P0.3-R42"}
                 }
                 n_dict["evidence_id"] = generate_deterministic_evidence_id(n_dict)
                 add_natal_causal_node(graph, n_dict, primary_node_ids)
             elif dignity in ["Debilitated"]:
-                val = EVIDENCE_SCORING_RULES["KARAKA_WEAK"]["magnitude"]
+                val = SCORING_RULES["R42-KARAKA-WEAK"]["magnitude"]
                 n_dict = {
                     "evidence_id": "",
                     "event_type": ev_key,
@@ -280,13 +281,13 @@ def evaluate_natal_promise(chart_obj, domain: str, event_type: str = "GENERAL") 
                     "expected_condition": "Not Debilitated",
                     "magnitude": val,
                     "rationale": f"Event significator {k} is debilitated.",
-                    "provenance": {"module": "app.astrology.predictions.v5_natal_promise", "function": "evaluate_natal_promise"}
+                    "provenance": {"module": "app.astrology.predictions.v5_natal_promise", "function": "evaluate_natal_promise", "rule_id": "R42-KARAKA-WEAK", "registry_version": "P0.3-R42"}
                 }
                 n_dict["evidence_id"] = generate_deterministic_evidence_id(n_dict)
                 add_natal_causal_node(graph, n_dict, primary_node_ids)
 
             if is_combust:
-                val = EVIDENCE_SCORING_RULES["KARAKA_COMBUST"]["magnitude"]
+                val = SCORING_RULES["R42-KARAKA-COMBUST"]["magnitude"]
                 n_dict = {
                     "evidence_id": "",
                     "event_type": ev_key,
@@ -303,13 +304,13 @@ def evaluate_natal_promise(chart_obj, domain: str, event_type: str = "GENERAL") 
                     "expected_condition": "Not Combust",
                     "magnitude": val,
                     "rationale": f"Event significator {k} is combust.",
-                    "provenance": {"module": "app.astrology.predictions.v5_natal_promise", "function": "evaluate_natal_promise"}
+                    "provenance": {"module": "app.astrology.predictions.v5_natal_promise", "function": "evaluate_natal_promise", "rule_id": "R42-KARAKA-COMBUST", "registry_version": "P0.3-R42"}
                 }
                 n_dict["evidence_id"] = generate_deterministic_evidence_id(n_dict)
                 add_natal_causal_node(graph, n_dict, primary_node_ids)
 
             if shadbala is not None:
-                val = EVIDENCE_SCORING_RULES["SHADBALA_FACTUAL"]["magnitude"]
+                val = SCORING_RULES["R42-SHADBALA-FACTUAL"]["magnitude"]
                 n_dict = {
                     "evidence_id": "",
                     "event_type": ev_key,
@@ -326,7 +327,7 @@ def evaluate_natal_promise(chart_obj, domain: str, event_type: str = "GENERAL") 
                     "expected_condition": "Factual Exposure",
                     "magnitude": val,
                     "rationale": f"Event significator {k} raw Shadbala score is {shadbala:.2f}.",
-                    "provenance": {"module": "app.astrology.predictions.v5_natal_promise", "function": "evaluate_natal_promise"}
+                    "provenance": {"module": "app.astrology.predictions.v5_natal_promise", "function": "evaluate_natal_promise", "rule_id": "R42-SHADBALA-FACTUAL", "registry_version": "P0.3-R42"}
                 }
                 n_dict["evidence_id"] = generate_deterministic_evidence_id(n_dict)
                 node = EvidenceNode(**n_dict)
@@ -341,7 +342,7 @@ def evaluate_natal_promise(chart_obj, domain: str, event_type: str = "GENERAL") 
             lhouse = getattr(lp, 'house', 1)
 
             if ldignity in ["Exalted", "Moolatrikona", "Own Sign"]:
-                val = EVIDENCE_SCORING_RULES["LORD_STRONG"]["magnitude"]
+                val = SCORING_RULES["R42-LORD-STRONG"]["magnitude"]
                 n_dict = {
                     "evidence_id": "",
                     "event_type": ev_key,
@@ -358,12 +359,12 @@ def evaluate_natal_promise(chart_obj, domain: str, event_type: str = "GENERAL") 
                     "expected_condition": "Strong Dignity",
                     "magnitude": val,
                     "rationale": f"Primary house {h} lord ({lord}) is strong ({ldignity}).",
-                    "provenance": {"module": "app.astrology.predictions.v5_natal_promise", "function": "evaluate_natal_promise"}
+                    "provenance": {"module": "app.astrology.predictions.v5_natal_promise", "function": "evaluate_natal_promise", "rule_id": "R42-LORD-STRONG", "registry_version": "P0.3-R42"}
                 }
                 n_dict["evidence_id"] = generate_deterministic_evidence_id(n_dict)
                 add_natal_causal_node(graph, n_dict, primary_node_ids)
             elif ldignity in ["Debilitated"]:
-                val = EVIDENCE_SCORING_RULES["LORD_WEAK"]["magnitude"]
+                val = SCORING_RULES["R42-LORD-WEAK"]["magnitude"]
                 n_dict = {
                     "evidence_id": "",
                     "event_type": ev_key,
@@ -380,14 +381,14 @@ def evaluate_natal_promise(chart_obj, domain: str, event_type: str = "GENERAL") 
                     "expected_condition": "Not Debilitated",
                     "magnitude": val,
                     "rationale": f"Primary house {h} lord ({lord}) is debilitated.",
-                    "provenance": {"module": "app.astrology.predictions.v5_natal_promise", "function": "evaluate_natal_promise"}
+                    "provenance": {"module": "app.astrology.predictions.v5_natal_promise", "function": "evaluate_natal_promise", "rule_id": "R42-LORD-WEAK", "registry_version": "P0.3-R42"}
                 }
                 n_dict["evidence_id"] = generate_deterministic_evidence_id(n_dict)
                 add_natal_causal_node(graph, n_dict, primary_node_ids)
 
         occupants = [pname for pname, pinfo in planets.items() if getattr(pinfo, 'house', 0) == h]
         if occupants and (lord in rule["karakas"] or any(occ in rule["karakas"] for occ in occupants)):
-            val = EVIDENCE_SCORING_RULES["HOUSE_OCCUPANCY"]["magnitude"]
+            val = SCORING_RULES["R42-HOUSE-OCCUPANCY"]["magnitude"]
             n_dict = {
                 "evidence_id": "",
                 "event_type": ev_key,
@@ -404,7 +405,7 @@ def evaluate_natal_promise(chart_obj, domain: str, event_type: str = "GENERAL") 
                 "expected_condition": "Event-Relevant Occupants",
                 "magnitude": val,
                 "rationale": f"Primary house {h} is tenanted by event-relevant factors.",
-                "provenance": {"module": "app.astrology.predictions.v5_natal_promise", "function": "evaluate_natal_promise"}
+                "provenance": {"module": "app.astrology.predictions.v5_natal_promise", "function": "evaluate_natal_promise", "rule_id": "R42-HOUSE-OCCUPANCY", "registry_version": "P0.3-R42"}
             }
             n_dict["evidence_id"] = generate_deterministic_evidence_id(n_dict)
             add_natal_causal_node(graph, n_dict, primary_node_ids)
@@ -425,7 +426,7 @@ def evaluate_natal_promise(chart_obj, domain: str, event_type: str = "GENERAL") 
                 "expected_condition": "Factual Occupancy",
                 "magnitude": 0.0,
                 "rationale": f"Primary house {h} is occupied by {', '.join(occupants)}.",
-                "provenance": {"module": "app.astrology.predictions.v5_natal_promise", "function": "evaluate_natal_promise"}
+                "provenance": {"module": "app.astrology.predictions.v5_natal_promise", "function": "evaluate_natal_promise", "rule_id": "R42-HOUSE-STRUCTURE", "registry_version": "P0.3-R42"}
             }
             n_dict["evidence_id"] = generate_deterministic_evidence_id(n_dict)
             node = EvidenceNode(**n_dict)
@@ -437,7 +438,7 @@ def evaluate_natal_promise(chart_obj, domain: str, event_type: str = "GENERAL") 
             y_name = y.get("name", "") if isinstance(y, dict) else getattr(y, 'name', '')
             y_planets = y.get("planets", []) if isinstance(y, dict) else getattr(y, 'planets', [])
             if y_name and any(k in y_planets for k in rule["karakas"]):
-                val = EVIDENCE_SCORING_RULES["YOGA_SUPPORT"]["magnitude"]
+                val = SCORING_RULES["R42-YOGA-SUPPORT"]["magnitude"]
                 n_dict = {
                     "evidence_id": "",
                     "event_type": ev_key,
@@ -454,7 +455,7 @@ def evaluate_natal_promise(chart_obj, domain: str, event_type: str = "GENERAL") 
                     "expected_condition": "Active Formation",
                     "magnitude": val,
                     "rationale": f"Chart exhibits Yoga formation involving event karakas: {y_name}.",
-                    "provenance": {"module": "app.astrology.predictions.v5_natal_promise", "function": "evaluate_natal_promise"}
+                    "provenance": {"module": "app.astrology.predictions.v5_natal_promise", "function": "evaluate_natal_promise", "rule_id": "R42-YOGA-SUPPORT", "registry_version": "P0.3-R42"}
                 }
                 n_dict["evidence_id"] = generate_deterministic_evidence_id(n_dict)
                 add_natal_causal_node(graph, n_dict, primary_node_ids)
@@ -464,7 +465,7 @@ def evaluate_natal_promise(chart_obj, domain: str, event_type: str = "GENERAL") 
     if varga_req and varga_req in div_charts:
         v_data = div_charts[varga_req]
         if v_data and len(v_data) > 0:
-            val = EVIDENCE_SCORING_RULES["VARGA_CONFIRMATION"]["magnitude"]
+            val = SCORING_RULES["R42-VARGA-CONFIRMATION"]["magnitude"]
             n_dict = {
                 "evidence_id": "",
                 "event_type": ev_key,
@@ -481,7 +482,7 @@ def evaluate_natal_promise(chart_obj, domain: str, event_type: str = "GENERAL") 
                 "expected_condition": "Computed Chart Content",
                 "magnitude": val,
                 "rationale": f"Divisional chart {varga_req} content corroborates structural baseline.",
-                "provenance": {"module": "app.astrology.predictions.v5_natal_promise", "function": "evaluate_natal_promise"}
+                "provenance": {"module": "app.astrology.predictions.v5_natal_promise", "function": "evaluate_natal_promise", "rule_id": "R42-VARGA-CONFIRMATION", "registry_version": "P0.3-R42"}
             }
             n_dict["evidence_id"] = generate_deterministic_evidence_id(n_dict)
             add_natal_causal_node(graph, n_dict, primary_node_ids)
