@@ -9,9 +9,10 @@ def client():
     app.config["TESTING"] = True
     app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///:memory:"
     with app.app_context():
+        db.drop_all()
         db.create_all()
         # Create test user
-        user = UserAccount(email="test@astropredictions.app")
+        user = UserAccount(firebase_uid="uid_test", email="test@astropredictions.app")
         db.session.add(user)
         db.session.commit()
         with app.test_client() as client:
@@ -41,12 +42,18 @@ def test_checkout_and_fulfillment(client):
 def test_attribution_service():
     app = create_app()
     with app.app_context():
+        db.drop_all()
+        db.create_all()
         AttributionService.record("anon_xyz", "google", "cpc", "launch", "ref123")
+        db.drop_all()
 
 def test_analytics_service():
     app = create_app()
     with app.app_context():
+        db.drop_all()
+        db.create_all()
         AnalyticsService.log_event("landing_view", "anon_xyz", {"dob": "1990-09-10", "page": "home"})
+        db.drop_all()
 
 def test_protected_v315_hashes_commercial():
     import hashlib

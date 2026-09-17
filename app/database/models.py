@@ -15,6 +15,7 @@ class Profile(db.Model):
 class Chart(db.Model):
     __tablename__ = 'charts'
     id = db.Column(db.String(36), primary_key=True)
+    owner_uid = db.Column(db.String(128), index=True, nullable=True) # Firebase UID ownership bridge
     profile_id = db.Column(db.Integer, db.ForeignKey('profiles.id'), nullable=True)
     name = db.Column(db.String(100))
     dob = db.Column(db.String(20))
@@ -41,12 +42,10 @@ class PredictionOutcome(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     chart_id = db.Column(db.String(36), db.ForeignKey('charts.id'), nullable=False)
 
-    # Beta Governance (V3.15)
     group_id = db.Column(db.String(20), default="BETA_GROUP_1")
     participant_id = db.Column(db.String(50))
     session_id = db.Column(db.String(50))
 
-    # Engine Versions
     engine_version = db.Column(db.String(20), default="V3.15")
     calculation_version = db.Column(db.String(50))
     dasha_version = db.Column(db.String(50))
@@ -57,31 +56,29 @@ class PredictionOutcome(db.Model):
 
     domain = db.Column(db.String(50), nullable=False)
     event_type = db.Column(db.String(50))
-    event_magnitude = db.Column(db.String(20)) # EXCEPTIONAL, MAJOR, MODERATE
+    event_magnitude = db.Column(db.String(20))
     what_may_develop = db.Column(db.Text)
 
-    prediction_strength = db.Column(db.String(20)) # WATCH, ACTIVE, PEAK
-    engine_confidence = db.Column(db.String(20)) # LOW, MODERATE, HIGH, EXTREME
+    prediction_strength = db.Column(db.String(20))
+    engine_confidence = db.Column(db.String(20))
 
-    signal_score = db.Column(db.Float) # V3.22: 0-1.0 signal strength
+    signal_score = db.Column(db.Float)
     quality_score = db.Column(db.Float)
     calibrated_probability = db.Column(db.Float)
 
     prediction_text = db.Column(db.Text, nullable=False)
-    possible_manifestations = db.Column(db.Text) # JSON list
-    confirmation_criteria = db.Column(db.Text) # JSON list
-    what_to_do = db.Column(db.Text) # Actionable guidance
-    remedy_text = db.Column(db.Text) # Recommended remedy
-    evidence_snapshot = db.Column(db.Text) # JSON string of all evidence items
+    possible_manifestations = db.Column(db.Text)
+    confirmation_criteria = db.Column(db.Text)
+    what_to_do = db.Column(db.Text)
+    remedy_text = db.Column(db.Text)
+    evidence_snapshot = db.Column(db.Text)
 
-    # Timing Snapshot
     start_date = db.Column(db.String(20))
     peak_date = db.Column(db.String(20))
     end_date = db.Column(db.String(20))
-    timing_phase = db.Column(db.String(30)) # V3.15: SCANNING, PEAK_MANIFESTATION, etc.
-    proximity_weight = db.Column(db.Float) # V3.14 metric
+    timing_phase = db.Column(db.String(30))
+    proximity_weight = db.Column(db.Float)
 
-    # Outcome Record
     status = db.Column(db.String(30), default="PENDING")
     actual_event_date = db.Column(db.String(20))
     actual_event_end_date = db.Column(db.String(20))
@@ -89,20 +86,19 @@ class PredictionOutcome(db.Model):
 
     verification_level = db.Column(db.String(30), default="SELF_REPORTED")
 
-    # Metrics
-    timing_quality = db.Column(db.String(30)) # PEAK_HIT, ACTIVE_WINDOW_HIT, etc.
+    timing_quality = db.Column(db.String(30))
     timing_error_days = db.Column(db.Integer)
-    lead_time_days = db.Column(db.Integer) # actual_event_date - created_at
+    lead_time_days = db.Column(db.Integer)
 
-    user_reported_confidence = db.Column(db.Integer) # 1-5
+    user_reported_confidence = db.Column(db.Integer)
     user_notes = db.Column(db.Text)
-    practitioner_feedback = db.Column(db.Text) # JSON string of feedback categories
+    practitioner_feedback = db.Column(db.Text)
 
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     reported_at = db.Column(db.DateTime)
 
     source_type = db.Column(db.String(30), default="BETA_SESSION")
-    cohort = db.Column(db.String(30)) # TRAINING, VALIDATION, HOLDOUT
+    cohort = db.Column(db.String(30))
     integrity_reason = db.Column(db.String(100))
     matching_version = db.Column(db.String(30))
 
@@ -133,7 +129,7 @@ class RemedyTask(db.Model):
 
 class TimelineEventSnapshot(db.Model):
     __tablename__ = 'timeline_event_snapshots'
-    id = db.Column(db.String(36), primary_key=True) # event_id from TimelineEvent
+    id = db.Column(db.String(36), primary_key=True)
     chart_id = db.Column(db.String(36), db.ForeignKey('charts.id'), nullable=False)
     domain = db.Column(db.String(50), nullable=False)
     event_type = db.Column(db.String(100))
@@ -151,7 +147,7 @@ class TimelineEventSnapshot(db.Model):
     evidence_snapshot = db.Column(db.Text)
     why_now = db.Column(db.Text)
 
-    status = db.Column(db.String(30)) # PAST_RECONSTRUCTION, etc.
+    status = db.Column(db.String(30))
     engine_version = db.Column(db.String(20), default="V3.17")
 
     actual_event_date = db.Column(db.String(20))
@@ -160,15 +156,31 @@ class TimelineEventSnapshot(db.Model):
     matching_version = db.Column(db.String(30))
     integrity_reason = db.Column(db.String(100))
 
-    cohort = db.Column(db.String(30)) # TRAINING, VALIDATION, HOLDOUT
+    cohort = db.Column(db.String(30))
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
-# Monetization & Commercial Models (Master Commercialization Phase)
+# Durable Immutable Report Persistence (P0.4)
+class ReportRecord(db.Model):
+    __tablename__ = 'report_records'
+    report_id = db.Column(db.String(36), primary_key=True)
+    owner_uid = db.Column(db.String(128), index=True, nullable=False)
+    chart_id = db.Column(db.String(36), nullable=False)
+    report_type = db.Column(db.String(50), nullable=False)
+    title = db.Column(db.String(200))
+    content_json = db.Column(db.Text, nullable=False)
+    evidence_snapshot_json = db.Column(db.Text)
+    engine_version = db.Column(db.String(20), default="P0.3-R42")
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
+# Monetization & Commercial Models
 class UserAccount(db.Model):
     __tablename__ = 'user_accounts'
     id = db.Column(db.Integer, primary_key=True)
-    email = db.Column(db.String(120), unique=True, nullable=False)
+    firebase_uid = db.Column(db.String(128), unique=True, index=True, nullable=False)
+    email = db.Column(db.String(120))
+    email_verified = db.Column(db.Boolean, default=False)
+    display_name = db.Column(db.String(100))
+    status = db.Column(db.String(30), default="active")
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     subscriptions = db.relationship('SubscriptionRecord', backref='user', lazy=True)
     orders = db.relationship('OrderRecord', backref='user', lazy=True)
@@ -178,9 +190,9 @@ class SubscriptionRecord(db.Model):
     __tablename__ = 'subscription_records'
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user_accounts.id'), nullable=False)
-    provider = db.Column(db.String(30), default="razorpay") # razorpay, google_play, stripe
+    provider = db.Column(db.String(30), default="razorpay")
     provider_subscription_id = db.Column(db.String(100), unique=True)
-    status = db.Column(db.String(30), default="active") # active, trialing, past_due, canceled, expired
+    status = db.Column(db.String(30), default="active")
     plan_type = db.Column(db.String(30), default="plus_monthly")
     renews_at = db.Column(db.DateTime)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
@@ -192,7 +204,7 @@ class OrderRecord(db.Model):
     product_id = db.Column(db.String(50), nullable=False)
     amount = db.Column(db.Float, nullable=False)
     currency = db.Column(db.String(10), default="INR")
-    status = db.Column(db.String(30), default="pending") # pending, paid, failed, refunded
+    status = db.Column(db.String(30), default="pending")
     provider_order_id = db.Column(db.String(100), unique=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
@@ -209,7 +221,7 @@ class EntitlementRecord(db.Model):
     __tablename__ = 'entitlement_records'
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user_accounts.id'), nullable=False)
-    feature_name = db.Column(db.String(50), nullable=False) # plus_access, report_career, ad_free
+    feature_name = db.Column(db.String(50), nullable=False)
     expires_at = db.Column(db.DateTime)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
