@@ -1,6 +1,7 @@
 {
-  "name": "Jyotish Dashboard 2.0",
-  "short_name": "Jyotish",
+  "name": "Astro Predictions",
+  "short_name": "Astro",
+  "description": "Vedic Astrology Intelligence",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#0d0820",

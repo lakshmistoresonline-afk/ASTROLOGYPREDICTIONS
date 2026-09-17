@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Free Vedic Birth Chart Calculator — Astro Predictions</title>
+    <meta name="description" content="Generate your free Vedic astrology birth chart, Lagna, Moon sign, Nakshatra and Dasha overview instantly.">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { background: #0b091a; color: #f1f1f1; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        .card-custom { background: #15102a; border: 1px solid #2d2254; border-radius: 15px; color: #fff; padding: 40px; }
+        .btn-gold { background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%); color: #0b091a; font-weight: bold; border: none; padding: 12px 30px; border-radius: 30px; }
+        a { color: #FFD700; text-decoration: none; }
+        a:hover { color: #FFA500; }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-transparent">
+        <div class="container">
+            <a class="navbar-brand fw-bold text-warning" href="/welcome"><i class="fas fa-star-of-life me-2"></i>Astro Predictions</a>
+            <div class="ms-auto"><a href="/download" class="btn btn-outline-warning btn-sm rounded-pill px-3">Get App</a></div>
+        </div>
+    </nav>
+
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-7">
+                <div class="card-custom shadow-lg">
+                    <h1 class="h3 fw-bold mb-3 text-warning"><i class="fas fa-chart-pie me-2"></i>Free Vedic Birth Chart Generator</h1>
+                    <p class="text-muted mb-4">Enter your precise birth details to compute your Lagna, Moon sign, Nakshatra, and Dasha overview.</p>
+
+                    {% if error_msg %}
+                    <div class="alert alert-danger" role="alert">{{ error_msg }}</div>
+                    {% endif %}
+
+                    {% if preview_data %}
+                    <div class="alert alert-success bg-dark border-warning text-light" role="alert">
+                        <h4 class="alert-heading text-warning fw-bold">Chart Calculated Successfully for {{ preview_data.name }}!</h4>
+                        <hr>
+                        <p class="mb-1"><strong>Ascendant (Lagna) Rashi:</strong> {{ preview_data.ascendant_rashi }}</p>
+                        <p class="mb-1"><strong>Moon Sign (Rashi):</strong> {{ preview_data.moon_rashi }}</p>
+                        <p class="mb-1"><strong>Nakshatra:</strong> {{ preview_data.nakshatra }}</p>
+                        <p class="mb-3"><strong>Timing:</strong> {{ preview_data.dasha }}</p>
+                        <div class="d-flex gap-3">
+                            <a href="/kundli" class="btn btn-gold btn-sm"><i class="fas fa-eye me-1"></i>Explore Full Chart & Predictions</a>
+                            <a href="/download" class="btn btn-outline-light btn-sm">Install App</a>
+                        </div>
+                    </div>
+                    {% else %}
+                    <form method="POST">
+                        <div class="mb-3">
+                            <label class="form-label text-muted">Your Name / Seeker</label>
+                            <input type="text" name="name" class="form-control bg-dark text-light border-secondary" required value="Seeker">
+                        </div>
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label text-muted">Birth Date</label>
+                                <input type="date" name="dob" class="form-control bg-dark text-light border-secondary" required value="1990-09-10">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label text-muted">Birth Time (24h)</label>
+                                <input type="text" name="tob" class="form-control bg-dark text-light border-secondary" required value="14:30">
+                            </div>
+                        </div>
+                        <div class="mb-4">
+                            <label class="form-label text-muted">Birth Place (City, Country)</label>
+                            <input type="text" name="place" class="form-control bg-dark text-light border-secondary" required value="New Delhi, India">
+                        </div>
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-gold btn-lg"><i class="fas fa-calculator me-2"></i>Generate Birth Chart</button>
+                        </div>
+                    </form>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

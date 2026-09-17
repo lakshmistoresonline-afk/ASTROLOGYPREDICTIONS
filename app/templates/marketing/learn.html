@@ -1,0 +1,11 @@
+{% extends "marketing/seo_base.html" %}
+{% block content %}
+<h1>Astro Predictions Learning Hub</h1>
+<p class="lead text-muted">Master Vedic astrology principles, chart calculations, and timing systems.</p>
+<hr class="my-4 border-secondary">
+<div class="list-group">
+{% for art in articles %}
+<a href="/learn/{{ art }}" class="list-group-item list-group-item-action bg-dark text-warning border-secondary mb-2 rounded">{{ art.replace('-', ' ').title() }}</a>
+{% endfor %}
+</div>
+{% endblock %}

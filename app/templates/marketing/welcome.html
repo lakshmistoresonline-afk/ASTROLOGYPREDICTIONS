@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Astro Predictions — Vedic Astrology Intelligence</title>
+    <meta name="description" content="Go beyond generic horoscopes. Explore your birth chart, planetary timing, Dashas and personalized Vedic astrology insights.">
+    <meta property="og:title" content="Astro Predictions — Vedic Astrology Intelligence">
+    <meta property="og:description" content="Vedic astrology intelligence built from your exact birth details and planetary movements.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="{{ public_base_url }}/welcome">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { background: #0b091a; color: #f1f1f1; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        .hero { padding: 100px 0; background: radial-gradient(circle at center, #1e1342 0%, #0b091a 70%); text-align: center; }
+        .btn-gold { background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%); color: #0b091a; font-weight: bold; border: none; padding: 12px 30px; border-radius: 30px; }
+        .btn-gold:hover { opacity: 0.9; color: #0b091a; }
+        .card-custom { background: #15102a; border: 1px solid #2d2254; border-radius: 15px; color: #fff; padding: 30px; height: 100%; }
+        footer { padding: 40px 0; border-top: 1px solid #2d2254; text-align: center; font-size: 0.9rem; color: #aaa; }
+        a { color: #FFD700; text-decoration: none; }
+        a:hover { color: #FFA500; }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-transparent fixed-top">
+        <div class="container">
+            <a class="navbar-brand fw-bold text-warning" href="/welcome"><i class="fas fa-star-of-life me-2"></i>Astro Predictions</a>
+            <div class="ms-auto">
+                <a href="/birth-chart" class="btn btn-outline-warning btn-sm rounded-pill px-3 me-2">Free Chart</a>
+                <a href="/download" class="btn btn-gold btn-sm rounded-pill px-3">Get App</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="hero container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <span class="badge bg-warning text-dark mb-3 px-3 py-2 rounded-pill fw-bold">Vedic Astrology Intelligence</span>
+                <h1 class="display-4 fw-bold mb-4">Go beyond generic daily horoscopes.</h1>
+                <p class="lead text-muted mb-5">Your birth chart is personal. Your timing should be personal too. Explore precise astronomical calculations, Dasha life periods, and meaningful chart insights.</p>
+                <div class="d-flex justify-content-center gap-3 flex-wrap">
+                    <a href="/birth-chart" class="btn btn-gold btn-lg"><i class="fas fa-chart-pie me-2"></i>Create Your Free Birth Chart</a>
+                    <a href="/download" class="btn btn-outline-light btn-lg rounded-pill px-4"><i class="fab fa-android me-2"></i>Get Android App</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container py-5">
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="card-custom">
+                    <i class="fas fa-crosshairs text-warning fa-2x mb-3"></i>
+                    <h3>Exact Birth Details</h3>
+                    <p class="text-muted">Calculated using exact birth date, birth time, and authoritative location timezone pipelines.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card-custom">
+                    <i class="fas fa-calculator text-warning fa-2x mb-3"></i>
+                    <h3>Deterministic Calculations</h3>
+                    <p class="text-muted">Precise Swiss Ephemeris mathematical engine with zero approximate astrology fallbacks.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card-custom">
+                    <i class="fas fa-clock text-warning fa-2x mb-3"></i>
+                    <h3>Vedic Life Timing</h3>
+                    <p class="text-muted">Explore Vimshottari Dashas and planetary transits mapped against your personal chart.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container py-5 text-center">
+        <h2 class="fw-bold mb-4">Explore All Life Domains</h2>
+        <div class="row g-3 justify-content-center">
+            <div class="col-auto"><a href="/career-astrology" class="badge bg-dark border border-warning p-3 text-warning fs-6">Career Astrology</a></div>
+            <div class="col-auto"><a href="/marriage-astrology" class="badge bg-dark border border-warning p-3 text-warning fs-6">Marriage Astrology</a></div>
+            <div class="col-auto"><a href="/finance-astrology" class="badge bg-dark border border-warning p-3 text-warning fs-6">Finance Astrology</a></div>
+            <div class="col-auto"><a href="/business-astrology" class="badge bg-dark border border-warning p-3 text-warning fs-6">Business Astrology</a></div>
+            <div class="col-auto"><a href="/property-astrology" class="badge bg-dark border border-warning p-3 text-warning fs-6">Property Astrology</a></div>
+            <div class="col-auto"><a href="/education-astrology" class="badge bg-dark border border-warning p-3 text-warning fs-6">Education Astrology</a></div>
+            <div class="col-auto"><a href="/life-timeline" class="badge bg-dark border border-warning p-3 text-warning fs-6">Life Timeline</a></div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="container">
+            <p class="mb-2">&copy; 2026 Astro Predictions. All rights reserved.</p>
+            <p class="small text-muted">Vedic astrology interpretation based on deterministic astronomical calculations. For personal reflection and informational purposes.</p>
+            <div class="d-flex justify-content-center gap-3 mt-3">
+                <a href="/privacy">Privacy Policy</a>
+                <a href="/terms">Terms of Service</a>
+                <a href="/about">About</a>
+                <a href="/contact">Contact</a>
+                <a href="/learn">Learning Hub</a>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>
