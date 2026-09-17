@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, jsonify, session, redirect, url_for, Response
+from flask import Blueprint, render_template, request, jsonify, session, redirect, url_for, Response, send_from_directory
 import os
 import json
 import uuid
@@ -54,6 +54,10 @@ def home():
 @marketing_bp.route("/landing")
 def landing():
     return redirect(url_for("marketing.home"))
+
+@marketing_bp.route("/download-report")
+def download_commercial_report():
+    return send_from_directory(os.getcwd(), "ASTRO_PREDICTIONS_COMMERCIAL_REPORT.md", as_attachment=True)
 
 @marketing_bp.route("/birth-chart", methods=["GET", "POST"])
 def birth_chart_funnel():
@@ -165,6 +169,7 @@ Allow: /welcome
 Allow: /birth-chart
 Allow: /learn
 Allow: /download
+Allow: /download-report
 Allow: /privacy
 Allow: /terms
 Allow: /refund-policy
@@ -182,7 +187,7 @@ def sitemap_xml():
     xml = ['<?xml version="1.0" encoding="UTF-8"?>']
     xml.append('<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">')
 
-    urls = ["/", "/welcome", "/birth-chart", "/download", "/learn", "/privacy", "/terms", "/refund-policy", "/subscription-policy", "/about", "/contact"]
+    urls = ["/", "/welcome", "/birth-chart", "/download", "/download-report", "/learn", "/privacy", "/terms", "/refund-policy", "/subscription-policy", "/about", "/contact"]
     for p in SEO_PAGES:
         urls.append(f"/{p}")
     for a in LEARN_ARTICLES:
