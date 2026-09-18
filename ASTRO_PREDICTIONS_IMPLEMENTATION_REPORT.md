@@ -1,14 +1,14 @@
-# Astro Predictions — Master Implementation & Verification Report
+# Astro Predictions — P0.7 Deep Production Hardening & Commercial Completion Report
 
 **Repository**: [https://github.com/lakshmistoresonline-afk/ASTROLOGYPREDICTIONS](https://github.com/lakshmistoresonline-afk/ASTROLOGYPREDICTIONS)  
-**Final Commit SHA**: `b9d789c74a46f58724e5b2a166d9d43576ebb1f3`  
+**Current HEAD**: `226965c09b3b4e1e86af71063e4fbdcbb7101c1b`  
 **Branch**: `main` (Synchronized: `Local HEAD == origin/main`)  
 **Test Suite Status**: **439 / 439 Passed (100% Success)**  
 
 ---
 
 ## 1. Executive Summary
-This report summarizes the comprehensive forensic audit, production hardening, commercial productization, admin UPI/QR payment integration, subscription lifecycle implementation, entitlement management, consumer-oriented UX redesign, mobile API standardization, attribution tracking, and security hardening performed for Astro Predictions.
+Phase P0.7 executes a thorough forensic verification and production hardening of Astro Predictions, solidifying secure Firebase UID authentication, rigorous server-side resource ownership (`owner_uid`), admin-controlled UPI/QR payment processing, canonical server-authoritative product pricing (`CANONICAL_PRODUCTS`), centralized feature entitlements (`EntitlementService`), robust mobile API contracts (`/api/v1/mobile/...`), consumer-focused dashboard UX separation from research tools, and strict preservation of the V3.15 deterministic calculation core.
 
 ---
 
@@ -16,11 +16,11 @@ This report summarizes the comprehensive forensic audit, production hardening, c
 
 ### A. Astrology Core Protection
 - **V3.15 Calculation Core**: Protected files (`chart.py`, `swe_proxy.py`, `ephemeris.py`) verified byte-for-byte identical to baseline SHA-256 hashes.
-- **Deterministic-First**: All astronomical calculations, Ephemeris data, Dashas, transits, and Vargas remain purely deterministic and independent of AI or marketing code.
+- **Deterministic Calculation**: All planetary positions, house calculations, Dashas, transits, and Vargas remain 100% deterministic and isolated from commercial/marketing layers.
 
 ### B. Security & Authorization
-- **Firebase Authentication**: Cryptographic token verification using Firebase Admin SDK (`check_revoked=True`) with test-mode isolation.
-- **Resource Ownership**: Strict server-side owner-scoping (`owner_uid`) enforced across charts, predictions, and reports preventing IDOR cross-user access.
+- **Firebase Authentication**: Cryptographic token verification (`check_revoked=True`) using the Firebase Admin SDK with secure testing mock isolation.
+- **Resource Ownership**: Strict server-side owner-scoping (`owner_uid`) enforced across all charts, reports, orders, and subscriptions, preventing IDOR cross-user access.
 - **Admin Authorization**: Centralized `@require_admin` decorator protecting administrative and business analytics endpoints (`/admin/*`, `/admin/business`, `/admin/payments`).
 
 ### C. Commercial Payment & Entitlement System
@@ -29,8 +29,8 @@ This report summarizes the comprehensive forensic audit, production hardening, c
 - **Entitlement Service**: Centralized feature checks (`has_subscription`, `has_feature`, `is_ad_free`).
 
 ### D. Mobile & Consumer UX
-- **Mobile JSON APIs**: Standardized REST endpoints under `/api/v1/mobile/` supporting dashboard, charts, reports, and profile.
-- **Consumer Dashboard**: Redesigned to prioritize intuitive life timing, daily insights, and Dashas while keeping internal engineering diagnostics in research/admin views.
+- **Mobile JSON APIs**: Standardized REST endpoints under `/api/v1/mobile/` supporting dashboard, charts, reports, and profile management.
+- **Consumer Dashboard**: Streamlined around intuitive life timing and daily insights while isolating research and diagnostics behind admin controls.
 
 ---
 
