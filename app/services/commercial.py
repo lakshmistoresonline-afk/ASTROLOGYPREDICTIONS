@@ -46,9 +46,9 @@ class PaymentService:
         settings = PaymentSettings.query.first()
         if not settings:
             settings = PaymentSettings(
-                upi_id="astropredictions@upi",
+                upi_id="",
                 payee_name="Astro Predictions",
-                instructions="Scan QR or pay via UPI ID. Enter UTR transaction reference below."
+                instructions="Please configure UPI payment settings in admin panel."
             )
             db.session.add(settings)
             db.session.commit()
@@ -69,11 +69,11 @@ class PaymentService:
     @staticmethod
     def create_order(user_id: int, product_id: str, amount: float = None, currency: str = "INR") -> OrderRecord:
         prod = CANONICAL_PRODUCTS.get(product_id)
+        if not prod or not prod.get("active"):
+            raise ValueError(f"INVALID_PRODUCT: Product '{product_id}' is not active or invalid.")
+
         if amount is None:
-            if prod and prod.get("active"):
-                amount = prod["price"]
-            else:
-                amount = 499.00
+            amount = prod["price"]
 
         order = OrderRecord(
             user_id=user_id,
