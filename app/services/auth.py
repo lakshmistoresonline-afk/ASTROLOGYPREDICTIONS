@@ -102,3 +102,21 @@ def login_required(f):
         g.firebase_uid = uid
         return f(*args, **kwargs)
     return decorated_function
+
+def require_admin(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        claims = get_current_authenticated_user()
+        if not claims:
+            return jsonify({"error": "AUTHENTICATION_REQUIRED", "message": "Authentication required."}), 401
+
+        is_admin = claims.get("admin", False) or claims.get("role") == "admin"
+        if not is_admin:
+            uid = claims.get("uid")
+            user = UserAccount.query.filter_by(firebase_uid=uid).first()
+            if not user or getattr(user, "role", "user") != "admin":
+                return jsonify({"error": "ADMIN_REQUIRED", "message": "Administrator privileges required."}), 403
+
+        g.firebase_uid = claims.get("uid")
+        return f(*args, **kwargs)
+    return decorated_function

@@ -1,6 +1,10 @@
 from datetime import datetime
 import json
+import hmac
+import hashlib
+import os
 from ..database.models import db, UserAccount, SubscriptionRecord, OrderRecord, PaymentRecord, EntitlementRecord, AttributionRecord, AnalyticsEventLog
+from .catalog import CANONICAL_PRODUCTS
 
 class EntitlementService:
     @staticmethod
@@ -21,10 +25,15 @@ class EntitlementService:
             return True
         if not user_id:
             return False
-        ent = EntitlementRecord.query.filter_by(user_id=user_id, feature_name=feature_name).first()
-        if ent:
-            if not ent.expires_at or ent.expires_at > datetime.utcnow():
-                return True
+        ents = EntitlementRecord.query.filter_by(user_id=user_id).all()
+        for ent in ents:
+            if ent.feature_name == feature_name:
+                if not ent.expires_at or ent.expires_at > datetime.utcnow():
+                    return True
+            prod = CANONICAL_PRODUCTS.get(ent.feature_name)
+            if prod and feature_name in prod.get("feature_entitlements", []):
+                if not ent.expires_at or ent.expires_at > datetime.utcnow():
+                    return True
         return False
 
     @staticmethod
@@ -33,7 +42,14 @@ class EntitlementService:
 
 class PaymentService:
     @staticmethod
-    def create_order(user_id: int, product_id: str, amount: float, currency: str = "INR") -> OrderRecord:
+    def create_order(user_id: int, product_id: str, amount: float = None, currency: str = "INR") -> OrderRecord:
+        prod = CANONICAL_PRODUCTS.get(product_id)
+        if amount is None:
+            if prod and prod.get("active"):
+                amount = prod["price"]
+            else:
+                amount = 499.00
+
         order = OrderRecord(
             user_id=user_id,
             product_id=product_id,
@@ -47,14 +63,22 @@ class PaymentService:
         return order
 
     @staticmethod
-    def fulfill_order(provider_order_id: str, provider_payment_id: str, amount: float) -> bool:
+    def verify_webhook_signature(payload_body: bytes, signature: str) -> bool:
+        secret = os.getenv("RAZORPAY_WEBHOOK_SECRET")
+        if not secret:
+            return True
+        expected_signature = hmac.new(secret.encode('utf-8'), payload_body, hashlib.sha256).hexdigest()
+        return hmac.compare_digest(expected_signature, signature)
+
+    @staticmethod
+    def fulfill_order(provider_order_id: str, provider_payment_id: str, amount: float, currency: str = "INR") -> bool:
         order = OrderRecord.query.filter_by(provider_order_id=provider_order_id).first()
         if not order:
             order = OrderRecord(
                 user_id=1,
                 product_id="plus_monthly",
                 amount=amount,
-                currency="INR",
+                currency=currency,
                 status="pending",
                 provider_order_id=provider_order_id
             )
@@ -62,7 +86,16 @@ class PaymentService:
             db.session.commit()
 
         if order.status == "paid":
-            return True # Idempotent
+            return True
+
+        prod = CANONICAL_PRODUCTS.get(order.product_id)
+        if not prod:
+            return False
+
+        if float(order.amount) != float(amount) or order.currency != currency:
+            order.status = "mismatched_amount"
+            db.session.commit()
+            return False
 
         order.status = "paid"
         payment = PaymentRecord(
@@ -73,8 +106,7 @@ class PaymentService:
         )
         db.session.add(payment)
 
-        # Grant entitlement
-        if "plus" in order.product_id:
+        if prod["product_type"] == "subscription":
             sub = SubscriptionRecord(
                 user_id=order.user_id or 1,
                 provider="razorpay",
