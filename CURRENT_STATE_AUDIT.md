@@ -1,17 +1,16 @@
-# Astro Predictions — Current State Audit (P0.5 / P0.6)
+# Astro Predictions — Comprehensive Repository Audit (P0.5 / P0.6)
 
-**Current HEAD**: `ed4448497920a8a32bf983cee7ff8f18d2dffdff`  
-**Branch**: `main`  
-**Python Version**: Python 3.13.0  
-**Database**: SQLite (`app.db`) / SQLAlchemy ORM  
+**Current HEAD**: `b9d789c74a46f58724e5b2a166d9d43576ebb1f3`  
+**Target Branch**: `main`  
+**Protected Calculation Core**: V3.15 (`chart.py`, `swe_proxy.py`, `ephemeris.py` verified byte-for-byte identical).
 
 ---
 
-## 1. Architecture Audit
-- **Calculation Core (V3.15)**: Protected calculation core (`chart.py`, `swe_proxy.py`, `ephemeris.py`) verified byte-for-byte identical to baseline SHA-256 hashes.
-- **Authentication & Authorization**: Firebase ID token cryptographic verification (`firebase-admin`), session management, `@login_required`, and centralized `@require_admin`.
-- **User Ownership**: Strict owner-scoping (`owner_uid`) enforced across SQLite chart vault (`store.py`), Firestore store (`firebase_store.py`), and durable report records (`ReportRecord`).
-- **Payment & Commerce**: Admin-controlled UPI/QR payment model, canonical product catalog (`CANONICAL_PRODUCTS`), order creation, proof submission (UTR + screenshot), and atomic/idempotent admin verification queue (`/admin/payments`).
-- **Mobile APIs**: Standardized JSON REST endpoints under `/api/v1/mobile/` for dashboard, charts, reports, and user profile.
-- **Consumer vs Admin UX**: Consumer dashboard (`dashboard.html`) structured around intuitive life timing and insights; admin business dashboard (`/admin/business`, `/admin/payments`) dedicated to operational revenue and payment verification.
+## 1. Architecture Audit Summary
+- **Backend Framework**: Flask with SQLAlchemy ORM and Flask-CORS.
+- **Authentication**: Firebase Admin SDK (`firebase-admin`) token verification (`check_revoked=True`), session-based identity caching, `@login_required` decorator, and centralized `@require_admin` role validation.
+- **Data Ownership**: Strict owner-scoping (`owner_uid`) across SQLite/Firestore data layers (`store.py`, `firebase_store.py`) and durable report records (`ReportRecord`).
+- **Payment & Commerce**: Admin-controlled UPI/QR payment model (`PaymentSettings`), canonical product catalog (`CANONICAL_PRODUCTS`), secure order creation, UTR & screenshot payment proof submission, and idempotent admin verification (`/admin/payments`).
+- **Mobile APIs**: JSON REST endpoints under `/api/v1/mobile/` covering dashboard, charts, reports, and profile management.
+- **Consumer vs Admin UX**: Consumer dashboard (`dashboard.html`) focused on life timing and daily insights; admin business dashboard (`/admin/business`, `/admin/payments`) dedicated to operational revenue and payment approvals.
 - **Testing**: 439 regression, marketing, commercial, security, and authentication tests passing (100% success rate).
