@@ -3,7 +3,7 @@ import json
 import hmac
 import hashlib
 import os
-from ..database.models import db, UserAccount, SubscriptionRecord, OrderRecord, PaymentRecord, EntitlementRecord, AttributionRecord, AnalyticsEventLog
+from ..database.models import db, UserAccount, SubscriptionRecord, OrderRecord, PaymentRecord, EntitlementRecord, PaymentSettings, AttributionRecord, AnalyticsEventLog
 from .catalog import CANONICAL_PRODUCTS
 
 class EntitlementService:
@@ -42,6 +42,31 @@ class EntitlementService:
 
 class PaymentService:
     @staticmethod
+    def get_settings() -> PaymentSettings:
+        settings = PaymentSettings.query.first()
+        if not settings:
+            settings = PaymentSettings(
+                upi_id="astropredictions@upi",
+                payee_name="Astro Predictions",
+                instructions="Scan QR or pay via UPI ID. Enter UTR transaction reference below."
+            )
+            db.session.add(settings)
+            db.session.commit()
+        return settings
+
+    @staticmethod
+    def update_settings(upi_id: str, payee_name: str, qr_code_url: str, instructions: str, is_active: bool) -> PaymentSettings:
+        settings = PaymentService.get_settings()
+        settings.upi_id = upi_id
+        settings.payee_name = payee_name
+        if qr_code_url:
+            settings.qr_code_url = qr_code_url
+        settings.instructions = instructions
+        settings.is_active = is_active
+        db.session.commit()
+        return settings
+
+    @staticmethod
     def create_order(user_id: int, product_id: str, amount: float = None, currency: str = "INR") -> OrderRecord:
         prod = CANONICAL_PRODUCTS.get(product_id)
         if amount is None:
@@ -56,6 +81,7 @@ class PaymentService:
             amount=amount,
             currency=currency,
             status="pending",
+            verification_status="pending_review",
             provider_order_id=f"order_{product_id}_{int(datetime.utcnow().timestamp())}"
         )
         db.session.add(order)
@@ -63,12 +89,56 @@ class PaymentService:
         return order
 
     @staticmethod
-    def verify_webhook_signature(payload_body: bytes, signature: str) -> bool:
-        secret = os.getenv("RAZORPAY_WEBHOOK_SECRET")
-        if not secret:
-            return True
-        expected_signature = hmac.new(secret.encode('utf-8'), payload_body, hashlib.sha256).hexdigest()
-        return hmac.compare_digest(expected_signature, signature)
+    def submit_payment_proof(order_id: int, utr_number: str, screenshot_url: str = None) -> OrderRecord:
+        order = OrderRecord.query.get(order_id)
+        if not order:
+            raise ValueError("ORDER_NOT_FOUND")
+        order.utr_number = utr_number
+        if screenshot_url:
+            order.screenshot_url = screenshot_url
+        order.status = "payment_submitted"
+        order.verification_status = "pending_review"
+        db.session.commit()
+        return order
+
+    @staticmethod
+    def verify_and_approve_order(order_id: int) -> bool:
+        order = OrderRecord.query.get(order_id)
+        if not order or order.status == "paid":
+            return False
+
+        prod = CANONICAL_PRODUCTS.get(order.product_id)
+        if not prod:
+            return False
+
+        order.status = "paid"
+        order.verification_status = "verified"
+
+        payment = PaymentRecord(
+            order_id=order.id,
+            provider_payment_id=f"utr_{order.utr_number or 'manual'}#{int(datetime.utcnow().timestamp())}",
+            status="success",
+            amount=order.amount
+        )
+        db.session.add(payment)
+
+        if prod["product_type"] == "subscription":
+            sub = SubscriptionRecord(
+                user_id=order.user_id,
+                provider="upi_manual",
+                status="active",
+                plan_type=order.product_id
+            )
+            db.session.add(sub)
+        else:
+            ent = EntitlementRecord(
+                user_id=order.user_id,
+                feature_name=order.product_id
+            )
+            db.session.add(ent)
+
+        db.session.commit()
+        return True
 
     @staticmethod
     def fulfill_order(provider_order_id: str, provider_payment_id: str, amount: float, currency: str = "INR") -> bool:
@@ -84,43 +154,17 @@ class PaymentService:
             )
             db.session.add(order)
             db.session.commit()
+        order.utr_number = provider_payment_id
+        db.session.commit()
+        return PaymentService.verify_and_approve_order(order.id)
 
-        if order.status == "paid":
-            return True
-
-        prod = CANONICAL_PRODUCTS.get(order.product_id)
-        if not prod:
+    @staticmethod
+    def reject_order(order_id: int) -> bool:
+        order = OrderRecord.query.get(order_id)
+        if not order:
             return False
-
-        if float(order.amount) != float(amount) or order.currency != currency:
-            order.status = "mismatched_amount"
-            db.session.commit()
-            return False
-
-        order.status = "paid"
-        payment = PaymentRecord(
-            order_id=order.id,
-            provider_payment_id=provider_payment_id,
-            status="success",
-            amount=amount
-        )
-        db.session.add(payment)
-
-        if prod["product_type"] == "subscription":
-            sub = SubscriptionRecord(
-                user_id=order.user_id or 1,
-                provider="razorpay",
-                status="active",
-                plan_type=order.product_id
-            )
-            db.session.add(sub)
-        else:
-            ent = EntitlementRecord(
-                user_id=order.user_id or 1,
-                feature_name=order.product_id
-            )
-            db.session.add(ent)
-
+        order.status = "rejected"
+        order.verification_status = "rejected"
         db.session.commit()
         return True
 

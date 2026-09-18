@@ -55,11 +55,13 @@ def create_app():
     from .api.v6_intelligence import v6_bp
     from .api.marketing import marketing_bp
     from .api.commercial import commercial_bp
+    from .api.mobile import mobile_bp
 
     app.register_blueprint(main)
     app.register_blueprint(tracking_bp)
     app.register_blueprint(v6_bp)
     app.register_blueprint(marketing_bp)
     app.register_blueprint(commercial_bp)
+    app.register_blueprint(mobile_bp)
 
     return app

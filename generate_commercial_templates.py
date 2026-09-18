@@ -46,43 +46,69 @@ with open('app/templates/commercial/pricing.html', 'w', encoding='utf-8') as f:
 </html>
 ''')
 
-# Checkout
+# Checkout (Admin UPI / QR)
 with open('app/templates/commercial/checkout.html', 'w', encoding='utf-8') as f:
     f.write('''<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Secure Checkout — Astro Predictions</title>
+    <title>Secure UPI Checkout — Astro Predictions</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <style>
         body { background: #0b091a; color: #f1f1f1; font-family: 'Segoe UI', sans-serif; }
-        .card-custom { background: #15102a; border: 1px solid #2d2254; border-radius: 20px; padding: 40px; color: #fff; max-width: 500px; margin: 80px auto; }
+        .card-custom { background: #15102a; border: 1px solid #2d2254; border-radius: 20px; padding: 40px; color: #fff; max-width: 600px; margin: 40px auto; }
         .btn-gold { background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%); color: #0b091a; font-weight: bold; border-radius: 30px; padding: 12px 30px; border: none; width: 100%; }
+        .qr-box { background: #fff; padding: 20px; border-radius: 10px; display: inline-block; margin: 15px 0; }
     </style>
 </head>
 <body>
-    <div class="card-custom">
-        <h2 class="h4 fw-bold mb-3 text-warning">Secure Checkout</h2>
-        <p class="text-muted mb-4">Product: <strong>{{ product_id }}</strong></p>
-        <h3 class="fw-bold mb-4">₹{{ amount }}</h3>
-        <form action="/payment/success" method="GET">
-            <input type="hidden" name="order_id" value="{{ order.provider_order_id }}">
-            <button type="submit" class="btn btn-gold">Simulate Secure Payment & Activate</button>
-        </form>
+    <div class="container py-4">
+        <div class="card-custom shadow-lg">
+            <h2 class="h4 fw-bold mb-3 text-warning">Complete UPI Payment</h2>
+            <p class="text-muted mb-2">Product: <strong>{{ product_id }}</strong></p>
+            <h3 class="fw-bold mb-4 text-warning">Amount: ₹{{ amount }}</h3>
+
+            <div class="text-center mb-4">
+                <p class="mb-1 text-muted">Scan QR or pay via UPI ID:</p>
+                <div class="bg-dark p-3 rounded border border-warning text-warning fw-bold fs-5 mb-2">
+                    {{ settings.upi_id }}
+                </div>
+                <p class="small text-muted">Payee: {{ settings.payee_name }}</p>
+                {% if settings.qr_code_url %}
+                <div class="qr-box">
+                    <img src="{{ settings.qr_code_url }}" alt="UPI QR Code" style="max-width: 180px;">
+                </div>
+                {% endif %}
+                <p class="small text-muted mt-2">{{ settings.instructions }}</p>
+            </div>
+
+            <hr class="border-secondary my-4">
+
+            <form action="/payment/submit-proof" method="POST">
+                <input type="hidden" name="order_id" value="{{ order.id }}">
+                <div class="mb-3">
+                    <label class="form-label text-muted">Enter UTR / Transaction Reference Number</label>
+                    <input type="text" name="utr_number" class="form-control bg-dark text-light border-secondary" required placeholder="e.g. 325419827361">
+                </div>
+                <div class="d-grid">
+                    <button type="submit" class="btn btn-gold">I Have Paid — Submit UTR for Verification</button>
+                </div>
+            </form>
+        </div>
     </div>
 </body>
 </html>
 ''')
 
-# Success
-with open('app/templates/commercial/success.html', 'w', encoding='utf-8') as f:
+# Under Review / Payment Submitted
+with open('app/templates/commercial/under_review.html', 'w', encoding='utf-8') as f:
     f.write('''<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Payment Successful — Astro Predictions</title>
+    <title>Payment Under Review — Astro Predictions</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <style>
         body { background: #0b091a; color: #f1f1f1; font-family: 'Segoe UI', sans-serif; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; }
@@ -92,10 +118,105 @@ with open('app/templates/commercial/success.html', 'w', encoding='utf-8') as f:
 </head>
 <body>
     <div class="card-custom">
-        <i class="fas fa-check-circle text-warning fa-3x mb-3"></i>
-        <h1 class="h3 fw-bold mb-3">Payment Successful!</h1>
-        <p class="text-muted mb-4">Your subscription / entitlement has been activated successfully.</p>
-        <a href="/dashboard" class="btn btn-gold">Go to Dashboard</a>
+        <i class="fas fa-clock text-warning fa-3x mb-3"></i>
+        <h1 class="h3 fw-bold mb-3">Payment Submitted!</h1>
+        <p class="text-muted mb-2">Order ID: <strong>#{{ order_id }}</strong></p>
+        <p class="text-muted mb-4">UTR Reference: <strong>{{ utr }}</strong></p>
+        <p class="small text-muted mb-4">Your payment is currently under review by our administrator. Entitlements will be activated immediately upon verification.</p>
+        <a href="/dashboard" class="btn btn-gold">Return to Dashboard</a>
+    </div>
+</body>
+</html>
+''')
+
+# Admin Payments Queue & Settings
+with open('app/templates/commercial/admin_payments.html', 'w', encoding='utf-8') as f:
+    f.write('''<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Payment Verification — Astro Predictions</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <style>
+        body { background: #0b091a; color: #f1f1f1; font-family: 'Segoe UI', sans-serif; }
+        .card-custom { background: #15102a; border: 1px solid #2d2254; border-radius: 15px; padding: 25px; color: #fff; }
+    </style>
+</head>
+<body>
+    <div class="container py-5">
+        <h1 class="h3 fw-bold text-warning mb-4"><i class="fas fa-receipt me-2"></i>Admin Payment Verification & UPI Settings</h1>
+
+        <div class="card-custom mb-5">
+            <h4 class="text-warning mb-3">Configure UPI / QR Settings</h4>
+            <form action="/admin/payments/settings" method="POST">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label text-muted">UPI ID</label>
+                        <input type="text" name="upi_id" class="form-control bg-dark text-light border-secondary" value="{{ settings.upi_id }}" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label text-muted">Payee Name</label>
+                        <input type="text" name="payee_name" class="form-control bg-dark text-light border-secondary" value="{{ settings.payee_name }}" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label text-muted">QR Code Image URL</label>
+                        <input type="text" name="qr_code_url" class="form-control bg-dark text-light border-secondary" value="{{ settings.qr_code_url }}">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label text-muted">Active Status</label>
+                        <div class="form-check mt-2">
+                            <input class="form-check-input" type="checkbox" name="is_active" id="isActive" {% if settings.is_active %}checked{% endif %}>
+                            <label class="form-check-label text-light" for="isActive">Accepting UPI Payments</label>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <label class="form-label text-muted">Instructions</label>
+                        <textarea name="instructions" class="form-control bg-dark text-light border-secondary" rows="2">{{ settings.instructions }}</textarea>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-warning mt-3 px-4 fw-bold">Save Payment Settings</button>
+            </form>
+        </div>
+
+        <h3 class="h4 text-warning mb-3">Pending Payment Verifications</h3>
+        {% if pending_orders %}
+        <div class="table-responsive">
+            <table class="table table-dark table-striped border border-secondary">
+                <thead>
+                    <tr>
+                        <th>Order ID</th>
+                        <th>User ID</th>
+                        <th>Product</th>
+                        <th>Amount</th>
+                        <th>UTR / Ref</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for o in pending_orders %}
+                    <tr>
+                        <td>#{{ o.id }}</td>
+                        <td>{{ o.user_id }}</td>
+                        <td>{{ o.product_id }}</td>
+                        <td>₹{{ o.amount }}</td>
+                        <td><strong class="text-warning">{{ o.utr_number }}</strong></td>
+                        <td>
+                            <form action="/admin/payments/approve/{{ o.id }}" method="POST" class="d-inline">
+                                <button type="submit" class="btn btn-success btn-sm">Approve</button>
+                            </form>
+                            <form action="/admin/payments/reject/{{ o.id }}" method="POST" class="d-inline ms-1">
+                                <button type="submit" class="btn btn-danger btn-sm">Reject</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <p class="text-muted">No pending payment verifications.</p>
+        {% endif %}
     </div>
 </body>
 </html>
@@ -132,9 +253,12 @@ with open('app/templates/commercial/admin_business.html', 'w', encoding='utf-8')
                 </div>
             </div>
         </div>
+        <div class="text-end">
+            <a href="/admin/payments" class="btn btn-warning fw-bold">Manage Payment Verifications & UPI</a>
+        </div>
     </div>
 </body>
 </html>
 ''')
 
-print('Commercial templates generated successfully.')
+print('Commercial production hardening templates generated successfully.')

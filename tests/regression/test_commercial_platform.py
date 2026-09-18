@@ -1,7 +1,14 @@
+import os
 import pytest
 from app import create_app
 from app.database.models import db, UserAccount, OrderRecord, SubscriptionRecord, EntitlementRecord
 from app.services.commercial import EntitlementService, PaymentService, AttributionService, AnalyticsService, AdService
+
+@pytest.fixture(autouse=True)
+def set_testing_env():
+    os.environ["FLASK_ENV"] = "testing"
+    yield
+    os.environ.pop("FLASK_ENV", None)
 
 @pytest.fixture
 def client():
@@ -11,8 +18,7 @@ def client():
     with app.app_context():
         db.drop_all()
         db.create_all()
-        # Create test user
-        user = UserAccount(firebase_uid="uid_test", email="test@astropredictions.app")
+        user = UserAccount(id=1, firebase_uid="uid_test", email="test@astropredictions.app")
         db.session.add(user)
         db.session.commit()
         with app.test_client() as client:
@@ -26,9 +32,13 @@ def test_pricing_page(client):
     assert b"Astro Plus" in res.data
 
 def test_checkout_and_fulfillment(client):
+    with client.session_transaction() as sess:
+        sess["firebase_id_token"] = "mock_token_uid_test"
+        sess["firebase_uid"] = "uid_test"
+
     res = client.get("/checkout/plus_monthly")
     assert res.status_code == 200
-    assert b"Secure Checkout" in res.data
+    assert b"Complete UPI Payment" in res.data
 
     # Fulfill order
     success = PaymentService.fulfill_order("order_plus_monthly_123", "pay_abc123", 499.00)

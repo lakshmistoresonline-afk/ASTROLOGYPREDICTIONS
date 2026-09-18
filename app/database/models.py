@@ -15,7 +15,7 @@ class Profile(db.Model):
 class Chart(db.Model):
     __tablename__ = 'charts'
     id = db.Column(db.String(36), primary_key=True)
-    owner_uid = db.Column(db.String(128), index=True, nullable=True) # Firebase UID ownership bridge
+    owner_uid = db.Column(db.String(128), index=True, nullable=True)
     profile_id = db.Column(db.Integer, db.ForeignKey('profiles.id'), nullable=True)
     name = db.Column(db.String(100))
     dob = db.Column(db.String(20))
@@ -34,10 +34,6 @@ class Chart(db.Model):
         return json.loads(self.raw_data) if self.raw_data else {}
 
 class PredictionOutcome(db.Model):
-    """
-    Immutable Prediction Snapshot & Outcome Tracking (V3.15).
-    Stores engine versions to ensure reproducibility.
-    """
     __tablename__ = 'prediction_outcomes'
     id = db.Column(db.Integer, primary_key=True)
     chart_id = db.Column(db.String(36), db.ForeignKey('charts.id'), nullable=False)
@@ -159,7 +155,6 @@ class TimelineEventSnapshot(db.Model):
     cohort = db.Column(db.String(30))
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
-# Durable Immutable Report Persistence (P0.4)
 class ReportRecord(db.Model):
     __tablename__ = 'report_records'
     report_id = db.Column(db.String(36), primary_key=True)
@@ -172,7 +167,6 @@ class ReportRecord(db.Model):
     engine_version = db.Column(db.String(20), default="P0.3-R42")
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
-# Monetization & Commercial Models
 class UserAccount(db.Model):
     __tablename__ = 'user_accounts'
     id = db.Column(db.Integer, primary_key=True)
@@ -180,8 +174,10 @@ class UserAccount(db.Model):
     email = db.Column(db.String(120))
     email_verified = db.Column(db.Boolean, default=False)
     display_name = db.Column(db.String(100))
+    role = db.Column(db.String(30), default="user") # user, admin
     status = db.Column(db.String(30), default="active")
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    last_login_at = db.Column(db.DateTime)
     subscriptions = db.relationship('SubscriptionRecord', backref='user', lazy=True)
     orders = db.relationship('OrderRecord', backref='user', lazy=True)
     entitlements = db.relationship('EntitlementRecord', backref='user', lazy=True)
@@ -204,8 +200,11 @@ class OrderRecord(db.Model):
     product_id = db.Column(db.String(50), nullable=False)
     amount = db.Column(db.Float, nullable=False)
     currency = db.Column(db.String(10), default="INR")
-    status = db.Column(db.String(30), default="pending")
+    status = db.Column(db.String(30), default="pending") # pending, paid, rejected, refunded
+    verification_status = db.Column(db.String(30), default="pending_review") # pending_review, verified, rejected
     provider_order_id = db.Column(db.String(100), unique=True)
+    utr_number = db.Column(db.String(100))
+    screenshot_url = db.Column(db.String(255))
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
 class PaymentRecord(db.Model):
@@ -224,6 +223,16 @@ class EntitlementRecord(db.Model):
     feature_name = db.Column(db.String(50), nullable=False)
     expires_at = db.Column(db.DateTime)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+class PaymentSettings(db.Model):
+    __tablename__ = 'payment_settings'
+    id = db.Column(db.Integer, primary_key=True)
+    upi_id = db.Column(db.String(100), default="astropredictions@upi")
+    payee_name = db.Column(db.String(100), default="Astro Predictions")
+    qr_code_url = db.Column(db.String(255), default="")
+    instructions = db.Column(db.Text, default="Scan QR or pay via UPI ID. Enter UTR transaction number below.")
+    is_active = db.Column(db.Boolean, default=True)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
 class AttributionRecord(db.Model):
     __tablename__ = 'attribution_records'
