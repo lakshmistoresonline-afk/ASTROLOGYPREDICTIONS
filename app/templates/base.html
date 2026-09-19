@@ -16,6 +16,36 @@
   <link rel="stylesheet" href="{{ url_for('static', filename='css/style_v2.css') }}?v=6.1"/>
   <link rel="manifest" href="/static/manifest.json">
   <meta name="theme-color" content="#08090E">
+
+  <style>
+    /* Senior Accessibility & High Visibility Hardening */
+    body {
+        font-size: 18px !important;
+        line-height: 1.75 !important;
+        color: #f8fafc !important;
+    }
+    p, span, li, a, label, input, select, button, .text-dim, .text-muted {
+        color: #f1f5f9 !important;
+        font-size: 1.125rem !important;
+    }
+    h1, h2, h3, h4, h5, h6, .text-gold {
+        color: #FFD700 !important;
+    }
+    .navbar-nav .nav-link {
+        font-size: 1.15rem !important;
+        font-weight: 600 !important;
+    }
+    .card-premium, .card-custom, .bg-glass, .bg-dark {
+        background-color: #120e26 !important;
+        border: 2px solid #3b2a75 !important;
+    }
+    .btn {
+        font-size: 1.1rem !important;
+        font-weight: 700 !important;
+        padding: 12px 24px !important;
+    }
+  </style>
+
   {% block head %}{% endblock %}
 </head>
 <body class="ethereal-bg text-white">

@@ -8,27 +8,32 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        body { background: #0b091a; color: #f1f1f1; font-family: 'Segoe UI', sans-serif; line-height: 1.7; }
-        .content-wrap { padding: 80px 0; max-width: 800px; margin: 0 auto; }
-        .btn-gold { background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%); color: #0b091a; font-weight: bold; border-radius: 30px; padding: 10px 25px; }
-        a { color: #FFD700; }
-        h1, h2, h3 { color: #FFD700; }
+        body { background: #0b091a; color: #f8fafc; font-family: 'Segoe UI', sans-serif; font-size: 18px; line-height: 1.8; }
+        .content-wrap { padding: 90px 0; max-width: 850px; margin: 0 auto; }
+        .btn-gold { background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%); color: #0b091a; font-weight: bold; border-radius: 35px; padding: 14px 32px; font-size: 1.15rem; }
+        .btn-gold:hover { color: #0b091a; opacity: 0.95; }
+        a { color: #FFD700; text-decoration: none; font-weight: 500; }
+        a:hover { color: #ffca28; text-decoration: underline; }
+        h1, h2, h3 { color: #FFD700; font-weight: 700; }
+        p { color: #e2e8f0; font-size: 1.15rem; }
+        .navbar-brand { font-size: 1.5rem; }
     </style>
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-transparent">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-transparent py-3 border-bottom border-secondary" style="background: rgba(11,9,26,0.98)!important;">
         <div class="container">
-            <a class="navbar-brand fw-bold text-warning" href="/welcome"><i class="fas fa-star-of-life me-2"></i>Astro Predictions</a>
-            <div class="ms-auto"><a href="/birth-chart" class="btn btn-outline-warning btn-sm rounded-pill px-3">Free Chart</a></div>
+            <a class="navbar-brand fw-bold text-warning" href="/"><i class="fas fa-star-of-life me-2"></i>Astro Predictions</a>
+            <div class="ms-auto"><a href="/birth-chart" class="btn btn-outline-warning btn-sm rounded-pill px-4 py-2 fs-6">Free Chart</a></div>
         </div>
     </nav>
     <div class="container content-wrap">
         {% block content %}{% endblock %}
         <hr class="my-5 border-secondary">
-        <div class="text-center">
-            <h4 class="text-warning mb-3">Ready to explore your personal Vedic chart?</h4>
-            <a href="/birth-chart" class="btn btn-gold btn-lg me-2">Create Free Chart</a>
-            <a href="/download" class="btn btn-outline-light btn-lg rounded-pill">Get Android App</a>
+        <div class="text-center p-5 bg-dark rounded-4 border border-secondary shadow-lg">
+            <h3 class="text-warning mb-3 fw-bold fs-3">Ready to explore your personal Vedic chart?</h3>
+            <p class="text-light mb-4 fs-5">Get instant deterministic astrological timing and chart insights.</p>
+            <a href="/birth-chart" class="btn btn-gold btn-lg me-2 mb-2">Create Free Chart</a>
+            <a href="/download" class="btn btn-outline-light btn-lg rounded-pill px-4 mb-2">Get Android App</a>
         </div>
     </div>
 </body>
