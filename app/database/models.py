@@ -59,6 +59,14 @@ class PredictionOutcome(db.Model):
     engine_confidence = db.Column(db.String(20))
 
     signal_score = db.Column(db.Float)
+
+    @property
+    def confluence_score(self):
+        return self.signal_score
+
+    @confluence_score.setter
+    def confluence_score(self, value):
+        self.signal_score = value
     quality_score = db.Column(db.Float)
     calibrated_probability = db.Column(db.Float)
 
