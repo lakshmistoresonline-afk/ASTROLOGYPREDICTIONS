@@ -1,7 +1,7 @@
-# Astro Predictions — Deep Production Certification Report
+# Astro Predictions — Deep Production Certification & Commercial Hardening Report
 
 **Repository**: [https://github.com/lakshmistoresonline-afk/ASTROLOGYPREDICTIONS](https://github.com/lakshmistoresonline-afk/ASTROLOGYPREDICTIONS)  
-**Current HEAD**: `c0df1b250c1f32bac93eeecbb280ff7cdb975160`  
+**Current HEAD**: `ff752c7ae724cd30c89cdbbcfed859d02b0a1cba`  
 **Branch**: `main` (Synchronized: `Local HEAD == origin/main`)  
 **Test Suite Status**: **439 / 439 Passed (100% Success)**  
 
@@ -15,7 +15,7 @@ This report certifies the complete production readiness of Astro Predictions fol
 ## 2. Verification & Deliverables Checklist
 
 ### A. Astrology Core Protection
-- **V3.15 Calculation Core**: Protected files (`chart.py`, `swe_proxy.py`, `ephemeris.py`) verified byte-for-byte identical to baseline SHA-256 hashes.
+- **V3.15 Calculation Core**: Protected files (`chart.py`, `swe_proxy.py`, `ephemeris.py`) verified byte-for-byte identical to baseline SHA-256 hashes (`True`).
 - **Deterministic Calculation**: All planetary positions, house calculations, Dashas, transits, and Vargas remain 100% deterministic and isolated from commercial/marketing layers.
 
 ### B. Security & Authorization
