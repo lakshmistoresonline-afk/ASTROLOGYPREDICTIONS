@@ -46,11 +46,20 @@ class PaymentService:
         settings = PaymentSettings.query.first()
         if not settings:
             settings = PaymentSettings(
-                upi_id="",
-                payee_name="Astro Predictions",
-                instructions="Please configure UPI payment settings in admin panel."
+                upi_id="srinathrajkiran007-2@okaxis",
+                payee_name="Srinath Rajkiran",
+                qr_code_url="/static/img/upi_qr.png",
+                instructions="Scan QR with any UPI app (Google Pay, PhonePe, Paytm, BHIM) or pay to srinathrajkiran007-2@okaxis. Enter UTR reference below after payment.",
+                is_active=True
             )
             db.session.add(settings)
+            db.session.commit()
+        elif not settings.upi_id or settings.upi_id in ["", "astropredictions@upi"]:
+            settings.upi_id = "srinathrajkiran007-2@okaxis"
+            settings.payee_name = "Srinath Rajkiran"
+            settings.qr_code_url = "/static/img/upi_qr.png"
+            settings.instructions = "Scan QR with any UPI app (Google Pay, PhonePe, Paytm, BHIM) or pay to srinathrajkiran007-2@okaxis. Enter UTR reference below after payment."
+            settings.is_active = True
             db.session.commit()
         return settings
 
