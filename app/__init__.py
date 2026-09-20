@@ -6,6 +6,30 @@ from .database.models import db
 
 load_dotenv()
 
+try:
+    from flask_migrate import Migrate
+    migrate = Migrate()
+    HAS_MIGRATE = True
+except ImportError:
+    migrate = None
+    HAS_MIGRATE = False
+
+def init_sentry(app):
+    sentry_dsn = os.getenv("SENTRY_DSN")
+    if sentry_dsn:
+        try:
+            import sentry_sdk
+            from sentry_sdk.integrations.flask import FlaskIntegration
+            sentry_sdk.init(
+                dsn=sentry_dsn,
+                integrations=[FlaskIntegration()],
+                traces_sample_rate=1.0,
+                environment=os.getenv("FLASK_ENV", "production")
+            )
+            app.logger.info("Sentry APM initialized successfully.")
+        except Exception as e:
+            app.logger.warning(f"Failed to initialize Sentry: {e}")
+
 def create_app():
     app = Flask(__name__)
 
@@ -24,6 +48,9 @@ def create_app():
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
     db.init_app(app)
+    if HAS_MIGRATE and migrate:
+        migrate.init_app(app, db)
+    init_sentry(app)
 
     with app.app_context():
         try:
