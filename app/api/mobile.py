@@ -145,11 +145,13 @@ def mobile_dashboard():
 
     # Multi-Dasha and Cross-System Synthesis Generation
     chara_list = []
-    if chart_obj and hasattr(chart_obj, "chara_dasha") and isinstance(chart_obj.chara_dasha, dict):
-        for k, v in chart_obj.chara_dasha.items():
-            if isinstance(v, dict):
-                chara_list.append(f"Chara {k}: {v.get('lord', 'Active')}")
-            else:
+    chara_raw = getattr(chart_obj, "chara_dasha", [])
+    if chara_raw:
+        if isinstance(chara_raw, list):
+            for d in chara_raw:
+                chara_list.append(f"{d.get('name', 'Sign')}: {d.get('years', 0)} Years")
+        elif isinstance(chara_raw, dict):
+            for k, v in chara_raw.items():
                 chara_list.append(f"Chara {k}: {str(v)}")
 
     # 3rd Level Dasha (Pratyantar) and Bhava Bala (Phase 6)

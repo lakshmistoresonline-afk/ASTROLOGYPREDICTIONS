@@ -5,7 +5,7 @@
 <div class="mb-5 d-flex justify-content-between align-items-center">
     <div>
         <h2 class="fw-black text-white mb-1">{{ chart.name if chart else 'Natal Blueprint' }}</h2>
-        <p class="text-dim small">{{ chart.birth_datetime[:16].replace('T',' ') if chart else 'Planetary positions at birth.' }}</p>
+        <p class="text-dim small">{{ (chart.birth_datetime|string)[:16].replace('T',' ') if chart else 'Planetary positions at birth.' }}</p>
     </div>
     {% if chart %}
     <div class="dropdown">
