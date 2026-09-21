@@ -9,6 +9,8 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -37,6 +39,7 @@ class MainActivity : ComponentActivity() {
                     }
 
                     when (currentScreen) {
+                        is Screen.Login -> LoginScreen(viewModel)
                         is Screen.BirthProfile -> BirthProfileScreen(viewModel)
                         is Screen.Dashboard -> DashboardScreen(viewModel)
                         is Screen.PredictionDetail -> PredictionDetailScreen(viewModel, currentScreen.domain)
@@ -51,12 +54,63 @@ class MainActivity : ComponentActivity() {
 }
 
 sealed class Screen {
+    object Login : Screen()
     object BirthProfile : Screen()
     object Dashboard : Screen()
     data class PredictionDetail(val domain: String) : Screen()
     object ChartVisualizer : Screen()
     object CompatibilityHub : Screen()
     object TimingHub : Screen()
+    object TimingHub : Screen()
+}
+
+@Composable
+fun LoginScreen(viewModel: MainViewModel) {
+    Column(
+        modifier = Modifier.fillMaxSize().padding(32.dp),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Icon(
+            imageVector = androidx.compose.material.icons.Icons.Default.Star,
+            contentDescription = null,
+            tint = Color(0xFFFBBF24),
+            modifier = Modifier.size(64.dp)
+        )
+        Spacer(modifier = Modifier.height(16.dp))
+        Text("Jyotish Intelligence", fontSize = 24.sp, fontWeight = FontWeight.Black, color = Color.White)
+        Text("PROFESSIONAL PREDICTION OS", fontSize = 12.sp, color = Color(0xFFFBBF24), letterSpacing = 2.sp)
+        
+        Spacer(modifier = Modifier.height(48.dp))
+        
+        Button(
+            onClick = { viewModel.currentScreen = Screen.BirthProfile },
+            modifier = Modifier.fillMaxWidth().height(56.dp),
+            shape = RoundedCornerShape(12.dp),
+            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFBBF24))
+        ) {
+            Text("ENTER AS TESTER", color = Color.Black, fontWeight = FontWeight.Black)
+        }
+        
+        Spacer(modifier = Modifier.height(16.dp))
+        
+        OutlinedButton(
+            onClick = { viewModel.currentScreen = Screen.BirthProfile },
+            modifier = Modifier.fillMaxWidth().height(56.dp),
+            shape = RoundedCornerShape(12.dp),
+            border = androidx.compose.foundation.BorderStroke(1.dp, Color.Gray)
+        ) {
+            Text("ADMINISTRATIVE BYPASS", color = Color.White)
+        }
+        
+        Spacer(modifier = Modifier.height(32.dp))
+        Text(
+            "Version 3.22.5 • Developer Preview\nStandard Firebase protocols are mocked.",
+            fontSize = 10.sp,
+            color = Color.Gray,
+            textAlign = androidx.compose.ui.text.style.TextAlign.Center
+        )
+    }
 }
 
 @Composable

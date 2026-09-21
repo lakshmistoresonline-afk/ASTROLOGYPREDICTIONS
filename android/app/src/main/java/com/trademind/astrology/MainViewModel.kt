@@ -38,7 +38,7 @@ class MainViewModel : ViewModel() {
     val uiState = _uiState.asStateFlow()
 
     // Navigation state (Phase 8 P1)
-    var currentScreen by mutableStateOf<Screen>(Screen.BirthProfile)
+    var currentScreen by mutableStateOf<Screen>(Screen.Login)
     
     var selectedExplanation by mutableStateOf<ExplanationResponse?>(null)
 

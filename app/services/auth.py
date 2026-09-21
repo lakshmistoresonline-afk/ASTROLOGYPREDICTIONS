@@ -70,7 +70,7 @@ def login_required(f):
         if not claims:
             if request.path.startswith("/api/"):
                 return jsonify({"error": "AUTHENTICATION_REQUIRED", "message": "Valid Firebase authentication required."}), 401
-            return redirect(url_for("marketing.home", next=request.path))
+            return redirect(url_for("main.login", next=request.path))
 
         uid = claims.get("uid")
         email = claims.get("email")
