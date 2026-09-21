@@ -94,11 +94,11 @@
             <div class="d-flex flex-column gap-3">
                 <div class="d-flex justify-content-between border-bottom border-white border-opacity-5 pb-2">
                     <span class="small text-dim">Ascendant</span>
-                    <span class="small fw-bold text-white">{{ chart.lagna.rashi_name }}</span>
+                    <span class="small fw-bold text-white">{{ chart.lagna.rashi_name if chart.lagna else 'N/A' }}</span>
                 </div>
                 <div class="d-flex justify-content-between border-bottom border-white border-opacity-5 pb-2">
                     <span class="small text-dim">Moon Sign</span>
-                    <span class="small fw-bold text-white">{{ chart.planets.Moon.rashi_name }}</span>
+                    <span class="small fw-bold text-white">{{ chart.planets.Moon.rashi_name if chart.planets and chart.planets.Moon else 'N/A' }}</span>
                 </div>
                 <div class="expert-only" style="display:none">
                     <div class="d-flex justify-content-between border-bottom border-white border-opacity-5 pb-2">
