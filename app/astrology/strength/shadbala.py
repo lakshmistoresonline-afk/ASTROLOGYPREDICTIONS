@@ -175,7 +175,7 @@ def calculate_shadbala(chart_data: Dict[str, Any], is_day: bool = True, is_shukl
 
         lon = p_data.get("longitude", 0)
         house = p_data.get("house", 1)
-        speed = p_data.get("speed_long", 1.0)
+        speed = p_data.get("speed_long") or p_data.get("speed", 1.0)
         is_retro = p_data.get("is_retrograde", False)
 
         # 1. Sthana Bala

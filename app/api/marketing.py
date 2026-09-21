@@ -86,11 +86,12 @@ def birth_chart_funnel():
 
             dt = parse_birth_datetime(dob, tob)
             chart = calculate_canonical_chart(dt, float(lat), float(lon), str(tz))
+            from ..astrology.core.houses import RASHI_NAMES
             preview_data = {
                 "name": name,
-                "ascendant_rashi": chart.ascendant_rashi,
-                "moon_rashi": chart.planets.get("Moon").rashi if "Moon" in chart.planets else 0,
-                "nakshatra": chart.planets.get("Moon").nakshatra if "Moon" in chart.planets else "Ashwini",
+                "ascendant_rashi": RASHI_NAMES[chart.asc_rashi],
+                "moon_rashi": RASHI_NAMES[chart.planets["Moon"].rashi] if "Moon" in chart.planets else "N/A",
+                "nakshatra": chart.planets["Moon"].nakshatra.name if "Moon" in chart.planets else "N/A",
                 "dasha": "Vimshottari Dasha Active",
                 "chart_fingerprint": chart.chart_fingerprint
             }

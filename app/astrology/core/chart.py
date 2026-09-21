@@ -48,6 +48,22 @@ def _get_nakshatra_info(longitude: float) -> NakshatraInfo:
         degree_range=(idx * NAK_SPAN, (idx + 1) * NAK_SPAN)
     )
 
+def _is_planet_combust(p_name: str, p_lon: float, sun_lon: float, is_retro: bool) -> bool:
+    """Check if planet is combust by proximity to Sun."""
+    limits = {
+        "Moon": 12.0, "Mars": 17.0, "Mercury": 14.0, "Jupiter": 11.0,
+        "Venus": 10.0, "Saturn": 15.0
+    }
+    if is_retro:
+        if p_name == "Mercury": limits["Mercury"] = 12.0
+        if p_name == "Venus": limits["Venus"] = 8.0
+
+    if p_name not in limits: return False
+
+    diff = abs(p_lon - sun_lon) % 360
+    if diff > 180: diff = 360 - diff
+    return diff < limits[p_name]
+
 @lru_cache(maxsize=128)
 def calculate_chart_data(birth_dt: datetime, lat: float, lon: float, tz_str: str, birth_time_conf: str = "HIGH") -> CanonicalChart:
     """Master Engine: Returns a complete CanonicalChart using isolated Calculation Service."""
@@ -114,7 +130,7 @@ def calculate_chart_data(birth_dt: datetime, lat: float, lon: float, tz_str: str
         WEEKDAY_LORDS = ["Sun", "Moon", "Mars", "Mercury", "Jupiter", "Venus", "Saturn"]
 
         temp_shad = {
-            "planets": { n: {"longitude": l, "rashi": int(l//30), "house": get_house_from_longitude(l, ascendant), "is_retrograde": raw_planets.get(n,{}).get("is_retrograde", False), "speed_long": raw_planets.get(n,{}).get("speed", 1.0)} for n,l in planets_lon.items() if n in WEEKDAY_LORDS},
+            "planets": { n: {"longitude": l, "rashi": int(l//30), "house": get_house_from_longitude(l, ascendant), "is_retrograde": raw_planets.get(n,{}).get("is_retrograde", False), "is_combust": _is_planet_combust(n, l, planets_lon["Sun"], raw_planets.get(n,{}).get("is_retrograde", False)), "speed_long": raw_planets.get(n,{}).get("speed", 1.0)} for n,l in planets_lon.items() if n in WEEKDAY_LORDS},
             "divisional_charts": divs
         }
         shad_map = calculate_shadbala(temp_shad, is_day, t_num <= 15, WEEKDAY_LORDS[v_weekday], hora_lord)
@@ -128,12 +144,15 @@ def calculate_chart_data(birth_dt: datetime, lat: float, lon: float, tz_str: str
             house = get_house_from_longitude(lon_p, ascendant)
             dignity = get_dignity(name, rashi, deg)
 
+            is_retro = raw_planets.get(name, {}).get("is_retrograde", False)
+            is_combust = _is_planet_combust(name, lon_p, planets_lon["Sun"], is_retro)
+
             planets[name] = PlanetInfo(
                 name=name, longitude=lon_p,
                 latitude=raw_planets.get(name, {}).get("latitude", 0.0),
                 speed=raw_planets.get(name, {}).get("speed", 1.0),
-                is_retrograde=raw_planets.get(name, {}).get("is_retrograde", False),
-                is_combust=False,
+                is_retrograde=is_retro,
+                is_combust=is_combust,
                 rashi=rashi, degree=deg, house=house, dignity=dignity,
                 nakshatra=_get_nakshatra_info(lon_p),
                 dispositor=RASHI_LORDS[rashi],
