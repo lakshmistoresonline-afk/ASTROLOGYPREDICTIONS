@@ -1,0 +1,16 @@
+2026-09-21 17:52:33,228 INFO [__init__.py:78]: Astro Predictions V3.22.1 starting with debug logging enabled...
+2026-09-21 17:52:52,223 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): 127.0.0.1:8000
+2026-09-21 17:52:54,365 INFO [_internal.py:97]: [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5001
+ * Running on http://192.168.1.11:5001
+2026-09-21 17:52:54,370 INFO [_internal.py:97]: [33mPress CTRL+C to quit[0m
+2026-09-21 17:52:54,543 INFO [_internal.py:97]:  * Restarting with stat
+2026-09-21 17:53:17,777 INFO [__init__.py:78]: Astro Predictions V3.22.1 starting with debug logging enabled...
+2026-09-21 17:53:18,039 DEBUG [proactor_events.py:631]: Using proactor: IocpProactor
+2026-09-21 17:53:35,516 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): 127.0.0.1:8000
+2026-09-21 17:53:35,565 DEBUG [connectionpool.py:544]: http://127.0.0.1:8000 "GET /health HTTP/1.1" 200 42
+2026-09-21 17:53:35,841 WARNING [_internal.py:97]:  * Debugger is active!
+2026-09-21 17:53:35,868 INFO [_internal.py:97]:  * Debugger PIN: 644-143-807
+2026-09-21 17:53:37,739 INFO [_internal.py:97]: 127.0.0.1 - - [21/Sep/2026 17:53:37] "GET / HTTP/1.1" 200 -
+2026-09-21 17:53:41,850 INFO [_internal.py:97]: 127.0.0.1 - - [21/Sep/2026 17:53:41] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
