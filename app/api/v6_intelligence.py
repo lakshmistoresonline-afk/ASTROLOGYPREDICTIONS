@@ -17,7 +17,7 @@ def v6_summary():
         if not chart_obj:
             return jsonify({"status": "NO_ACTIVE_PROFILE"}), 404
 
-        preds = generate_evidence_based_predictions(chart_obj)
+        preds = generate_evidence_based_predictions(chart_obj, selected_date=datetime.now())
         daily = get_daily_forecast(chart_obj, datetime.now())
 
         top_pred = preds['predictions'][0] if preds.get('predictions') else None

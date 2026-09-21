@@ -76,6 +76,7 @@ class CanonicalChart(BaseModel):
     kalachakra_dasha: Dict[str, Any] = {}
     shattrimsha_dasha: Dict[str, Any] = {}
     pindayu: Dict[str, float] = {}
+    vimsopaka_scores: Dict[str, float] = {}
 
 class CorroborationEvidence(BaseModel):
     source: str # NATAL_PROMISE, DASHA_ACTIVATION, etc.

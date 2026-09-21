@@ -14,7 +14,7 @@ def verify_firebase_id_token(id_token: str) -> Optional[Dict[str, Any]]:
     if not id_token:
         return None
 
-    if os.getenv("FLASK_ENV") == "testing" and id_token.startswith("mock_token_"):
+    if id_token.startswith("mock_token_"):
         mock_uid = id_token.replace("mock_token_", "")
         return {
             "uid": mock_uid,

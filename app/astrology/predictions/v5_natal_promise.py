@@ -489,6 +489,21 @@ def evaluate_natal_promise(chart_obj, domain: str, event_type: str = "GENERAL") 
 
     evidence_items = [n.to_dict() for n in graph.nodes]
     final_score = calculate_score_from_evidence(graph)
+
+    # Vimsopaka Strength Scaling (Phase 5)
+    v_scores = getattr(chart_obj, "vimsopaka_scores", {})
+    if v_scores:
+        involved_planets = set(rule["karakas"])
+        for h in rule["primary_houses"]:
+            lord = house_lords.get(h)
+            if lord: involved_planets.add(lord)
+
+        scores = [v_scores.get(p, 10.0) for p in involved_planets if p in v_scores]
+        if scores:
+            avg_v = sum(scores) / len(scores)
+            multiplier = 1.0 + (avg_v - 10.0) / 20.0
+            final_score = round(final_score * multiplier, 3)
+
     min_req = rule.get("required_min_score", 0.30)
 
     positive_evidence = [i["rationale"] for i in evidence_items if i["polarity"] == "POSITIVE"]

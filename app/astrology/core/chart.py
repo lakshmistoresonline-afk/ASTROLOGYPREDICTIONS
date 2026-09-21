@@ -22,6 +22,7 @@ from ..dasha.chara import calculate_chara_dasha
 from ..dasha.shattrimsha import calculate_shattrimsha_dasha
 from ..strength.avasthas import calculate_baladi_avastha, calculate_deeptadi_avastha
 from ..strength.longevity_calculation import calculate_pindayu
+from ..strength.vimsopaka import calculate_vimsopaka_bala
 from datetime import datetime
 import traceback
 from functools import lru_cache
@@ -165,6 +166,7 @@ def calculate_chart_data(birth_dt: datetime, lat: float, lon: float, tz_str: str
         )
 
         final_chart.yogas = detect_yogas(planets, final_chart.house_lords, chart=final_chart)
+        final_chart.vimsopaka_scores = calculate_vimsopaka_bala(final_chart)
         return final_chart
 
     except Exception as e:

@@ -3,6 +3,7 @@ from typing import Dict, Any, List, Optional
 from collections import defaultdict
 from ..core.models import CanonicalChart
 from ..core.calc_client import calc_client
+from ..core.sarvatobhadra import check_sbc_transit_impact
 
 class TransitEvent:
     """
@@ -303,6 +304,18 @@ class TimingWindowEngine:
             convergence_bonus = 1.3 if trigger_count >= 2 else 1.0
             proximity_weight = temporal_weight * p_imp * convergence_bonus
 
+            # Sarvatobhadra Transit Blockage (Phase 7)
+            from ..core.calc_client import calc_client
+            t_day_positions = calc_client.get_natal_chart(peak_dt.year, peak_dt.month, peak_dt.day, 12.0, chart.latitude, chart.longitude)["planets"]
+            t_lons = {n: p["longitude"] for n, p in t_day_positions.items()}
+            n_lons = {n: p.longitude for n, p in chart.planets.items()}
+            sbc_alerts = check_sbc_transit_impact(t_lons, n_lons)
+
+            sbc_desc = ""
+            if sbc_alerts:
+                proximity_weight *= 0.7 # Downgrade by 30% for obstruction
+                sbc_desc = " [SBC Vedha Obstruction Detected]"
+
             return {
                 "phase": phase,
                 "transition_status": transition_phase,
@@ -311,7 +324,7 @@ class TimingWindowEngine:
                 "peak": manifest_peak.strftime("%Y-%m-%d"),
                 "manifestation": (manifest_peak + timedelta(days=5)).strftime("%Y-%m-%d"),
                 "decline": (manifest_peak + timedelta(days=15)).strftime("%Y-%m-%d"),
-                "description": f"{valid_peak_event.planet} {valid_peak_event.event_type} trigger ({transition_phase}).",
+                "description": f"{valid_peak_event.planet} {valid_peak_event.event_type} trigger ({transition_phase}).{sbc_desc}",
                 "timing_confidence": f"{phase} ({int(proximity_weight*100)}%)",
                 "proximity_weight": proximity_weight,
                 "days_to_peak": days_to_peak,
