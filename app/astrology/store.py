@@ -29,6 +29,24 @@ else:
         name = chart_data.get("name") or "Native"
         dob = chart_data.get("birth_dob")
         tob = chart_data.get("birth_tob")
+
+        # Fallback to birth_datetime if dob/tob missing (V3.22 patch)
+        if not dob or not tob:
+            bdt_str = chart_data.get("birth_datetime")
+            if bdt_str:
+                try:
+                    # Handle both datetime objects and ISO strings
+                    if hasattr(bdt_str, "strftime"):
+                        bdt = bdt_str
+                    else:
+                        from datetime import datetime
+                        bdt = datetime.fromisoformat(str(bdt_str).replace('Z', '+00:00'))
+
+                    if not dob: dob = bdt.strftime("%Y-%m-%d")
+                    if not tob: tob = bdt.strftime("%H:%M")
+                except:
+                    pass
+
         if not dob or not tob:
             raise ValueError("DATA_INTEGRITY_ERROR: Birth date and birth time are required.")
 
