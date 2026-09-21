@@ -36,7 +36,7 @@ def mobile_dashboard():
                     dob = chart_data.get('birth_dob') or chart_data.get('dob')
                     tob = chart_data.get('birth_tob') or chart_data.get('tob')
                     lat = float(chart_data.get('latitude') or chart_data.get('lat', 0))
-                    lon = float(chart_data.get('longitude_coord') or chart_data.get('lon', 0))
+                    lon = float(chart_data.get('longitude') or chart_data.get('longitude_coord') or chart_data.get('lon', 0))
                     tz = chart_data.get('timezone') or chart_data.get('tz', 'Asia/Kolkata')
                     birth_dt = parse_birth_datetime(dob, tob)
                     chart_obj = calculate_canonical_chart(birth_dt, lat, lon, tz)

@@ -62,9 +62,9 @@ else:
             dob=dob,
             tob=tob,
             place=chart_data.get("place"),
-            lat=chart_data.get("latitude"),
-            lon=chart_data.get("longitude_coord"),
-            tz=chart_data.get("timezone")
+            lat=chart_data.get("latitude") or chart_data.get("lat"),
+            lon=chart_data.get("longitude") or chart_data.get("longitude_coord") or chart_data.get("lon"),
+            tz=chart_data.get("timezone") or chart_data.get("tz")
         )
         new_chart.set_data(chart_data)
         db.session.add(new_chart)
