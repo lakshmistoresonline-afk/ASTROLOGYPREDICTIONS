@@ -1,0 +1,21 @@
+# Multi-Region Active-Active Helm Values (AP-South)
+region: ap-south1
+replicaCount: 4
+
+autoscaling:
+  enabled: true
+  minReplicas: 4
+  maxReplicas: 32
+  targetCPUUtilizationPercentage: 70
+
+ingress:
+  enabled: true
+  className: "nginx"
+  annotations:
+    ingress.kubernetes.io/ssl-redirect: "true"
+    external-dns.alpha.kubernetes.io/hostname: "ap-south.astropredictions.com"
+
+env:
+  REGION_ID: "AP-SOUTH-1"
+  REDIS_URL: "redis://redis-ap-south.cache.internal:6379/0"
+  POSTGRES_URL: "postgresql://astro:secret@pg-ap-south.db.internal:5432/astrodb"

@@ -1,0 +1,21 @@
+# Multi-Region Active-Active Helm Values (EU-Central)
+region: eu-central1
+replicaCount: 4
+
+autoscaling:
+  enabled: true
+  minReplicas: 4
+  maxReplicas: 32
+  targetCPUUtilizationPercentage: 70
+
+ingress:
+  enabled: true
+  className: "nginx"
+  annotations:
+    ingress.kubernetes.io/ssl-redirect: "true"
+    external-dns.alpha.kubernetes.io/hostname: "eu-central.astropredictions.com"
+
+env:
+  REGION_ID: "EU-CENTRAL-1"
+  REDIS_URL: "redis://redis-eu-central.cache.internal:6379/0"
+  POSTGRES_URL: "postgresql://astro:secret@pg-eu-central.db.internal:5432/astrodb"
