@@ -1,12 +1,13 @@
 #!/bin/bash
-# Emscripten Compilation Script for Swiss Ephemeris C Source to swisseph.wasm
-echo "Building Swiss Ephemeris C-to-WASM binary..."
+# Swiss Ephemeris C-to-WASM Emscripten Compilation Pipeline (Module 29)
+echo "Building Swiss Ephemeris swisseph.wasm with maximum performance optimization (-O3)..."
 
 emcc swisseph/src/*.c \
   -O3 \
   -s WASM=1 \
-  -s EXPORTED_FUNCTIONS='["_swe_calc_ut", "_swe_houses_ex", "_swe_set_topocentric", "_swe_set_sid_mode"]' \
+  -s ALLOW_MEMORY_GROWTH=1 \
+  -s EXPORTED_FUNCTIONS='["_swe_calc_ut", "_swe_houses", "_swe_houses_ex", "_swe_set_topocentric", "_swe_set_sid_mode"]' \
   -s EXPORTED_RUNTIME_METHODS='["ccall", "cwrap"]' \
-  -o ../frontend/lib/ephemeris/swisseph.js
+  -o ../frontend/lib/wasm/swisseph.js
 
-echo "Swiss Ephemeris WASM build completed successfully."
+echo "Swiss Ephemeris WASM compilation completed successfully."

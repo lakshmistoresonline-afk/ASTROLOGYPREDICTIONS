@@ -7,6 +7,7 @@ from typing import Dict, Any, List
 from datetime import datetime
 from ..services.daily_transit_scanner import daily_transit_scanner
 from ..services.push_notifier import push_notifier
+from ..utils.fcm_dispatcher import fcm_dispatcher
 
 class DailyTransitsWorker:
     """
@@ -35,7 +36,7 @@ class DailyTransitsWorker:
             confluence_score = profile.get("latest_confluence_score", 78.5)
 
             if confluence_score >= 75.0 and fcm_token:
-                alert = push_notifier.dispatch_confluence_push(
+                alert = fcm_dispatcher.dispatch_fcm_notification(
                     fcm_token=fcm_token,
                     domain="Career & Authority",
                     confluence_score=confluence_score,
