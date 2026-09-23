@@ -1591,3 +1591,157 @@
 2026-09-22 22:34:09,767 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
 2026-09-22 22:34:09,882 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
 2026-09-22 22:34:10,669 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-23 18:44:45,826 INFO [__init__.py:78]: Astro Predictions V3.22.1 starting with debug logging enabled...
+2026-09-23 18:44:52,765 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-23 18:44:54,874 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-23 18:44:56,020 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-23 18:44:57,786 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-23 18:46:12,854 INFO [__init__.py:78]: Astro Predictions V3.22.1 starting with debug logging enabled...
+2026-09-23 18:46:29,889 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-23 18:46:31,629 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-23 18:46:32,657 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-23 18:46:33,673 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-23 18:51:50,831 INFO [__init__.py:78]: Astro Predictions V3.22.1 starting with debug logging enabled...
+2026-09-23 18:56:21,212 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-23 18:56:34,859 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-23 18:56:40,353 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-23 18:56:45,745 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-23 19:02:52,004 INFO [__init__.py:78]: Astro Predictions V3.22.1 starting with debug logging enabled...
+2026-09-23 19:02:58,770 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-23 19:03:00,437 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-23 19:03:01,449 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-23 19:03:02,459 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-23 19:03:15,089 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-23 19:03:15,144 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-23 19:03:15,161 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-23 19:03:15,162 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-23 19:03:15,183 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-23 19:03:15,383 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-23 19:03:15,385 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-23 19:03:15,388 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-23 19:03:21,505 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-23 19:03:22,469 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-23 19:03:22,612 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-23 19:03:22,656 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-23 19:03:22,694 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-23 19:03:23,021 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-23 19:03:29,775 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-23 19:03:39,699 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-23 19:03:39,708 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-23 19:03:39,713 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-23 19:03:39,784 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-23 19:03:39,820 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-23 19:03:46,041 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-23 19:03:46,122 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-23 19:03:46,171 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-23 19:03:46,192 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-23 19:03:46,202 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-23 19:03:53,925 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-23 19:03:54,018 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-23 19:03:54,234 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-23 19:03:54,237 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-23 19:03:54,421 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-23 19:04:00,281 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-23 19:04:00,283 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-23 19:04:00,399 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-23 19:04:00,533 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-23 19:04:08,375 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-23 19:04:08,600 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-23 19:04:08,701 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-23 19:04:08,705 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-23 19:04:08,748 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-23 19:04:14,167 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-23 19:04:14,328 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-23 19:04:14,801 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-23 19:04:22,478 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-23 19:04:22,522 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-23 19:04:22,649 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-23 19:04:22,871 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-23 19:04:22,921 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-23 19:04:27,755 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-23 19:04:27,763 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-23 19:04:27,870 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-23 19:04:28,024 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-23 19:04:35,921 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-23 19:04:36,599 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-23 19:04:36,601 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-23 19:04:36,637 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-23 19:04:36,642 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-23 19:04:39,784 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-23 19:04:41,216 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-23 19:04:41,432 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-23 19:04:41,435 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-23 19:04:41,509 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-23 19:04:43,543 DEBUG [fpdf.py:3413]: Page break on page 6 at y=273 for element of height 5 > 277
+2026-09-23 19:04:43,812 DEBUG [fpdf.py:3413]: Page break on page 8 at y=273 for element of height 5 > 277
+2026-09-23 19:04:43,929 DEBUG [output.py:954]: Final size summary of the biggest document sections:
+2026-09-23 19:04:43,939 DEBUG [output.py:956]: - pages: 16.6KiB
+2026-09-23 19:04:43,942 DEBUG [output.py:956]: - fonts: 307.0B
+2026-09-23 19:06:26,053 INFO [__init__.py:78]: Astro Predictions V3.22.1 starting with debug logging enabled...
+2026-09-23 19:06:31,863 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-23 19:06:33,523 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-23 19:06:34,605 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-23 19:06:35,614 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-23 19:06:47,512 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-23 19:06:47,521 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-23 19:06:47,524 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-23 19:06:47,526 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-23 19:06:47,552 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-23 19:06:47,662 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-23 19:06:47,696 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-23 19:06:47,700 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-23 19:06:55,334 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-23 19:06:55,367 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-23 19:06:55,660 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-23 19:06:55,677 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-23 19:06:55,848 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-23 19:06:55,931 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-23 19:06:56,025 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-23 19:07:13,110 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-23 19:07:13,427 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-23 19:07:13,465 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-23 19:07:13,540 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-23 19:07:13,677 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-23 19:07:17,728 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-23 19:07:18,470 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-23 19:07:18,559 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-23 19:07:18,568 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-23 19:07:18,604 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-23 19:07:26,880 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-23 19:07:27,049 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-23 19:07:27,061 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-23 19:07:27,095 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-23 19:07:27,100 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-23 19:07:32,027 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-23 19:07:32,305 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-23 19:07:32,306 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-23 19:07:32,408 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-23 19:07:41,292 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-23 19:07:41,313 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-23 19:07:41,474 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-23 19:07:41,552 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-23 19:07:41,554 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-23 19:07:46,655 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-23 19:07:46,676 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-23 19:07:55,518 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-23 19:07:55,644 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-23 19:07:55,706 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-23 19:07:55,711 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-23 19:07:55,871 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-23 19:08:00,159 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-23 19:08:00,946 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-23 19:08:09,738 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-23 19:08:10,063 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-23 19:08:10,064 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-23 19:08:10,067 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-23 19:08:10,125 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-23 19:08:14,947 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-23 19:08:15,437 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-23 19:08:15,577 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-23 19:08:15,581 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-23 19:08:15,582 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-23 19:08:17,641 DEBUG [fpdf.py:3413]: Page break on page 6 at y=273 for element of height 5 > 277
+2026-09-23 19:08:17,912 DEBUG [fpdf.py:3413]: Page break on page 8 at y=273 for element of height 5 > 277
+2026-09-23 19:08:18,037 DEBUG [output.py:954]: Final size summary of the biggest document sections:
+2026-09-23 19:08:18,038 DEBUG [output.py:956]: - pages: 16.6KiB
+2026-09-23 19:08:18,039 DEBUG [output.py:956]: - fonts: 307.0B
