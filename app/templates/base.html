@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>{% block title %}Astro Predictions — Premium Vedic Intelligence{% endblock %}</title>
+  <title>{% block title %}Astro Predictions — Dark Celestial Intelligence{% endblock %}</title>
   <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='img/icon.svg') }}"/>
 
   <!-- Next-Gen UI Stack -->
@@ -12,111 +12,136 @@
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap"/>
 
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}?v=6.1"/>
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/style_v2.css') }}?v=6.1"/>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style_v2.css') }}?v=6.3"/>
   <link rel="manifest" href="/static/manifest.json">
-  <meta name="theme-color" content="#08090E">
-
-  <style>
-    /* Senior Accessibility & High Visibility Hardening */
-    body {
-        font-size: 18px !important;
-        line-height: 1.75 !important;
-        color: #f8fafc !important;
-    }
-    p, span, li, a, label, input, select, button, .text-dim, .text-muted {
-        color: #f1f5f9 !important;
-        font-size: 1.125rem !important;
-    }
-    h1, h2, h3, h4, h5, h6, .text-gold {
-        color: #FFD700 !important;
-    }
-    .navbar-nav .nav-link {
-        font-size: 1.15rem !important;
-        font-weight: 600 !important;
-    }
-    .card-premium, .card-custom, .bg-glass, .bg-dark {
-        background-color: #120e26 !important;
-        border: 2px solid #3b2a75 !important;
-    }
-    .btn {
-        font-size: 1.1rem !important;
-        font-weight: 700 !important;
-        padding: 12px 24px !important;
-    }
-  </style>
+  <meta name="theme-color" content="#0B0F19">
 
   {% block head %}{% endblock %}
 </head>
-<body class="ethereal-bg text-white">
+<body class="deep-space-bg">
 
-    <!-- Top Celestial Navigation Bar (Co-Star / Chani Editorial Standard) -->
-    <header class="navbar navbar-expand-lg navbar-dark bg-glass border-bottom border-white border-opacity-10 sticky-top py-3 px-4 shadow-lg">
-        <div class="container-fluid max-w-7xl">
-            <a class="navbar-brand d-flex align-items-center gap-3 text-decoration-none" href="{{ url_for('main.dashboard') }}">
-                <div class="rounded-circle bg-gold text-dark d-flex align-items-center justify-content-center fw-black shadow-gold" style="width: 42px; height: 42px; font-size: 1.2rem; background: linear-gradient(135deg, #FBBF24 0%, #D97706 100%);">ॐ</div>
-                <div>
-                    <div class="font-premium fs-5 tracking-widest text-white mb-0 fw-bold">ASTRO PREDICTIONS</div>
-                    <div class="xxsmall text-gold fw-black tracking-widest opacity-60 uppercase font-mono" style="font-size: 0.65rem;">V6.0 Vedic Intelligence</div>
-                </div>
+  <div class="app-shell">
+
+    <!-- 1. LEFT GLASSMORPHIC SIDEBAR -->
+    <aside class="app-sidebar" id="appSidebar">
+      <div>
+        <a class="sidebar-brand" href="{{ url_for('main.dashboard') }}">
+          <div class="brand-icon">ॐ</div>
+          <div>
+            <div class="font-premium fs-6 tracking-widest text-white mb-0 fw-bold">ASTRO PREDICTIONS</div>
+            <div class="xxsmall text-gold fw-bold tracking-widest opacity-75 uppercase font-mono">Dark Celestial AI</div>
+          </div>
+        </a>
+
+        <ul class="sidebar-menu">
+          <li>
+            <a class="sidebar-link {% if request.endpoint == 'main.dashboard' %}active{% endif %}" href="{{ url_for('main.dashboard') }}">
+              <i class="bi bi-grid-1x2-fill text-gold fs-5"></i>
+              <span>Dashboard</span>
             </a>
+          </li>
+          {% if session.get('active_chart_id') %}
+          <li>
+            <a class="sidebar-link {% if request.endpoint == 'main.kundli' %}active{% endif %}" href="{{ url_for('main.kundli') }}">
+              <i class="bi bi-compass-fill text-gold fs-5"></i>
+              <span>Birth Chart</span>
+            </a>
+          </li>
+          <li>
+            <a class="sidebar-link {% if request.endpoint == 'main.predictions' %}active{% endif %}" href="{{ url_for('main.predictions') }}">
+              <i class="bi bi-stars text-gold fs-5"></i>
+              <span>Forecasts & Domains</span>
+            </a>
+          </li>
+          <li>
+            <a class="sidebar-link {% if request.endpoint == 'main.timeline' %}active{% endif %}" href="{{ url_for('main.timeline') }}">
+              <i class="bi bi-calendar3-range-fill text-gold fs-5"></i>
+              <span>Life Atlas</span>
+            </a>
+          </li>
+          <li>
+            <a class="sidebar-link {% if request.endpoint == 'main.cosmic_dna' %}active{% endif %}" href="{{ url_for('main.cosmic_dna') }}">
+              <i class="bi bi-dna text-gold fs-5"></i>
+              <span>Cosmic DNA</span>
+            </a>
+          </li>
+          <li>
+            <a class="sidebar-link text-gold" href="{{ url_for('main.report_download') }}" target="_blank">
+              <i class="bi bi-file-earmark-pdf-fill fs-5"></i>
+              <span>Export PDF Report</span>
+            </a>
+          </li>
+          <li class="mt-3 pt-3 border-top border-white border-opacity-10">
+            <a class="sidebar-link {% if request.endpoint == 'main.index' %}active{% endif %}" href="{{ url_for('main.index') }}">
+              <i class="bi bi-folder-symlink-fill text-white-50 fs-5"></i>
+              <span>Vault & Profiles</span>
+            </a>
+          </li>
+          {% else %}
+          <li>
+            <a class="sidebar-link text-gold" href="{{ url_for('main.new_profile') }}">
+              <i class="bi bi-plus-circle-fill fs-5"></i>
+              <span>Create Birth Profile</span>
+            </a>
+          </li>
+          {% endif %}
+        </ul>
+      </div>
 
-            <button class="navbar-toggler border-0 text-white" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <i class="bi bi-list fs-2"></i>
-            </button>
-
-            <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
-                <ul class="navbar-nav align-items-center gap-2 my-2 my-lg-0">
-                    <li class="nav-item">
-                        <a class="nav-link px-3 py-2 rounded-pill {% if request.endpoint == 'main.dashboard' %}active-pill{% endif %}" href="{{ url_for('main.dashboard') }}">
-                            <i class="bi bi-house-door me-1"></i> Home
-                        </a>
-                    </li>
-                    {% if session.get('active_chart_id') %}
-                    <li class="nav-item">
-                        <a class="nav-link px-3 py-2 rounded-pill {% if request.endpoint == 'main.index' %}active-pill{% endif %}" href="{{ url_for('main.index') }}">
-                            <i class="bi bi-circle-square me-1"></i> My Chart & Vault
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link px-3 py-2 rounded-pill {% if request.endpoint == 'main.predictions' %}active-pill{% endif %}" href="{{ url_for('main.predictions') }}">
-                            <i class="bi bi-compass me-1"></i> Forecast
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link px-3 py-2 rounded-pill {% if request.endpoint == 'main.timeline' %}active-pill{% endif %}" href="{{ url_for('main.timeline') }}">
-                            <i class="bi bi-calendar3 me-1"></i> Life Atlas
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link px-3 py-2 rounded-pill" href="{{ url_for('main.predictions') }}">
-                            <i class="bi bi-lightbulb me-1"></i> Insights
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link px-3 py-2 rounded-pill {% if request.endpoint == 'main.history' %}active-pill{% endif %}" href="{{ url_for('main.history') }}">
-                            <i class="bi bi-check2-square me-1"></i> Outcomes
-                        </a>
-                    </li>
-                    {% endif %}
-                    {% if session.get('is_beta_session') or session.get('is_admin') %}
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle px-3 py-2 rounded-pill text-gold" href="#" role="button" data-bs-toggle="dropdown">
-                            <i class="bi bi-cpu me-1"></i> Expert Mode
-                        </a>
-                        <ul class="dropdown-menu dropdown-menu-dark bg-glass border border-white border-opacity-10 shadow-2xl rounded-4 p-2">
-                            <li><a class="dropdown-item rounded-3 py-2" href="{{ url_for('main.admin_accuracy') }}"><i class="bi bi-bar-chart me-2"></i> Validation</a></li>
-                            <li><a class="dropdown-item rounded-3 py-2" href="{{ url_for('main.prediction_lab') }}"><i class="bi bi-cpu me-2"></i> Prediction Lab</a></li>
-                        </ul>
-                    </li>
-                    {% endif %}
-                </ul>
+      <!-- Sidebar Footer User Profile Card -->
+      <div class="pt-3 border-top border-white border-opacity-10">
+        <div class="d-flex align-items-center justify-content-between p-2 rounded-3 bg-dark bg-opacity-40">
+          <div class="d-flex align-items-center gap-2 overflow-hidden">
+            <div class="rounded-circle bg-gold text-dark fw-bold d-flex align-items-center justify-content-center xxsmall" style="width: 32px; height: 32px; flex-shrink: 0;">
+              {{ (session.get('birth_name') or 'U')[0]|upper }}
             </div>
+            <div class="text-truncate">
+              <div class="xxsmall fw-bold text-white text-truncate">{{ session.get('birth_name') or 'Guest User' }}</div>
+              <div class="xxsmall text-dim font-mono">V3.35 Active</div>
+            </div>
+          </div>
+          <a href="{{ url_for('main.index') }}" class="text-dim hover-gold"><i class="bi bi-gear-fill"></i></a>
         </div>
-    </header>
+      </div>
+    </aside>
 
-    <!-- Main Content Container -->
-    <main class="container pt-4 pb-5 max-w-7xl">
+    <!-- 2. MAIN WORKSPACE CONTAINER -->
+    <div class="app-main">
+
+      <!-- TOP HEADER BAR -->
+      <header class="app-header">
+        <div class="d-flex align-items-center gap-3">
+          <button class="btn btn-link text-white p-0 d-lg-none" type="button" onclick="document.getElementById('appSidebar').classList.toggle('show')">
+            <i class="bi bi-list fs-2"></i>
+          </button>
+
+          <div class="position-relative d-none d-md-block">
+            <i class="bi bi-search position-absolute text-dim" style="left: 14px; top: 50%; transform: translateY(-50%); font-size: 0.85rem;"></i>
+            <input type="text" class="header-search" placeholder="Search domains, transits, charts..." aria-label="Search"/>
+          </div>
+        </div>
+
+        <div class="d-flex align-items-center gap-3">
+          {% if session.get('active_chart_id') %}
+          <!-- TOP-RIGHT DAILY FOCUS BADGE -->
+          <div class="pill-transit d-none d-sm-inline-flex border-gold border-opacity-30">
+            <span class="text-gold">🌕 TRANSIT FOCUS:</span>
+            <span class="text-white">VENUS IN LIBRA (9TH HOUSE)</span>
+          </div>
+
+          <a href="{{ url_for('main.report_download') }}" class="btn btn-vedic btn-sm py-1.5 px-3 xxsmall fw-bold shadow-sm" target="_blank">
+            <i class="bi bi-download me-1"></i> PDF Report
+          </a>
+          {% else %}
+          <a href="{{ url_for('main.new_profile') }}" class="btn btn-vedic btn-sm py-1.5 px-3 xxsmall fw-bold shadow-sm">
+            + New Profile
+          </a>
+          {% endif %}
+        </div>
+      </header>
+
+      <!-- MAIN CONTENT AREA -->
+      <main class="p-4 p-md-5">
         {% with messages = get_flashed_messages(with_categories=true) %}
           {% if messages %}
             {% for category, message in messages %}
@@ -129,31 +154,19 @@
         {% endwith %}
 
         {% block content %}{% endblock %}
-    </main>
+      </main>
 
-    <!-- Footer -->
-    <footer class="py-4 text-center border-top border-white border-opacity-10 bg-glass text-dim xsmall">
-        <div class="container max-w-7xl">
-            <span class="opacity-60">Astro Predictions V6.0 — Premium Vedic Intelligence Architecture. V3.15 Calculation Core Preserved.</span>
-        </div>
-    </footer>
+      <!-- FOOTER -->
+      <footer class="p-4 text-center border-top border-white border-opacity-10 text-dim xxsmall mt-auto">
+        <span>Astro Predictions V6.2 — Dark Celestial Intelligence Shell. Swiss Ephemeris Core.</span>
+      </footer>
+
+    </div>
+
+  </div>
 
 <!-- Bootstrap JS Bundle -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-<script>
-function toggleExpertMode(val) {
-    fetch('/api/v1/session/expert', {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({expert: val})
-    }).then(() => window.location.reload());
-}
-function toggleTheme() {
-    const html = document.documentElement;
-    const current = html.getAttribute('data-bs-theme');
-    html.setAttribute('data-bs-theme', current === 'dark' ? 'light' : 'dark');
-}
-</script>
 {% block scripts %}{% endblock %}
 </body>
 </html>

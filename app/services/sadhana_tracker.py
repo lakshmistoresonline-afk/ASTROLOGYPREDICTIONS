@@ -1,5 +1,5 @@
 from typing import Dict, Any, List
-from datetime import datetime
+from datetime import datetime, timezone
 
 class SadhanaTrackerService:
     """
@@ -15,6 +15,6 @@ class SadhanaTrackerService:
             "target_japam_count": 10008,
             "completed_japam_count": 0,
             "gemstone_status": "Not Started",
-            "started_at": datetime.utcnow().isoformat(),
+            "started_at": datetime.now(timezone.utc).isoformat(),
             "status": "IN_PROGRESS"
         }

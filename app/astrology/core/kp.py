@@ -1,5 +1,5 @@
 from .planets import NAKSHATRA_LORDS, NAK_SPAN
-from typing import Tuple, Dict
+from typing import Tuple, Dict, List, Any
 
 # Vimshottari years
 DASHA_YEARS = {
@@ -114,3 +114,39 @@ def get_ruling_planets(jd_ut: float, lat: float, lon: float) -> Dict[str, str]:
         "Moon Rashi Lord": m_rashi_lord,
         "Day Lord": day_lord
     }
+
+from dataclasses import dataclass
+
+@dataclass
+class KPSubLordResult:
+    planet: str
+    star_lord: str
+    sub_lord: str
+    favorable: bool
+    significators: List[int]
+
+class KPEngine:
+    def evaluate_promise(self, planet_data: Dict[str, Any], target_house: int) -> KPSubLordResult:
+        """
+        Evaluates KP Promise: Planet acts through Star Lord, qualified by Sub Lord.
+        """
+        star_lord = planet_data.get("star_lord", "Sun")
+        sub_lord = planet_data.get("sub_lord", "Sun")
+        significators = planet_data.get("significators", [])
+
+        # Unfavorable houses for most positive events (6, 8, 12)
+        detrimental_houses = {6, 8, 12}
+        sub_lord_houses = planet_data.get("sub_lord_significators", [])
+
+        # If Sub-Lord heavily signifies 6, 8, 12, the promise fails
+        is_favorable = not any(h in detrimental_houses for h in sub_lord_houses)
+
+        return KPSubLordResult(
+            planet=planet_data.get("name", "Planet"),
+            star_lord=star_lord,
+            sub_lord=sub_lord,
+            favorable=is_favorable,
+            significators=significators
+        )
+
+kp_engine = KPEngine()

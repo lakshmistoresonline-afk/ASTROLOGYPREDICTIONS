@@ -1,4 +1,4 @@
-# Python
+# Caches & Logs
 __pycache__/
 *.py[cod]
 *$py.class
@@ -6,6 +6,11 @@ __pycache__/
 venv/
 ENV/
 .env
+*.log
+
+# PDFs & Reports
+*.pdf
+accuracy_benchmark_report.json
 
 # Astro Data
 ephe/

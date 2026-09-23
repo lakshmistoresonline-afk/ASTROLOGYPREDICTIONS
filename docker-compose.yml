@@ -1,36 +1,18 @@
-version: "3.9"
+version: '3.8'
 
 services:
-  kundli:
+  api:
     build: .
-    container_name: jyotish-dashboard
     ports:
       - "5000:5000"
-    env_file:
-      - .env
     environment:
-      - SE_EPHE_PATH=/app/ephe
+      - REDIS_URL=redis://redis:6379/0
       - FLASK_ENV=production
-      - PORT=5000
-      - CALC_SERVICE_URL=http://calculation-service:8000
-    volumes:
-      - ephe_data:/app/ephe
-      - app_data:/app/data
-    restart: unless-stopped
     depends_on:
-      - calculation-service
+      - redis
 
-  calculation-service:
-    build: ./calculation_service
-    container_name: jyotish-calc-service
+  redis:
+    image: redis:7.0-alpine
     ports:
-      - "8000:8000"
-    environment:
-      - SE_EPHE_PATH=/app/ephe
-    volumes:
-      - ephe_data:/app/ephe
-    restart: unless-stopped
-
-volumes:
-  ephe_data:
-  app_data:
+      - "6379:6379"
+    command: redis-server --maxmemory 512mb --maxmemory-policy volatile-lru

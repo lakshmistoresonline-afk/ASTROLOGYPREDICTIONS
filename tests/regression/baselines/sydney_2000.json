@@ -16,7 +16,7 @@
     "longitude": 151.2093,
     "ayanamsa": 23.857055729089552,
     "ayanamsa_name": "Lahiri",
-    "house_system": "Whole Sign",
+    "house_system": "WHOLE_SIGN",
     "ascendant": 149.96326820853548,
     "asc_rashi": 4,
     "asc_nakshatra": {
@@ -141,7 +141,7 @@
         "latitude": -0.8985738203735015,
         "speed": 1.560208797144469,
         "is_retrograde": false,
-        "is_combust": false,
+        "is_combust": true,
         "rashi": 8,
         "degree": 6.547976595683053,
         "house": 5,
@@ -428,6 +428,42 @@
       "11": "Mercury",
       "12": "Moon"
     },
+    "calculation_config": {
+      "engine_version": "V3.15-PROTECTED",
+      "zodiac": "SIDEREAL",
+      "ayanamsa": "LAHIRI",
+      "house_system": "WHOLE_SIGN",
+      "astronomical_house_system": "PLACIDUS",
+      "interpretive_house_system": "WHOLE_SIGN",
+      "node_mode": "MEAN",
+      "ephemeris_mode": "SWISS_EPHEMERIS",
+      "topocentric_mode": true,
+      "time_standard": "UTC/UT",
+      "config_version": "2.2.0"
+    },
+    "calculation_provenance": {
+      "engine_version": "V3.15-PROTECTED",
+      "config_version": "2.2.0",
+      "zodiac": "SIDEREAL",
+      "ayanamsa": "LAHIRI",
+      "node_mode": "MEAN",
+      "house_system": "WHOLE_SIGN",
+      "astronomical_house_system": "PLACIDUS",
+      "interpretive_house_system": "WHOLE_SIGN",
+      "ephemeris_mode": "SWISS_EPHEMERIS",
+      "topocentric_mode": true,
+      "time_standard": "UTC/UT",
+      "birth_local_datetime": "2000-01-01T00:01:00",
+      "timezone": "Australia/Sydney",
+      "birth_instant_utc": "1999-12-31T13:01:00Z",
+      "latitude": -33.8688,
+      "longitude": 151.2093,
+      "jd_ut": 2451544.042361111
+    },
+    "chart_fingerprint": "05be1c9bc1dbf6285de89bc6735ec1987b813fe88e55ef9071618bb045924e26",
+    "calculation_config_fingerprint": "a4f64e6a69dd9faa52f1820375918deb7fcdf2390e05c07a1b81a0c80b89c2c1",
+    "astronomical_house_system": "PLACIDUS",
+    "interpretive_house_system": "WHOLE_SIGN",
     "divisional_charts": {
       "D1": {
         "Lagna": 4,
@@ -1216,6 +1252,15 @@
       "Jupiter": 3.9,
       "Venus": 8.19,
       "Saturn": 10.19
+    },
+    "vimsopaka_scores": {
+      "Sun": 9.95,
+      "Moon": 6.7,
+      "Mars": 9.22,
+      "Mercury": 7.17,
+      "Jupiter": 6.83,
+      "Venus": 6.28,
+      "Saturn": 7.92
     }
   },
   "panchang": {

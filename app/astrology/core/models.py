@@ -26,10 +26,13 @@ class PlanetInfo(BaseModel):
     degree: float
     house: int
     dignity: str
+    positional_dignity: Optional[str] = None
     nakshatra: NakshatraInfo
     dispositor: str
     functional_status: Optional[str] = None
     shadbala_score: Optional[float] = None
+    functional_power_multiplier: Optional[float] = 1.0
+    effective_shadbala: Optional[float] = None
     baladi_avastha: Optional[str] = None
     deeptadi_avastha: Optional[str] = None
     navamsa_rashi: Optional[int] = None

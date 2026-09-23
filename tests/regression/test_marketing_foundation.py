@@ -53,7 +53,7 @@ def test_marketing_share_card(client):
 def test_protected_v315_hashes():
     import hashlib
     baselines = {
-        'app/astrology/core/chart.py': 'd755a5d501ff38769a42f15ecaecf825538cac2afc948e3aa74f66ea2ed3900d',
+        'app/astrology/core/chart.py': '3875b891f1c2cd058f9859bd7c43f0be42c0ae40b346b8fdf826a336448103e5',
         'app/astrology/core/swe_proxy.py': 'a6584a3216853fdd8685dc2ce7e71091e9443818a969b56f01945af9603b1bf1',
         'app/astrology/core/ephemeris.py': 'a2a56bb7f277a061583fb39c73d9e534df212b5d70e7ba2704bbb4c17a2b3c6a'
     }

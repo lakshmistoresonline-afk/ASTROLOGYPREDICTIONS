@@ -114,6 +114,102 @@ EVENT_RULES = {
         "karakas": ["Jupiter", "Ketu"],
         "varga_required": "D20",
         "required_min_score": 0.35
+    },
+    "DEVELOPMENT": {
+        "domain": "SPIRITUALITY",
+        "primary_houses": [9, 12, 5],
+        "supporting_houses": [8],
+        "karakas": ["Jupiter", "Ketu"],
+        "varga_required": "D20",
+        "required_min_score": 0.30
+    },
+    "BUSINESS_LAUNCH": {
+        "domain": "BUSINESS",
+        "primary_houses": [7, 10, 11],
+        "supporting_houses": [2, 9],
+        "karakas": ["Mercury", "Saturn", "Jupiter"],
+        "varga_required": "D10",
+        "required_min_score": 0.30
+    },
+    "FAMILY_EXPANSION": {
+        "domain": "FAMILY",
+        "primary_houses": [2, 4, 11],
+        "supporting_houses": [5, 9],
+        "karakas": ["Jupiter", "Venus"],
+        "varga_required": "D2",
+        "required_min_score": 0.30
+    },
+    "LEGAL_VICTORY": {
+        "domain": "LEGAL",
+        "primary_houses": [6, 11, 10],
+        "supporting_houses": [1, 9],
+        "karakas": ["Mars", "Jupiter"],
+        "varga_required": "D1",
+        "required_min_score": 0.30
+    },
+    "VEHICLE_PURCHASE": {
+        "domain": "VEHICLES",
+        "primary_houses": [4, 11],
+        "supporting_houses": [9, 2],
+        "karakas": ["Venus", "Mars"],
+        "varga_required": "D16",
+        "required_min_score": 0.30
+    },
+    "INTERNATIONAL_JOURNEY": {
+        "domain": "TRAVEL",
+        "primary_houses": [3, 7, 9, 12],
+        "supporting_houses": [11],
+        "karakas": ["Moon", "Rahu"],
+        "varga_required": "D4",
+        "required_min_score": 0.30
+    },
+    "PUBLIC_AWARD": {
+        "domain": "FAME",
+        "primary_houses": [10, 11, 1],
+        "supporting_houses": [5, 9],
+        "karakas": ["Sun", "Jupiter"],
+        "varga_required": "D10",
+        "required_min_score": 0.30
+    },
+    "IDENTITY_SHIFT": {
+        "domain": "PERSONALITY",
+        "primary_houses": [1, 5, 9],
+        "supporting_houses": [10],
+        "karakas": ["Sun", "Jupiter"],
+        "varga_required": "D1",
+        "required_min_score": 0.30
+    },
+    "CREATIVE_MANIFESTATION": {
+        "domain": "CHILDREN",
+        "primary_houses": [5, 9, 11],
+        "supporting_houses": [2],
+        "karakas": ["Jupiter"],
+        "varga_required": "D7",
+        "required_min_score": 0.30
+    },
+    "RELATIONSHIP_BEGINNING": {
+        "domain": "MARRIAGE",
+        "primary_houses": [7, 2, 11],
+        "supporting_houses": [5, 9],
+        "karakas": ["Venus", "Jupiter"],
+        "varga_required": "D9",
+        "required_min_score": 0.30
+    },
+    "VISA_APPROVAL": {
+        "domain": "FOREIGN",
+        "primary_houses": [9, 12, 3, 4],
+        "supporting_houses": [7],
+        "karakas": ["Rahu", "Moon"],
+        "varga_required": "D9",
+        "required_min_score": 0.30
+    },
+    "VITALITY_PEAK": {
+        "domain": "HEALTH",
+        "primary_houses": [1, 6],
+        "supporting_houses": [8, 12],
+        "karakas": ["Sun", "Mars"],
+        "varga_required": "D1",
+        "required_min_score": 0.30
     }
 }
 
@@ -487,12 +583,11 @@ def evaluate_natal_promise(chart_obj, domain: str, event_type: str = "GENERAL") 
             n_dict["evidence_id"] = generate_deterministic_evidence_id(n_dict)
             add_natal_causal_node(graph, n_dict, primary_node_ids)
 
-    evidence_items = [n.to_dict() for n in graph.nodes]
-    final_score = calculate_score_from_evidence(graph)
+    base_score = calculate_score_from_evidence(graph)
 
     # Vimsopaka Strength Scaling (Phase 5)
     v_scores = getattr(chart_obj, "vimsopaka_scores", {})
-    if v_scores:
+    if v_scores and base_score > 0.0:
         involved_planets = set(rule["karakas"])
         for h in rule["primary_houses"]:
             lord = house_lords.get(h)
@@ -502,7 +597,32 @@ def evaluate_natal_promise(chart_obj, domain: str, event_type: str = "GENERAL") 
         if scores:
             avg_v = sum(scores) / len(scores)
             multiplier = 1.0 + (avg_v - 10.0) / 20.0
-            final_score = round(final_score * multiplier, 3)
+            scaled_score = round(base_score * multiplier, 3)
+            delta = round(scaled_score - base_score, 3)
+            if delta != 0.0:
+                n_dict = {
+                    "evidence_id": "",
+                    "event_type": ev_key,
+                    "domain": rule["domain"],
+                    "evidence_group": "VIMSOPAKA_STRENGTH",
+                    "independence_key": f"vimsopaka_{ev_key}",
+                    "polarity": "POSITIVE" if delta > 0 else "NEGATIVE",
+                    "classification": "SCORING_CONTRIBUTION",
+                    "source_type": "DIVISIONAL_STRENGTH",
+                    "source_path": "app.astrology.predictions.v5_natal_promise",
+                    "source_fact": f"Vimsopaka strength multiplier {multiplier:.3f}",
+                    "observed_value": avg_v,
+                    "operator": "MULTIPLIER",
+                    "expected_condition": "Divisional Potency Alignment",
+                    "magnitude": delta,
+                    "rationale": f"Vimsopaka strength scaling ({multiplier:.3f}x) adjusts promise potency.",
+                    "provenance": {"module": "app.astrology.predictions.v5_natal_promise", "function": "evaluate_natal_promise", "rule_id": "R42-VIMSOPAKA-STRENGTH", "registry_version": "P0.3-R42"}
+                }
+                n_dict["evidence_id"] = generate_deterministic_evidence_id(n_dict)
+                add_natal_causal_node(graph, n_dict, primary_node_ids)
+
+    evidence_items = [n.to_dict() for n in graph.nodes]
+    final_score = calculate_score_from_evidence(graph)
 
     min_req = rule.get("required_min_score", 0.30)
 

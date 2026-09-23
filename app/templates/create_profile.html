@@ -1,45 +1,68 @@
 {% extends "base.html" %}
-{% block title %}Create Profile — Astro Predictions{% endblock %}
+{% block title %}Create Birth Profile — Astro Predictions{% endblock %}
 
 {% block content %}
-<div class="row justify-content-center align-items-start pt-1 pb-5">
-    <div class="col-lg-6 align-self-start">
-        <div class="card-premium p-4 p-md-5 bg-glass shadow-2xl position-relative overflow-hidden" style="border-radius: 28px; height: auto;">
-            <div class="glow-orb" style="width: 300px; height: 300px; top: -60px; right: -60px; opacity: 0.12"></div>
+<div class="row justify-content-center align-items-center py-4">
+    <div class="col-lg-7 col-xl-6">
+        <div class="card-premium p-4 p-md-5 bg-glass shadow-2xl position-relative overflow-hidden">
+            <div class="glow-orb" style="width: 350px; height: 350px; top: -80px; right: -80px; opacity: 0.15"></div>
 
             <div class="position-relative z-index-1">
                 <div class="text-center mb-4">
-                    <div class="badge bg-gold text-dark mb-2 fw-black px-3 py-2 xsmall tracking-widest rounded-pill" style="font-size: 0.65rem;">ONBOARDING</div>
-                    <h2 class="font-premium text-white fw-black mb-2 fs-3">Create Your Life Profile</h2>
-                    <p class="text-dim xsmall mb-0">Enter your precise birth particulars for deterministic Swiss Ephemeris calculation.</p>
+                    <div class="badge bg-gold text-dark mb-2 fw-black px-3 py-1 xsmall tracking-widest rounded-pill" style="font-size: 0.7rem;">INSTANT ONBOARDING</div>
+                    <h2 class="font-premium text-white fw-black mb-2 fs-3">Generate Your Life Intelligence</h2>
+                    <p class="text-dim xsmall mb-0">Enter your birth particulars for deterministic Swiss Ephemeris calculation.</p>
                 </div>
 
                 <form action="{{ url_for('main.kundli') }}" method="POST" id="kundli-form">
                     <div class="row g-3">
                         <div class="col-12">
-                            <label class="form-label-vedic xsmall text-uppercase opacity-70">Full Name</label>
-                            <input type="text" name="name" class="form-control-vedic py-3 fs-6 rounded-4" placeholder="e.g. Subramanian T S" required/>
+                            <label class="form-label xsmall text-uppercase text-gold fw-bold tracking-wider mb-1">Full Name</label>
+                            <input type="text" name="name" class="form-control form-control-lg bg-dark border-secondary text-white py-3 rounded-4 shadow-sm" placeholder="e.g. Alex Taylor" required/>
                         </div>
+
                         <div class="col-md-6">
-                            <label class="form-label-vedic xsmall text-uppercase opacity-70">Birth Date (DD/MM/YYYY)</label>
-                            <input type="text" id="dob-display" class="form-control-vedic py-3 rounded-4 font-mono" placeholder="DD/MM/YYYY" maxlength="10" autocomplete="off" required/>
-                            <input type="hidden" name="dob" id="dob-canonical"/>
+                            <label class="form-label xsmall text-uppercase text-gold fw-bold tracking-wider mb-1">Birth Date</label>
+                            <input type="date" name="dob" id="dob-input" class="form-control form-control-lg bg-dark border-secondary text-white py-3 rounded-4 font-mono shadow-sm" required/>
                         </div>
+
                         <div class="col-md-6">
-                            <label class="form-label-vedic xsmall text-uppercase opacity-70">Birth Time (24h)</label>
-                            <input type="time" name="tob" class="form-control-vedic py-3 rounded-4" required step="60"/>
+                            <label class="form-label xsmall text-uppercase text-gold fw-bold tracking-wider mb-1">Birth Time (24h)</label>
+                            <input type="time" name="tob" class="form-control form-control-lg bg-dark border-secondary text-white py-3 rounded-4 font-mono shadow-sm" value="12:00" required step="60"/>
                         </div>
+
+                        <div class="col-12 position-relative">
+                            <label class="form-label xsmall text-uppercase text-gold fw-bold tracking-wider mb-1">Birth City / Location</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-dark border-secondary text-gold"><i class="bi bi-geo-alt"></i></span>
+                                <input type="text" name="place" id="place-input" class="form-control form-control-lg bg-dark border-secondary text-white py-3 rounded-end-4 shadow-sm" placeholder="Type city name (e.g. London, New Delhi, New York)..." autocomplete="off" required/>
+                            </div>
+                            <div id="location-results" class="list-group position-absolute w-100 z-3 shadow-2xl d-none" style="top: 100%; max-height: 200px; overflow-y: auto;"></div>
+                        </div>
+
+                        <!-- Quick Location Chips -->
                         <div class="col-12">
-                            <label class="form-label-vedic xsmall text-uppercase opacity-70">Birth Location</label>
-                            <input type="text" name="place" id="place-input" class="form-control-vedic py-3 rounded-4" placeholder="Search city, town or village..." required/>
+                            <div class="xxsmall text-white-50 mb-2 font-mono">Quick Cities:</div>
+                            <div class="d-flex flex-wrap gap-2">
+                                <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill xxsmall text-white py-1 px-3" onclick="selectQuickCity('New Delhi', 28.6139, 77.2090, 'Asia/Kolkata')">📍 New Delhi</button>
+                                <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill xxsmall text-white py-1 px-3" onclick="selectQuickCity('London', 51.5074, -0.1278, 'Europe/London')">📍 London</button>
+                                <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill xxsmall text-white py-1 px-3" onclick="selectQuickCity('New York', 40.7128, -74.0060, 'America/New_York')">📍 New York</button>
+                                <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill xxsmall text-white py-1 px-3" onclick="selectQuickCity('Mumbai', 19.0760, 72.8777, 'Asia/Kolkata')">📍 Mumbai</button>
+                                <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill xxsmall text-white py-1 px-3" onclick="selectQuickCity('San Francisco', 37.7749, -122.4194, 'America/Los_Angeles')">📍 San Francisco</button>
+                                <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill xxsmall text-white py-1 px-3" onclick="selectQuickCity('Dubai', 25.2048, 55.2708, 'Asia/Dubai')">📍 Dubai</button>
+                                <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill xxsmall text-white py-1 px-3" onclick="selectQuickCity('Singapore', 1.3521, 103.8198, 'Asia/Singapore')">📍 Singapore</button>
+                            </div>
                         </div>
 
                         <input type="hidden" name="lat" id="lat-input"/>
                         <input type="hidden" name="lon" id="lon-input"/>
                         <input type="hidden" name="timezone" id="tz-input"/>
+                        <input type="hidden" name="confidence" value="HIGH"/>
 
-                        <div class="col-12 pt-2">
-                            <button type="submit" class="btn btn-vedic w-100 py-3 fw-black fs-6 shadow-lg rounded-pill">CALCULATE BLUEPRINT & FORECAST</button>
+                        <div class="col-12 pt-3">
+                            <button type="submit" id="submit-btn" class="btn btn-vedic w-100 py-3 fw-bold fs-6 shadow-lg rounded-4">
+                                <i class="bi bi-cpu me-2"></i> GENERATE LIFE INTELLIGENCE REPORT
+                            </button>
                         </div>
                     </div>
                 </form>
@@ -49,46 +72,59 @@
 </div>
 
 <script>
+function selectQuickCity(place, lat, lon, tz) {
+    document.getElementById('place-input').value = place;
+    document.getElementById('lat-input').value = lat;
+    document.getElementById('lon-input').value = lon;
+    document.getElementById('tz-input').value = tz;
+    document.getElementById('location-results').classList.add('d-none');
+}
+
 document.addEventListener('DOMContentLoaded', function() {
-    const displayInput = document.getElementById('dob-display');
-    const canonicalInput = document.getElementById('dob-canonical');
+    const placeInput = document.getElementById('place-input');
+    const resultsDiv = document.getElementById('location-results');
+    let timeout = null;
 
-    if (displayInput && canonicalInput) {
-        displayInput.addEventListener('input', function(e) {
-            let v = e.target.value.replace(/\D/g, '');
-            if (v.length >= 2 && v.length <= 4) {
-                v = v.slice(0,2) + '/' + v.slice(2);
-            } else if (v.length > 4) {
-                v = v.slice(0,2) + '/' + v.slice(2,4) + '/' + v.slice(4,8);
+    if (placeInput && resultsDiv) {
+        placeInput.addEventListener('input', function(e) {
+            clearTimeout(timeout);
+            const q = e.target.value.trim();
+            if (q.length < 3) {
+                resultsDiv.classList.add('d-none');
+                return;
             }
-            e.target.value = v;
+            timeout = setTimeout(() => {
+                fetch(`/api/geocode?q=${encodeURIComponent(q)}`)
+                    .then(res => res.json())
+                    .then(data => {
+                        resultsDiv.innerHTML = '';
+                        if (data && !data.error && data.lat) {
+                            resultsDiv.classList.remove('d-none');
+                            const item = document.createElement('button');
+                            item.type = 'button';
+                            item.className = 'list-group-item list-group-item-action bg-dark text-white border-secondary p-3 xsmall';
+                            item.innerHTML = `<i class="bi bi-geo-alt-fill text-gold me-2"></i><strong>${data.display_name || q}</strong> <span class="text-dim">(${data.lat.toFixed(2)}°, ${data.lon.toFixed(2)}° | ${data.timezone})</span>`;
+                            item.onclick = function() {
+                                selectQuickCity(data.display_name || q, data.lat, data.lon, data.timezone);
+                            };
+                            resultsDiv.appendChild(item);
+                        } else {
+                            resultsDiv.classList.add('d-none');
+                        }
+                    }).catch(() => resultsDiv.classList.add('d-none'));
+            }, 300);
+        });
+    }
 
-            if (v.length === 10) {
-                const parts = v.split('/');
-                if (parts.length === 3) {
-                    const day = parts[0], month = parts[1], year = parts[2];
-                    const dNum = parseInt(day, 10), mNum = parseInt(month, 10), yNum = parseInt(year, 10);
-                    if (mNum >= 1 && mNum <= 12 && dNum >= 1 && dNum <= 31 && yNum >= 1000 && yNum <= 9999) {
-                        canonicalInput.value = `${year}-${month}-${day}`;
-                    } else {
-                        canonicalInput.value = '';
-                    }
-                }
-            } else {
-                canonicalInput.value = '';
+    const form = document.getElementById('kundli-form');
+    if (form) {
+        form.addEventListener('submit', function() {
+            const btn = document.getElementById('submit-btn');
+            if (btn) {
+                btn.disabled = true;
+                btn.innerHTML = `<span class="spinner-border spinner-border-sm me-2"></span> CALCULATING SWISS EPHEMERIS BLUEPRINT...`;
             }
         });
-
-        const form = displayInput.closest('form');
-        if (form) {
-            form.addEventListener('submit', function(e) {
-                if (!canonicalInput.value) {
-                    e.preventDefault();
-                    alert('Please enter a valid birth date in DD/MM/YYYY format.');
-                    displayInput.focus();
-                }
-            });
-        }
     }
 });
 </script>

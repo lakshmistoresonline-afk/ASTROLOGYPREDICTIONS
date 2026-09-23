@@ -57,15 +57,15 @@ def run_supreme_test():
 
         print("  ✅ Core Chart: Calculated successfully.")
 
-        # Verify 31-System Synthesis
+        # Verify Core Data Layers
         checkpoints = {
-            "Vedic": "house_lords",
-            "KP System": "kp_4_steps",
-            "Human Design": "human_design",
-            "Bazi Pillars": "bazi_pillars",
-            "Hellenistic": "hellenistic_lots",
-            "Galactic": "galactic_aspects",
-            "Astro-Locality": "astrocartography"
+            "Vedic House Lords": "house_lords",
+            "Divisional Varga Charts": "divisional_charts",
+            "Jaimini Karakas": "jaimini_karakas",
+            "Chara Dasha Engine": "chara_dasha",
+            "Kalachakra Dasha Engine": "kalachakra_dasha",
+            "Special Lagnas": "special_lagnas",
+            "Arudha Padas": "arudha_padas"
         }
 
         for name, attr in checkpoints.items():
@@ -85,14 +85,13 @@ def run_supreme_test():
     print("\n[STEP 3/5] Auditing Deterministic Inference Chain...")
     try:
         from app.astrology.predictions.engine import generate_evidence_based_predictions
-        preds = generate_evidence_based_predictions(chart)
+        preds = generate_evidence_based_predictions(chart, selected_date=dt)
 
-        print(f"  ✅ Prediction Hub: Successfully processed {len(preds['domains'])} domains.")
-        print(f"  ✅ Overall Score: {preds['overall_score']}/100")
-        print(f"  ✅ Narrative Label: {preds['overall_label']}")
+        print(f"  ✅ Prediction Hub: Successfully processed {len(preds['predictions'])} prediction domains.")
+        print(f"  ✅ Overall Status: {preds['overall_status']}")
 
-        if 'micro_timing' in preds:
-            print(f"  ✅ Timing: 5-Level Prana Dasha logic verified.")
+        if 'timeline' in preds:
+            print(f"  ✅ Timing: Dasha & transit timeline logic verified.")
     except Exception as e:
         print(f"  ❌ Prediction Pipeline Error: {e}")
         return
@@ -100,10 +99,17 @@ def run_supreme_test():
     # 5. Global Context & Synthesis
     print("\n[STEP 4/5] Cross-Tradition Synthesis Check...")
     try:
-        adv = preds.get('advanced_metrics', {})
-        if adv.get('nadi_signatures'): print("  ✅ Nadi Astrology: Career signatures detected.")
-        if adv.get('western_aspects'): print("  ✅ Western Astrology: Natal aspects mapped.")
-        if adv.get('bazi_pillars'): print("  ✅ Chinese Metaphysics: Day Master calculated.")
+        from app.astrology.core.bazi import calculate_bazi_pillars
+        from app.astrology.core.human_design import calculate_human_design
+        from app.astrology.core.galactic import analyze_galactic_aspects
+
+        bazi = calculate_bazi_pillars(dt.year, dt.month, dt.day, dt.hour)
+        hd = calculate_human_design(chart.planets)
+        galactic = analyze_galactic_aspects(chart.planets)
+
+        if bazi: print(f"  ✅ Chinese Metaphysics: Day Master calculated ({bazi.get('day_master')}).")
+        if hd: print(f"  ✅ Human Design: Profile calculated ({hd.get('profile')}).")
+        if galactic is not None: print(f"  ✅ Galactic Astronomy: Fixed star alignments mapped ({len(galactic)} points).")
     except Exception as e:
         print(f"  ❌ Synthesis Error: {e}")
 

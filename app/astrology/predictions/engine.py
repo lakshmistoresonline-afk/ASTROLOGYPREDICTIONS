@@ -139,6 +139,23 @@ def generate_evidence_based_predictions(chart: CanonicalChart, selected_date: da
             p_dict["category"] = cat_map.get(name, "essence")
             p_dict["headline"] = prediction.headline
             p_dict["status"] = "SUCCESS"
+
+            # Multi-Engine Enrichment (VedAstro + Astrolog Fixed Stars)
+            try:
+                from .vedastro_client import vedastro_bridge
+                from ..core.astrolog_engine import astrolog_engine
+
+                v_rules = vedastro_bridge.get_prediction_rules(chart, selected_date)
+                for vr in v_rules:
+                    if vr.get("domain", "").lower() in [name.lower(), prediction.domain.lower()]:
+                        p_dict["supporting_factors"].append(f"VEDASTRO RULE: {vr['description']}")
+
+                stars = astrolog_engine.analyze_fixed_stars(chart.planets)
+                for st in stars[:2]:
+                    p_dict["supporting_factors"].append(f"FIXED STAR: {st['description']}")
+            except Exception:
+                pass
+
             return p_dict
         except Exception as e:
             return {

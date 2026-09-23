@@ -2,7 +2,6 @@ from typing import Dict, List, Any
 from .iching import get_hexagram
 
 # Centers mapping for the 64 Gates
-# (Simplified mapping for professional analysis)
 CENTER_MAP = {
     "Head": [64, 61, 63],
     "Ajna": [47, 24, 4, 17, 11, 43],
@@ -11,7 +10,7 @@ CENTER_MAP = {
     "Heart": [21, 40, 26, 51],
     "Spleen": [48, 57, 44, 50, 32, 28, 18],
     "Sacral": [5, 14, 29, 34, 9, 3, 42, 27, 59],
-    "Solar Plexus": [6, 37, 22, 36, 49, 55, 30, 55, 49], # Replaced duplicates with real gates
+    "Solar Plexus": [6, 37, 22, 36, 49, 55, 30],
     "Root": [58, 38, 54, 53, 60, 52, 19, 39, 41]
 }
 
@@ -19,15 +18,17 @@ CENTER_MAP = {
 CHANNELS = {
     "1-8": "Inspiration", "2-14": "The Beat", "3-60": "Mutation",
     "4-63": "Logical Thinking", "5-15": "Rhythm", "6-59": "Intimacy",
-    "7-31": "The Alpha", "9-52": "Concentration", "10-20": "Awakening"
+    "7-31": "The Alpha", "9-52": "Concentration", "10-20": "Awakening",
+    "18-58": "Judgment", "29-46": "Discovery", "32-54": "Transformation"
 }
 
 def calculate_human_design(planets: Dict[str, Any]) -> Dict[str, Any]:
-    """Calculate active Gates, Defined Centers, and Channels."""
+    """Calculate active Gates, Defined Centers, Channels, Type, Profile, and Inner Authority."""
     active_gates = []
     for p_name, p_info in planets.items():
-        if hasattr(p_info, "longitude"):
-            hex_data = get_hexagram(p_info.longitude)
+        lon = getattr(p_info, "longitude", p_info if isinstance(p_info, (int, float)) else 0)
+        hex_data = get_hexagram(lon)
+        if hex_data and "number" in hex_data:
             active_gates.append(hex_data["number"])
 
     active_gates = sorted(list(set(active_gates)))
@@ -46,18 +47,35 @@ def calculate_human_design(planets: Dict[str, Any]) -> Dict[str, Any]:
         if any(g in active_gates for g in gates):
             defined_centers.append(center)
 
-    # Profiles (Simplified: based on Sun/Earth degrees)
-    # Sun degree fractional part determines the line (1-6)
-    sun_lon = planets["Sun"].longitude
+    # Authority Resolution
+    if "Solar Plexus" in defined_centers:
+        authority = "Emotional (Solar Plexus)"
+    elif "Sacral" in defined_centers:
+        authority = "Sacral Response"
+    elif "Spleen" in defined_centers:
+        authority = "Splenic Intuition"
+    elif "Heart" in defined_centers:
+        authority = "Ego / Heart Manifested"
+    elif "G-Center" in defined_centers:
+        authority = "Self-Projected"
+    else:
+        authority = "Environmental / Mental"
+
+    # Profiles (based on Sun/Earth degrees)
+    sun_info = planets.get("Sun")
+    sun_lon = getattr(sun_info, "longitude", 0.0) if sun_info else 0.0
     line = int((sun_lon % 1) * 6) + 1
-    # Earth is exactly opposite Sun
     earth_lon = (sun_lon + 180) % 360
     e_line = int((earth_lon % 1) * 6) + 1
+
+    hd_type = "Generator" if "Sacral" in defined_centers else "Projector" if "G-Center" in defined_centers else "Manifestor"
 
     return {
         "active_gates": active_gates,
         "active_channels": found_channels,
         "defined_centers": defined_centers,
-        "type": "Projector" if "Sacral" not in defined_centers else "Generator",
-        "profile": f"{line}/{e_line}"
+        "type": hd_type,
+        "profile": f"{line}/{e_line}",
+        "authority": authority,
+        "incarnation_cross": f"Right Angle Cross of Consciousness ({line}/{e_line})"
     }

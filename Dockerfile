@@ -1,41 +1,27 @@
-FROM python:3.11-slim
-
-LABEL maintainer="Jyotish Dashboard"
-LABEL description="Vedic Astrology Kundli Dashboard"
-
-# System deps for pyswisseph + ephem build
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    gcc g++ make wget curl \
-    && rm -rf /var/lib/apt/lists/*
+# Multi-stage Dockerfile for Astrological Intelligence Engine (V3.36)
+FROM python:3.11-slim as builder
 
 WORKDIR /app
 
-# Download Swiss Ephemeris data files (GitHub Mirror — reliable)
-RUN mkdir -p /app/ephe && \
-    wget -q -O /app/ephe/seas_18.se1 \
-        https://github.com/aloistr/swisseph/raw/master/ephe/seas_18.se1 && \
-    wget -q -O /app/ephe/semo_18.se1 \
-        https://github.com/aloistr/swisseph/raw/master/ephe/semo_18.se1 && \
-    wget -q -O /app/ephe/sepl_18.se1 \
-        https://github.com/aloistr/swisseph/raw/master/ephe/sepl_18.se1
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    gcc g++ make libffi-dev \
+    && rm -rf /var/lib/apt/lists/*
 
-# Python dependencies
 COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir --user -r requirements.txt
 
-# Application code
+# Final Runtime Image
+FROM python:3.11-slim as runner
+
+WORKDIR /app
+
+COPY --from=builder /root/.local /root/.local
 COPY . .
 
-# Set ephemeris path for pyswisseph
-ENV SE_EPHE_PATH=/app/ephe
+ENV PATH=/root/.local/bin:$PATH
+ENV PYTHONUNBUFFERED=1
 ENV FLASK_ENV=production
-ENV PORT=8080
 
-EXPOSE 8080
+EXPOSE 5000
 
-# Use gunicorn in production
-# Cloud Run expects the app to listen on the $PORT environment variable
-CMD gunicorn --bind 0.0.0.0:$PORT \
-     --workers 2 --threads 4 \
-     --timeout 120 \
-     "run:app"
+CMD ["gunicorn", "--bind", "0.0.0.0:5000", "--workers", "4", "--threads", "2", "app:create_app()"]

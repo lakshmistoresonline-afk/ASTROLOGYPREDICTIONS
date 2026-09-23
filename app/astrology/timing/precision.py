@@ -309,7 +309,7 @@ class TimingWindowEngine:
             t_day_positions = calc_client.get_natal_chart(peak_dt.year, peak_dt.month, peak_dt.day, 12.0, chart.latitude, chart.longitude)["planets"]
             t_lons = {n: p["longitude"] for n, p in t_day_positions.items()}
             n_lons = {n: p.longitude for n, p in chart.planets.items()}
-            sbc_alerts = check_sbc_transit_impact(t_lons, n_lons)
+            sbc_alerts = check_sbc_transit_impact(t_lons, n_lons, transiting_planet=valid_peak_event.planet, target_natal=valid_peak_event.target_natal)
 
             sbc_desc = ""
             if sbc_alerts:

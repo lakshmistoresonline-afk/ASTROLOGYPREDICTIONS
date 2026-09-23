@@ -16,19 +16,23 @@ def calculate_vimsopaka_bala(chart: Any) -> Dict[str, float]:
     planets = ["Sun", "Moon", "Mars", "Mercury", "Jupiter", "Venus", "Saturn"]
     results = {}
 
+    from .dignity import get_dignity
+
     for p in planets:
         total_points = 0.0
         # For each varga, check dignity
         for varga_name, weight in WEIGHTS.items():
-            varga_chart = chart.divisional_charts.get(varga_name)
-            if not varga_chart: continue
+            varga_positions = chart.divisional_charts.get(varga_name)
+            if not varga_positions: continue
 
-            p_data = varga_chart.get("planets", {}).get(p)
-            if not p_data: continue
+            r_idx = varga_positions.get(p)
+            if r_idx is None: continue
 
-            # Dignity points (Max 20 per varga, scaled by weight/20)
-            dignity = p_data.get("dignity", "")
-            pts = 5 # Default Neutral
+            # Varga charts in Jyotish OS only store rashi index.
+            # We assume 0 degrees within that rashi for dignity check (Standard practice)
+            dignity = get_dignity(p, r_idx, 0.0)
+
+            pts = 7 # Default Neutral
             if "Exalted" in dignity: pts = 20
             elif "Moolatrikona" in dignity: pts = 18
             elif "Own Sign" in dignity: pts = 15
@@ -41,10 +45,7 @@ def calculate_vimsopaka_bala(chart: Any) -> Dict[str, float]:
 
             total_points += (pts * weight)
 
-        results[p] = round(total_points, 2) # Max 20 * 20 / something?
-        # Actually Vimsopaka is usually expressed as a score out of 20.
-        # total_points / Sum(Weights) * (pts/20) ...
-        # If all vargas have pts=20, total = 20 * 20 = 400.
-        # Result = total / 20 = 20.
+        # Normalize to 20-point scale (Sum of weights is 20)
+        results[p] = round(total_points / 20.0, 2)
 
     return results

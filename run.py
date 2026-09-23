@@ -108,5 +108,5 @@ if __name__ == "__main__":
         # Open browser after Flask is ready (once only, avoid double-tab)
         threading.Timer(1.5, open_browser).start()
 
-    app.run(host="0.0.0.0", port=port, debug=True)
+    app.run(host="127.0.0.1", port=port, debug=False)
 # Force Reload V1.0.3

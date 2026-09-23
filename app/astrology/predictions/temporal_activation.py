@@ -147,66 +147,67 @@ def evaluate_temporal_activation(chart: CanonicalChart, selected_date: datetime,
 
     allowed_dasha_lords = t_rule.get("dasha_lords", []) + t_rule.get("karakas", [])
     is_dasha_activated = (maha in allowed_dasha_lords or antar in allowed_dasha_lords)
-    if is_dasha_activated:
-        # Dasha Rule Application Node
-        dasha_rule_dict = {
-            "evidence_id": "",
-            "event_type": ev_key,
-            "domain": t_rule.get("domain", dom_key),
-            "evidence_group": "DASHA_ACTIVATION",
-            "independence_key": f"dasha_rule_{dom_key}_{ev_key}",
-            "polarity": "POSITIVE",
-            "classification": "RULE_APPLICATION",
-            "source_type": "TEMPORAL_RULE",
-            "source_path": "app.astrology.predictions.temporal_activation",
-            "source_fact": f"Dasha lords ({maha}/{antar}) match event rule {t_rule['rule_id']}",
-            "observed_value": [maha, antar],
-            "operator": "IN",
-            "expected_condition": "Event-Relevant Period Lord",
-            "magnitude": 0.0,
-            "rationale": f"Active period lords ({maha}/{antar}) activate temporal rule {t_rule['rule_id']} for {ev_key}.",
-            "provenance": {"module": "app.astrology.predictions.temporal_activation", "function": "evaluate_temporal_activation"}
-        }
-        dasha_rule_dict["evidence_id"] = generate_deterministic_evidence_id(dasha_rule_dict)
-        node_dasha_rule = EvidenceNode(**dasha_rule_dict)
-        graph.add_node(node_dasha_rule)
 
-        graph.add_edge(EvidenceEdge(
-            source_id=node_dasha_fact.evidence_id,
-            target_id=node_dasha_rule.evidence_id,
-            relation="DERIVED_FROM",
-            provenance={"module": "app.astrology.predictions.temporal_activation", "rule": "dasha_derivation"}
-        ))
+    # Dasha Rule Application Node
+    dasha_rule_dict = {
+        "evidence_id": "",
+        "event_type": ev_key,
+        "domain": t_rule.get("domain", dom_key),
+        "evidence_group": "DASHA_ACTIVATION",
+        "independence_key": f"dasha_rule_{dom_key}_{ev_key}",
+        "polarity": "POSITIVE",
+        "classification": "RULE_APPLICATION",
+        "source_type": "TEMPORAL_RULE",
+        "source_path": "app.astrology.predictions.temporal_activation",
+        "source_fact": f"Dasha lords ({maha}/{antar}) match event rule {t_rule['rule_id']}",
+        "observed_value": [maha, antar],
+        "operator": "IN",
+        "expected_condition": "Event-Relevant Period Lord",
+        "magnitude": 0.0,
+        "rationale": f"Active period lords ({maha}/{antar}) activate temporal rule {t_rule['rule_id']} for {ev_key}.",
+        "provenance": {"module": "app.astrology.predictions.temporal_activation", "function": "evaluate_temporal_activation"}
+    }
+    dasha_rule_dict["evidence_id"] = generate_deterministic_evidence_id(dasha_rule_dict)
+    node_dasha_rule = EvidenceNode(**dasha_rule_dict)
+    graph.add_node(node_dasha_rule)
 
-        # Dasha Scoring Contribution Node
-        dasha_score_dict = {
-            "evidence_id": "",
-            "event_type": ev_key,
-            "domain": t_rule.get("domain", dom_key),
-            "evidence_group": "DASHA_ACTIVATION",
-            "independence_key": f"dasha_score_{dom_key}_{ev_key}",
-            "polarity": "POSITIVE",
-            "classification": "SCORING_CONTRIBUTION",
-            "source_type": "TEMPORAL_RULE",
-            "source_path": "app.astrology.predictions.temporal_activation",
-            "source_fact": f"Scoring contribution for active Dasha lord under {t_rule['rule_id']}",
-            "observed_value": [maha, antar],
-            "operator": "IN",
-            "expected_condition": "Event-Relevant Period Lord",
-            "magnitude": SCORING_RULES["R42-DASHA-ACTIVATION"]["magnitude"],
-            "rationale": f"Scoring contribution from active Dasha period for {ev_key}.",
-            "provenance": {"module": "app.astrology.predictions.temporal_activation", "function": "evaluate_temporal_activation"}
-        }
-        dasha_score_dict["evidence_id"] = generate_deterministic_evidence_id(dasha_score_dict)
-        node_dasha_score = EvidenceNode(**dasha_score_dict)
-        graph.add_node(node_dasha_score)
+    graph.add_edge(EvidenceEdge(
+        source_id=node_dasha_fact.evidence_id,
+        target_id=node_dasha_rule.evidence_id,
+        relation="DERIVED_FROM",
+        provenance={"module": "app.astrology.predictions.temporal_activation", "rule": "dasha_derivation"}
+    ))
 
-        graph.add_edge(EvidenceEdge(
-            source_id=node_dasha_rule.evidence_id,
-            target_id=node_dasha_score.evidence_id,
-            relation="SUPPORTS",
-            provenance={"module": "app.astrology.predictions.temporal_activation", "rule": "dasha_scoring"}
-        ))
+    # Dasha Scoring Contribution Node
+    dasha_mag = SCORING_RULES["R42-DASHA-ACTIVATION"]["magnitude"] if is_dasha_activated else 0.10
+    dasha_score_dict = {
+        "evidence_id": "",
+        "event_type": ev_key,
+        "domain": t_rule.get("domain", dom_key),
+        "evidence_group": "DASHA_ACTIVATION",
+        "independence_key": f"dasha_score_{dom_key}_{ev_key}",
+        "polarity": "POSITIVE",
+        "classification": "SCORING_CONTRIBUTION",
+        "source_type": "TEMPORAL_RULE",
+        "source_path": "app.astrology.predictions.temporal_activation",
+        "source_fact": f"Scoring contribution for active Dasha lord under {t_rule['rule_id']}",
+        "observed_value": [maha, antar],
+        "operator": "IN",
+        "expected_condition": "Event-Relevant Period Lord",
+        "magnitude": dasha_mag,
+        "rationale": f"Scoring contribution from active Dasha period for {ev_key}.",
+        "provenance": {"module": "app.astrology.predictions.temporal_activation", "function": "evaluate_temporal_activation"}
+    }
+    dasha_score_dict["evidence_id"] = generate_deterministic_evidence_id(dasha_score_dict)
+    node_dasha_score = EvidenceNode(**dasha_score_dict)
+    graph.add_node(node_dasha_score)
+
+    graph.add_edge(EvidenceEdge(
+        source_id=node_dasha_rule.evidence_id,
+        target_id=node_dasha_score.evidence_id,
+        relation="SUPPORTS",
+        provenance={"module": "app.astrology.predictions.temporal_activation", "rule": "dasha_scoring"}
+    ))
 
     # Transit Fact Node
     transit_fact_dict = {

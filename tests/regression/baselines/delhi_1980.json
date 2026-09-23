@@ -16,7 +16,7 @@
     "longitude": 77.209,
     "ayanamsa": 23.582878476336703,
     "ayanamsa_name": "Lahiri",
-    "house_system": "Whole Sign",
+    "house_system": "WHOLE_SIGN",
     "ascendant": 100.37860695398884,
     "asc_rashi": 3,
     "asc_nakshatra": {
@@ -75,7 +75,7 @@
         "latitude": -5.3014404613013575,
         "speed": 10.53564262377904,
         "is_retrograde": false,
-        "is_combust": false,
+        "is_combust": true,
         "rashi": 1,
         "degree": 11.071727262078227,
         "house": 11,
@@ -141,7 +141,7 @@
         "latitude": 0.4502328802001221,
         "speed": 2.1778019466722753,
         "is_retrograde": false,
-        "is_combust": false,
+        "is_combust": true,
         "rashi": 1,
         "degree": 3.1356196210375913,
         "house": 11,
@@ -428,6 +428,42 @@
       "11": "Venus",
       "12": "Mercury"
     },
+    "calculation_config": {
+      "engine_version": "V3.15-PROTECTED",
+      "zodiac": "SIDEREAL",
+      "ayanamsa": "LAHIRI",
+      "house_system": "WHOLE_SIGN",
+      "astronomical_house_system": "PLACIDUS",
+      "interpretive_house_system": "WHOLE_SIGN",
+      "node_mode": "MEAN",
+      "ephemeris_mode": "SWISS_EPHEMERIS",
+      "topocentric_mode": true,
+      "time_standard": "UTC/UT",
+      "config_version": "2.2.0"
+    },
+    "calculation_provenance": {
+      "engine_version": "V3.15-PROTECTED",
+      "config_version": "2.2.0",
+      "zodiac": "SIDEREAL",
+      "ayanamsa": "LAHIRI",
+      "node_mode": "MEAN",
+      "house_system": "WHOLE_SIGN",
+      "astronomical_house_system": "PLACIDUS",
+      "interpretive_house_system": "WHOLE_SIGN",
+      "ephemeris_mode": "SWISS_EPHEMERIS",
+      "topocentric_mode": true,
+      "time_standard": "UTC/UT",
+      "birth_local_datetime": "1980-05-15T10:30:00",
+      "timezone": "Asia/Kolkata",
+      "birth_instant_utc": "1980-05-15T05:00:00Z",
+      "latitude": 28.6139,
+      "longitude": 77.209,
+      "jd_ut": 2444374.7083333335
+    },
+    "chart_fingerprint": "b6778b41793f3061279525fde04d3009fd7c0b632fb1f120ca5ea74778621af2",
+    "calculation_config_fingerprint": "a4f64e6a69dd9faa52f1820375918deb7fcdf2390e05c07a1b81a0c80b89c2c1",
+    "astronomical_house_system": "PLACIDUS",
+    "interpretive_house_system": "WHOLE_SIGN",
     "divisional_charts": {
       "D1": {
         "Lagna": 3,
@@ -1198,6 +1234,15 @@
       "Jupiter": 13.66,
       "Venus": 16.9,
       "Saturn": 2.96
+    },
+    "vimsopaka_scores": {
+      "Sun": 7.38,
+      "Moon": 9.7,
+      "Mars": 9.47,
+      "Mercury": 8.53,
+      "Jupiter": 6.53,
+      "Venus": 7.75,
+      "Saturn": 8.2
     }
   },
   "panchang": {

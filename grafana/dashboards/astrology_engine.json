@@ -1,0 +1,47 @@
+{
+  "annotations": { "list": [] },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": 1,
+  "links": [],
+  "liveNow": false,
+  "panels": [
+    {
+      "id": 1,
+      "title": "API Request Throughput (Total)",
+      "type": "stat",
+      "targets": [
+        { "expr": "api_request_throughput_total", "refId": "A" }
+      ]
+    },
+    {
+      "id": 2,
+      "title": "Astrology Calculation Latency (Seconds)",
+      "type": "timeseries",
+      "targets": [
+        { "expr": "astrology_calculation_latency_seconds", "refId": "A" }
+      ]
+    },
+    {
+      "id": 3,
+      "title": "Prediction Confluence Score Distribution",
+      "type": "gauge",
+      "targets": [
+        { "expr": "prediction_confluence_score_distribution", "refId": "A" }
+      ]
+    },
+    {
+      "id": 4,
+      "title": "Anomaly Guardrail Alerts Intercepted",
+      "type": "stat",
+      "targets": [
+        { "expr": "anomaly_guardrail_alerts_total", "refId": "A" }
+      ]
+    }
+  ],
+  "refresh": "5s",
+  "schemaVersion": 38,
+  "title": "Astrological Engine V7.0 Observability Dashboard",
+  "version": 1
+}

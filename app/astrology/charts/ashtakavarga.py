@@ -144,9 +144,24 @@ def calculate_shodhya_pinda(bav: List[int], planet_rashis: Dict[str, int], plane
 
     return rashi_sum + planet_sum
 
+def assert_sav_total(sav: List[int]) -> bool:
+    """Asserts strict Parashari SAV invariant: sum(SAV across 12 rashis) == 337."""
+    total = sum(sav)
+    assert total == 337, f"PARASHARI_SAV_INVARIANT_VIOLATION: SAV total is {total}, expected 337."
+    return True
+
 def calculate_ashtakavarga(planets_rashi: Dict[str, int], lagna_rashi: int) -> Dict[str, Any]:
-    """Calculate BAV, SAV, and Shodhya Pinda."""
-    all_rashis = {**planets_rashi, "Lagna": lagna_rashi}
+    """Calculate BAV, SAV, and Shodhya Pinda according to strict Parashari rules."""
+    # Ensure case-insensitive mapping for all 7 classical planets and Lagna
+    canonical_planets = {"Sun", "Moon", "Mars", "Mercury", "Jupiter", "Venus", "Saturn"}
+    all_rashis = {"Lagna": int(lagna_rashi) % 12}
+
+    for k, v in planets_rashi.items():
+        for cp in canonical_planets:
+            if k.lower() == cp.lower():
+                all_rashis[cp] = int(v) % 12
+                break
+
     bav_results = {}
     shodhya_pindas = {}
     sav = [0] * 12
@@ -154,9 +169,12 @@ def calculate_ashtakavarga(planets_rashi: Dict[str, int], lagna_rashi: int) -> D
     for p in ["Sun", "Moon", "Mars", "Mercury", "Jupiter", "Venus", "Saturn"]:
         bav = calculate_bav(p, all_rashis)
         bav_results[p] = bav
-        shodhya_pindas[p] = calculate_shodhya_pinda(bav, planets_rashi, p)
+        shodhya_pindas[p] = calculate_shodhya_pinda(bav, all_rashis, p)
         for i in range(12):
             sav[i] += bav[i]
+
+    # Enforce strict Parashari SAV invariant = 337 points
+    assert_sav_total(sav)
 
     return {
         "BAV": bav_results,

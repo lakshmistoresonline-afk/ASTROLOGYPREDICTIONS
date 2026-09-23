@@ -23,9 +23,15 @@ from ..dasha.shattrimsha import calculate_shattrimsha_dasha
 from ..strength.avasthas import calculate_baladi_avastha, calculate_deeptadi_avastha
 from ..strength.longevity_calculation import calculate_pindayu
 from ..strength.vimsopaka import calculate_vimsopaka_bala
-from datetime import datetime
+from datetime import datetime, timedelta
 import traceback
 from functools import lru_cache
+
+def normalize_dasha_boundary(dt: datetime) -> datetime:
+    """Normalizes micro-float rounding on dasha transition datetimes to the nearest minute boundary."""
+    if dt.second >= 30:
+        dt += timedelta(minutes=1)
+    return dt.replace(second=0, microsecond=0)
 
 from ..matchmaking.data import NAKSHATRA_GANA, NAKSHATRA_YONI, NAKSHATRA_NADI
 
@@ -147,6 +153,16 @@ def calculate_chart_data(birth_dt: datetime, lat: float, lon: float, tz_str: str
             is_retro = raw_planets.get(name, {}).get("is_retrograde", False)
             is_combust = _is_planet_combust(name, lon_p, planets_lon["Sun"], is_retro)
 
+            bal_av = calculate_baladi_avastha(rashi, deg)
+            mult = 1.0
+            if "Yuva" in bal_av: mult = 1.0
+            elif "Kumara" in bal_av: mult = 0.75
+            elif "Vriddha" in bal_av or "Bala" in bal_av: mult = 0.50
+            elif "Mrita" in bal_av: mult = 0.25
+
+            raw_shad = shad_map.get(name, {}).get("total_shadbala", 0.0)
+            eff_shad = round(raw_shad * mult, 1)
+
             planets[name] = PlanetInfo(
                 name=name, longitude=lon_p,
                 latitude=raw_planets.get(name, {}).get("latitude", 0.0),
@@ -154,11 +170,14 @@ def calculate_chart_data(birth_dt: datetime, lat: float, lon: float, tz_str: str
                 is_retrograde=is_retro,
                 is_combust=is_combust,
                 rashi=rashi, degree=deg, house=house, dignity=dignity,
+                positional_dignity=dignity,
                 nakshatra=_get_nakshatra_info(lon_p),
                 dispositor=RASHI_LORDS[rashi],
                 functional_status=func_map.get(name, "Neutral"),
-                shadbala_score=shad_map.get(name, {}).get("total_shadbala", 0.0),
-                baladi_avastha=calculate_baladi_avastha(rashi, deg),
+                shadbala_score=raw_shad,
+                functional_power_multiplier=mult,
+                effective_shadbala=eff_shad,
+                baladi_avastha=bal_av,
                 deeptadi_avastha=calculate_deeptadi_avastha(name, dignity),
                 navamsa_rashi=divs["D9"].get(name, rashi)
             )
@@ -186,6 +205,42 @@ def calculate_chart_data(birth_dt: datetime, lat: float, lon: float, tz_str: str
 
         final_chart.yogas = detect_yogas(planets, final_chart.house_lords, chart=final_chart)
         final_chart.vimsopaka_scores = calculate_vimsopaka_bala(final_chart)
+
+        # Attach default calculation config and chart fingerprint
+        import json, hashlib
+        from .calculation_config import generate_chart_fingerprint, get_canonical_calculation_config
+        cfg = get_canonical_calculation_config()
+        dt_utc = to_utc(birth_dt, tz_str)
+        utc_instant = dt_utc.strftime("%Y-%m-%dT%H:%M:%SZ")
+        cfg_dict = cfg.to_dict()
+        cfg_fp = hashlib.sha256(json.dumps(cfg_dict, sort_keys=True).encode('utf-8')).hexdigest()
+
+        final_chart.chart_fingerprint = generate_chart_fingerprint(utc_instant, lat, lon, tz_str, cfg)
+        final_chart.calculation_config = cfg_dict
+        final_chart.calculation_config_fingerprint = cfg_fp
+        final_chart.calculation_provenance = {
+            "engine_version": cfg.engine_version,
+            "config_version": cfg.config_version,
+            "zodiac": cfg.zodiac,
+            "ayanamsa": cfg.ayanamsa,
+            "node_mode": cfg.node_mode,
+            "house_system": cfg.house_system,
+            "astronomical_house_system": cfg.astronomical_house_system,
+            "interpretive_house_system": cfg.interpretive_house_system,
+            "ephemeris_mode": cfg.ephemeris_mode,
+            "topocentric_mode": cfg.topocentric_mode,
+            "time_standard": cfg.time_standard,
+            "birth_local_datetime": birth_dt.isoformat(),
+            "timezone": tz_str,
+            "birth_instant_utc": utc_instant,
+            "latitude": lat,
+            "longitude": lon,
+            "jd_ut": jd_ut
+        }
+        final_chart.house_system = cfg.house_system
+        final_chart.astronomical_house_system = cfg.astronomical_house_system
+        final_chart.interpretive_house_system = cfg.interpretive_house_system
+
         return final_chart
 
     except Exception as e:

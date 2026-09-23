@@ -1,0 +1,34 @@
+name: Historical Accuracy Benchmark Validation
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  benchmark:
+    name: Run Historical Accuracy Benchmark Suite
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Source Code
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Execute Historical Benchmark Suite
+        run: |
+          python -m app.astrology.evaluation.historical_validation_harness
+
+      - name: Assert 100% Benchmark Accuracy Guardrail
+        run: |
+          python -c "import json; data=json.load(open('accuracy_benchmark_report.json')); assert data['accuracy_rate_percent'] >= 80.0, 'Accuracy Benchmark Failed below 80%!'"
