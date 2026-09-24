@@ -8,6 +8,12 @@ ENV/
 .env
 *.log
 
+# Node & Frontend
+node_modules/
+frontend/node_modules/
+.next/
+frontend/.next/
+
 # PDFs & Reports
 *.pdf
 accuracy_benchmark_report.json

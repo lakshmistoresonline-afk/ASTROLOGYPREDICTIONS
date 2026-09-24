@@ -1745,3 +1745,11 @@
 2026-09-23 19:08:18,037 DEBUG [output.py:954]: Final size summary of the biggest document sections:
 2026-09-23 19:08:18,038 DEBUG [output.py:956]: - pages: 16.6KiB
 2026-09-23 19:08:18,039 DEBUG [output.py:956]: - fonts: 307.0B
+2026-09-24 08:12:53,415 INFO [__init__.py:78]: Astro Predictions V3.22.1 starting with debug logging enabled...
+2026-09-24 08:13:02,405 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): 127.0.0.1:8000
+2026-09-24 08:13:04,249 INFO [_internal.py:97]: [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5001
+2026-09-24 08:13:04,261 INFO [_internal.py:97]: [33mPress CTRL+C to quit[0m
+2026-09-24 08:13:05,176 DEBUG [proactor_events.py:631]: Using proactor: IocpProactor
+2026-09-24 08:13:18,252 INFO [_internal.py:97]: 127.0.0.1 - - [24/Sep/2026 08:13:18] "GET / HTTP/1.1" 200 -
+2026-09-24 08:13:25,076 INFO [_internal.py:97]: 127.0.0.1 - - [24/Sep/2026 08:13:25] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
