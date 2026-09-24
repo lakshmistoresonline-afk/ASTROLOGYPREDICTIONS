@@ -18,14 +18,13 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
   onSearch
 }) => {
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 font-sans selection:bg-amber-500 selection:text-slate-950 flex">
-      {/* Background Ambient Celestial Halos */}
-      <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
-        <div className="absolute -top-40 -left-40 w-[600px] h-[600px] bg-indigo-950/20 rounded-full blur-[140px]" />
-        <div className="absolute top-1/3 -right-40 w-[500px] h-[500px] bg-slate-900/30 rounded-full blur-[140px]" />
-        <div className="absolute -bottom-40 left-1/3 w-[600px] h-[600px] bg-amber-950/15 rounded-full blur-[140px]" />
-      </div>
-
+    <div
+      className="min-h-screen text-slate-100 font-sans selection:bg-sky-500 selection:text-slate-950 flex"
+      style={{
+        backgroundColor: '#0B0F19',
+        backgroundImage: 'radial-gradient(circle at top right, rgba(30, 27, 75, 0.4), rgba(15, 23, 42, 0.8))'
+      }}
+    >
       {/* 2-Column App Shell: Sidebar Left */}
       <Sidebar activeRoute={activeRoute} userProfileName={userProfileName} onNavigate={onNavigate} />
 
