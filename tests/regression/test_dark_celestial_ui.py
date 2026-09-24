@@ -48,7 +48,7 @@ def test_login_page_content():
         content = f.read()
 
     assert "export const Login" in content
-    assert "ACCESS CELESTIAL DASHBOARD" in content
+    assert "Continue / Sign In" in content
 
 def test_profile_new_page_content():
     with open("frontend/src/pages/ProfileNew.tsx", "r", encoding="utf-8") as f:

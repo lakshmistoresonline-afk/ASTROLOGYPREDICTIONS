@@ -1876,3 +1876,38 @@
 2026-09-24 19:53:32,259 INFO [_internal.py:97]: 127.0.0.1 - - [24/Sep/2026 19:53:32] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
 2026-09-24 19:53:41,988 INFO [_internal.py:97]: 127.0.0.1 - - [24/Sep/2026 19:53:41] "[32mPOST /login HTTP/1.1[0m" 302 -
 2026-09-24 19:53:42,242 INFO [_internal.py:97]: 127.0.0.1 - - [24/Sep/2026 19:53:42] "GET /dashboard HTTP/1.1" 200 -
+2026-09-24 20:38:49,884 INFO [__init__.py:78]: Astro Predictions V3.22.1 starting with debug logging enabled...
+2026-09-24 20:38:59,005 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): 127.0.0.1:8000
+2026-09-24 20:39:01,186 INFO [_internal.py:97]: [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5001
+2026-09-24 20:39:01,197 INFO [_internal.py:97]: [33mPress CTRL+C to quit[0m
+2026-09-24 20:39:01,508 DEBUG [proactor_events.py:631]: Using proactor: IocpProactor
+2026-09-24 20:39:07,583 INFO [_internal.py:97]: 127.0.0.1 - - [24/Sep/2026 20:39:07] "[32mGET / HTTP/1.1[0m" 302 -
+2026-09-24 20:39:07,873 INFO [_internal.py:97]: 127.0.0.1 - - [24/Sep/2026 20:39:07] "GET /login?next=/ HTTP/1.1" 200 -
+2026-09-24 20:39:09,024 INFO [_internal.py:97]: 127.0.0.1 - - [24/Sep/2026 20:39:09] "[36mGET /static/manifest.json HTTP/1.1[0m" 304 -
+2026-09-24 20:39:09,115 INFO [_internal.py:97]: 127.0.0.1 - - [24/Sep/2026 20:39:09] "[36mGET /static/css/style_v2.css?v=6.3 HTTP/1.1[0m" 304 -
+2026-09-24 20:39:10,502 INFO [_internal.py:97]: 127.0.0.1 - - [24/Sep/2026 20:39:10] "[36mGET /static/img/icon.svg HTTP/1.1[0m" 304 -
+2026-09-24 20:45:32,190 INFO [_internal.py:97]: 127.0.0.1 - - [24/Sep/2026 20:45:32] "[32mPOST /login HTTP/1.1[0m" 302 -
+2026-09-24 20:45:32,530 INFO [_internal.py:97]: 127.0.0.1 - - [24/Sep/2026 20:45:32] "GET /dashboard HTTP/1.1" 200 -
+2026-09-24 20:45:33,952 INFO [_internal.py:97]: 127.0.0.1 - - [24/Sep/2026 20:45:33] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
+2026-09-24 20:46:20,225 INFO [_internal.py:97]: 127.0.0.1 - - [24/Sep/2026 20:46:20] "[32mGET /kundli HTTP/1.1[0m" 302 -
+2026-09-24 20:46:20,438 DEBUG [connectionpool.py:1062]: Starting new HTTPS connection (1): freeipapi.com:443
+2026-09-24 20:46:21,401 DEBUG [connectionpool.py:544]: https://freeipapi.com:443 "GET /api/json HTTP/1.1" 307 None
+2026-09-24 20:46:21,406 DEBUG [connectionpool.py:1062]: Starting new HTTPS connection (1): free.freeipapi.com:443
+2026-09-24 20:46:22,061 DEBUG [connectionpool.py:544]: https://free.freeipapi.com:443 "GET /api/v1/json HTTP/1.1" 200 None
+2026-09-24 20:46:22,123 INFO [_internal.py:97]: 127.0.0.1 - - [24/Sep/2026 20:46:22] "GET /my-charts?action=new HTTP/1.1" 200 -
+2026-09-24 20:46:22,407 INFO [_internal.py:97]: 127.0.0.1 - - [24/Sep/2026 20:46:22] "[36mGET /static/manifest.json HTTP/1.1[0m" 304 -
+2026-09-24 20:46:22,444 INFO [_internal.py:97]: 127.0.0.1 - - [24/Sep/2026 20:46:22] "[36mGET /static/css/style_v2.css?v=6.3 HTTP/1.1[0m" 304 -
+2026-09-24 20:46:22,909 INFO [_internal.py:97]: 127.0.0.1 - - [24/Sep/2026 20:46:22] "[36mGET /static/img/icon.svg HTTP/1.1[0m" 304 -
+2026-09-24 20:46:43,572 INFO [_internal.py:97]: 127.0.0.1 - - [24/Sep/2026 20:46:43] "GET /dashboard HTTP/1.1" 200 -
+2026-09-24 20:46:47,560 INFO [_internal.py:97]: 127.0.0.1 - - [24/Sep/2026 20:46:47] "[32mGET /predictions HTTP/1.1[0m" 302 -
+2026-09-24 20:46:47,615 DEBUG [connectionpool.py:1062]: Starting new HTTPS connection (1): freeipapi.com:443
+2026-09-24 20:46:47,992 DEBUG [connectionpool.py:544]: https://freeipapi.com:443 "GET /api/json HTTP/1.1" 307 None
+2026-09-24 20:46:48,024 DEBUG [connectionpool.py:1062]: Starting new HTTPS connection (1): free.freeipapi.com:443
+2026-09-24 20:46:48,636 DEBUG [connectionpool.py:544]: https://free.freeipapi.com:443 "GET /api/v1/json HTTP/1.1" 200 None
+2026-09-24 20:46:48,642 INFO [_internal.py:97]: 127.0.0.1 - - [24/Sep/2026 20:46:48] "GET /my-charts HTTP/1.1" 200 -
+2026-09-24 20:46:48,776 INFO [_internal.py:97]: 127.0.0.1 - - [24/Sep/2026 20:46:48] "[36mGET /static/css/style_v2.css?v=6.3 HTTP/1.1[0m" 304 -
+2026-09-24 20:46:49,244 INFO [_internal.py:97]: 127.0.0.1 - - [24/Sep/2026 20:46:49] "[36mGET /static/manifest.json HTTP/1.1[0m" 304 -
+2026-09-24 20:46:49,294 INFO [_internal.py:97]: 127.0.0.1 - - [24/Sep/2026 20:46:49] "[36mGET /static/img/icon.svg HTTP/1.1[0m" 304 -
+2026-09-24 20:57:02,277 INFO [__init__.py:78]: Astro Predictions V3.22.1 starting with debug logging enabled...
+2026-09-24 21:17:16,395 INFO [__init__.py:78]: Astro Predictions V3.22.1 starting with debug logging enabled...

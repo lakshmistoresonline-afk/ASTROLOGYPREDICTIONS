@@ -1,5 +1,5 @@
 import pytest
-from app.db.migrations.blue_green_migration import blue_green_migration_manager
+from app.database.blue_green_migration import blue_green_migration_manager
 
 def test_db_zero_downtime_blue_green_migration():
     res = blue_green_migration_manager.execute_non_blocking_migration(target_schema_version="V12.0")
