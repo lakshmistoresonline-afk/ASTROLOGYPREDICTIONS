@@ -1930,3 +1930,15 @@
 2026-09-24 22:42:17,229 INFO [_internal.py:97]: 127.0.0.1 - - [24/Sep/2026 22:42:17] "[36mGET /static/manifest.json HTTP/1.1[0m" 304 -
 2026-09-24 22:42:17,818 INFO [_internal.py:97]: 127.0.0.1 - - [24/Sep/2026 22:42:17] "[36mGET /static/img/icon.svg HTTP/1.1[0m" 304 -
 2026-09-24 22:42:17,950 INFO [_internal.py:97]: 127.0.0.1 - - [24/Sep/2026 22:42:17] "[36mGET /static/img/icon.svg HTTP/1.1[0m" 304 -
+2026-09-24 22:50:21,191 INFO [__init__.py:78]: Astro Predictions V3.22.1 starting with debug logging enabled...
+2026-09-24 22:50:27,423 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): 127.0.0.1:8000
+2026-09-24 22:50:29,107 INFO [_internal.py:97]: [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5001
+2026-09-24 22:50:29,109 INFO [_internal.py:97]: [33mPress CTRL+C to quit[0m
+2026-09-24 22:50:29,383 DEBUG [proactor_events.py:631]: Using proactor: IocpProactor
+2026-09-24 22:50:36,376 INFO [_internal.py:97]: 127.0.0.1 - - [24/Sep/2026 22:50:36] "[32mGET / HTTP/1.1[0m" 302 -
+2026-09-24 22:50:36,938 INFO [_internal.py:97]: 127.0.0.1 - - [24/Sep/2026 22:50:36] "GET /login?next=/ HTTP/1.1" 200 -
+2026-09-24 22:50:38,334 INFO [_internal.py:97]: 127.0.0.1 - - [24/Sep/2026 22:50:38] "[36mGET /static/css/style_v2.css?v=6.3 HTTP/1.1[0m" 304 -
+2026-09-24 22:50:38,430 INFO [_internal.py:97]: 127.0.0.1 - - [24/Sep/2026 22:50:38] "[36mGET /static/manifest.json HTTP/1.1[0m" 304 -
+2026-09-24 22:50:40,245 INFO [_internal.py:97]: 127.0.0.1 - - [24/Sep/2026 22:50:40] "[36mGET /static/img/icon.svg HTTP/1.1[0m" 304 -
+2026-09-24 23:01:08,204 INFO [__init__.py:78]: Astro Predictions V3.22.1 starting with debug logging enabled...

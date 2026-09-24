@@ -172,7 +172,7 @@ body {
 }
 
 /* Glassmorphism Cards */
-.card-glass {
+.card-glass, .card-premium {
     background: var(--bg-card);
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
