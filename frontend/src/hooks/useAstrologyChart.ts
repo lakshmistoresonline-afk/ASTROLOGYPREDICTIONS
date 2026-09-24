@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
-import { ChartDataPayload, BirthDetails } from '../types/chart';
+import { ChartPayload, BirthDetails } from '../types/astrology';
 
 export interface UseAstrologyChartReturn {
-  data: ChartDataPayload | null;
+  data: ChartPayload | null;
   loading: boolean;
   error: string | null;
   refetch: () => Promise<void>;
@@ -13,7 +13,7 @@ export const useAstrologyChart = (
   authToken: string | null,
   birthDetails: BirthDetails
 ): UseAstrologyChartReturn => {
-  const [data, setData] = useState<ChartDataPayload | null>(null);
+  const [data, setData] = useState<ChartPayload | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -38,6 +38,7 @@ export const useAstrologyChart = (
           tob: birthDetails.tob,
           latitude: birthDetails.lat,
           longitude: birthDetails.lng,
+          timezone: birthDetails.timezone || 'Asia/Kolkata',
         }),
       });
 
@@ -45,7 +46,7 @@ export const useAstrologyChart = (
         throw new Error(`Calculation Engine Error (${response.status}): ${response.statusText}`);
       }
 
-      const payload: ChartDataPayload = await response.json();
+      const payload: ChartPayload = await response.json();
       setData(payload);
     } catch (err: any) {
       setError(err?.message || 'Failed to calculate astrological chart.');
@@ -56,7 +57,7 @@ export const useAstrologyChart = (
 
   useEffect(() => {
     fetchChart();
-  }, [apiEndpoint, authToken, birthDetails.dob, birthDetails.tob, birthDetails.lat, birthDetails.lng]);
+  }, [apiEndpoint, authToken, birthDetails.dob, birthDetails.tob, birthDetails.lat, birthDetails.lng, birthDetails.timezone]);
 
   return { data, loading, error, refetch: fetchChart };
 };

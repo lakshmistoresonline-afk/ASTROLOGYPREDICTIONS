@@ -1,8 +1,8 @@
 import React from 'react';
-import { PlanetPosition } from '../types/chart';
+import { Planet } from '../types/astrology';
 
 export interface PlanetInspectorProps {
-  selectedPlanet: PlanetPosition | null;
+  selectedPlanet: Planet | null;
 }
 
 export const PlanetInspector: React.FC<PlanetInspectorProps> = ({ selectedPlanet }) => {

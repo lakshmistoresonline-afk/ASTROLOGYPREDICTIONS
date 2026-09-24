@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-import { ChartDataPayload, PlanetPosition } from '../types/chart';
+import { ChartPayload, Planet } from '../types/astrology';
 
 export interface NatalWheelProps {
-  chartData: ChartDataPayload;
+  chartData: ChartPayload;
   selectedPlanetId?: string | null;
-  onSelectPlanet?: (planet: PlanetPosition) => void;
+  onSelectPlanet?: (planet: Planet) => void;
   size?: number;
 }
 
@@ -29,7 +29,7 @@ export const NatalWheel: React.FC<NatalWheelProps> = ({
   onSelectPlanet,
   size = 500,
 }) => {
-  const [hoveredPlanet, setHoveredPlanet] = useState<PlanetPosition | null>(null);
+  const [hoveredPlanet, setHoveredPlanet] = useState<Planet | null>(null);
 
   const center = size / 2;
   const outerRadius = size * 0.46;
@@ -48,7 +48,7 @@ export const NatalWheel: React.FC<NatalWheelProps> = ({
     return { x, y };
   };
 
-  const handlePlanetClick = (planet: PlanetPosition) => {
+  const handlePlanetClick = (planet: Planet) => {
     if (onSelectPlanet) {
       onSelectPlanet(planet);
     }
@@ -203,9 +203,9 @@ export const NatalWheel: React.FC<NatalWheelProps> = ({
           const p2 = degreeToPolar(target.degree, aspectRadius);
 
           const strokeColor =
-            aspect.aspectType === 'Trine' || aspect.aspectType === 'Sextile'
+            aspect.aspectType === 'trine' || aspect.aspectType === 'sextile'
               ? '#34D399' // Green (Benefic)
-              : aspect.aspectType === 'Square' || aspect.aspectType === 'Opposition'
+              : aspect.aspectType === 'square' || aspect.aspectType === 'opposition'
               ? '#F87171' // Red (Friction)
               : '#FBBF24'; // Gold (Conjunction)
 
