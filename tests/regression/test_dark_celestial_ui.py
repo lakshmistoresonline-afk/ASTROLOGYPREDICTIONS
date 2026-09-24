@@ -7,7 +7,9 @@ def test_dark_celestial_ui_layout_files_exist():
         "frontend/src/components/layout/Header.tsx",
         "frontend/src/components/layout/DashboardLayout.tsx",
         "frontend/src/pages/Landing.tsx",
-        "frontend/src/pages/Dashboard.tsx"
+        "frontend/src/pages/Dashboard.tsx",
+        "frontend/src/pages/Login.tsx",
+        "frontend/src/pages/ProfileNew.tsx"
     ]
 
     for f in files:
@@ -41,10 +43,17 @@ def test_dashboard_layout_content():
     assert "Sidebar" in content
     assert "Header" in content
 
-def test_landing_page_content():
-    with open("frontend/src/pages/Landing.tsx", "r", encoding="utf-8") as f:
+def test_login_page_content():
+    with open("frontend/src/pages/Login.tsx", "r", encoding="utf-8") as f:
         content = f.read()
 
-    assert "export const Landing" in content
-    assert "Deterministic Astrological Intelligence" in content
-    assert "ENTER CELESTIAL DASHBOARD" in content
+    assert "export const Login" in content
+    assert "ACCESS CELESTIAL DASHBOARD" in content
+
+def test_profile_new_page_content():
+    with open("frontend/src/pages/ProfileNew.tsx", "r", encoding="utf-8") as f:
+        content = f.read()
+
+    assert "export const ProfileNew" in content
+    assert "Quick City Preset" in content
+    assert "COMPUTE CANONICAL CHART" in content

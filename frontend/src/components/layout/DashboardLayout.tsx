@@ -38,3 +38,5 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
     </div>
   );
 };
+
+export default DashboardLayout;
