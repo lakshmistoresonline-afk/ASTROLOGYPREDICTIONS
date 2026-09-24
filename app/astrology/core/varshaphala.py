@@ -1,8 +1,11 @@
 from .swe_proxy import swe
 from datetime import datetime, date
-from .ephemeris import get_planet_position, get_julian_day
+from .ephemeris import get_planet_position
 from ..panchang.utils import find_event
 from typing import Dict, Any
+
+def get_julian_day(year: int, month: int, day: int, hour: float = 0.0) -> float:
+    return swe.julday(year, month, day, hour)
 
 def get_solar_return_jd(natal_jd: float, target_year: int) -> float:
     """Find the exact JD when Sun returns to natal longitude."""

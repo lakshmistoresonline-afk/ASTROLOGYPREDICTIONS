@@ -1,29 +1,5 @@
 {% extends "base.html" %}
-{% block title %}Matchmaking (Guna Milan) — Jyotish Dashboard{% block scripts %}
-<script>
-function checkAndAutoCalc() {
-    const fields = ['b-name', 'b-dob', 'b-tob', 'b-place', 'g-name', 'g-dob', 'g-tob', 'g-place'];
-    const allFilled = fields.every(id => {
-        const val = document.getElementById(id).value.trim();
-        return val !== '';
-    });
-
-    if (allFilled) {
-        document.getElementById('calc-btn').innerText = "GENERATING REPORT...";
-        document.getElementById('match-form').submit();
-    }
-}
-
-document.querySelectorAll('.auto-calc').forEach(el => {
-    el.addEventListener('change', checkAndAutoCalc);
-    // For text inputs, check on blur or after small delay
-    if(el.type === 'text') {
-        el.addEventListener('blur', checkAndAutoCalc);
-    }
-});
-</script>
-{% endblock %}
-{% endblock %}
+{% block title %}Matchmaking (Guna Milan) — Astro Predictions{% endblock %}
 
 {% block content %}
 <div class="page-header mb-5 d-flex justify-content-between align-items-end flex-wrap gap-4">
@@ -33,164 +9,119 @@ document.querySelectorAll('.auto-calc').forEach(el => {
     </div>
     {% if result %}
     <div class="text-end">
-        <div class="xsmall fw-black tracking-widest text-gold mb-1 opacity-50 uppercase">TOTAL SYNC SCORE</div>
-        <div class="h2 fw-black text-white mb-0">{{ result.total_score }} / 36.0</div>
+        <div class="display-4 fw-black text-gold font-mono mb-0">{{ result.total_score }} <span class="fs-4 text-dim">/ 36</span></div>
+        <div class="xxsmall text-gold fw-bold uppercase tracking-widest">Composite Guna Score</div>
     </div>
     {% endif %}
 </div>
 
-<div class="row g-5">
-    <!-- ── Input Form ───────── -->
-    <div class="col-lg-4">
-        <div class="card-vedic p-4 shadow-lg border-white border-opacity-5">
-            <h5 class="text-white fw-bold mb-4 opacity-50 uppercase tracking-widest">Inquiry Details</h5>
-            <form method="POST" id="match-form">
-          <div class="row g-3">
-            <!-- Boy Details -->
-            <div class="col-12">
-              <h5 class="text-gold border-bottom border-secondary pb-2 mb-3">Partner 1 (Boy)</h5>
-              <div class="mb-2">
-                <label class="form-label small text-muted">Full Name</label>
-                <input type="text" name="b_name" id="b-name" class="form-control form-control-sm bg-dark text-white auto-calc" placeholder="Boy's Name" required>
-              </div>
-              <div class="row g-2 mb-2">
-                <div class="col-7">
-                  <label class="form-label small text-muted">Date of Birth</label>
-                  <input type="date" name="b_dob" id="b-dob" class="form-control form-control-sm bg-dark text-white auto-calc" required>
+<!-- MATCHMAKING FORM CARD -->
+<div class="card-glass p-4 p-md-5 mb-5 border-gold border-opacity-20 shadow-2xl">
+    <form action="{{ url_for('main.matchmaking') }}" method="POST" id="match-form">
+        <div class="row g-4">
+            <!-- Boy Profile -->
+            <div class="col-md-6 border-end border-white border-opacity-10 pe-md-4">
+                <div class="d-flex align-items-center gap-2 mb-3">
+                    <span class="badge bg-gold text-dark font-mono xxsmall fw-bold">BOY PROFILE</span>
+                    <span class="xxsmall text-dim">Primary Partner</span>
                 </div>
-                <div class="col-5">
-                  <label class="form-label small text-muted">Time</label>
-                  <input type="time" name="b_tob" id="b-tob" class="form-control form-control-sm bg-dark text-white auto-calc" required>
+                <div class="mb-3">
+                    <label class="form-label xxsmall text-dim font-mono uppercase mb-1">Full Name</label>
+                    <input type="text" class="form-control form-control-dark font-mono text-white bg-dark bg-opacity-60 border-secondary border-opacity-30 rounded-3 py-2 px-3 auto-calc" id="b-name" name="b_name" placeholder="Partner A Name" value="{{ b_name or '' }}">
                 </div>
-              </div>
-              <div class="mb-3">
-                <label class="form-label small text-muted">Birth Place</label>
-                <input type="text" name="b_place" id="b-place" class="form-control form-control-sm bg-dark text-white auto-calc" placeholder="City, Country" required>
-              </div>
+                <div class="row g-2 mb-3">
+                    <div class="col-6">
+                        <label class="form-label xxsmall text-dim font-mono uppercase mb-1">Date of Birth</label>
+                        <input type="date" class="form-control form-control-dark font-mono text-white bg-dark bg-opacity-60 border-secondary border-opacity-30 rounded-3 py-2 px-3 auto-calc" id="b-dob" name="b_dob" value="{{ b_dob or '' }}">
+                    </div>
+                    <div class="col-6">
+                        <label class="form-label xxsmall text-dim font-mono uppercase mb-1">Time of Birth</label>
+                        <input type="time" class="form-control form-control-dark font-mono text-white bg-dark bg-opacity-60 border-secondary border-opacity-30 rounded-3 py-2 px-3 auto-calc" id="b-tob" name="b_tob" value="{{ b_tob or '12:00' }}">
+                    </div>
+                </div>
+                <div>
+                    <label class="form-label xxsmall text-dim font-mono uppercase mb-1">Birth Location</label>
+                    <input type="text" class="form-control form-control-dark font-mono text-white bg-dark bg-opacity-60 border-secondary border-opacity-30 rounded-3 py-2 px-3 auto-calc" id="b-place" name="b_place" placeholder="City Name" value="{{ b_place or '' }}">
+                </div>
             </div>
 
-            <!-- Girl Details -->
-            <div class="col-12">
-              <h5 class="text-gold border-bottom border-secondary pb-2 mb-3">Partner 2 (Girl)</h5>
-              <div class="mb-2">
-                <label class="form-label small text-muted">Full Name</label>
-                <input type="text" name="g_name" id="g-name" class="form-control form-control-sm bg-dark text-white auto-calc" placeholder="Girl's Name" required>
-              </div>
-              <div class="row g-2 mb-2">
-                <div class="col-7">
-                  <label class="form-label small text-muted">Date of Birth</label>
-                  <input type="date" name="g_dob" id="g-dob" class="form-control form-control-sm bg-dark text-white auto-calc" required>
+            <!-- Girl Profile -->
+            <div class="col-md-6 ps-md-4">
+                <div class="d-flex align-items-center gap-2 mb-3">
+                    <span class="badge bg-info text-dark font-mono xxsmall fw-bold">GIRL PROFILE</span>
+                    <span class="xxsmall text-dim">Secondary Partner</span>
                 </div>
-                <div class="col-5">
-                  <label class="form-label small text-muted">Time</label>
-                  <input type="time" name="g_tob" id="g-tob" class="form-control form-control-sm bg-dark text-white auto-calc" required>
+                <div class="mb-3">
+                    <label class="form-label xxsmall text-dim font-mono uppercase mb-1">Full Name</label>
+                    <input type="text" class="form-control form-control-dark font-mono text-white bg-dark bg-opacity-60 border-secondary border-opacity-30 rounded-3 py-2 px-3 auto-calc" id="g-name" name="g_name" placeholder="Partner B Name" value="{{ g_name or '' }}">
                 </div>
-              </div>
-              <div class="mb-3">
-                <label class="form-label small text-muted">Birth Place</label>
-                <input type="text" name="g_place" id="g-place" class="form-control form-control-sm bg-dark text-white auto-calc" placeholder="City, Country" required>
-              </div>
+                <div class="row g-2 mb-3">
+                    <div class="col-6">
+                        <label class="form-label xxsmall text-dim font-mono uppercase mb-1">Date of Birth</label>
+                        <input type="date" class="form-control form-control-dark font-mono text-white bg-dark bg-opacity-60 border-secondary border-opacity-30 rounded-3 py-2 px-3 auto-calc" id="g-dob" name="g_dob" value="{{ g_dob or '' }}">
+                    </div>
+                    <div class="col-6">
+                        <label class="form-label xxsmall text-dim font-mono uppercase mb-1">Time of Birth</label>
+                        <input type="time" class="form-control form-control-dark font-mono text-white bg-dark bg-opacity-60 border-secondary border-opacity-30 rounded-3 py-2 px-3 auto-calc" id="g-tob" name="g_tob" value="{{ g_tob or '12:00' }}">
+                    </div>
+                </div>
+                <div>
+                    <label class="form-label xxsmall text-dim font-mono uppercase mb-1">Birth Location</label>
+                    <input type="text" class="form-control form-control-dark font-mono text-white bg-dark bg-opacity-60 border-secondary border-opacity-30 rounded-3 py-2 px-3 auto-calc" id="g-place" name="g_place" placeholder="City Name" value="{{ g_place or '' }}">
+                </div>
             </div>
+        </div>
 
-            <div class="col-12">
-              <button type="submit" id="calc-btn" class="btn btn-vedic w-100 py-3 fs-6">CALCULATE FUSION</button>
-            </div>
-          </div>
-        </form>
-    </div>
+        <div class="pt-4 mt-4 border-top border-white border-opacity-10 text-center">
+            <button type="submit" id="calc-btn" class="btn btn-vedic py-3 px-5 fw-bold shadow-lg rounded-pill fs-6">
+                COMPUTE ASHTAKOOTA SYNCHRONICITY →
+            </button>
+        </div>
+    </form>
 </div>
 
-  <!-- ── Results ───────── -->
-  <div class="col-lg-8">
-    {% if error %}
-    <div class="alert alert-danger">{{ error }}</div>
-    {% endif %}
-
-    {% if result %}
-    <div class="card-vedic p-5 mb-5 border-{{ 'success' if result.total_score >= 18 else 'danger' }} border-opacity-20 shadow-2xl">
-        <div class="row align-items-center g-5">
-            <div class="col-md-auto text-center">
-                <div class="main-resonance-orb mx-auto" style="--score-color: {{ '#16a34a' if result.total_score >= 25 else '#fbbf24' if result.total_score >= 18 else '#dc2626' }}; width: 140px; height: 140px; border-width: 8px">
-                    <span class="h2 fw-black text-white mb-0">{{ result.total_score }}</span>
-                </div>
-            </div>
-            <div class="col-md">
-                <h3 class="fw-black text-white mb-2">{{ result.verdict|upper }} SYNC</h3>
-                <p class="text-dim leading-relaxed mb-0">The fusion of these two celestial grids indicates a <strong>{{ result.verdict.lower() }}</strong> compatibility, primarily influenced by the Moon's psychological resonance.</p>
-            </div>
-        </div>
-
-        {% if result.doshas %}
-        <div class="mt-5 p-4 rounded-4 bg-danger bg-opacity-10 border border-danger border-opacity-20 d-flex gap-4 align-items-center">
-            <i class="bi bi-shield-x text-danger fs-3"></i>
-            <div>
-                <div class="xsmall text-danger fw-black tracking-widest uppercase mb-1">Critical Doshas Detected</div>
-                <p class="small text-white mb-0">{{ result.doshas | join(', ') }}</p>
-            </div>
-        </div>
-        {% endif %}
-    </div>
-
-    <!-- Detailed Kutas Matrix -->
-    <div class="card-vedic p-0 overflow-hidden shadow-lg mb-5">
-        <div class="p-4 border-bottom border-white border-opacity-5 bg-black bg-opacity-20">
-            <h6 class="mb-0 text-white fw-bold xsmall uppercase tracking-widest">The 8-Kuta Matrix</h6>
-        </div>
-        <div class="table-responsive">
-          <table class="table table-vedic mb-0 align-middle">
+<!-- RESULTS SECTION -->
+{% if result %}
+<div class="card-glass p-4 border-gold border-opacity-30 shadow-2xl mb-5">
+    <h4 class="text-gold font-premium fw-bold mb-4"><i class="bi bi-heart-pulse-fill me-2"></i> Ashtakoota 36-Guna Breakdown</h4>
+    <div class="table-responsive">
+        <table class="table table-dark table-hover align-middle xxsmall mb-0">
             <thead>
-              <tr class="xsmall text-dim border-bottom border-white border-opacity-5">
-                <th class="px-5 py-3">KUTA (FACTOR)</th>
-                <th class="text-center">SYNC SCORE</th>
-                <th class="text-center">THRESHOLD</th>
-                <th class="px-5 text-end">STATUS</th>
-              </tr>
+                <tr class="text-gold border-bottom border-secondary">
+                    <th class="ps-4">KUTA NAME</th>
+                    <th class="text-center">OBTAINED SCORE</th>
+                    <th class="text-center">MAX SCORE</th>
+                    <th class="pe-4 text-end">STATUS</th>
+                </tr>
             </thead>
             <tbody>
-              {% for k in result.kutas %}
-              <tr class="border-bottom border-white border-opacity-5">
-                <td class="px-5 py-4 fw-bold text-white small">{{ k.name }}</td>
-                <td class="text-center">
-                    <div class="h5 mb-0 fw-black text-{{ 'success' if k.status == 'PASS' else 'danger' }}">{{ k.score }}</div>
-                </td>
-                <td class="text-center text-dim xsmall fw-bold">MAX: {{ k.max }}</td>
-                <td class="px-5 text-end">
-                  <span class="badge {{ 'bg-success' if k.status == 'PASS' else 'bg-danger' }} bg-opacity-10 text-{{ 'success' if k.status == 'PASS' else 'danger' }} xsmall fw-black tracking-widest">
-                    {{ k.status }}
-                  </span>
-                </td>
-              </tr>
-              {% endfor %}
+                {% for k in result.kutas %}
+                <tr>
+                    <td class="ps-4 fw-bold text-white">{{ k.name }}</td>
+                    <td class="text-center font-mono font-bold text-gold fs-6">{{ k.score }}</td>
+                    <td class="text-center font-mono text-dim">/ {{ k.max }}</td>
+                    <td class="pe-4 text-end">
+                        <span class="badge {{ 'bg-success' if k.status == 'PASS' else 'bg-danger' }} bg-opacity-20 text-{{ 'success' if k.status == 'PASS' else 'danger' }} xxsmall font-mono fw-bold">
+                            {{ k.status }}
+                        </span>
+                    </td>
+                </tr>
+                {% endfor %}
             </tbody>
-          </table>
-        </div>
+        </table>
     </div>
-
-    <!-- Explanations -->
-    <div class="card-vedic">
-      <div class="card-vedic-header">What these scores mean</div>
-      <div class="card-vedic-body small text-muted">
-        <p><strong>Nadi (8 pts):</strong> Represents physiological compatibility and progeny. If 0, it indicates Nadi Dosha.</p>
-        <p><strong>Bhakut (7 pts):</strong> Represents emotional construct and longevity of the relationship.</p>
-        <p><strong>Gana (6 pts):</strong> Represents temperament compatibility (Deva, Manushya, Rakshasa).</p>
-        <p><strong>Graha Maitri (5 pts):</strong> Represents psychological compatibility based on planetary friendship.</p>
-      </div>
-    </div>
-    {% else %}
-    <div class="text-center py-5 text-muted">
-      <i class="bi bi-heart-pulse fs-1 mb-3 d-block"></i>
-      <p>Enter birth details for both partners to view the matchmaking report.</p>
-    </div>
-    {% endif %}
-  </div>
 </div>
+{% endif %}
+
+{% endblock %}
+
 {% block scripts %}
 <script>
 function checkAndAutoCalc() {
     const fields = ['b-name', 'b-dob', 'b-tob', 'b-place', 'g-name', 'g-dob', 'g-tob', 'g-place'];
     const allFilled = fields.every(id => {
-        const val = document.getElementById(id).value.trim();
-        return val !== '';
+        const el = document.getElementById(id);
+        return el && el.value.trim() !== '';
     });
 
     if (allFilled) {
@@ -201,11 +132,6 @@ function checkAndAutoCalc() {
 
 document.querySelectorAll('.auto-calc').forEach(el => {
     el.addEventListener('change', checkAndAutoCalc);
-    // For text inputs, check on blur or after small delay
-    if(el.type === 'text') {
-        el.addEventListener('blur', checkAndAutoCalc);
-    }
 });
 </script>
-{% endblock %}
 {% endblock %}

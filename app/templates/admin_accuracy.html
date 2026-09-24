@@ -42,6 +42,7 @@
         <div class="card-premium p-4 h-100">
             <div class="xxsmall text-gold fw-black uppercase mb-4">Horizon Performance (Decay Analysis)</div>
             <div class="d-flex justify-content-between gap-2">
+                {% if real_world and real_world.get and real_world.get('horizon_performance') %}
                 {% for h, rate in real_world.horizon_performance.items() %}
                 <div class="text-center flex-grow-1">
                     <div class="xsmall fw-black text-white mb-2">{{ rate }}%</div>
@@ -51,6 +52,9 @@
                     <div class="xxsmall text-dim">{{ h }}</div>
                 </div>
                 {% endfor %}
+                {% else %}
+                <div class="text-dim xxsmall">Horizon decay analysis processing...</div>
+                {% endif %}
             </div>
         </div>
     </div>
@@ -92,6 +96,7 @@
         <h6 class="nav-group-title mt-0 mb-4">DOMAIN PERFORMANCE MATRIX</h6>
         <div class="card-premium p-4">
             <div class="row g-3">
+                {% if real_world and real_world.get and real_world.get('domain_performance') %}
                 {% for d, stats in real_world.domain_performance.items() %}
                 <div class="col-md-6 col-xl-4">
                     <div class="p-3 rounded-4 bg-black bg-opacity-20 border border-white border-opacity-5">
@@ -103,6 +108,9 @@
                     </div>
                 </div>
                 {% endfor %}
+                {% else %}
+                <div class="col-12 text-dim xxsmall">Domain performance calibration active...</div>
+                {% endif %}
             </div>
         </div>
     </div>

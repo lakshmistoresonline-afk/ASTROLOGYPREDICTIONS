@@ -1942,3 +1942,810 @@
 2026-09-24 22:50:38,430 INFO [_internal.py:97]: 127.0.0.1 - - [24/Sep/2026 22:50:38] "[36mGET /static/manifest.json HTTP/1.1[0m" 304 -
 2026-09-24 22:50:40,245 INFO [_internal.py:97]: 127.0.0.1 - - [24/Sep/2026 22:50:40] "[36mGET /static/img/icon.svg HTTP/1.1[0m" 304 -
 2026-09-24 23:01:08,204 INFO [__init__.py:78]: Astro Predictions V3.22.1 starting with debug logging enabled...
+2026-09-24 23:05:50,830 INFO [__init__.py:78]: Astro Predictions V3.22.1 starting with debug logging enabled...
+2026-09-24 23:05:56,846 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): 127.0.0.1:8000
+2026-09-24 23:05:58,530 INFO [_internal.py:97]: [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5001
+2026-09-24 23:05:58,531 INFO [_internal.py:97]: [33mPress CTRL+C to quit[0m
+2026-09-24 23:05:58,783 DEBUG [proactor_events.py:631]: Using proactor: IocpProactor
+2026-09-24 23:06:05,536 INFO [_internal.py:97]: 127.0.0.1 - - [24/Sep/2026 23:06:05] "[32mGET / HTTP/1.1[0m" 302 -
+2026-09-24 23:06:05,955 INFO [_internal.py:97]: 127.0.0.1 - - [24/Sep/2026 23:06:05] "GET /login?next=/ HTTP/1.1" 200 -
+2026-09-24 23:06:06,793 INFO [_internal.py:97]: 127.0.0.1 - - [24/Sep/2026 23:06:06] "[36mGET /static/manifest.json HTTP/1.1[0m" 304 -
+2026-09-24 23:06:06,823 INFO [_internal.py:97]: 127.0.0.1 - - [24/Sep/2026 23:06:06] "GET /static/css/style_v2.css?v=6.3 HTTP/1.1" 200 -
+2026-09-24 23:06:08,770 INFO [_internal.py:97]: 127.0.0.1 - - [24/Sep/2026 23:06:08] "[36mGET /static/img/icon.svg HTTP/1.1[0m" 304 -
+2026-09-24 23:15:27,912 INFO [__init__.py:78]: Astro Predictions V3.22.1 starting with debug logging enabled...
+2026-09-24 23:15:35,877 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): 127.0.0.1:8000
+2026-09-24 23:15:37,617 INFO [_internal.py:97]: [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5001
+2026-09-24 23:15:37,619 INFO [_internal.py:97]: [33mPress CTRL+C to quit[0m
+2026-09-24 23:15:37,897 DEBUG [proactor_events.py:631]: Using proactor: IocpProactor
+2026-09-24 23:15:44,159 INFO [_internal.py:97]: 127.0.0.1 - - [24/Sep/2026 23:15:44] "[32mGET / HTTP/1.1[0m" 302 -
+2026-09-24 23:15:44,632 INFO [_internal.py:97]: 127.0.0.1 - - [24/Sep/2026 23:15:44] "GET /login?next=/ HTTP/1.1" 200 -
+2026-09-24 23:15:45,760 INFO [_internal.py:97]: 127.0.0.1 - - [24/Sep/2026 23:15:45] "[36mGET /static/manifest.json HTTP/1.1[0m" 304 -
+2026-09-24 23:15:45,764 INFO [_internal.py:97]: 127.0.0.1 - - [24/Sep/2026 23:15:45] "[36mGET /static/css/style_v2.css?v=6.3 HTTP/1.1[0m" 304 -
+2026-09-24 23:15:47,460 INFO [_internal.py:97]: 127.0.0.1 - - [24/Sep/2026 23:15:47] "[36mGET /static/img/icon.svg HTTP/1.1[0m" 304 -
+2026-09-24 23:20:43,814 INFO [__init__.py:78]: Astro Predictions V3.22.1 starting with debug logging enabled...
+2026-09-24 23:20:54,505 ERROR [app.py:838]: Exception on /matchmaking [GET]
+Traceback (most recent call last):
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\app.py", line 1473, in wsgi_app
+    response = self.full_dispatch_request()
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\app.py", line 882, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask_cors\extension.py", line 178, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+                                                ~^^^^^^^^^^^^^^^^^
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\app.py", line 880, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\app.py", line 865, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "D:\ASTROLOGYPREDICTIONS\app\routes.py", line 979, in matchmaking
+    return render_template("matchmaking.html", result=result, error=error)
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\templating.py", line 149, in render_template
+    template = app.jinja_env.get_or_select_template(template_name_or_list)
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\jinja2\environment.py", line 1087, in get_or_select_template
+    return self.get_template(template_name_or_list, parent, globals)
+           ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\jinja2\environment.py", line 1016, in get_template
+    return self._load_template(name, globals)
+           ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\jinja2\environment.py", line 975, in _load_template
+    template = self.loader.load(self, name, self.make_globals(globals))
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\jinja2\loaders.py", line 138, in load
+    code = environment.compile(source, name, filename)
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\jinja2\environment.py", line 771, in compile
+    self.handle_exception(source=source_hint)
+    ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\jinja2\environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "D:\ASTROLOGYPREDICTIONS\app\templates\matchmaking.html", line 187, in template
+    {% block scripts %}
+jinja2.exceptions.TemplateAssertionError: block 'scripts' defined twice
+2026-09-24 23:20:55,148 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-24 23:20:56,072 DEBUG [connectionpool.py:544]: http://localhost:8000 "POST /v1/natal-chart HTTP/1.1" 200 1416
+2026-09-24 23:20:56,078 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-24 23:20:56,591 DEBUG [connectionpool.py:544]: http://localhost:8000 "POST /v1/sky-events HTTP/1.1" 200 63
+2026-09-24 23:20:56,596 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-24 23:20:57,109 DEBUG [connectionpool.py:544]: http://localhost:8000 "POST /v1/sky-events HTTP/1.1" 200 63
+2026-09-24 23:20:57,113 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-24 23:20:57,625 DEBUG [connectionpool.py:544]: http://localhost:8000 "POST /v1/sky-events HTTP/1.1" 200 64
+2026-09-24 23:20:57,768 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-24 23:20:58,280 DEBUG [connectionpool.py:544]: http://localhost:8000 "POST /v1/sky-events HTTP/1.1" 200 63
+2026-09-24 23:20:58,285 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-24 23:20:58,797 DEBUG [connectionpool.py:544]: http://localhost:8000 "POST /v1/sky-events HTTP/1.1" 200 63
+2026-09-24 23:20:58,920 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-24 23:20:59,433 DEBUG [connectionpool.py:544]: http://localhost:8000 "POST /v1/sky-events HTTP/1.1" 200 63
+2026-09-24 23:20:59,519 ERROR [app.py:838]: Exception on /panchang [GET]
+Traceback (most recent call last):
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\app.py", line 1473, in wsgi_app
+    response = self.full_dispatch_request()
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\app.py", line 882, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask_cors\extension.py", line 178, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+                                                ~^^^^^^^^^^^^^^^^^
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\app.py", line 880, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\app.py", line 865, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "D:\ASTROLOGYPREDICTIONS\app\routes.py", line 949, in panchang
+    return render_template("panchang.html", panchang=res, sky=res["sky"], place=place, today=date.today().isoformat())
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\templating.py", line 149, in render_template
+    template = app.jinja_env.get_or_select_template(template_name_or_list)
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\jinja2\environment.py", line 1087, in get_or_select_template
+    return self.get_template(template_name_or_list, parent, globals)
+           ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\jinja2\environment.py", line 1016, in get_template
+    return self._load_template(name, globals)
+           ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\jinja2\environment.py", line 975, in _load_template
+    template = self.loader.load(self, name, self.make_globals(globals))
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\jinja2\loaders.py", line 138, in load
+    code = environment.compile(source, name, filename)
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\jinja2\environment.py", line 771, in compile
+    self.handle_exception(source=source_hint)
+    ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\jinja2\environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "D:\ASTROLOGYPREDICTIONS\app\templates\panchang.html", line 225, in template
+    {% endblock %}
+jinja2.exceptions.TemplateSyntaxError: Unexpected end of template. Jinja was looking for the following tags: 'endblock'. The innermost block that needs to be closed is 'block'.
+2026-09-24 23:20:59,559 ERROR [app.py:838]: Exception on /varshaphala [GET]
+Traceback (most recent call last):
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\app.py", line 1473, in wsgi_app
+    response = self.full_dispatch_request()
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\app.py", line 882, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask_cors\extension.py", line 178, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+                                                ~^^^^^^^^^^^^^^^^^
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\app.py", line 880, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\app.py", line 865, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "D:\ASTROLOGYPREDICTIONS\app\routes.py", line 985, in varshaphala
+    from .astrology.core.varshaphala import get_varshaphala_data, get_solar_return_jd
+  File "D:\ASTROLOGYPREDICTIONS\app\astrology\core\varshaphala.py", line 3, in <module>
+    from .ephemeris import get_planet_position, get_julian_day
+ImportError: cannot import name 'get_julian_day' from 'app.astrology.core.ephemeris' (D:\ASTROLOGYPREDICTIONS\app\astrology\core\ephemeris.py)
+2026-09-24 23:20:59,713 ERROR [app.py:838]: Exception on /admin/accuracy [GET]
+Traceback (most recent call last):
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\app.py", line 1473, in wsgi_app
+    response = self.full_dispatch_request()
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\app.py", line 882, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask_cors\extension.py", line 178, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+                                                ~^^^^^^^^^^^^^^^^^
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\app.py", line 880, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\app.py", line 865, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "D:\ASTROLOGYPREDICTIONS\app\routes.py", line 1172, in admin_accuracy
+    return render_template("admin_accuracy.html",
+                           real_world=real_world,
+    ...<3 lines>...
+                           evidence=evidence,
+                           optimal=optimal)
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\templating.py", line 150, in render_template
+    return _render(app, template, context)
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\templating.py", line 131, in _render
+    rv = template.render(context)
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\jinja2\environment.py", line 1295, in render
+    self.environment.handle_exception()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\jinja2\environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "D:\ASTROLOGYPREDICTIONS\app\templates\admin_accuracy.html", line 1, in top-level template code
+    {% extends "base.html" %}
+  File "D:\ASTROLOGYPREDICTIONS\app\templates\base.html", line 163, in top-level template code
+    {% block content %}{% endblock %}
+    ^^^^^^^^^^^^^^^^^
+  File "D:\ASTROLOGYPREDICTIONS\app\templates\admin_accuracy.html", line 45, in block 'content'
+    {% for h, rate in real_world.horizon_performance.items() %}
+    ^^^^^^^^^
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\jinja2\environment.py", line 490, in getattr
+    return getattr(obj, attribute)
+jinja2.exceptions.UndefinedError: 'dict object' has no attribute 'horizon_performance'
+2026-09-24 23:32:29,407 INFO [__init__.py:78]: Astro Predictions V3.22.1 starting with debug logging enabled...
+2026-09-24 23:34:14,526 INFO [__init__.py:78]: Astro Predictions V3.22.1 starting with debug logging enabled...
+2026-09-24 23:34:35,297 ERROR [app.py:838]: Exception on /cosmic_dna [GET]
+Traceback (most recent call last):
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\app.py", line 1473, in wsgi_app
+    response = self.full_dispatch_request()
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\app.py", line 882, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask_cors\extension.py", line 178, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+                                                ~^^^^^^^^^^^^^^^^^
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\app.py", line 880, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\app.py", line 865, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "D:\ASTROLOGYPREDICTIONS\app\services\auth.py", line 105, in decorated_function
+    return f(*args, **kwargs)
+  File "D:\ASTROLOGYPREDICTIONS\app\routes.py", line 1232, in cosmic_dna
+    return render_template("cosmic_dna.html", chart=chart_obj)
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\templating.py", line 150, in render_template
+    return _render(app, template, context)
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\templating.py", line 131, in _render
+    rv = template.render(context)
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\jinja2\environment.py", line 1295, in render
+    self.environment.handle_exception()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\jinja2\environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "D:\ASTROLOGYPREDICTIONS\app\templates\cosmic_dna.html", line 1, in top-level template code
+    {% extends "base.html" %}
+  File "D:\ASTROLOGYPREDICTIONS\app\templates\base.html", line 163, in top-level template code
+    {% block content %}{% endblock %}
+    ^^^^^^^^^^^^^^^^^
+  File "D:\ASTROLOGYPREDICTIONS\app\templates\cosmic_dna.html", line 87, in block 'content'
+    <span class="dna-value text-gold">{{ dna.vedic.lagna }}</span>
+    ^^^^^^^^^^^^^
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\jinja2\environment.py", line 490, in getattr
+    return getattr(obj, attribute)
+jinja2.exceptions.UndefinedError: 'dna' is undefined
+2026-09-24 23:34:35,512 ERROR [app.py:838]: Exception on /matchmaking [GET]
+Traceback (most recent call last):
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\app.py", line 1473, in wsgi_app
+    response = self.full_dispatch_request()
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\app.py", line 882, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask_cors\extension.py", line 178, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+                                                ~^^^^^^^^^^^^^^^^^
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\app.py", line 880, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\app.py", line 865, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "D:\ASTROLOGYPREDICTIONS\app\routes.py", line 979, in matchmaking
+    return render_template("matchmaking.html", result=result, error=error)
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\templating.py", line 149, in render_template
+    template = app.jinja_env.get_or_select_template(template_name_or_list)
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\jinja2\environment.py", line 1087, in get_or_select_template
+    return self.get_template(template_name_or_list, parent, globals)
+           ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\jinja2\environment.py", line 1016, in get_template
+    return self._load_template(name, globals)
+           ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\jinja2\environment.py", line 975, in _load_template
+    template = self.loader.load(self, name, self.make_globals(globals))
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\jinja2\loaders.py", line 138, in load
+    code = environment.compile(source, name, filename)
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\jinja2\environment.py", line 771, in compile
+    self.handle_exception(source=source_hint)
+    ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\jinja2\environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "D:\ASTROLOGYPREDICTIONS\app\templates\matchmaking.html", line 25, in template
+    {% endblock %}
+jinja2.exceptions.TemplateSyntaxError: Encountered unknown tag 'endblock'.
+2026-09-24 23:34:37,154 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-24 23:34:38,101 DEBUG [connectionpool.py:544]: http://localhost:8000 "POST /v1/natal-chart HTTP/1.1" 200 1382
+2026-09-24 23:34:38,115 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-24 23:34:38,642 DEBUG [connectionpool.py:544]: http://localhost:8000 "POST /v1/sky-events HTTP/1.1" 200 63
+2026-09-24 23:34:38,654 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-24 23:34:39,186 DEBUG [connectionpool.py:544]: http://localhost:8000 "POST /v1/sky-events HTTP/1.1" 200 63
+2026-09-24 23:34:39,198 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-24 23:34:39,726 DEBUG [connectionpool.py:544]: http://localhost:8000 "POST /v1/sky-events HTTP/1.1" 200 64
+2026-09-24 23:34:39,977 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-24 23:34:40,504 DEBUG [connectionpool.py:544]: http://localhost:8000 "POST /v1/sky-events HTTP/1.1" 200 63
+2026-09-24 23:34:40,516 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-24 23:34:41,042 DEBUG [connectionpool.py:544]: http://localhost:8000 "POST /v1/sky-events HTTP/1.1" 200 63
+2026-09-24 23:34:41,149 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-24 23:34:41,672 DEBUG [connectionpool.py:544]: http://localhost:8000 "POST /v1/sky-events HTTP/1.1" 200 63
+2026-09-24 23:34:42,043 ERROR [app.py:838]: Exception on /ashtakavarga [GET]
+Traceback (most recent call last):
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\app.py", line 1473, in wsgi_app
+    response = self.full_dispatch_request()
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\app.py", line 882, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask_cors\extension.py", line 178, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+                                                ~^^^^^^^^^^^^^^^^^
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\app.py", line 880, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\app.py", line 865, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "D:\ASTROLOGYPREDICTIONS\app\services\auth.py", line 105, in decorated_function
+    return f(*args, **kwargs)
+  File "D:\ASTROLOGYPREDICTIONS\app\routes.py", line 1238, in ashtakavarga
+    return render_template("ashtakavarga.html", chart=chart_obj)
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\templating.py", line 150, in render_template
+    return _render(app, template, context)
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\templating.py", line 131, in _render
+    rv = template.render(context)
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\jinja2\environment.py", line 1295, in render
+    self.environment.handle_exception()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\jinja2\environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "D:\ASTROLOGYPREDICTIONS\app\templates\ashtakavarga.html", line 1, in top-level template code
+    {% extends "base.html" %}
+  File "D:\ASTROLOGYPREDICTIONS\app\templates\base.html", line 163, in top-level template code
+    {% block content %}{% endblock %}
+    ^^^^^^^^^^^^^^^^^
+  File "D:\ASTROLOGYPREDICTIONS\app\templates\ashtakavarga.html", line 54, in block 'content'
+    {% for p, points in av.BAV.items() %}
+    ^^^^^^^^^
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\jinja2\environment.py", line 490, in getattr
+    return getattr(obj, attribute)
+jinja2.exceptions.UndefinedError: 'av' is undefined
+2026-09-24 23:34:42,465 ERROR [app.py:838]: Exception on /admin/accuracy [GET]
+Traceback (most recent call last):
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\app.py", line 1473, in wsgi_app
+    response = self.full_dispatch_request()
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\app.py", line 882, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask_cors\extension.py", line 178, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+                                                ~^^^^^^^^^^^^^^^^^
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\app.py", line 880, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\app.py", line 865, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "D:\ASTROLOGYPREDICTIONS\app\routes.py", line 1172, in admin_accuracy
+    return render_template("admin_accuracy.html",
+                           real_world=real_world,
+    ...<3 lines>...
+                           evidence=evidence,
+                           optimal=optimal)
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\templating.py", line 150, in render_template
+    return _render(app, template, context)
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\templating.py", line 131, in _render
+    rv = template.render(context)
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\jinja2\environment.py", line 1295, in render
+    self.environment.handle_exception()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\jinja2\environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "D:\ASTROLOGYPREDICTIONS\app\templates\admin_accuracy.html", line 1, in top-level template code
+    {% extends "base.html" %}
+  File "D:\ASTROLOGYPREDICTIONS\app\templates\base.html", line 163, in top-level template code
+    {% block content %}{% endblock %}
+    ^^^^^^^^^^^^^^^^^
+  File "D:\ASTROLOGYPREDICTIONS\app\templates\admin_accuracy.html", line 99, in block 'content'
+    {% for d, stats in real_world.domain_performance.items() %}
+    ^^^^^^^^^
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\jinja2\environment.py", line 490, in getattr
+    return getattr(obj, attribute)
+jinja2.exceptions.UndefinedError: 'dict object' has no attribute 'domain_performance'
+2026-09-24 23:37:27,879 INFO [__init__.py:78]: Astro Predictions V3.22.1 starting with debug logging enabled...
+2026-09-24 23:37:48,645 ERROR [app.py:838]: Exception on /cosmic_dna [GET]
+Traceback (most recent call last):
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\app.py", line 1473, in wsgi_app
+    response = self.full_dispatch_request()
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\app.py", line 882, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask_cors\extension.py", line 178, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+                                                ~^^^^^^^^^^^^^^^^^
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\app.py", line 880, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\app.py", line 865, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "D:\ASTROLOGYPREDICTIONS\app\services\auth.py", line 105, in decorated_function
+    return f(*args, **kwargs)
+  File "D:\ASTROLOGYPREDICTIONS\app\routes.py", line 1241, in cosmic_dna
+    return render_template("cosmic_dna.html", chart=chart_obj, dna=dna)
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\templating.py", line 150, in render_template
+    return _render(app, template, context)
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\templating.py", line 131, in _render
+    rv = template.render(context)
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\jinja2\environment.py", line 1295, in render
+    self.environment.handle_exception()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\jinja2\environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "D:\ASTROLOGYPREDICTIONS\app\templates\cosmic_dna.html", line 1, in top-level template code
+    {% extends "base.html" %}
+  File "D:\ASTROLOGYPREDICTIONS\app\templates\base.html", line 163, in top-level template code
+    {% block content %}{% endblock %}
+    ^^^^^^^^^^^^^^^^^
+  File "D:\ASTROLOGYPREDICTIONS\app\templates\cosmic_dna.html", line 155, in block 'content'
+    <span class="dna-value text-gold">{{ dna.maya.seal }}</span>
+    ^^^^^^^^^^^^^
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\jinja2\environment.py", line 490, in getattr
+    return getattr(obj, attribute)
+jinja2.exceptions.UndefinedError: 'dict object' has no attribute 'maya'
+2026-09-24 23:37:50,245 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-24 23:37:51,125 DEBUG [connectionpool.py:544]: http://localhost:8000 "POST /v1/natal-chart HTTP/1.1" 200 1382
+2026-09-24 23:37:51,138 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-24 23:37:51,671 DEBUG [connectionpool.py:544]: http://localhost:8000 "POST /v1/sky-events HTTP/1.1" 200 63
+2026-09-24 23:37:51,680 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-24 23:37:52,207 DEBUG [connectionpool.py:544]: http://localhost:8000 "POST /v1/sky-events HTTP/1.1" 200 63
+2026-09-24 23:37:52,218 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-24 23:37:52,749 DEBUG [connectionpool.py:544]: http://localhost:8000 "POST /v1/sky-events HTTP/1.1" 200 64
+2026-09-24 23:37:53,007 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-24 23:37:53,543 DEBUG [connectionpool.py:544]: http://localhost:8000 "POST /v1/sky-events HTTP/1.1" 200 63
+2026-09-24 23:37:53,554 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-24 23:37:54,076 DEBUG [connectionpool.py:544]: http://localhost:8000 "POST /v1/sky-events HTTP/1.1" 200 63
+2026-09-24 23:37:54,148 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-24 23:37:54,683 DEBUG [connectionpool.py:544]: http://localhost:8000 "POST /v1/sky-events HTTP/1.1" 200 63
+2026-09-24 23:37:54,992 ERROR [app.py:838]: Exception on /ashtakavarga [GET]
+Traceback (most recent call last):
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\app.py", line 1473, in wsgi_app
+    response = self.full_dispatch_request()
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\app.py", line 882, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask_cors\extension.py", line 178, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+                                                ~^^^^^^^^^^^^^^^^^
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\app.py", line 880, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\app.py", line 865, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "D:\ASTROLOGYPREDICTIONS\app\services\auth.py", line 105, in decorated_function
+    return f(*args, **kwargs)
+  File "D:\ASTROLOGYPREDICTIONS\app\routes.py", line 1250, in ashtakavarga
+    return render_template("ashtakavarga.html", chart=chart_obj, av=av)
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\templating.py", line 150, in render_template
+    return _render(app, template, context)
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\templating.py", line 131, in _render
+    rv = template.render(context)
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\jinja2\environment.py", line 1295, in render
+    self.environment.handle_exception()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\jinja2\environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "D:\ASTROLOGYPREDICTIONS\app\templates\ashtakavarga.html", line 1, in top-level template code
+    {% extends "base.html" %}
+  File "D:\ASTROLOGYPREDICTIONS\app\templates\base.html", line 163, in top-level template code
+    {% block content %}{% endblock %}
+    ^^^^^^^^^^^^^^^^^
+  File "D:\ASTROLOGYPREDICTIONS\app\templates\ashtakavarga.html", line 54, in block 'content'
+    {% for p, points in av.BAV.items() %}
+    ^^^^^^^^^
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\jinja2\environment.py", line 490, in getattr
+    return getattr(obj, attribute)
+jinja2.exceptions.UndefinedError: 'dict object' has no attribute 'BAV'
+2026-09-24 23:37:55,311 ERROR [app.py:838]: Exception on /admin/accuracy [GET]
+Traceback (most recent call last):
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\app.py", line 1473, in wsgi_app
+    response = self.full_dispatch_request()
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\app.py", line 882, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask_cors\extension.py", line 178, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+                                                ~^^^^^^^^^^^^^^^^^
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\app.py", line 880, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\app.py", line 865, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "D:\ASTROLOGYPREDICTIONS\app\routes.py", line 1172, in admin_accuracy
+    return render_template("admin_accuracy.html",
+                           real_world=real_world,
+    ...<3 lines>...
+                           evidence=evidence,
+                           optimal=optimal)
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\templating.py", line 150, in render_template
+    return _render(app, template, context)
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\templating.py", line 131, in _render
+    rv = template.render(context)
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\jinja2\environment.py", line 1295, in render
+    self.environment.handle_exception()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\jinja2\environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "D:\ASTROLOGYPREDICTIONS\app\templates\admin_accuracy.html", line 1, in top-level template code
+    {% extends "base.html" %}
+  File "D:\ASTROLOGYPREDICTIONS\app\templates\base.html", line 163, in top-level template code
+    {% block content %}{% endblock %}
+    ^^^^^^^^^^^^^^^^^
+  File "D:\ASTROLOGYPREDICTIONS\app\templates\admin_accuracy.html", line 99, in block 'content'
+    {% for d, stats in real_world.domain_performance.items() %}
+    ^^^^^^^^^
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\jinja2\environment.py", line 490, in getattr
+    return getattr(obj, attribute)
+jinja2.exceptions.UndefinedError: 'dict object' has no attribute 'domain_performance'
+2026-09-24 23:40:00,216 INFO [__init__.py:78]: Astro Predictions V3.22.1 starting with debug logging enabled...
+2026-09-24 23:40:19,855 ERROR [app.py:838]: Exception on /cosmic_dna [GET]
+Traceback (most recent call last):
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\app.py", line 1473, in wsgi_app
+    response = self.full_dispatch_request()
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\app.py", line 882, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask_cors\extension.py", line 178, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+                                                ~^^^^^^^^^^^^^^^^^
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\app.py", line 880, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\app.py", line 865, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "D:\ASTROLOGYPREDICTIONS\app\services\auth.py", line 105, in decorated_function
+    return f(*args, **kwargs)
+  File "D:\ASTROLOGYPREDICTIONS\app\routes.py", line 1242, in cosmic_dna
+    return render_template("cosmic_dna.html", chart=chart_obj, dna=dna)
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\templating.py", line 150, in render_template
+    return _render(app, template, context)
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\templating.py", line 131, in _render
+    rv = template.render(context)
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\jinja2\environment.py", line 1295, in render
+    self.environment.handle_exception()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\jinja2\environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "D:\ASTROLOGYPREDICTIONS\app\templates\cosmic_dna.html", line 1, in top-level template code
+    {% extends "base.html" %}
+  File "D:\ASTROLOGYPREDICTIONS\app\templates\base.html", line 163, in top-level template code
+    {% block content %}{% endblock %}
+    ^^^^^^^^^^^^^^^^^
+  File "D:\ASTROLOGYPREDICTIONS\app\templates\cosmic_dna.html", line 173, in block 'content'
+    <span class="dna-value">{{ dna.tibetan.mewa }} ({{ dna.tibetan.parkha }})</span>
+    ^^^^^^^^^^^^^
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\jinja2\environment.py", line 490, in getattr
+    return getattr(obj, attribute)
+jinja2.exceptions.UndefinedError: 'dict object' has no attribute 'tibetan'
+2026-09-24 23:40:21,411 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-24 23:40:22,327 DEBUG [connectionpool.py:544]: http://localhost:8000 "POST /v1/natal-chart HTTP/1.1" 200 1382
+2026-09-24 23:40:22,342 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-24 23:40:22,867 DEBUG [connectionpool.py:544]: http://localhost:8000 "POST /v1/sky-events HTTP/1.1" 200 63
+2026-09-24 23:40:22,883 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-24 23:40:23,411 DEBUG [connectionpool.py:544]: http://localhost:8000 "POST /v1/sky-events HTTP/1.1" 200 63
+2026-09-24 23:40:23,424 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-24 23:40:23,947 DEBUG [connectionpool.py:544]: http://localhost:8000 "POST /v1/sky-events HTTP/1.1" 200 64
+2026-09-24 23:40:24,188 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-24 23:40:24,717 DEBUG [connectionpool.py:544]: http://localhost:8000 "POST /v1/sky-events HTTP/1.1" 200 63
+2026-09-24 23:40:24,729 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-24 23:40:25,262 DEBUG [connectionpool.py:544]: http://localhost:8000 "POST /v1/sky-events HTTP/1.1" 200 63
+2026-09-24 23:40:25,315 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-24 23:40:25,842 DEBUG [connectionpool.py:544]: http://localhost:8000 "POST /v1/sky-events HTTP/1.1" 200 63
+2026-09-24 23:41:50,948 INFO [__init__.py:78]: Astro Predictions V3.22.1 starting with debug logging enabled...
+2026-09-24 23:42:20,103 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-24 23:42:20,722 DEBUG [connectionpool.py:544]: http://localhost:8000 "GET /health HTTP/1.1" 200 42
+2026-09-24 23:42:21,367 DEBUG [connectionpool.py:1062]: Starting new HTTPS connection (1): freeipapi.com:443
+2026-09-24 23:42:21,704 DEBUG [connectionpool.py:544]: https://freeipapi.com:443 "GET /api/json HTTP/1.1" 307 None
+2026-09-24 23:42:21,713 DEBUG [connectionpool.py:1062]: Starting new HTTPS connection (1): free.freeipapi.com:443
+2026-09-24 23:42:22,286 DEBUG [connectionpool.py:544]: https://free.freeipapi.com:443 "GET /api/v1/json HTTP/1.1" 200 None
+2026-09-24 23:42:22,405 DEBUG [connectionpool.py:1062]: Starting new HTTPS connection (1): freeipapi.com:443
+2026-09-24 23:42:22,724 DEBUG [connectionpool.py:544]: https://freeipapi.com:443 "GET /api/json HTTP/1.1" 307 None
+2026-09-24 23:42:22,734 DEBUG [connectionpool.py:1062]: Starting new HTTPS connection (1): free.freeipapi.com:443
+2026-09-24 23:42:23,215 DEBUG [connectionpool.py:544]: https://free.freeipapi.com:443 "GET /api/v1/json HTTP/1.1" 200 None
+2026-09-24 23:42:23,338 ERROR [app.py:838]: Exception on /cosmic_dna [GET]
+Traceback (most recent call last):
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\app.py", line 1473, in wsgi_app
+    response = self.full_dispatch_request()
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\app.py", line 882, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask_cors\extension.py", line 178, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+                                                ~^^^^^^^^^^^^^^^^^
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\app.py", line 880, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\app.py", line 865, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "D:\ASTROLOGYPREDICTIONS\app\services\auth.py", line 105, in decorated_function
+    return f(*args, **kwargs)
+  File "D:\ASTROLOGYPREDICTIONS\app\routes.py", line 1246, in cosmic_dna
+    return render_template("cosmic_dna.html", chart=chart_obj, dna=dna)
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\templating.py", line 150, in render_template
+    return _render(app, template, context)
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\templating.py", line 131, in _render
+    rv = template.render(context)
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\jinja2\environment.py", line 1295, in render
+    self.environment.handle_exception()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\jinja2\environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "D:\ASTROLOGYPREDICTIONS\app\templates\cosmic_dna.html", line 1, in top-level template code
+    {% extends "base.html" %}
+  File "D:\ASTROLOGYPREDICTIONS\app\templates\base.html", line 163, in top-level template code
+    {% block content %}{% endblock %}
+    ^^^^^^^^^^^^^^^^^
+  File "D:\ASTROLOGYPREDICTIONS\app\templates\cosmic_dna.html", line 191, in block 'content'
+    <span class="dna-value text-gold fw-black">{{ dna.numerology.life_path }}</span>
+    ^^^^^^^^^^^^^
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\jinja2\environment.py", line 490, in getattr
+    return getattr(obj, attribute)
+jinja2.exceptions.UndefinedError: 'dict object' has no attribute 'numerology'
+2026-09-24 23:42:23,578 ERROR [app.py:838]: Exception on /matchmaking [GET]
+Traceback (most recent call last):
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\app.py", line 1473, in wsgi_app
+    response = self.full_dispatch_request()
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\app.py", line 882, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask_cors\extension.py", line 178, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+                                                ~^^^^^^^^^^^^^^^^^
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\app.py", line 880, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\app.py", line 865, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "D:\ASTROLOGYPREDICTIONS\app\routes.py", line 979, in matchmaking
+    return render_template("matchmaking.html", result=result, error=error)
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\templating.py", line 150, in render_template
+    return _render(app, template, context)
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\templating.py", line 131, in _render
+    rv = template.render(context)
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\jinja2\environment.py", line 1295, in render
+    self.environment.handle_exception()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\jinja2\environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "D:\ASTROLOGYPREDICTIONS\app\templates\matchmaking.html", line 1, in top-level template code
+    {% extends "base.html" %}
+  File "D:\ASTROLOGYPREDICTIONS\app\templates\base.html", line 71, in top-level template code
+    <a class="sidebar-link text-gold" href="{{ url_for('main.report_download') }}" target="_blank">
+    ^^^^^^^^^^^^^
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\app.py", line 1084, in url_for
+    return self.handle_url_build_error(error, endpoint, values)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\app.py", line 1073, in url_for
+    rv = url_adapter.build(  # type: ignore[union-attr]
+        endpoint,
+    ...<3 lines>...
+        force_external=_external,
+    )
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\werkzeug\routing\map.py", line 901, in build
+    raise BuildError(endpoint, values, method, self)
+werkzeug.routing.exceptions.BuildError: Could not build url for endpoint 'main.report_download'. Did you mean 'marketing.download' instead?
+2026-09-24 23:42:24,914 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-24 23:42:25,762 DEBUG [connectionpool.py:544]: http://localhost:8000 "POST /v1/natal-chart HTTP/1.1" 200 1382
+2026-09-24 23:42:25,772 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-24 23:42:26,314 DEBUG [connectionpool.py:544]: http://localhost:8000 "POST /v1/sky-events HTTP/1.1" 200 63
+2026-09-24 23:42:26,329 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-24 23:42:26,870 DEBUG [connectionpool.py:544]: http://localhost:8000 "POST /v1/sky-events HTTP/1.1" 200 63
+2026-09-24 23:42:26,881 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-24 23:42:27,419 DEBUG [connectionpool.py:544]: http://localhost:8000 "POST /v1/sky-events HTTP/1.1" 200 64
+2026-09-24 23:42:27,664 ERROR [app.py:838]: Exception on /prashna [GET]
+Traceback (most recent call last):
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\app.py", line 1473, in wsgi_app
+    response = self.full_dispatch_request()
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\app.py", line 882, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask_cors\extension.py", line 178, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+                                                ~^^^^^^^^^^^^^^^^^
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\app.py", line 880, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\app.py", line 865, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "D:\ASTROLOGYPREDICTIONS\app\routes.py", line 920, in prashna
+    return render_template("prashna.html", result=result, chart=chart)
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\templating.py", line 150, in render_template
+    return _render(app, template, context)
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\templating.py", line 131, in _render
+    rv = template.render(context)
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\jinja2\environment.py", line 1295, in render
+    self.environment.handle_exception()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\jinja2\environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "D:\ASTROLOGYPREDICTIONS\app\templates\prashna.html", line 1, in top-level template code
+    {% extends "base.html" %}
+  File "D:\ASTROLOGYPREDICTIONS\app\templates\base.html", line 71, in top-level template code
+    <a class="sidebar-link text-gold" href="{{ url_for('main.report_download') }}" target="_blank">
+    ^^^^^^^^^^^^^
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\app.py", line 1084, in url_for
+    return self.handle_url_build_error(error, endpoint, values)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\app.py", line 1073, in url_for
+    rv = url_adapter.build(  # type: ignore[union-attr]
+        endpoint,
+    ...<3 lines>...
+        force_external=_external,
+    )
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\werkzeug\routing\map.py", line 901, in build
+    raise BuildError(endpoint, values, method, self)
+werkzeug.routing.exceptions.BuildError: Could not build url for endpoint 'main.report_download'. Did you mean 'marketing.download' instead?
+2026-09-24 23:42:27,774 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-24 23:42:28,307 DEBUG [connectionpool.py:544]: http://localhost:8000 "POST /v1/sky-events HTTP/1.1" 200 63
+2026-09-24 23:42:28,320 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-24 23:42:28,845 DEBUG [connectionpool.py:544]: http://localhost:8000 "POST /v1/sky-events HTTP/1.1" 200 63
+2026-09-24 23:42:28,932 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-24 23:42:29,465 DEBUG [connectionpool.py:544]: http://localhost:8000 "POST /v1/sky-events HTTP/1.1" 200 63
+2026-09-24 23:42:29,568 ERROR [app.py:838]: Exception on /panchang [GET]
+Traceback (most recent call last):
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\app.py", line 1473, in wsgi_app
+    response = self.full_dispatch_request()
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\app.py", line 882, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask_cors\extension.py", line 178, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+                                                ~^^^^^^^^^^^^^^^^^
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\app.py", line 880, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\app.py", line 865, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "D:\ASTROLOGYPREDICTIONS\app\routes.py", line 949, in panchang
+    return render_template("panchang.html", panchang=res, sky=res["sky"], place=place, today=date.today().isoformat())
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\templating.py", line 150, in render_template
+    return _render(app, template, context)
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\templating.py", line 131, in _render
+    rv = template.render(context)
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\jinja2\environment.py", line 1295, in render
+    self.environment.handle_exception()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\jinja2\environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "D:\ASTROLOGYPREDICTIONS\app\templates\panchang.html", line 1, in top-level template code
+    {% extends "base.html" %}
+  File "D:\ASTROLOGYPREDICTIONS\app\templates\base.html", line 71, in top-level template code
+    <a class="sidebar-link text-gold" href="{{ url_for('main.report_download') }}" target="_blank">
+    ^^^^^^^^^^^^^
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\app.py", line 1084, in url_for
+    return self.handle_url_build_error(error, endpoint, values)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\app.py", line 1073, in url_for
+    rv = url_adapter.build(  # type: ignore[union-attr]
+        endpoint,
+    ...<3 lines>...
+        force_external=_external,
+    )
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\werkzeug\routing\map.py", line 901, in build
+    raise BuildError(endpoint, values, method, self)
+werkzeug.routing.exceptions.BuildError: Could not build url for endpoint 'main.report_download'. Did you mean 'marketing.download' instead?
+2026-09-24 23:42:29,750 DEBUG [connectionpool.py:1062]: Starting new HTTPS connection (1): freeipapi.com:443
+2026-09-24 23:42:30,047 DEBUG [connectionpool.py:544]: https://freeipapi.com:443 "GET /api/json HTTP/1.1" 307 None
+2026-09-24 23:42:30,056 DEBUG [connectionpool.py:1062]: Starting new HTTPS connection (1): free.freeipapi.com:443
+2026-09-24 23:42:30,564 DEBUG [connectionpool.py:544]: https://free.freeipapi.com:443 "GET /api/v1/json HTTP/1.1" 200 None
+2026-09-24 23:42:30,591 ERROR [app.py:838]: Exception on /history [GET]
+Traceback (most recent call last):
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\app.py", line 1473, in wsgi_app
+    response = self.full_dispatch_request()
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\app.py", line 882, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask_cors\extension.py", line 178, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+                                                ~^^^^^^^^^^^^^^^^^
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\app.py", line 880, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\app.py", line 865, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "D:\ASTROLOGYPREDICTIONS\app\routes.py", line 624, in history
+    outcomes = PredictionOutcome.query.filter_by(chart_id=chart_id)\
+               ^^^^^^^^^^^^^^^^^
+NameError: name 'PredictionOutcome' is not defined
+2026-09-24 23:42:31,157 ERROR [app.py:838]: Exception on /admin/accuracy [GET]
+Traceback (most recent call last):
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\app.py", line 1473, in wsgi_app
+    response = self.full_dispatch_request()
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\app.py", line 882, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask_cors\extension.py", line 178, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+                                                ~^^^^^^^^^^^^^^^^^
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\app.py", line 880, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\app.py", line 865, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "D:\ASTROLOGYPREDICTIONS\app\routes.py", line 1172, in admin_accuracy
+    return render_template("admin_accuracy.html",
+                           real_world=real_world,
+    ...<3 lines>...
+                           evidence=evidence,
+                           optimal=optimal)
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\templating.py", line 150, in render_template
+    return _render(app, template, context)
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\templating.py", line 131, in _render
+    rv = template.render(context)
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\jinja2\environment.py", line 1295, in render
+    self.environment.handle_exception()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\jinja2\environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "D:\ASTROLOGYPREDICTIONS\app\templates\admin_accuracy.html", line 1, in top-level template code
+    {% extends "base.html" %}
+  File "D:\ASTROLOGYPREDICTIONS\app\templates\base.html", line 71, in top-level template code
+    <a class="sidebar-link text-gold" href="{{ url_for('main.report_download') }}" target="_blank">
+    ^^^^^^^^^^^^^
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\app.py", line 1084, in url_for
+    return self.handle_url_build_error(error, endpoint, values)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\flask\app.py", line 1073, in url_for
+    rv = url_adapter.build(  # type: ignore[union-attr]
+        endpoint,
+    ...<3 lines>...
+        force_external=_external,
+    )
+  File "D:\ASTROLOGYPREDICTIONS\venv\Lib\site-packages\werkzeug\routing\map.py", line 901, in build
+    raise BuildError(endpoint, values, method, self)
+werkzeug.routing.exceptions.BuildError: Could not build url for endpoint 'main.report_download'. Did you mean 'marketing.download' instead?
+2026-09-24 23:45:20,967 INFO [__init__.py:78]: Astro Predictions V3.22.1 starting with debug logging enabled...
+2026-09-24 23:45:41,540 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-24 23:45:42,165 DEBUG [connectionpool.py:544]: http://localhost:8000 "GET /health HTTP/1.1" 200 42
+2026-09-24 23:45:42,556 DEBUG [connectionpool.py:1062]: Starting new HTTPS connection (1): freeipapi.com:443
+2026-09-24 23:45:42,898 DEBUG [connectionpool.py:544]: https://freeipapi.com:443 "GET /api/json HTTP/1.1" 307 None
+2026-09-24 23:45:42,904 DEBUG [connectionpool.py:1062]: Starting new HTTPS connection (1): free.freeipapi.com:443
+2026-09-24 23:45:43,463 DEBUG [connectionpool.py:544]: https://free.freeipapi.com:443 "GET /api/v1/json HTTP/1.1" 200 None
+2026-09-24 23:45:43,582 DEBUG [connectionpool.py:1062]: Starting new HTTPS connection (1): freeipapi.com:443
+2026-09-24 23:45:43,876 DEBUG [connectionpool.py:544]: https://freeipapi.com:443 "GET /api/json HTTP/1.1" 307 None
+2026-09-24 23:45:43,883 DEBUG [connectionpool.py:1062]: Starting new HTTPS connection (1): free.freeipapi.com:443
+2026-09-24 23:45:44,339 DEBUG [connectionpool.py:544]: https://free.freeipapi.com:443 "GET /api/v1/json HTTP/1.1" 200 None
+2026-09-24 23:45:45,853 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-24 23:45:46,705 DEBUG [connectionpool.py:544]: http://localhost:8000 "POST /v1/natal-chart HTTP/1.1" 200 1384
+2026-09-24 23:45:46,721 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-24 23:45:47,245 DEBUG [connectionpool.py:544]: http://localhost:8000 "POST /v1/sky-events HTTP/1.1" 200 63
+2026-09-24 23:45:47,254 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-24 23:45:47,786 DEBUG [connectionpool.py:544]: http://localhost:8000 "POST /v1/sky-events HTTP/1.1" 200 63
+2026-09-24 23:45:47,794 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-24 23:45:48,332 DEBUG [connectionpool.py:544]: http://localhost:8000 "POST /v1/sky-events HTTP/1.1" 200 64
+2026-09-24 23:45:48,583 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-24 23:45:49,107 DEBUG [connectionpool.py:544]: http://localhost:8000 "POST /v1/sky-events HTTP/1.1" 200 63
+2026-09-24 23:45:49,118 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-24 23:45:49,651 DEBUG [connectionpool.py:544]: http://localhost:8000 "POST /v1/sky-events HTTP/1.1" 200 63
+2026-09-24 23:45:49,727 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-24 23:45:50,256 DEBUG [connectionpool.py:544]: http://localhost:8000 "POST /v1/sky-events HTTP/1.1" 200 63
+2026-09-24 23:45:50,482 DEBUG [connectionpool.py:1062]: Starting new HTTPS connection (1): freeipapi.com:443
+2026-09-24 23:45:50,722 DEBUG [connectionpool.py:544]: https://freeipapi.com:443 "GET /api/json HTTP/1.1" 307 None
+2026-09-24 23:45:50,728 DEBUG [connectionpool.py:1062]: Starting new HTTPS connection (1): free.freeipapi.com:443
+2026-09-24 23:45:51,192 DEBUG [connectionpool.py:544]: https://free.freeipapi.com:443 "GET /api/v1/json HTTP/1.1" 200 None
+2026-09-24 23:52:51,877 INFO [__init__.py:78]: Astro Predictions V3.22.1 starting with debug logging enabled...
