@@ -8,7 +8,8 @@ def test_frontend_components_files_exist():
         "frontend/src/components/NatalWheel.tsx",
         "frontend/src/components/PlanetInspector.tsx",
         "frontend/src/components/TransitDashboard.tsx",
-        "frontend/src/hooks/useAstrologyChart.ts"
+        "frontend/src/hooks/useAstrologyEngine.ts",
+        "frontend/src/pages/Dashboard.tsx"
     ]
 
     for f in files:
@@ -53,11 +54,21 @@ def test_frontend_transit_dashboard_spec_content():
     assert "LIVE STREAMING" in content
     assert "Active Aspect Configurations" in content
 
-def test_frontend_use_astrology_chart_hook_spec_content():
-    with open("frontend/src/hooks/useAstrologyChart.ts", "r", encoding="utf-8") as f:
+def test_frontend_use_astrology_engine_hook_spec_content():
+    with open("frontend/src/hooks/useAstrologyEngine.ts", "r", encoding="utf-8") as f:
         content = f.read()
 
-    assert "export const useAstrologyChart" in content
+    assert "export const useAstrologyEngine" in content
     assert "fetchChart" in content
     assert "apiEndpoint" in content
     assert "ChartPayload" in content
+
+def test_frontend_dashboard_page_spec_content():
+    with open("frontend/src/pages/Dashboard.tsx", "r", encoding="utf-8") as f:
+        content = f.read()
+
+    assert "export const Dashboard" in content
+    assert "MOCK_FALLBACK_CHART" in content
+    assert "NatalWheel" in content
+    assert "PlanetInspector" in content
+    assert "TransitDashboard" in content

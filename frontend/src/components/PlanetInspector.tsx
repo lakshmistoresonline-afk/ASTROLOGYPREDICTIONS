@@ -59,7 +59,7 @@ export const PlanetInspector: React.FC<PlanetInspectorProps> = ({ selectedPlanet
         </div>
       </div>
 
-      {/* Grid Metrics */}
+      {/* Grid Section Metrics */}
       <div className="grid grid-cols-2 gap-3">
         <div className="p-3 bg-slate-800/40 rounded-xl border border-slate-800">
           <span className="text-[11px] text-slate-400 font-mono block mb-0.5">Sign Degree</span>
@@ -82,7 +82,7 @@ export const PlanetInspector: React.FC<PlanetInspectorProps> = ({ selectedPlanet
           <span className="text-slate-400 font-medium">Functional Power Index</span>
           <span className="font-mono font-bold text-amber-400">{selectedPlanet.functionalPowerPct}%</span>
         </div>
-        <div className="w-full h-2 rounded-full bg-slate-800 overflow-hidden p-0.5 border border-slate-700/50">
+        <div className="w-full h-2.5 rounded-full bg-slate-800 overflow-hidden p-0.5 border border-slate-700/50">
           <div
             className={`h-full rounded-full ${powerColor} transition-all duration-700 ease-out`}
             style={{ width: `${Math.min(100, Math.max(0, selectedPlanet.functionalPowerPct))}%` }}

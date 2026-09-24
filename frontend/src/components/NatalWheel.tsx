@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { ChartPayload, Planet } from '../types/astrology';
 
 export interface NatalWheelProps {
-  chartData: ChartPayload;
+  data: ChartPayload;
   selectedPlanetId?: string | null;
   onSelectPlanet?: (planet: Planet) => void;
   size?: number;
@@ -24,7 +24,7 @@ const ZODIAC_SIGNS = [
 ];
 
 export const NatalWheel: React.FC<NatalWheelProps> = ({
-  chartData,
+  data,
   selectedPlanetId,
   onSelectPlanet,
   size = 500,
@@ -37,11 +37,10 @@ export const NatalWheel: React.FC<NatalWheelProps> = ({
   const houseInnerRadius = size * 0.28;
   const aspectRadius = size * 0.14;
 
-  const ascendantDegree = chartData.ascendantDegree || 0;
+  const ascendantDegree = data.ascendantDegree || 0;
 
-  // Converts absolute zodiac degree (0-360) to polar canvas coordinates relative to Ascendant
+  // Converts 360° total longitude to polar canvas (x,y) relative to Ascendant (positioned at 180° / Left)
   const degreeToPolar = (deg: number, radius: number) => {
-    // Rotate counter-clockwise from Ascendant (positioned at 180 deg / Left)
     const angleRad = ((ascendantDegree - deg + 180) * Math.PI) / 180;
     const x = center + radius * Math.cos(angleRad);
     const y = center - radius * Math.sin(angleRad);
@@ -79,7 +78,7 @@ export const NatalWheel: React.FC<NatalWheelProps> = ({
           </filter>
         </defs>
 
-        {/* Outer Background Circle */}
+        {/* Outer Background Rim */}
         <circle
           cx={center}
           cy={center}
@@ -89,7 +88,7 @@ export const NatalWheel: React.FC<NatalWheelProps> = ({
           strokeWidth="2"
         />
 
-        {/* 12 Polar Zodiac Segments (30 deg each) */}
+        {/* 12 Polar Zodiac Sectors (30° Each) */}
         {ZODIAC_SIGNS.map((sign, idx) => {
           const startDeg = idx * 30;
           const midDeg = startDeg + 15;
@@ -145,8 +144,8 @@ export const NatalWheel: React.FC<NatalWheelProps> = ({
           strokeWidth="1.5"
         />
 
-        {/* House Cusp Radial Lines */}
-        {chartData.houseCusps.map((cusp) => {
+        {/* House Division Lines (12 Radiating Vectors) */}
+        {data.houseCusps.map((cusp) => {
           const pOuter = degreeToPolar(cusp.degree, zodiacInnerRadius);
           const pInner = degreeToPolar(cusp.degree, aspectRadius);
 
@@ -161,7 +160,7 @@ export const NatalWheel: React.FC<NatalWheelProps> = ({
                 strokeWidth={cusp.house === 1 || cusp.house === 10 ? '2' : '1'}
                 strokeDasharray={cusp.house === 1 || cusp.house === 10 ? 'none' : '3,3'}
               />
-              {/* House Number Label */}
+              {/* House Number Indicator */}
               {(() => {
                 const labelPos = degreeToPolar(cusp.degree + 15, (zodiacInnerRadius + houseInnerRadius) / 2);
                 return (
@@ -192,10 +191,10 @@ export const NatalWheel: React.FC<NatalWheelProps> = ({
           strokeWidth="1"
         />
 
-        {/* Aspect Lines between Planets */}
-        {chartData.aspects.map((aspect, idx) => {
-          const source = chartData.planets.find((p) => p.name === aspect.sourcePlanet);
-          const target = chartData.planets.find((p) => p.name === aspect.targetPlanet);
+        {/* Aspect Lines Between Planetary Nodes */}
+        {data.aspects.map((aspect, idx) => {
+          const source = data.planets.find((p) => p.name === aspect.sourcePlanet);
+          const target = data.planets.find((p) => p.name === aspect.targetPlanet);
 
           if (!source || !target) return null;
 
@@ -234,8 +233,8 @@ export const NatalWheel: React.FC<NatalWheelProps> = ({
           strokeWidth="1.5"
         />
 
-        {/* Planetary Nodes */}
-        {chartData.planets.map((planet) => {
+        {/* Planetary Nodes Plotted Accurately in 360° Polar Space */}
+        {data.planets.map((planet) => {
           const pos = degreeToPolar(planet.degree, (zodiacInnerRadius + houseInnerRadius) / 2);
           const isSelected = selectedPlanetId === planet.id;
           const isHovered = hoveredPlanet?.id === planet.id;
@@ -248,7 +247,7 @@ export const NatalWheel: React.FC<NatalWheelProps> = ({
               onMouseEnter={() => setHoveredPlanet(planet)}
               onMouseLeave={() => setHoveredPlanet(null)}
             >
-              {/* Selection or Hover Glow Outer Ring */}
+              {/* Selection / Hover Glowing Pulse Outer Ring */}
               {(isSelected || isHovered) && (
                 <circle
                   cx={pos.x}
@@ -262,7 +261,7 @@ export const NatalWheel: React.FC<NatalWheelProps> = ({
                 />
               )}
 
-              {/* Node Background */}
+              {/* Node Circle Background */}
               <circle
                 cx={pos.x}
                 cy={pos.y}
@@ -272,7 +271,7 @@ export const NatalWheel: React.FC<NatalWheelProps> = ({
                 strokeWidth={isSelected || isHovered ? '2' : '1.5'}
               />
 
-              {/* Planet Glyph / Abbreviation */}
+              {/* Planet Glyph or Symbol */}
               <text
                 x={pos.x}
                 y={pos.y + 4}
@@ -303,7 +302,7 @@ export const NatalWheel: React.FC<NatalWheelProps> = ({
         })}
       </svg>
 
-      {/* Floating Hover Tooltip Modal */}
+      {/* Floating Centered Tooltip Modal */}
       {hoveredPlanet && (
         <div className="absolute top-6 right-6 backdrop-blur-xl bg-slate-900/90 border border-slate-700/80 p-4 rounded-2xl shadow-2xl text-xs space-y-1.5 z-20 min-w-[200px] pointer-events-none animate-fadeIn">
           <div className="flex items-center justify-between border-b border-slate-800 pb-1.5">
