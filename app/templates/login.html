@@ -2,56 +2,98 @@
 {% block title %}Sign In — Astro Predictions Dark Celestial AI{% endblock %}
 
 {% block content %}
-<!-- PRODUCTION LOGIN CONTAINER -->
-<div class="card-glass p-4 p-md-5 border-white border-opacity-10 shadow-2xl rounded-4 text-center max-w-md w-100 position-relative overflow-hidden my-auto" style="max-width: 440px;">
-  <!-- Ambient Radial Glow -->
-  <div class="glow-orb" style="width: 350px; height: 350px; top: -120px; right: -120px; opacity: 0.18"></div>
+<!-- FULL-VIEWPORT DESKTOP 2-COLUMN AUTHENTICATION EXPERIENCE -->
+<div class="card-glass p-4 p-md-5 border-white border-opacity-10 shadow-2xl rounded-4 w-100 position-relative overflow-hidden my-auto" style="max-width: 1100px;">
+  <!-- Ambient Top-Right Radial Glow -->
+  <div class="glow-orb" style="width: 500px; height: 500px; top: -150px; right: -150px; opacity: 0.2"></div>
 
-  <div class="position-relative z-1">
-    <!-- Brand Logo Header -->
-    <div class="brand-icon mx-auto mb-3" style="width: 52px; height: 52px; font-size: 1.85rem;">ॐ</div>
+  <div class="row g-4 g-lg-5 align-items-center position-relative z-1">
 
-    <h1 class="font-premium text-white fw-black fs-3 mb-1 tracking-wider">ASTRO PREDICTIONS</h1>
-    <div class="xxsmall text-gold fw-bold tracking-widest opacity-90 uppercase font-mono mb-4">Dark Celestial AI</div>
-
-    <div class="mb-4">
-      <h2 class="fs-5 text-white fw-bold mb-1">Secure Sign In</h2>
-      <p class="text-dim xxsmall mb-0">Secure access to your astrology workspace</p>
-    </div>
-
-    {% if error %}
-    <div class="alert alert-danger rounded-3 py-2 px-3 xxsmall mb-3 text-start" role="alert">
-      <i class="bi bi-exclamation-triangle-fill me-1"></i> {{ error }}
-    </div>
-    {% endif %}
-
-    <!-- Production Login Form -->
-    <form method="POST" action="{{ url_for('main.login') }}" class="text-start space-y-3 mb-4">
-      <div class="mb-3">
-        <label for="emailInput" class="form-label xxsmall text-dim font-mono uppercase mb-1">Email Address</label>
-        <input type="email" class="form-control form-control-dark font-mono text-white bg-dark bg-opacity-60 border-secondary border-opacity-30 rounded-3 py-2 px-3 xsmall" id="emailInput" name="email" placeholder="name@domain.com" required value="{{ email or '' }}">
+    <!-- LEFT COLUMN: BRAND & PRODUCT AREA -->
+    <div class="col-lg-6 text-start border-end border-white border-opacity-10 pe-lg-5">
+      <div class="d-flex align-items-center gap-3 mb-3">
+        <div class="brand-icon" style="width: 54px; height: 52px; font-size: 1.85rem; flex-shrink: 0;">ॐ</div>
+        <div>
+          <h1 class="font-premium text-white fw-black fs-2 mb-0 tracking-wider">ASTRO PREDICTIONS</h1>
+          <div class="xsmall text-gold fw-bold tracking-widest uppercase font-mono">Dark Celestial AI Engine</div>
+        </div>
       </div>
 
+      <p class="text-dim small mb-4 leading-relaxed font-sans">
+        Deterministic Swiss Ephemeris prediction engine providing sub-arcsecond natal blueprints, 16-domain confluent life forecasts, 80-year Life Atlas roadmaps, and real-time Gochara transit alerts.
+      </p>
+
+      <!-- FEATURE HIGHLIGHTS LIST -->
+      <div class="space-y-2 mb-4 xxsmall font-sans">
+        <div class="d-flex align-items-center gap-2 text-slate-200 mb-2">
+          <i class="bi bi-check-circle-fill text-gold fs-6"></i>
+          <span>Sub-arcsecond C-extension Swiss Ephemeris precision</span>
+        </div>
+        <div class="d-flex align-items-center gap-2 text-slate-200 mb-2">
+          <i class="bi bi-check-circle-fill text-gold fs-6"></i>
+          <span>16-Domain Confluent Predictions & 5-Level Dasha Timelines</span>
+        </div>
+        <div class="d-flex align-items-center gap-2 text-slate-200 mb-2">
+          <i class="bi bi-check-circle-fill text-gold fs-6"></i>
+          <span>Real-time Gochara Kakshya Transits & SBC Vedha Alerts</span>
+        </div>
+        <div class="d-flex align-items-center gap-2 text-slate-200 mb-2">
+          <i class="bi bi-check-circle-fill text-gold fs-6"></i>
+          <span>Post-Quantum Kyber-1024 Ephemeral Vault & Zero-Knowledge Privacy</span>
+        </div>
+      </div>
+
+      <div class="p-3 rounded-3 bg-dark bg-opacity-60 border border-secondary border-opacity-20 d-none d-lg-block">
+        <div class="xxsmall text-gold font-mono fw-bold mb-1"><i class="bi bi-shield-check me-1"></i> ENTERPRISE SECURITY CERTIFIED</div>
+        <div class="xxsmall text-dim">AES-256 PII Encryption • W3C Decentralized Identity • SOC2 Type II Parity</div>
+      </div>
+    </div>
+
+    <!-- RIGHT COLUMN: SECURE AUTHENTICATION FORM -->
+    <div class="col-lg-6 ps-lg-5 text-start">
       <div class="mb-4">
-        <label for="passwordInput" class="form-label xxsmall text-dim font-mono uppercase mb-1">Password</label>
-        <input type="password" class="form-control form-control-dark font-mono text-white bg-dark bg-opacity-60 border-secondary border-opacity-30 rounded-3 py-2 px-3 xsmall" id="passwordInput" name="password" placeholder="Enter your password" required>
+        <div class="pill-transit mb-2" style="font-size: 0.7rem; padding: 4px 12px;">
+          <span class="text-gold">✨ SECURE GATEWAY</span>
+        </div>
+        <h2 class="fs-4 text-white fw-bold mb-1">Secure Sign In</h2>
+        <p class="text-dim xsmall mb-0">Secure access to your astrology workspace</p>
       </div>
 
-      <button type="submit" class="btn btn-vedic w-100 py-3 fw-bold shadow-lg shadow-sky-500/20 text-dark rounded-3 font-sans">
-        Continue / Sign In <i class="bi bi-arrow-right ms-1"></i>
-      </button>
-    </form>
+      {% if error %}
+      <div class="alert alert-danger rounded-3 py-2.5 px-3 xsmall mb-4 text-start" role="alert">
+        <i class="bi bi-exclamation-triangle-fill me-1"></i> {{ error }}
+      </div>
+      {% endif %}
 
-    <div class="text-center xxsmall mb-4">
-      <span class="text-dim">New user?</span>
-      <a href="{{ url_for('main.new_profile') }}" class="text-gold fw-bold text-decoration-none ms-1">Create birth profile →</a>
+      <!-- Production Sign-In Form -->
+      <form method="POST" action="{{ url_for('main.login') }}" class="space-y-3 mb-4">
+        <div class="mb-3">
+          <label for="emailInput" class="form-label xxsmall text-dim font-mono uppercase mb-1">Email Address</label>
+          <input type="email" class="form-control form-control-dark font-mono text-white bg-dark bg-opacity-60 border-secondary border-opacity-30 rounded-3 py-2.5 px-3 small" id="emailInput" name="email" placeholder="name@domain.com" required value="{{ email or '' }}">
+        </div>
+
+        <div class="mb-4">
+          <label for="passwordInput" class="form-label xxsmall text-dim font-mono uppercase mb-1">Password</label>
+          <input type="password" class="form-control form-control-dark font-mono text-white bg-dark bg-opacity-60 border-secondary border-opacity-30 rounded-3 py-2.5 px-3 small" id="passwordInput" name="password" placeholder="Enter your password" required>
+        </div>
+
+        <button type="submit" class="btn btn-vedic w-100 py-3 fw-bold shadow-lg text-dark rounded-3 font-sans fs-6">
+          Continue / Sign In <i class="bi bi-arrow-right ms-1"></i>
+        </button>
+      </form>
+
+      <div class="text-center xsmall mb-4">
+        <span class="text-dim">New user?</span>
+        <a href="{{ url_for('main.new_profile') }}" class="text-gold fw-bold text-decoration-none ms-1">Create birth profile →</a>
+      </div>
+
+      <div class="pt-3 border-top border-white border-opacity-10 xxsmall text-dim font-mono d-flex justify-content-center gap-3">
+        <a href="/marketing/privacy" class="text-dim hover-gold text-decoration-none">Privacy Policy</a>
+        <span>•</span>
+        <a href="/marketing/terms" class="text-dim hover-gold text-decoration-none">Terms of Service</a>
+      </div>
     </div>
 
-    <div class="pt-3 border-top border-white border-opacity-10 xxsmall text-dim font-mono d-flex justify-content-center gap-3">
-      <a href="/marketing/privacy" class="text-dim hover-gold text-decoration-none">Privacy Policy</a>
-      <span>•</span>
-      <a href="/marketing/terms" class="text-dim hover-gold text-decoration-none">Terms of Service</a>
-    </div>
   </div>
 </div>
 {% endblock %}
