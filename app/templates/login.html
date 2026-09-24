@@ -4,49 +4,130 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Authentication — Jyotish OS</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        body { background: #0b091a; color: #f8fafc; font-family: 'Segoe UI', sans-serif; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; }
-        .login-card { background: #15102a; border: 2px solid #3b2a75; border-radius: 20px; padding: 50px; width: 100%; max-width: 450px; box-shadow: 0 15px 40px rgba(0,0,0,0.6); }
-        .btn-gold { background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%); color: #0b091a; font-weight: 700; border: none; padding: 14px; border-radius: 12px; transition: 0.2s; width: 100%; margin-top: 10px; }
-        .btn-gold:hover { opacity: 0.9; transform: translateY(-2px); }
-        .btn-outline { background: transparent; border: 2px solid #3b2a75; color: #f8fafc; padding: 14px; border-radius: 12px; width: 100%; margin-top: 10px; }
-        .btn-outline:hover { background: #1e1342; border-color: #FFD700; }
-        .logo { color: #FFD700; font-size: 2rem; font-weight: 800; text-align: center; margin-bottom: 30px; }
-        .info-text { color: #94a3b8; font-size: 0.95rem; text-align: center; margin-top: 25px; }
+        :root {
+          --bg-dark: #0a0c16;
+          --card-bg: #131728;
+          --accent-gold: #f59e0b;
+          --accent-gold-hover: #d97706;
+          --border-color: #232a45;
+          --text-main: #f3f4f6;
+          --text-muted: #9ca3af;
+        }
+
+        body {
+          background-color: var(--bg-dark);
+          color: var(--text-main);
+          font-family: 'Inter', system-ui, -apple-system, sans-serif;
+          margin: 0;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          min-height: 100vh;
+        }
+
+        /* Redesigned Card Container */
+        .auth-card {
+          background: var(--card-bg);
+          border: 1px solid var(--border-color);
+          border-radius: 16px;
+          padding: 2.5rem;
+          width: 100%;
+          max-width: 420px;
+          box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5), 0 8px 10px -6px rgba(0, 0, 0, 0.5);
+          text-align: center;
+        }
+
+        /* Brand Header */
+        .brand-title {
+          color: var(--accent-gold);
+          font-size: 1.75rem;
+          font-weight: 700;
+          margin-bottom: 0.5rem;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 0.5rem;
+        }
+
+        /* Primary Accent Buttons */
+        .btn-primary {
+          background-color: var(--accent-gold);
+          color: #000000;
+          font-weight: 600;
+          border: none;
+          padding: 0.75rem 1.5rem;
+          border-radius: 8px;
+          width: 100%;
+          cursor: pointer;
+          transition: all 0.2s ease-in-out;
+          margin-bottom: 1rem;
+        }
+
+        .btn-primary:hover {
+          background-color: var(--accent-gold-hover);
+          transform: translateY(-1px);
+        }
+
+        /* Secondary Buttons */
+        .btn-secondary {
+          background-color: transparent;
+          color: var(--text-main);
+          border: 1px solid var(--border-color);
+          font-weight: 500;
+          padding: 0.75rem 1.5rem;
+          border-radius: 8px;
+          width: 100%;
+          cursor: pointer;
+          transition: all 0.2s ease-in-out;
+        }
+
+        .btn-secondary:hover {
+          background-color: rgba(255, 255, 255, 0.05);
+          border-color: var(--text-muted);
+        }
+
+        /* Form Inputs */
+        .form-input {
+          width: 100%;
+          padding: 0.75rem 1rem;
+          background-color: var(--bg-dark);
+          border: 1px solid var(--border-color);
+          border-radius: 8px;
+          color: var(--text-main);
+          margin-bottom: 1rem;
+          box-sizing: border-box;
+        }
+
+        .form-input:focus {
+          outline: none;
+          border-color: var(--accent-gold);
+        }
     </style>
 </head>
 <body>
-    <div class="login-card">
-        <div class="logo"><i class="fas fa-star-of-life me-2"></i>Jyotish OS</div>
-        <h4 class="text-center mb-4">System Authentication</h4>
+    <div class="auth-card">
+      <div class="brand-title">
+        <span>✨</span> Jyotish OS
+      </div>
+      <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 2rem;">
+        Enterprise Astrological Prediction Engine
+      </p>
 
-        <form method="POST">
-            <input type="hidden" name="role" value="user">
-            <button type="submit" class="btn btn-gold">
-                <i class="fas fa-user-check me-2"></i>Sign in as Standard Tester
-            </button>
-        </form>
+      <form method="POST" action="/login">
+        <button type="submit" name="user_type" value="tester" class="btn-primary">
+          Sign in as Standard Tester
+        </button>
 
-        <form method="POST">
-            <input type="hidden" name="role" value="admin">
-            <button type="submit" class="btn btn-outline">
-                <i class="fas fa-user-shield me-2"></i>Sign in as Administrator
-            </button>
-        </form>
+        <button type="submit" name="user_type" value="admin" class="btn-secondary">
+          Sign in as Administrator
+        </button>
+      </form>
 
-        <div class="info-text">
-            This is a <strong>Developer Preview</strong> login. <br>
-            Standard security protocols are bypassed to enable <br>
-            full feature testing and architectural audit.
-        </div>
-
-        <div class="text-center mt-4">
-            <a href="/" class="text-decoration-none" style="color: #64748b; font-size: 0.9rem;">
-                <i class="fas fa-arrow-left me-1"></i> Return to Welcome Page
-            </a>
-        </div>
+      <div style="margin-top: 1.5rem; font-size: 0.75rem; color: var(--text-muted);">
+        Developer Preview Login • Standard security protocols bypassed for testing.
+      </div>
     </div>
 </body>
 </html>
