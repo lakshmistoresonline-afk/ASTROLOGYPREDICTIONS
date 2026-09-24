@@ -1,133 +1,33 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Authentication — Jyotish OS</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        :root {
-          --bg-dark: #0a0c16;
-          --card-bg: #131728;
-          --accent-gold: #f59e0b;
-          --accent-gold-hover: #d97706;
-          --border-color: #232a45;
-          --text-main: #f3f4f6;
-          --text-muted: #9ca3af;
-        }
+{% extends "base.html" %}
+{% block title %}Authentication — Astro Predictions Dark Celestial OS{% endblock %}
 
-        body {
-          background-color: var(--bg-dark);
-          color: var(--text-main);
-          font-family: 'Inter', system-ui, -apple-system, sans-serif;
-          margin: 0;
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          min-height: 100vh;
-        }
+{% block content %}
+<div class="d-flex align-items-center justify-content-center min-vh-75 py-5">
+  <!-- GLASSMORPHIC AUTHENTICATION CARD -->
+  <div class="card-glass p-4 p-md-5 border-white border-opacity-10 shadow-2xl rounded-4 text-center max-w-md w-100 position-relative overflow-hidden">
+    <!-- Ambient Radial Glow -->
+    <div class="glow-orb" style="width: 300px; height: 300px; top: -100px; right: -100px; opacity: 0.2"></div>
 
-        /* Redesigned Card Container */
-        .auth-card {
-          background: var(--card-bg);
-          border: 1px solid var(--border-color);
-          border-radius: 16px;
-          padding: 2.5rem;
-          width: 100%;
-          max-width: 420px;
-          box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5), 0 8px 10px -6px rgba(0, 0, 0, 0.5);
-          text-align: center;
-        }
+    <div class="position-relative z-1">
+      <div class="brand-icon mx-auto mb-3" style="width: 50px; height: 50px; font-size: 1.75rem;">ॐ</div>
 
-        /* Brand Header */
-        .brand-title {
-          color: var(--accent-gold);
-          font-size: 1.75rem;
-          font-weight: 700;
-          margin-bottom: 0.5rem;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          gap: 0.5rem;
-        }
+      <h2 class="font-premium text-white fw-bold fs-3 mb-1">Jyotish OS</h2>
+      <p class="text-dim xsmall mb-4 font-mono">Enterprise Astrological Prediction Engine V3.36</p>
 
-        /* Primary Accent Buttons */
-        .btn-primary {
-          background-color: var(--accent-gold);
-          color: #000000;
-          font-weight: 600;
-          border: none;
-          padding: 0.75rem 1.5rem;
-          border-radius: 8px;
-          width: 100%;
-          cursor: pointer;
-          transition: all 0.2s ease-in-out;
-          margin-bottom: 1rem;
-        }
-
-        .btn-primary:hover {
-          background-color: var(--accent-gold-hover);
-          transform: translateY(-1px);
-        }
-
-        /* Secondary Buttons */
-        .btn-secondary {
-          background-color: transparent;
-          color: var(--text-main);
-          border: 1px solid var(--border-color);
-          font-weight: 500;
-          padding: 0.75rem 1.5rem;
-          border-radius: 8px;
-          width: 100%;
-          cursor: pointer;
-          transition: all 0.2s ease-in-out;
-        }
-
-        .btn-secondary:hover {
-          background-color: rgba(255, 255, 255, 0.05);
-          border-color: var(--text-muted);
-        }
-
-        /* Form Inputs */
-        .form-input {
-          width: 100%;
-          padding: 0.75rem 1rem;
-          background-color: var(--bg-dark);
-          border: 1px solid var(--border-color);
-          border-radius: 8px;
-          color: var(--text-main);
-          margin-bottom: 1rem;
-          box-sizing: border-box;
-        }
-
-        .form-input:focus {
-          outline: none;
-          border-color: var(--accent-gold);
-        }
-    </style>
-</head>
-<body>
-    <div class="auth-card">
-      <div class="brand-title">
-        <span>✨</span> Jyotish OS
-      </div>
-      <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 2rem;">
-        Enterprise Astrological Prediction Engine
-      </p>
-
-      <form method="POST" action="/login">
-        <button type="submit" name="user_type" value="tester" class="btn-primary">
-          Sign in as Standard Tester
+      <form method="POST" action="/login" class="space-y-3 mb-3">
+        <button type="submit" name="user_type" value="tester" class="btn btn-vedic w-100 py-3 fw-bold shadow-lg mb-3">
+          <i class="bi bi-person-check-fill me-2"></i> Sign in as Standard Tester (Subramanian T S)
         </button>
 
-        <button type="submit" name="user_type" value="admin" class="btn-secondary">
-          Sign in as Administrator
+        <button type="submit" name="user_type" value="admin" class="btn btn-outline-glass w-100 py-3 font-mono">
+          <i class="bi bi-shield-lock-fill me-2"></i> Sign in as Administrator
         </button>
       </form>
 
-      <div style="margin-top: 1.5rem; font-size: 0.75rem; color: var(--text-muted);">
-        Developer Preview Login • Standard security protocols bypassed for testing.
+      <div class="pt-3 border-top border-white border-opacity-10 xxsmall text-dim font-mono">
+        Developer Preview Login • Standard security protocols bypassed for full feature testing.
       </div>
     </div>
-</body>
-</html>
+  </div>
+</div>
+{% endblock %}
