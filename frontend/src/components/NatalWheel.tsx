@@ -39,11 +39,12 @@ export const NatalWheel: React.FC<NatalWheelProps> = ({
 
   const ascendantDegree = data.ascendantDegree || 0;
 
-  // Converts 360° total longitude to polar canvas (x,y) relative to Ascendant (positioned at 180° / Left)
+  // Converts 360° total longitude to fixed-precision polar (x,y) coordinates relative to Ascendant
+  // Fixed 3-decimal precision prevents float representation mismatches between SSR and Client Hydration
   const degreeToPolar = (deg: number, radius: number) => {
     const angleRad = ((ascendantDegree - deg + 180) * Math.PI) / 180;
-    const x = center + radius * Math.cos(angleRad);
-    const y = center - radius * Math.sin(angleRad);
+    const x = Number((center + radius * Math.cos(angleRad)).toFixed(3));
+    const y = Number((center - radius * Math.sin(angleRad)).toFixed(3));
     return { x, y };
   };
 
@@ -53,6 +54,9 @@ export const NatalWheel: React.FC<NatalWheelProps> = ({
     }
   };
 
+  const rOut = Number(outerRadius.toFixed(3));
+  const rIn = Number(zodiacInnerRadius.toFixed(3));
+
   return (
     <div className="relative flex flex-col items-center justify-center p-4">
       <svg
@@ -60,6 +64,7 @@ export const NatalWheel: React.FC<NatalWheelProps> = ({
         height={size}
         viewBox={`0 0 ${size} ${size}`}
         className="drop-shadow-[0_0_35px_rgba(56,189,248,0.15)] transition-all duration-300"
+        suppressHydrationWarning
       >
         <defs>
           <radialGradient id="celestialBg" cx="50%" cy="50%" r="50%">
@@ -82,7 +87,7 @@ export const NatalWheel: React.FC<NatalWheelProps> = ({
         <circle
           cx={center}
           cy={center}
-          r={outerRadius}
+          r={rOut}
           fill="url(#celestialBg)"
           stroke="#1E293B"
           strokeWidth="2"
@@ -101,13 +106,7 @@ export const NatalWheel: React.FC<NatalWheelProps> = ({
 
           const midPos = degreeToPolar(midDeg, (outerRadius + zodiacInnerRadius) / 2);
 
-          const arcPath = `
-            M ${pStart.x} ${pStart.y}
-            A ${outerRadius} ${outerRadius} 0 0 1 ${pEnd.x} ${pEnd.y}
-            L ${pInnerEnd.x} ${pInnerEnd.y}
-            A ${zodiacInnerRadius} ${zodiacInnerRadius} 0 0 0 ${pInnerStart.x} ${pInnerStart.y}
-            Z
-          `;
+          const arcPath = `M ${pStart.x} ${pStart.y} A ${rOut} ${rOut} 0 0 1 ${pEnd.x} ${pEnd.y} L ${pInnerEnd.x} ${pInnerEnd.y} A ${rIn} ${rIn} 0 0 0 ${pInnerStart.x} ${pInnerStart.y} Z`;
 
           return (
             <g key={sign.name}>
@@ -117,6 +116,7 @@ export const NatalWheel: React.FC<NatalWheelProps> = ({
                 stroke="rgba(255, 255, 255, 0.08)"
                 strokeWidth="1"
                 className="transition-colors duration-200 hover:fill-slate-800/60"
+                suppressHydrationWarning
               />
               <text
                 x={midPos.x}
@@ -137,7 +137,7 @@ export const NatalWheel: React.FC<NatalWheelProps> = ({
         <circle
           cx={center}
           cy={center}
-          r={zodiacInnerRadius}
+          r={rIn}
           fill="none"
           stroke="#38BDF8"
           strokeOpacity="0.3"
@@ -185,7 +185,7 @@ export const NatalWheel: React.FC<NatalWheelProps> = ({
         <circle
           cx={center}
           cy={center}
-          r={houseInnerRadius}
+          r={Number(houseInnerRadius.toFixed(3))}
           fill="none"
           stroke="rgba(255, 255, 255, 0.08)"
           strokeWidth="1"
@@ -227,7 +227,7 @@ export const NatalWheel: React.FC<NatalWheelProps> = ({
         <circle
           cx={center}
           cy={center}
-          r={aspectRadius}
+          r={Number(aspectRadius.toFixed(3))}
           fill="#0B0F19"
           stroke="#1E293B"
           strokeWidth="1.5"
