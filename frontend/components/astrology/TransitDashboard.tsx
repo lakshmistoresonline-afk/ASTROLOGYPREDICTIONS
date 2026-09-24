@@ -86,7 +86,7 @@ export const TransitDashboard: React.FC<TransitDashboardProps> = ({
           <span className="w-2 h-2 rounded-full bg-emerald-400" />
           <span>Kakshya BAV Bindu Active (High-Confluence)</span>
         </div>
-        <div class="flex items-center gap-2">
+        <div className="flex items-center gap-2">
           <span className="w-2 h-2 rounded-full bg-amber-400" />
           <span>SBC Vedha Clear Flow</span>
         </div>

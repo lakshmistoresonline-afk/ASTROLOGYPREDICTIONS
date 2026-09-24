@@ -12,8 +12,8 @@ export interface NatalChartData {
 export const useNatalChart = (
   dob: string,
   tob: string,
-  latitude: float,
-  longitude: float,
+  latitude: number,
+  longitude: number,
   timezone: string = 'Asia/Kolkata',
   profileName: string = 'Native'
 ) => {
