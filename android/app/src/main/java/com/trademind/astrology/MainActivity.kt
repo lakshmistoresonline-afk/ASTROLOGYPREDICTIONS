@@ -256,7 +256,7 @@ fun Header() {
     ) {
         Column {
             Text("Namaste", fontSize = 24.sp, fontWeight = FontWeight.Black, color = Color.White)
-            Text("JYOTISH OS V1.0.0", fontSize = 12.sp, color = Color(0xFFFBBF24), letterSpacing = 2.sp)
+            Text("ASTRO PREDICTIONS V3.36", fontSize = 12.sp, color = Color(0xFFFBBF24), letterSpacing = 2.sp)
         }
     }
 }

@@ -2,7 +2,7 @@ from typing import Dict, Any, List
 
 class PredictionNarrativeComposer:
     """
-    V3.35 Authoritative Narrative Intelligence Engine.
+    V3.36 Authoritative Narrative Intelligence Engine.
     Generates exhaustive, multi-paragraph, professional evidence-driven interpretations and timing breakdowns for all 16 life domains.
     """
 

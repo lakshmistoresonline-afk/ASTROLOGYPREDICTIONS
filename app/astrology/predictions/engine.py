@@ -30,7 +30,7 @@ PREDICTION_ENGINE_VERSION = "P0.3-R42"
 
 def generate_evidence_based_predictions(chart: CanonicalChart, selected_date: datetime = None, limit_domains: List[str] = None, event_requests: Dict[str, str] = None) -> Dict[str, Any]:
     """
-    Master Engine (V3.35): Orchestrates specialized domain engines using hierarchical confluence.
+    Master Engine (V3.36): Orchestrates specialized domain engines using hierarchical confluence.
     Enforces strict event validation, fail-closed caching via SHA-256 request fingerprinting,
     deterministic temporal activation with independent per-event evaluation, structured timeline/domain errors,
     and explicit target date contract.
@@ -202,7 +202,7 @@ def generate_evidence_based_predictions(chart: CanonicalChart, selected_date: da
     upcoming_roadmap = [e for e in timeline_sorted if isinstance(e, dict) and (e.get('peak') or '0000') >= today_str]
 
     res_payload = {
-        "overall_status": f"V3.35 Authoritative Intelligence Report Generated ({PREDICTION_ENGINE_VERSION})",
+        "overall_status": f"V3.36 Authoritative Intelligence Report Generated ({PREDICTION_ENGINE_VERSION})",
         "predictions": results_sorted,
         "categorized_domains": categorized,
         "temporal_activation": temporal_act.to_dict() if temporal_act else None,
