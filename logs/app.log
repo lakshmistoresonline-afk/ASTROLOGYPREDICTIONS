@@ -1813,3 +1813,25 @@
 2026-09-24 14:48:40,873 INFO [_internal.py:97]: 127.0.0.1 - - [24/Sep/2026 14:48:40] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
 2026-09-24 15:04:04,125 INFO [_internal.py:97]: 127.0.0.1 - - [24/Sep/2026 15:04:04] "GET /login?next=/ HTTP/1.1" 200 -
 2026-09-24 15:04:04,650 INFO [_internal.py:97]: 127.0.0.1 - - [24/Sep/2026 15:04:04] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
+2026-09-24 16:47:29,895 INFO [__init__.py:78]: Astro Predictions V3.22.1 starting with debug logging enabled...
+2026-09-24 16:47:36,692 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): 127.0.0.1:8000
+2026-09-24 16:47:38,308 INFO [_internal.py:97]: [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5001
+2026-09-24 16:47:38,310 INFO [_internal.py:97]: [33mPress CTRL+C to quit[0m
+2026-09-24 16:47:38,554 DEBUG [proactor_events.py:631]: Using proactor: IocpProactor
+2026-09-24 16:47:44,782 INFO [_internal.py:97]: 127.0.0.1 - - [24/Sep/2026 16:47:44] "[32mGET / HTTP/1.1[0m" 302 -
+2026-09-24 16:47:44,836 INFO [_internal.py:97]: 127.0.0.1 - - [24/Sep/2026 16:47:44] "GET /login?next=/ HTTP/1.1" 200 -
+2026-09-24 16:47:45,815 INFO [_internal.py:97]: 127.0.0.1 - - [24/Sep/2026 16:47:45] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
+2026-09-24 17:01:25,889 INFO [_internal.py:97]: 127.0.0.1 - - [24/Sep/2026 17:01:25] "[32mGET / HTTP/1.1[0m" 302 -
+2026-09-24 17:01:27,050 INFO [_internal.py:97]: 127.0.0.1 - - [24/Sep/2026 17:01:27] "GET /login?next=/ HTTP/1.1" 200 -
+2026-09-24 17:01:29,335 INFO [_internal.py:97]: 127.0.0.1 - - [24/Sep/2026 17:01:29] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
+2026-09-24 17:01:51,346 INFO [_internal.py:97]: 127.0.0.1 - - [24/Sep/2026 17:01:51] "[32mPOST /login HTTP/1.1[0m" 302 -
+2026-09-24 17:01:51,819 INFO [_internal.py:97]: 127.0.0.1 - - [24/Sep/2026 17:01:51] "GET /dashboard HTTP/1.1" 200 -
+2026-09-24 17:01:52,739 INFO [_internal.py:97]: 127.0.0.1 - - [24/Sep/2026 17:01:52] "GET /static/css/style_v2.css?v=6.3 HTTP/1.1" 200 -
+2026-09-24 17:01:53,027 INFO [_internal.py:97]: 127.0.0.1 - - [24/Sep/2026 17:01:53] "GET /static/manifest.json HTTP/1.1" 200 -
+2026-09-24 17:01:54,269 INFO [_internal.py:97]: 127.0.0.1 - - [24/Sep/2026 17:01:54] "GET /static/img/icon.svg HTTP/1.1" 200 -
+2026-09-24 17:01:54,313 INFO [_internal.py:97]: 127.0.0.1 - - [24/Sep/2026 17:01:54] "[36mGET /static/img/icon.svg HTTP/1.1[0m" 304 -
+2026-09-24 17:02:15,571 INFO [_internal.py:97]: 127.0.0.1 - - [24/Sep/2026 17:02:15] "GET /profile/new HTTP/1.1" 200 -
+2026-09-24 17:02:15,789 INFO [_internal.py:97]: 127.0.0.1 - - [24/Sep/2026 17:02:15] "[36mGET /static/css/style_v2.css?v=6.3 HTTP/1.1[0m" 304 -
+2026-09-24 17:02:15,869 INFO [_internal.py:97]: 127.0.0.1 - - [24/Sep/2026 17:02:15] "[36mGET /static/manifest.json HTTP/1.1[0m" 304 -
+2026-09-24 17:02:16,216 INFO [_internal.py:97]: 127.0.0.1 - - [24/Sep/2026 17:02:16] "[36mGET /static/img/icon.svg HTTP/1.1[0m" 304 -

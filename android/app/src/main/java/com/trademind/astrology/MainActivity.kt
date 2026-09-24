@@ -61,7 +61,6 @@ sealed class Screen {
     object ChartVisualizer : Screen()
     object CompatibilityHub : Screen()
     object TimingHub : Screen()
-    object TimingHub : Screen()
 }
 
 @Composable
