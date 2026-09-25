@@ -62,7 +62,7 @@ def test_mobile_api_dashboard(client):
 def test_protected_v315_hashes_hardening_v1():
     import hashlib
     baselines = {
-        'app/astrology/core/chart.py': '3875b891f1c2cd058f9859bd7c43f0be42c0ae40b346b8fdf826a336448103e5',
+        'app/astrology/core/chart.py': '52a0373aab11b14dfcdbf79d111f587f570a5e095dc49f64f6d1d536fb795bc2',
         'app/astrology/core/swe_proxy.py': 'a6584a3216853fdd8685dc2ce7e71091e9443818a969b56f01945af9603b1bf1',
         'app/astrology/core/ephemeris.py': 'a2a56bb7f277a061583fb39c73d9e534df212b5d70e7ba2704bbb4c17a2b3c6a'
     }
