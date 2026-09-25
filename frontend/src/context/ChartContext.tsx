@@ -59,8 +59,11 @@ export const ChartProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const activateChart = async (cid: string) => {
     setLoading(true);
     try {
-      await chartsApi.getActiveChart();
+      await chartsApi.activateChart(cid);
       await refreshActiveChart();
+    } catch (err: any) {
+      setError(err.message || 'Failed to activate chart.');
+      throw err;
     } finally {
       setLoading(false);
     }
@@ -69,7 +72,11 @@ export const ChartProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const deleteChart = async (cid: string) => {
     setLoading(true);
     try {
+      await chartsApi.deleteChart(cid);
       await refreshActiveChart();
+    } catch (err: any) {
+      setError(err.message || 'Failed to delete chart.');
+      throw err;
     } finally {
       setLoading(false);
     }
