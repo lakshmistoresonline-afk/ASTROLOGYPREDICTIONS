@@ -67,8 +67,8 @@ def _idle_watcher():
 
 
 def open_browser():
-    port = int(os.getenv("PORT", 5001))
-    webbrowser.open(f"http://localhost:{port}")
+    frontend_port = int(os.getenv("FRONTEND_PORT", 3000))
+    webbrowser.open(f"http://localhost:{frontend_port}")
 
 
 if __name__ == "__main__":

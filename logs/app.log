@@ -2835,3 +2835,26 @@ werkzeug.routing.exceptions.BuildError: Could not build url for endpoint 'main.r
 2026-09-25 08:08:01,494 INFO [_internal.py:97]: 127.0.0.1 - - [25/Sep/2026 08:08:01] "[36mGET /static/img/icon.svg HTTP/1.1[0m" 304 -
 2026-09-25 08:08:01,529 INFO [_internal.py:97]: 127.0.0.1 - - [25/Sep/2026 08:08:01] "[36mGET /static/img/icon.svg HTTP/1.1[0m" 304 -
 2026-09-25 08:21:01,365 INFO [__init__.py:78]: Astro Predictions V3.22.1 starting with debug logging enabled...
+2026-09-25 09:35:19,480 INFO [__init__.py:78]: Astro Predictions V3.22.1 starting with debug logging enabled...
+2026-09-25 09:35:30,206 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): 127.0.0.1:8000
+2026-09-25 09:35:32,330 INFO [_internal.py:97]: [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5001
+2026-09-25 09:35:32,332 INFO [_internal.py:97]: [33mPress CTRL+C to quit[0m
+2026-09-25 09:35:32,631 DEBUG [proactor_events.py:631]: Using proactor: IocpProactor
+2026-09-25 09:35:43,489 INFO [_internal.py:97]: 127.0.0.1 - - [25/Sep/2026 09:35:43] "[32mGET / HTTP/1.1[0m" 302 -
+2026-09-25 09:35:48,587 INFO [_internal.py:97]: 127.0.0.1 - - [25/Sep/2026 09:35:48] "GET /login?next=/ HTTP/1.1" 200 -
+2026-09-25 09:35:49,795 INFO [_internal.py:97]: 127.0.0.1 - - [25/Sep/2026 09:35:49] "[36mGET /static/css/style_v2.css?v=6.3 HTTP/1.1[0m" 304 -
+2026-09-25 09:35:49,825 INFO [_internal.py:97]: 127.0.0.1 - - [25/Sep/2026 09:35:49] "[36mGET /static/manifest.json HTTP/1.1[0m" 304 -
+2026-09-25 09:35:51,342 INFO [_internal.py:97]: 127.0.0.1 - - [25/Sep/2026 09:35:51] "[36mGET /static/img/icon.svg HTTP/1.1[0m" 304 -
+2026-09-25 10:16:30,025 INFO [__init__.py:78]: Astro Predictions V3.22.1 starting with debug logging enabled...
+2026-09-25 10:16:36,097 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): 127.0.0.1:8000
+2026-09-25 10:16:39,201 INFO [_internal.py:97]: [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5001
+2026-09-25 10:16:39,239 INFO [_internal.py:97]: [33mPress CTRL+C to quit[0m
+2026-09-25 10:16:39,274 DEBUG [proactor_events.py:631]: Using proactor: IocpProactor
+2026-09-25 10:16:56,527 INFO [_internal.py:97]: 127.0.0.1 - - [25/Sep/2026 10:16:56] "[32mGET / HTTP/1.1[0m" 302 -
+2026-09-25 10:16:57,720 INFO [_internal.py:97]: 127.0.0.1 - - [25/Sep/2026 10:16:57] "GET /login?next=/ HTTP/1.1" 200 -
+2026-09-25 10:16:58,816 INFO [_internal.py:97]: 127.0.0.1 - - [25/Sep/2026 10:16:58] "[36mGET /static/css/style_v2.css?v=6.3 HTTP/1.1[0m" 304 -
+2026-09-25 10:16:58,886 INFO [_internal.py:97]: 127.0.0.1 - - [25/Sep/2026 10:16:58] "[36mGET /static/manifest.json HTTP/1.1[0m" 304 -
+2026-09-25 10:17:03,151 INFO [_internal.py:97]: 127.0.0.1 - - [25/Sep/2026 10:17:03] "[36mGET /static/img/icon.svg HTTP/1.1[0m" 304 -
+2026-09-25 10:33:59,760 INFO [__init__.py:78]: Astro Predictions V3.22.1 starting with debug logging enabled...
