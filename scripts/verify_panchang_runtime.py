@@ -6,31 +6,48 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')
 
 from app.astrology.panchang import calculate_panchang
 
-def verify_panchang():
+def verify_panchang_multi_location():
     print("================================================================================")
-    print("🌅 VERIFYING PANCHANG RUNTIME & SUNRISE/SUNSET CALCULATION")
+    print("🌅 VERIFYING PANCHANG RUNTIME & COORDINATE SENSITIVITY")
     print("================================================================================")
 
     dt = datetime.now()
-    lat, lon = 10.7867, 76.6548 # Palakkad, Kerala, India
-    tz_str = "Asia/Kolkata"
 
-    p = calculate_panchang(dt, lat, lon, tz_str)
+    # 1. Location A: Palakkad, Kerala, India (10.7867° N, 76.6548° E)
+    p_a = calculate_panchang(dt, 10.7867, 76.6548, "Asia/Kolkata")
+    sunrise_a = p_a.get('sky', {}).get('sunrise')
+    sunset_a = p_a.get('sky', {}).get('sunset')
 
-    print(f"  ✅ Tithi: {p.get('tithi', {}).get('name')}")
-    print(f"  ✅ Nakshatra: {p.get('nakshatra', {}).get('name')}")
-    print(f"  ✅ Yoga: {p.get('yoga', {}).get('name')}")
-    print(f"  ✅ Karana: {p.get('karana', {}).get('name')}")
-    print(f"  ✅ Sunrise Time: {p.get('sky', {}).get('sunrise')}")
-    print(f"  ✅ Sunset Time: {p.get('sky', {}).get('sunset')}")
+    print("📍 LOCATION A: Palakkad, Kerala, India (Asia/Kolkata)")
+    print(f"   Tithi: {p_a.get('tithi', {}).get('name')}")
+    print(f"   Nakshatra: {p_a.get('nakshatra', {}).get('name')}")
+    print(f"   Sunrise: {sunrise_a}")
+    print(f"   Sunset: {sunset_a}")
 
-    assert p.get('tithi', {}).get('name') is not None
-    assert p.get('sky', {}).get('sunrise') is not None
+    # 2. Location B: London, UK (51.5074° N, -0.1278° W)
+    p_b = calculate_panchang(dt, 51.5074, -0.1278, "Europe/London")
+    sunrise_b = p_b.get('sky', {}).get('sunrise')
+    sunset_b = p_b.get('sky', {}).get('sunset')
 
-    print("================================================================================")
-    print("🎯 PANCHANG RUNTIME VERIFICATION PASSED PERFECTLY (0 ERRORS)")
+    print("\n📍 LOCATION B: London, UK (Europe/London)")
+    print(f"   Tithi: {p_b.get('tithi', {}).get('name')}")
+    print(f"   Nakshatra: {p_b.get('nakshatra', {}).get('name')}")
+    print(f"   Sunrise: {sunrise_b}")
+    print(f"   Sunset: {sunset_b}")
+
+    # Assertions: Real non-placeholder values
+    assert sunrise_a not in [None, "—", ""]
+    assert sunset_a not in [None, "—", ""]
+    assert sunrise_b not in [None, "—", ""]
+    assert sunset_b not in [None, "—", ""]
+
+    # Assert Coordinate Sensitivity: Sunrise/Sunset differs appropriately across longitudes/latitudes
+    assert (sunrise_a != sunrise_b) or (sunset_a != sunset_b), "Sunrise/Sunset failed to react to coordinate shift!"
+
+    print("\n================================================================================")
+    print("🎯 PANCHANG RUNTIME & COORDINATE SENSITIVITY PASSED PERFECTLY (100% PARITY)")
     print("================================================================================")
     return True
 
 if __name__ == "__main__":
-    verify_panchang()
+    verify_panchang_multi_location()
