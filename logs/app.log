@@ -2818,3 +2818,20 @@ werkzeug.routing.exceptions.BuildError: Could not build url for endpoint 'main.r
 2026-09-25 07:51:04,237 DEBUG [connectionpool.py:544]: https://freeipapi.com:443 "GET /api/json HTTP/1.1" 307 None
 2026-09-25 07:51:04,245 DEBUG [connectionpool.py:1062]: Starting new HTTPS connection (1): free.freeipapi.com:443
 2026-09-25 07:51:04,714 DEBUG [connectionpool.py:544]: https://free.freeipapi.com:443 "GET /api/v1/json HTTP/1.1" 200 None
+2026-09-25 08:06:38,993 INFO [__init__.py:78]: Astro Predictions V3.22.1 starting with debug logging enabled...
+2026-09-25 08:06:45,310 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): 127.0.0.1:8000
+2026-09-25 08:06:46,940 INFO [_internal.py:97]: [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5001
+2026-09-25 08:06:46,943 INFO [_internal.py:97]: [33mPress CTRL+C to quit[0m
+2026-09-25 08:06:47,188 DEBUG [proactor_events.py:631]: Using proactor: IocpProactor
+2026-09-25 08:06:53,643 INFO [_internal.py:97]: 127.0.0.1 - - [25/Sep/2026 08:06:53] "[32mGET / HTTP/1.1[0m" 302 -
+2026-09-25 08:06:53,929 INFO [_internal.py:97]: 127.0.0.1 - - [25/Sep/2026 08:06:53] "GET /login?next=/ HTTP/1.1" 200 -
+2026-09-25 08:06:54,883 INFO [_internal.py:97]: 127.0.0.1 - - [25/Sep/2026 08:06:54] "[36mGET /static/manifest.json HTTP/1.1[0m" 304 -
+2026-09-25 08:06:54,889 INFO [_internal.py:97]: 127.0.0.1 - - [25/Sep/2026 08:06:54] "[36mGET /static/css/style_v2.css?v=6.3 HTTP/1.1[0m" 304 -
+2026-09-25 08:06:56,062 INFO [_internal.py:97]: 127.0.0.1 - - [25/Sep/2026 08:06:56] "[36mGET /static/img/icon.svg HTTP/1.1[0m" 304 -
+2026-09-25 08:07:55,492 INFO [_internal.py:97]: 127.0.0.1 - - [25/Sep/2026 08:07:55] "[36mGET /static/css/style_v2.css?v=6.3 HTTP/1.1[0m" 304 -
+2026-09-25 08:07:55,508 INFO [_internal.py:97]: 127.0.0.1 - - [25/Sep/2026 08:07:55] "[36mGET /static/manifest.json HTTP/1.1[0m" 304 -
+2026-09-25 08:07:55,851 INFO [_internal.py:97]: 127.0.0.1 - - [25/Sep/2026 08:07:55] "[33mGET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1[0m" 404 -
+2026-09-25 08:08:01,494 INFO [_internal.py:97]: 127.0.0.1 - - [25/Sep/2026 08:08:01] "[36mGET /static/img/icon.svg HTTP/1.1[0m" 304 -
+2026-09-25 08:08:01,529 INFO [_internal.py:97]: 127.0.0.1 - - [25/Sep/2026 08:08:01] "[36mGET /static/img/icon.svg HTTP/1.1[0m" 304 -
+2026-09-25 08:21:01,365 INFO [__init__.py:78]: Astro Predictions V3.22.1 starting with debug logging enabled...
