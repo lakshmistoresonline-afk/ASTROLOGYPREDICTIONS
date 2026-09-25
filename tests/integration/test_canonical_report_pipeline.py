@@ -55,3 +55,4 @@ def test_canonical_astrology_report_pipeline_end_to_end():
         # 6. Verify zero historical demo names appear in native report
         pdf_text = pdf_bytes.decode('latin-1', 'ignore')
         assert "Steve Jobs" not in pdf_text
+        assert "Mahatma Gandhi" not in pdf_text

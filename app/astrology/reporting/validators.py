@@ -2,6 +2,10 @@ from typing import Tuple, List
 from .models import CanonicalAstrologyReport
 
 def validate_canonical_report(report: CanonicalAstrologyReport) -> Tuple[bool, List[str]]:
+    """
+    Validates mandatory structural completeness of CanonicalAstrologyReport.
+    Returns (is_valid, list_of_error_strings).
+    """
     errors: List[str] = []
 
     if not report.report_id:
@@ -18,6 +22,12 @@ def validate_canonical_report(report: CanonicalAstrologyReport) -> Tuple[bool, L
 
     if not report.house_cusps or len(report.house_cusps) < 12:
         errors.append(f"Incomplete house cusps count: {len(report.house_cusps)} cusps found (12 required).")
+
+    if not report.dashas or len(report.dashas) < 1:
+        errors.append("Missing or empty Vimshottari Dasha hierarchy.")
+
+    if not report.predictions or len(report.predictions) < 1:
+        errors.append("Missing or empty domain predictions in report.")
 
     is_valid = len(errors) == 0
     return is_valid, errors

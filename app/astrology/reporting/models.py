@@ -2,6 +2,10 @@ from dataclasses import dataclass, field, asdict
 from typing import List, Dict, Any, Optional
 from datetime import datetime
 
+class ReportBuildError(Exception):
+    """Raised when a mandatory calculation or profile field is missing during report construction."""
+    pass
+
 @dataclass
 class NativeProfile:
     name: str
@@ -108,6 +112,8 @@ class CanonicalAstrologyReport:
     predictions: List[DomainPrediction] = field(default_factory=list)
     timeline: List[TimelineEvent] = field(default_factory=list)
     remedies: List[RemedyProtocol] = field(default_factory=list)
+    diagnostics: List[Dict[str, Any]] = field(default_factory=list)
+    limitations: List[str] = field(default_factory=list)
 
     def to_dict(self) -> Dict[str, Any]:
         return asdict(self)
