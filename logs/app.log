@@ -2749,3 +2749,72 @@ werkzeug.routing.exceptions.BuildError: Could not build url for endpoint 'main.r
 2026-09-24 23:45:50,728 DEBUG [connectionpool.py:1062]: Starting new HTTPS connection (1): free.freeipapi.com:443
 2026-09-24 23:45:51,192 DEBUG [connectionpool.py:544]: https://free.freeipapi.com:443 "GET /api/v1/json HTTP/1.1" 200 None
 2026-09-24 23:52:51,877 INFO [__init__.py:78]: Astro Predictions V3.22.1 starting with debug logging enabled...
+2026-09-25 07:21:11,998 INFO [__init__.py:78]: Astro Predictions V3.22.1 starting with debug logging enabled...
+2026-09-25 07:21:20,283 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): 127.0.0.1:8000
+2026-09-25 07:21:22,174 INFO [_internal.py:97]: [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5001
+2026-09-25 07:21:22,186 INFO [_internal.py:97]: [33mPress CTRL+C to quit[0m
+2026-09-25 07:21:22,949 DEBUG [proactor_events.py:631]: Using proactor: IocpProactor
+2026-09-25 07:21:30,892 INFO [_internal.py:97]: 127.0.0.1 - - [25/Sep/2026 07:21:30] "[32mGET / HTTP/1.1[0m" 302 -
+2026-09-25 07:21:31,377 INFO [_internal.py:97]: 127.0.0.1 - - [25/Sep/2026 07:21:31] "GET /login?next=/ HTTP/1.1" 200 -
+2026-09-25 07:21:32,409 INFO [_internal.py:97]: 127.0.0.1 - - [25/Sep/2026 07:21:32] "[36mGET /static/css/style_v2.css?v=6.3 HTTP/1.1[0m" 304 -
+2026-09-25 07:21:32,466 INFO [_internal.py:97]: 127.0.0.1 - - [25/Sep/2026 07:21:32] "[36mGET /static/manifest.json HTTP/1.1[0m" 304 -
+2026-09-25 07:21:34,321 INFO [_internal.py:97]: 127.0.0.1 - - [25/Sep/2026 07:21:34] "[36mGET /static/img/icon.svg HTTP/1.1[0m" 304 -
+2026-09-25 07:31:23,320 INFO [__init__.py:78]: Astro Predictions V3.22.1 starting with debug logging enabled...
+2026-09-25 07:31:34,786 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-25 07:31:35,398 DEBUG [connectionpool.py:544]: http://localhost:8000 "GET /health HTTP/1.1" 200 42
+2026-09-25 07:31:35,681 DEBUG [connectionpool.py:1062]: Starting new HTTPS connection (1): freeipapi.com:443
+2026-09-25 07:31:36,310 DEBUG [connectionpool.py:544]: https://freeipapi.com:443 "GET /api/json HTTP/1.1" 307 None
+2026-09-25 07:31:36,345 DEBUG [connectionpool.py:1062]: Starting new HTTPS connection (1): free.freeipapi.com:443
+2026-09-25 07:31:37,130 DEBUG [connectionpool.py:544]: https://free.freeipapi.com:443 "GET /api/v1/json HTTP/1.1" 200 None
+2026-09-25 07:31:41,247 DEBUG [connectionpool.py:1062]: Starting new HTTPS connection (1): freeipapi.com:443
+2026-09-25 07:31:41,637 DEBUG [connectionpool.py:544]: https://freeipapi.com:443 "GET /api/json HTTP/1.1" 307 None
+2026-09-25 07:31:41,641 DEBUG [connectionpool.py:1062]: Starting new HTTPS connection (1): free.freeipapi.com:443
+2026-09-25 07:31:42,098 DEBUG [connectionpool.py:544]: https://free.freeipapi.com:443 "GET /api/v1/json HTTP/1.1" 200 None
+2026-09-25 07:31:43,219 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-25 07:31:44,056 DEBUG [connectionpool.py:544]: http://localhost:8000 "POST /v1/natal-chart HTTP/1.1" 200 1386
+2026-09-25 07:31:44,064 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-25 07:31:44,580 DEBUG [connectionpool.py:544]: http://localhost:8000 "POST /v1/sky-events HTTP/1.1" 200 64
+2026-09-25 07:31:44,585 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-25 07:31:45,099 DEBUG [connectionpool.py:544]: http://localhost:8000 "POST /v1/sky-events HTTP/1.1" 200 64
+2026-09-25 07:31:45,108 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-25 07:31:45,635 DEBUG [connectionpool.py:544]: http://localhost:8000 "POST /v1/sky-events HTTP/1.1" 200 63
+2026-09-25 07:31:45,879 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-25 07:31:46,394 DEBUG [connectionpool.py:544]: http://localhost:8000 "POST /v1/sky-events HTTP/1.1" 200 61
+2026-09-25 07:31:46,399 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-25 07:31:46,914 DEBUG [connectionpool.py:544]: http://localhost:8000 "POST /v1/sky-events HTTP/1.1" 200 61
+2026-09-25 07:31:47,008 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-25 07:31:47,527 DEBUG [connectionpool.py:544]: http://localhost:8000 "POST /v1/sky-events HTTP/1.1" 200 64
+2026-09-25 07:31:47,692 DEBUG [connectionpool.py:1062]: Starting new HTTPS connection (1): freeipapi.com:443
+2026-09-25 07:31:47,993 DEBUG [connectionpool.py:544]: https://freeipapi.com:443 "GET /api/json HTTP/1.1" 307 None
+2026-09-25 07:31:47,999 DEBUG [connectionpool.py:1062]: Starting new HTTPS connection (1): free.freeipapi.com:443
+2026-09-25 07:31:48,613 DEBUG [connectionpool.py:544]: https://free.freeipapi.com:443 "GET /api/v1/json HTTP/1.1" 200 None
+2026-09-25 07:50:43,634 INFO [__init__.py:78]: Astro Predictions V3.22.1 starting with debug logging enabled...
+2026-09-25 07:50:55,715 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-25 07:50:56,267 DEBUG [connectionpool.py:544]: http://localhost:8000 "GET /health HTTP/1.1" 200 42
+2026-09-25 07:50:56,433 DEBUG [connectionpool.py:1062]: Starting new HTTPS connection (1): freeipapi.com:443
+2026-09-25 07:50:56,785 DEBUG [connectionpool.py:544]: https://freeipapi.com:443 "GET /api/json HTTP/1.1" 307 None
+2026-09-25 07:50:56,793 DEBUG [connectionpool.py:1062]: Starting new HTTPS connection (1): free.freeipapi.com:443
+2026-09-25 07:50:57,388 DEBUG [connectionpool.py:544]: https://free.freeipapi.com:443 "GET /api/v1/json HTTP/1.1" 200 None
+2026-09-25 07:50:57,503 DEBUG [connectionpool.py:1062]: Starting new HTTPS connection (1): freeipapi.com:443
+2026-09-25 07:50:57,767 DEBUG [connectionpool.py:544]: https://freeipapi.com:443 "GET /api/json HTTP/1.1" 307 None
+2026-09-25 07:50:57,772 DEBUG [connectionpool.py:1062]: Starting new HTTPS connection (1): free.freeipapi.com:443
+2026-09-25 07:50:58,243 DEBUG [connectionpool.py:544]: https://free.freeipapi.com:443 "GET /api/v1/json HTTP/1.1" 200 None
+2026-09-25 07:50:59,231 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-25 07:51:00,062 DEBUG [connectionpool.py:544]: http://localhost:8000 "POST /v1/natal-chart HTTP/1.1" 200 1424
+2026-09-25 07:51:00,123 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-25 07:51:00,737 DEBUG [connectionpool.py:544]: http://localhost:8000 "POST /v1/sky-events HTTP/1.1" 200 64
+2026-09-25 07:51:00,745 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-25 07:51:01,267 DEBUG [connectionpool.py:544]: http://localhost:8000 "POST /v1/sky-events HTTP/1.1" 200 64
+2026-09-25 07:51:01,277 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-25 07:51:01,797 DEBUG [connectionpool.py:544]: http://localhost:8000 "POST /v1/sky-events HTTP/1.1" 200 63
+2026-09-25 07:51:01,966 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-25 07:51:02,484 DEBUG [connectionpool.py:544]: http://localhost:8000 "POST /v1/sky-events HTTP/1.1" 200 61
+2026-09-25 07:51:02,494 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-25 07:51:03,012 DEBUG [connectionpool.py:544]: http://localhost:8000 "POST /v1/sky-events HTTP/1.1" 200 61
+2026-09-25 07:51:03,063 DEBUG [connectionpool.py:241]: Starting new HTTP connection (1): localhost:8000
+2026-09-25 07:51:03,582 DEBUG [connectionpool.py:544]: http://localhost:8000 "POST /v1/sky-events HTTP/1.1" 200 64
+2026-09-25 07:51:03,978 DEBUG [connectionpool.py:1062]: Starting new HTTPS connection (1): freeipapi.com:443
+2026-09-25 07:51:04,237 DEBUG [connectionpool.py:544]: https://freeipapi.com:443 "GET /api/json HTTP/1.1" 307 None
+2026-09-25 07:51:04,245 DEBUG [connectionpool.py:1062]: Starting new HTTPS connection (1): free.freeipapi.com:443
+2026-09-25 07:51:04,714 DEBUG [connectionpool.py:544]: https://free.freeipapi.com:443 "GET /api/v1/json HTTP/1.1" 200 None
