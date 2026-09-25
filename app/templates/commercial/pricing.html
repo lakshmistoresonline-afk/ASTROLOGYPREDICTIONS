@@ -1,43 +1,69 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pricing & Plans — Astro Predictions</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
-    <style>
-        body { background: #0b091a; color: #f8fafc; font-family: 'Segoe UI', sans-serif; font-size: 18px; line-height: 1.75; }
-        .card-custom { background: #15102a; border: 2px solid #3b2a75; border-radius: 20px; padding: 45px; color: #fff; height: 100%; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-        .btn-gold { background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%); color: #0b091a; font-weight: 700; border-radius: 35px; padding: 14px 30px; border: none; font-size: 1.15rem; }
-        .btn-gold:hover { opacity: 0.95; color: #0b091a; }
-        p, span, li, h3 { color: #f8fafc !important; }
-        a { color: #FFD700; text-decoration: none; font-weight: 500; }
-        a:hover { color: #ffca28; text-decoration: underline; }
-    </style>
-</head>
-<body>
-    <div class="container py-5 text-center">
-        <h1 class="display-5 fw-bold text-warning mb-3">Simple, Transparent Pricing</h1>
-        <p class="lead mb-5 fs-4" style="color: #e2e8f0 !important;">Unlock full Vedic astrology intelligence and detailed timing reports.</p>
-        <div class="row g-4 justify-content-center">
-            <div class="col-md-5">
-                <div class="card-custom text-start">
-                    <h3 class="fw-bold text-white mb-3 fs-3">Free Tier</h3>
-                    <h2 class="display-5 fw-bold my-3 text-white">₹0</h2>
-                    <p class="fs-5 mb-4" style="color: #cbd5e1 !important;">Basic chart, Moon sign, Nakshatra, and basic Dasha overview.</p>
-                    <a href="/birth-chart" class="btn btn-outline-warning w-100 rounded-pill py-3 fs-5 fw-bold mt-3">Get Started Free</a>
+{% extends "base.html" %}
+{% block title %}Pricing & Subscription Plans — Astro Predictions{% endblock %}
+
+{% block content %}
+<div class="py-4 text-center max-w-5xl mx-auto space-y-6">
+    <div class="mb-5">
+        <span class="badge bg-gold text-dark font-mono xxsmall fw-bold uppercase px-3 py-1.5 rounded-pill mb-2">COMMERCIAL PORTAL</span>
+        <h1 class="display-5 fw-bold text-white mb-2 font-premium">Simple, Transparent Pricing</h1>
+        <p class="text-dim small max-w-lg mx-auto font-sans">Choose the ideal celestial intelligence tier for your natal analysis and predictive workflow.</p>
+    </div>
+
+    <div class="row g-4 align-items-stretch text-start">
+        <div class="col-md-4">
+            <div class="card-glass h-100 p-4 border-white border-opacity-10 shadow-2xl d-flex flex-column justify-content-between">
+                <div>
+                    <span class="xxsmall text-dim font-mono uppercase font-bold">STARTER</span>
+                    <h3 class="text-white fw-bold fs-4 mb-2 mt-1">Free Tier</h3>
+                    <div class="display-5 fw-bold text-sky-400 font-mono mb-4">$0 <span class="fs-6 text-dim font-sans">/ mo</span></div>
+                    <ul class="list-unstyled xxsmall text-slate-300 space-y-2 font-mono mb-4">
+                        <li class="mb-2">✓ Full Natal Chart Calculation</li>
+                        <li class="mb-2">✓ Basic Dasha Periods</li>
+                        <li class="mb-2">✓ Daily Gochara Transits</li>
+                    </ul>
                 </div>
+                <a href="{{ url_for('main.dashboard') }}" class="btn btn-outline-glass w-100 py-3 font-mono xxsmall fw-bold">
+                    CURRENT PLAN
+                </a>
             </div>
-            <div class="col-md-5">
-                <div class="card-custom border-warning text-start shadow-lg">
-                    <span class="badge bg-warning text-dark mb-2 fs-6 px-3 py-1">Most Popular</span>
-                    <h3 class="fw-bold text-white mb-3 fs-3">Astro Plus</h3>
-                    <h2 class="display-5 fw-bold my-3 text-warning">₹499 <span class="fs-5 text-light">/ month</span></h2>
-                    <p class="fs-5 mb-4" style="color: #cbd5e1 !important;">Full prediction domains, advanced timing, full Life Timeline & ad-free experience.</p>
-                    <a href="/checkout/plus_monthly" class="btn btn-gold w-100 py-3 fs-5 mt-3">Unlock Astro Plus</a>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card-glass h-100 p-4 border-gold border-opacity-40 shadow-2xl d-flex flex-column justify-content-between position-relative">
+                <span class="position-absolute top-0 end-0 m-3 px-2.5 py-1 rounded-pill bg-gold text-dark xxsmall font-mono fw-bold">MOST POPULAR</span>
+                <div>
+                    <span class="xxsmall text-gold font-mono uppercase font-bold">PRO CELESTIAL</span>
+                    <h3 class="text-amber-400 fw-bold fs-4 mb-2 mt-1">Professional</h3>
+                    <div class="display-5 fw-bold text-gold font-mono mb-4">$19 <span class="fs-6 text-dim font-sans">/ mo</span></div>
+                    <ul class="list-unstyled xxsmall text-slate-300 space-y-2 font-mono mb-4">
+                        <li class="mb-2">✓ 16-Domain Confluence Forecasts</li>
+                        <li class="mb-2">✓ 80-Year Life Atlas Roadmap</li>
+                        <li class="mb-2">✓ Unlimited PDF Report Exports</li>
+                    </ul>
                 </div>
+                <a href="{{ url_for('main.report_download') }}" class="btn btn-vedic w-100 py-3 text-dark font-sans xxsmall fw-bold shadow-lg">
+                    UPGRADE TO PRO →
+                </a>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card-glass h-100 p-4 border-white border-opacity-10 shadow-2xl d-flex flex-column justify-content-between">
+                <div>
+                    <span class="xxsmall text-dim font-mono uppercase font-bold">ENTERPRISE API</span>
+                    <h3 class="text-white fw-bold fs-4 mb-2 mt-1">High Throughput</h3>
+                    <div class="display-5 fw-bold text-sky-400 font-mono mb-4">$99 <span class="fs-6 text-dim font-sans">/ mo</span></div>
+                    <ul class="list-unstyled xxsmall text-slate-300 space-y-2 font-mono mb-4">
+                        <li class="mb-2">✓ Sub-15ms Anycast Edge API</li>
+                        <li class="mb-2">✓ Kyber-1024 Quantum Vault</li>
+                        <li class="mb-2">✓ Custom Webhook & Stream Bus</li>
+                    </ul>
+                </div>
+                <a href="{{ url_for('main.dashboard') }}" class="btn btn-outline-glass w-100 py-3 font-mono xxsmall fw-bold">
+                    CONTACT ENTERPRISE →
+                </a>
             </div>
         </div>
     </div>
-</body>
-</html>
+</div>
+{% endblock %}

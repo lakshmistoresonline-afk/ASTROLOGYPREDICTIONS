@@ -15,6 +15,7 @@ def get_sky_event(jd_ut: float, lat: float, lon: float, planet_id: int, event_ty
 
     # Fallback for Moon or if service fails
     atpress = 1013.25
+    attemp = 15.0
     try:
         # Check if rise_trans is actually functional
         if hasattr(swe, 'rise_trans'):

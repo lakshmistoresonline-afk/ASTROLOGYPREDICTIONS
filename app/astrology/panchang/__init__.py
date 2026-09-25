@@ -91,6 +91,9 @@ def calculate_panchang_2_0(target_date: date, lat: float, lon: float, tz_str: st
 def calculate_panchang(target_date: date, lat: float, lon: float, tz_str: str,
                         birth_nak_idx: int = None) -> dict:
     """Legacy compatibility wrapper for high-precision Panchang."""
+    from ..core.ephemeris import set_topocentric
+    set_topocentric(lat, lon, 0.0)
+
     tz = pytz.timezone(tz_str)
     # Use midnight local time as base, then convert to UTC for search
     local_base = tz.localize(datetime.combine(target_date, datetime.min.time()))
