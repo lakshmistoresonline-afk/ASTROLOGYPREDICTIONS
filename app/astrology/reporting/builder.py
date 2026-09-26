@@ -117,17 +117,33 @@ def build_canonical_astrology_report(chart_obj: Any, selected_date: Optional[dat
             ))
 
     # 5. Vargas (D1, D9 Navamsha, D10 Dashamsha)
+    from ..charts.divisional import calculate_varga_rashi
     vargas_list: List[VargaPlacement] = []
+    div_charts = getattr(chart_obj, 'divisional_charts', {}) or {}
+    d9_map = div_charts.get("D9", {})
+    d10_map = div_charts.get("D10", {})
+
     for p_name, p in chart_planets.items():
-        r_idx = getattr(p, 'rashi', 0)
+        r_idx = getattr(p, 'rashi', int(p.longitude / 30) % 12)
         d1_s = RASHI_NAMES[r_idx] if (0 <= r_idx < 12) else 'Unknown'
-        d9_idx = getattr(p, 'navamsa_rashi', r_idx)
+
+        d9_idx = getattr(p, 'navamsa_rashi', None)
+        if d9_idx is None and isinstance(d9_map, dict):
+            d9_idx = d9_map.get(p_name)
+        if d9_idx is None:
+            d9_idx = calculate_varga_rashi(p.longitude, 9)
         d9_s = RASHI_NAMES[d9_idx] if (d9_idx is not None and 0 <= d9_idx < 12) else d1_s
+
+        d10_idx = d10_map.get(p_name) if isinstance(d10_map, dict) else None
+        if d10_idx is None:
+            d10_idx = calculate_varga_rashi(p.longitude, 10)
+        d10_s = RASHI_NAMES[d10_idx] if (d10_idx is not None and 0 <= d10_idx < 12) else d1_s
+
         vargas_list.append(VargaPlacement(
             planet=p_name,
             d1_sign=d1_s,
             d9_sign=d9_s,
-            d10_sign=d1_s
+            d10_sign=d10_s
         ))
 
     # 6. Yogas & Combinations
