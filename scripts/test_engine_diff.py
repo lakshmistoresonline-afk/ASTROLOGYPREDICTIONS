@@ -11,7 +11,7 @@ from flask import session
 
 app = create_app()
 
-@pytest.mark.parametrize("pid", ["de9427a1"])
+@pytest.mark.parametrize("pid", ["de9427a1", "913637d9"])
 def test_profile(pid):
     with app.test_request_context():
         session['active_chart_id'] = pid
@@ -20,3 +20,4 @@ def test_profile(pid):
             preds = generate_evidence_based_predictions(chart_obj)
             assert preds is not None
             assert 'predictions' in preds
+            assert len(preds['predictions']) >= 4
